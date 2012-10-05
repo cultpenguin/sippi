@@ -13,17 +13,17 @@ i=i+1;F{i}=['toolboxes',filesep,'fast_marching_kroon',filesep];
 i=i+1;F{i}=['toolboxes',filesep,'fast_marching_kroon',filesep,'functions',filesep];
 i=i+1;F{i}=['toolboxes',filesep,'fast_marching_kroon',filesep,'shortestpath',filesep];
 i=i+1;F{i}=['toolboxes',filesep,'traveltime',filesep];
-i=i+1;F{i}=['toolboxes',filesep,'lomgrav',filesep];
-i=i+1;F{i}=['toolboxes',filesep,'reflection',filesep];
-i=i+1;F{i}=['toolboxes',filesep,'gpr_full_waveform',filesep];
+%i=i+1;F{i}=['toolboxes',filesep,'lomgrav',filesep];
+%i=i+1;F{i}=['toolboxes',filesep,'reflection',filesep];
+%i=i+1;F{i}=['toolboxes',filesep,'gpr_full_waveform',filesep];
 
-if exist([p,filesep,F{i}],'dir')
-    % add path to full waveform GPR forward
-    i=i+1;F{i}=['toolboxes',filesep,'gpr_full_waveform',filesep,'forward_simulation',filesep];
-    for  j=1:18;
-        i=i+1;F{i}=['toolboxes',filesep,'gpr_full_waveform',filesep,'forward_simulation',filesep,sprintf('Core%d',j),filesep];
-    end
-end
+%if exist([p,filesep,F{i}],'dir')
+%    % add path to full waveform GPR forward
+%    i=i+1;F{i}=['toolboxes',filesep,'gpr_full_waveform',filesep,'forward_simulation',filesep];
+%    for  j=1:18;
+%        i=i+1;F{i}=['toolboxes',filesep,'gpr_full_waveform',filesep,'forward_simulation',filesep,sprintf('Core%d',j),filesep];
+%    end
+%end
 i=i+1;F{i}=['toolboxes',filesep,'mGstat',filesep];
 
 

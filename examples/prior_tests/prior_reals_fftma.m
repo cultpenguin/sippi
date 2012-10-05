@@ -25,9 +25,9 @@ for i=1:5;
     %ylabel('Y')
 end
 try;load cmap;colormap(cmap);end
-suptitle(sprintf('FFT-MA, Cm=%s',prior{im}.Va))
 colorbar_shift;
 print_mul('prior_reals_fftma')
+suptitle(sprintf('FFT-MA, Cm=%s',prior{im}.Va))
 
 %% SETUP TARGET DISTRIBUTION
 N=10000;
