@@ -1,0 +1,21 @@
+3D GPR Cross borehole data set.
+
+This is the data set that was used in 
+
+Looms et al., 2010. Geostatistical inference using crosshole ground-penetrating radar.
+ Geophysics 75 (6), P. J29–J41. doi:10.1190/1.3496001.
+
+ 
+AM1234_data.eas 
+AM1234_data.mat
+3D traveltime data recorded between borholes 1, 2, 3, and 4
+
+
+AM13_data.eas 
+AM13_data.mat 
+2D traveltime data recorded between borholes 1 and 3
+
+AM24_data.eas 
+AM24_data.mat 
+2D traveltime data recorded between borholes 2 and 4
+
