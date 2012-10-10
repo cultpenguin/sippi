@@ -309,10 +309,6 @@ end
 save(filename_mat)
 disp(sprintf('%s : DONE McMC on %s',mfilename,options.txt))
 
-%%
-fast_fd_clean;
-mgstat_clean;
-
 %% PLOT STATS
 
 try;
