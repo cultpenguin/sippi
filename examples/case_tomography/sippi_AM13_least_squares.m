@@ -63,6 +63,7 @@ n_reals=15;
 %data{1}.i_use=1:50:702;
 
 %% STRAIGHT RAY FORWARD
+forward.forward_function='sippi_forward_traveltime';
 forward.type='ray';
 forward.linear=1;
 options.txt=[txt,'_',forward.type];

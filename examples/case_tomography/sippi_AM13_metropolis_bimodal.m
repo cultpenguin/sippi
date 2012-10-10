@@ -39,6 +39,7 @@ prior=sippi_prior_init(prior);
 forward.sources=D.S;
 forward.receivers=D.R;
 forward.type='eikonal';
+forward.forward_function='sippi_forward_traveltime';
 
 
 %% SETUP METROPOLIS
