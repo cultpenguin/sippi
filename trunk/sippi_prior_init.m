@@ -1,7 +1,10 @@
 function prior=sippi_prior_init(prior);
 % sippi_prior_init Initialize PRIOR structure for SIPPI
 %
+% Call 
+%   prior=sippi_prior_init(prior);
 %
+% See also sippi_prior
 %
 disp(sprintf('%s : Initializing prior options',mfilename))
 

@@ -1,10 +1,7 @@
-% sippi_plot_loglikelihood % plot loglikelihood time series
-%                         plots accept ratio
+% sippi_plot_loglikelihood Plot loglikelihood time series
 %
 % Call : 
-%    sippi_plot_loglikelihood(logL,i_acc,N,itext)
-%
-%
+%    acc=sippi_plot_loglikelihood(logL,i_acc,N,itext)
 %
 
 function acc=sippi_plot_loglikelihood(logL,i_acc,N,itext);

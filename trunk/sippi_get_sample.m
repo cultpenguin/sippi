@@ -1,5 +1,5 @@
 function [reals_mat,etype_mean,etype_var,reals]=sippi_get_sample(data,prior,id,im,n_reals,options);
-% sippi_get_sample
+% sippi_get_sample Get a posterior sample 
 %
 % Call :
 %  [reals,etype_mean,etype_var]=sippi_get_sample(data,prior,id,im,n_reals,options);

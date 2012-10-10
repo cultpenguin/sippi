@@ -1,20 +1,32 @@
-% sippi_forward_traveltime Traveltime computation in SIPPI
+% sippi_forward Simple forward wrapper for SIPPI
 %
-% Call :
-%   [d,forward,prior,data]=sippi_forward_traveltime(m,forward,prior,data,id,im)
+% Assumes that the actual forward solver has been defined by
+% forward.forward_function 
 %
-%   forward.type determines the method used to compute travel times
-%   forward.type='ray';
-%   forward.type='fat';
-%   forward.type='eikonal';
-%   forward.type='born';
+% Call:
+%   [d,forward,prior,data]=sippi_forward(m,forward,prior,data,id,im)
 %
-function [d,forward,prior,data]=sippi_forward_traveltime(m,forward,prior,data,id,im)
+function [d,forward,prior,data]=sippi_forward(m,forward,prior,data,id,im)
 
 %if nargin<4;    forward.null='';end
 if nargin<4;    data{1}.null='';end
 if nargin<5;    id=1;end
 if nargin<6;    im=1;end
+
+if isfield(forward,'forward_function');
+    
+    if nargin==2;
+        [d,forward,prior,data]=feval(forward.forward_function,m,forward);
+    elseif nargin==3
+        [d,forward,prior,data]=feval(forward.forward_function,m,forward,prior);
+    else
+        [d,forward,prior,data]=feval(forward.forward_function,m,forward,prior,data,id,im);
+    end
+else
+    disp(sprintf('%s : No forward_function specified in ''forward'' structure',mfilename))
+    d=[];
+    
+end
 
 
 

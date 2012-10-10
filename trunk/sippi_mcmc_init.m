@@ -1,3 +1,7 @@
+% sippi_mcmc_init Initialize McMC options for Metropolis and rejection sampling in SIPPI
+%
+% Call:
+%    options=sippi_mcmc_init(options,prior);
 %
 function options=sippi_mcmc_init(options,prior);
 

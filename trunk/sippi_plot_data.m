@@ -1,4 +1,8 @@
-% sippi_plot_data : plot data in SIPPI
+% sippi_plot_data plot data in SIPPI
+%
+% Call.
+%    sippi_plot_data(d,data);
+%
 function sippi_plot_data(d,data);
 
 for id=1:length(d);

@@ -1,4 +1,4 @@
-% sippi_likelihood : compute likelihood given an observed fnameset
+% sippi_likelihood Compute likelihood given an observed dataset
 %
 % Call
 %   [logL,L,data]=sippi_likelihood(d,data);
