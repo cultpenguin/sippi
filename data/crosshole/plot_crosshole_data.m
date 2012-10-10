@@ -28,7 +28,7 @@ title(sprintf('%s',D{id}),'interp','none')
 print_mul(sprintf('%s',D{id}))
 
 %%
-figure(2);clf
+figure(2);clf;set_paper('portrait');
 v_min=0.12;
 v_max=0.18;
 for i=1:nd
@@ -59,7 +59,7 @@ if (size(S,2)==2)
 else
     % 3D
     %axis([-.5 3.9 -.5 3.9 0 12.5]);
-    set(gca,'ydir','revers')
+    set(gca,'zdir','revers')
     xlabel('X (m)')
     ylabel('Y (m)')
     zlabel('Z (m)')
