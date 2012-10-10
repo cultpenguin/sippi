@@ -1,5 +1,5 @@
 function [options,data,prior,forward,m_current]=sippi_metropolis(data,prior,forward,options)
-% sippi_metropolis Extended Metropolis sampling
+% sippi_metropolis Extended Metropolis sampling in SIPPI
 %
 % Metropolis sampling.
 %   See e.g. Hansen, T. M., Cordua, K. S., and Mosegaard, K., 2012. 
@@ -21,7 +21,7 @@ function [options,data,prior,forward,m_current]=sippi_metropolis(data,prior,forw
 %    options.mcmc.i_sample=500: Number of iterations between saving model to disk
 %
 %    options.mcmc.m_init : Manually chosen starting model
-%    options.mcmc.m_ref  : Reference known starting model
+%    options.mcmc.m_ref  : Reference known target model
 %
 %
 %    options_mcmc.accept_only_improvements [0] : Optimization

@@ -1,5 +1,5 @@
 function options=sippi_rejection(data,prior,forward,options)
-% sippi_rejection    Rejection sampling 
+% sippi_rejection Rejection sampling 
 %
 % input arguments
 % 

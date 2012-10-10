@@ -1,4 +1,4 @@
-% sippi_set_path : set paths for running sippi
+% sippi_set_path Set paths for running sippi
 
 function sippi_set_path();
 [p]=fileparts(which('sippi_set_path.m'));

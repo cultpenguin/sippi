@@ -1,11 +1,10 @@
 function sippi_plot_prior(prior,im_arr,n_reals,caxis,supt);
-% sippi_plot_prior : generate a sample of the prior
+% sippi_plot_prior Plot a sample of the prior in SIPPI
 %
 % Call :
 %    sippi_plot_prior(prior,ip,n_reals,cax,supt);
 %
-%
-%  See also: sippi_plot_posterior, sippi_plot_model
+%  See also sippi_plot_posterior, sippi_plot_model
 %
 
 cwd=pwd;

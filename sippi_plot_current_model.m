@@ -1,4 +1,4 @@
-% sippi_plot_current_model;
+% sippi_plot_current_model Plots the current model during Metropolis sampling
 %
 % Call :
 %   sippi_plot_current_model(mcmc,data,d,m_current,prior);

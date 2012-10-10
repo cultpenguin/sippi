@@ -1,4 +1,4 @@
-% sippi_least_squares
+% sippi_least_squares Least squares type inversion for SIPPI
 %
 % Call : 
 %    [m_reals,m_est,Cm_est]=sippi_least_squares(data,prior,forward,n_reals,lsq_type,id,im);

@@ -1,5 +1,5 @@
 function sippi_plot_model(prior,m,im_array,use_colorbar,fhandle);
-% sippi_plot_model  Plot a 'model', i.e. a realization of the prior model
+% sippi_plot_model Plot a 'model', i.e. a realization of the prior model
 %
 %
 % Call :

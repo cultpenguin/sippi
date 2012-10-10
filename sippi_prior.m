@@ -1,4 +1,4 @@
-% sippi_prior : a priori models for SIPPI 
+% sippi_prior A priori models for SIPPI 
 %
 % To generate a realization of the prior model defined by the prior structure use: 
 %   [m_propose,prior]=sippi_prior(prior);
