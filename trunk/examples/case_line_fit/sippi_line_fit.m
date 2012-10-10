@@ -12,25 +12,20 @@ prior{im}.m0=0;
 prior{im}.std=4;
 prior{im}.norm=80;
 prior{im}.m_true=2;
-%prior{im}.seq_gibbs.step=1;
-%prior{im}.seq_gibbs.i_update_step_max=2000;
 
 % the intercept
 im=im+1;
 prior{im}.type='gaussian';
 prior{im}.name='intercept';
 prior{im}.m0=0;
-prior{im}.std=15;
-prior{im}.norm=10;
-prior{im}.m_true=-10;
-%prior{im}.seq_gibbs.step=1;
-%prior{im}.seq_gibbs.i_update_step_max=2000;
+prior{im}.std=30;
+prior{im}.m_true=-30;
 
 prior=sippi_prior_init(prior);
 
 %% Setup the forward model in the 'forward' structure
 nd=40;
-forward.x=sort(rand(1,nd)*20)';
+forward.x=linspace(1,20,nd)';
 forward.forward_function='sippi_forward_linefit';
 
 %% Set up the 'data' structure
@@ -68,17 +63,26 @@ end
 
 %% plot
 try;close(1);end;figure(1);clf;set_paper('portrait');
-x1=[0 20];
+ax=[0 20 -150 150];
+x1=[min(forward.x) max(forward.x)];
 hold on
+errorbar(forward.x,data{1}.d_obs,ones(size(forward.x)).*data{1}.d_std,'k.','linewidth',2)
+box on
+xlabel('X');ylabel('Y')
+ppp(8,8,12)
+axis(ax);print_mul('sippi_line_fit_data')
+
 for i=ceil(linspace(1,N,100))
     plot(x1,m1_prior(i).*x1+m2_prior(i),'r-','linewidth',.8);
+end
+errorbar(forward.x,data{1}.d_obs,ones(size(forward.x)).*data{1}.d_std,'k.','linewidth',2)
+axis(ax);print_mul('sippi_line_fit_data_prior')
+
+for i=ceil(linspace(1,N,100))
     plot(x1,m1_post(i).*x1+m2_post(i),'g-','linewidth',.8);
 end
 errorbar(forward.x,data{1}.d_obs,ones(size(forward.x)).*data{1}.d_std,'k.','linewidth',2)
 hold off
-box on
-xlabel('X');ylabel('Y')
-ppp(8,8,12)
 print_mul('sippi_line_fit')
 
 %%
@@ -91,7 +95,7 @@ plot(prior{1}.m_true,prior{2}.m_true,'k.','MarkerSize',24);
 hold off
 xlabel('Gradient')
 ylabel('Intercept')
-legend('A priori','A posteriori','true model')
+legend('A priori, \rho','A posteriori, \sigma','true model')
 ppp(8,8,12)
 print_mul('sippi_line_fit_cross')
 
@@ -107,14 +111,14 @@ maxL=max(logL),
 %% REJECTION SAMPLING
 clear options
 options.mcmc.adaptive_rejection=1;
-options.mcmc.nite=40000;
+options.mcmc.nite=100000;
 options=sippi_rejection(data,prior,forward,options);
 
 % load the posterior sample
 G_rej=load([options.txt,filesep,options.txt,'_m1.asc']);
 I_rej=load([options.txt,filesep,options.txt,'_m2.asc']);
 
-%
+%%
 ii=1:min([length(m1_post) length(G_rej) 500]);
 try;close(3);end;figure(3);clf;set_paper('portrait');
 try
@@ -129,14 +133,14 @@ end
 hold off
 xlabel('Gradient')
 ylabel('Intercept')
-legend('\sigma','\rho_{Metropolis}','\rho_{Rejection}','true model')
+legend('\rho','\sigma_{Metropolis}','\sigma_{Rejection}','true model')
 ppp(8,8,12)
 print_mul('sippi_line_fit_cross_rejection')
 
 save sippi_line_fit
 
 %% PLOT HIST OF logLikelihoods
-hx=[-150:.5:-130];
+hx=[-145:.5:-133];
 h1=hist(logL,hx);h1=h1./sum(h1);
 h2=hist(options.mcmc.logL,hx);h2=h2./sum(h2);
 plot(hx,[h1;h2]','-');
@@ -149,7 +153,4 @@ xlabel('log(Likelihood)')
 ylabel('Count (#)')
 set(gca,'xlim',[hx(1) hx(length(hx))])
 print_mul('sippi_line_fit_cross_metro_rejection')
-%% LINEAR LEAST SQUARESSOLUTION
-%sippi_least_squares()
-
 
