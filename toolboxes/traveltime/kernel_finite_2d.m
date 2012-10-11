@@ -1,4 +1,4 @@
-% kernel_finite_2d : 2D sensitivity kernels
+% kernel_finite_2d 2D sensitivity kernels
 %
 %  Call:
 %    [Knorm,K,dt,options]=kernel_finite_2d(v_ref,x,y,S,R,freq,options);

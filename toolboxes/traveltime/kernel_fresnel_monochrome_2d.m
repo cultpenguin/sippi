@@ -1,4 +1,4 @@
-% kernel_fresnel_monochrome_2d : 2D monchrome kernel for amplitude and first arrival
+% kernel_fresnel_monochrome_2d 2D monchrome kernel for amplitude and first arrival
 %
 % Call:
 %   [kernel_t,kernel_a]=kernel_fresnel_monochrome_2d(v,x,y,S,R,omega);
