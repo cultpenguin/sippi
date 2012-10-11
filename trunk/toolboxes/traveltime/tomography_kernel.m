@@ -1,5 +1,4 @@
-% tomography_kernel : computes the sensitivity kernel for a wave traveling
-% from S to R.
+% tomography_kernel Computes the sensitivity kernel for a wave traveling from S to R.
 %
 % CALL :
 %    [K,RAY,Gk,Gray,timeS,timeR,raypath]=tomography_kernel(Vel,x,y,z,S,R,T,alpha,Knorm);

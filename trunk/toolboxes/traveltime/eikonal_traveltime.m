@@ -1,6 +1,42 @@
-% eikonal_traveltime : computes traveltime by solving the eikonal equation
+% eikonal_traveltime Computes traveltime between sources and receivers by solving the eikonal equation
 %
 % t=eikonal_traveltime(x,y,z,V,Sources,Receivers,iuse,type);
+%
+%  x,y,z : arrays defining the x, y, and z axis
+%  V: velocity field, with size (length(y),length(x),length(z));
+%  Sources [ndata,ndim] : Source positions
+%  Receivers [ndata,ndim] : Receiver positions
+%  iuse (optional): optionally only use subset of data. eg.g i_use=[1 2 4];
+%  type (optional): type of eikonal solver: [1]:Fast Marching(default), [2]:FD
+%
+%  tmap [size(V)]: travel times computed everywhere in the velocity grid
+%
+%%Example (2%
+%
+% Example 2d traveltime compuation
+%
+% Example (2D):
+%   x=[1:1:100];
+%   y=1:1:100;
+%   z=1;
+%   V=ones(100,100);V(:,1:50)=2;
+%   S=[50 50 1;50 50 1];
+%   R=[90 90 1; 90 80 1];
+%   t=eikonal_traveltime(x,y,z,V,S,R)
+%
+% Example (3D):
+%   nx=50;ny=50;nz=50;
+%   x=1:1:nx;
+%   y=1:1:ny;
+%   z=1:1:nz;
+%   V=ones(ny,nx,nz);V(:,1:50,:)=2;
+%   S=[10 10 1;10 10 1;10 9 1];
+%   R=[40 40 40; 40 39 40; 40 40 40];
+%   t=eikonal_traveltime(x,y,z,V,S,R)
+%
+%
+% See also eikonal
+
 function t=eikonal_traveltime(x,y,z,V,S,R,iuse,type);
 
 if nargin<7,

@@ -1,4 +1,4 @@
-% kernel_multiple : computes the sensitivity kernel for a wave traveling
+% kernel_multiple Computes the sensitivity kernel for a wave traveling
 % from S to R.
 %
 % CALL : 

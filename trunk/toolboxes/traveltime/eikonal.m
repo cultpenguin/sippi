@@ -1,4 +1,24 @@
+% eikonal Traveltime computation by solving the eikonal equation
+% 
 % tmap=eikonal(x,y,z,V,Sources,type);
+%
+%  x,y,z : arrays defining the x, y, and z axis
+%  V: velocity field, with size (length(y),length(x),length(z));
+%  Sources [ndata,ndim] : Source positions
+%  type (optional): type of eikonal solver: [1]:Fast Marching(default), [2]:FD
+%
+%  tmap [size(V)]: travel times computed everywhere in the velocity grid
+%
+%%Example (2D):
+%   x=[1:1:100];
+%   y=1:1:100;
+%   z=1;
+%   V=ones(100,100);V(:,1:50)=2;
+%   Sources = [10 50;75 50];
+%   t=eikonal(x,y,z,V,Sources);
+%   subplot(1,2,1);imagesc(x,y,t(:,:,1,1));axis image;colorbar
+%   subplot(1,2,2);imagesc(x,y,t(:,:,1,2));axis image;colorbar
+%
 function tmap=eikonal(x,y,z,V,Sources,type);
 
 if nargin<6, type=1; end

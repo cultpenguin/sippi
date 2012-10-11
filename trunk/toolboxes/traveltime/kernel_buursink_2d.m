@@ -1,5 +1,4 @@
-
-% kernel_buursink_2k : Computes 2D Sensitivity kernel based on 1st order EM scattering theory
+% kernel_buursink_2k Computes 2D Sensitivity kernel based on 1st order EM scattering theory
 % 
 % See 
 %   Buursink et al. 2008. Crosshole radar velocity tomography 

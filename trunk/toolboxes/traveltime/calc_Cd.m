@@ -1,4 +1,6 @@
 function Cd=calc_Cd(ant_pos,var_uncor,var_cor1,var_cor2,L)
+% Calc_cd Setup a covariance model to account for borehole imperfections
+%
 % Call: Cd=calc_Cd(ant_pos,var_uncor,var_cor1,var_cor2,L)
 % This function sets up a data covariance matrix that accounts for static
 % (i.e. correlated) data errors.

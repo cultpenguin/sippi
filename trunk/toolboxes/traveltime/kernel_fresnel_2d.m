@@ -1,4 +1,4 @@
-% kernel_fresnel_2d : sensitivity kernel for amplitude and first arrival
+% kernel_fresnel_2d Sensitivity kernel for amplitude and first arrival
 %
 % Call:
 %   [kernel_t,kernel_a,P_omega,omega]=kernel_fresnel_2d(v,x,y,S,R,omega,P_omega);

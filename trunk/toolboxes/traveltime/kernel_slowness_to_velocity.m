@@ -1,4 +1,4 @@
-% kernel_slowness_to_velocity : converts from slowness to velocity parameterizations
+% kernel_slowness_to_velocity Converts from slowness to velocity parameterizations
 %
 % G : kernel [1,nkernels]
 % V : Velocity field (
