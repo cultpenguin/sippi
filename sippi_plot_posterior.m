@@ -8,7 +8,7 @@ function sippi_plot_posterior(fname,im_arr,prior,options,n_reals);
 %
 
 if ~exist('n_reals','var');
-    n_reals=15;
+    n_reals=5;
 end
 
 if ~exist('supt','var');
@@ -243,7 +243,8 @@ for im=im_arr;
     
     %% PLOT ACCEPTANCE RATE
     try
-        figure_focus((im-1)*10+5);set_paper('landscape');clf;
+        fn=(im-1)*10+5;
+        figure_focus(fn);set_paper('landscape');clf;
         acc=mcmc.acc(im,1:mcmc.i);
         
         prior{im}.seq_gibbs.n_update_history;
@@ -263,7 +264,8 @@ for im=im_arr;
         ylabel('pdf')
         print_mul(sprintf('%s_m%d__rate',fname,im))
     catch
-        disp(sprintf('%s : could not plot acceptabe rate',mfilename));
+        try;close(fn);end
+        disp(sprintf('%s : could not plot acceptance rate',mfilename));
         cd(cwd);
     end
     
@@ -271,7 +273,8 @@ for im=im_arr;
     try
         
         if ndim>1
-            figure_focus((im-1)*10+6);set_paper('landscape');clf;
+            fn=(im-1)*10+6;
+            figure_focus(fn);set_paper('landscape');clf;
             set(gca,'FontSize',options.FS)
             nr=size(reals_all,1);
             it=[1:1:nr].*mcmc.i_sample;
@@ -305,6 +308,7 @@ for im=im_arr;
         end
         
     catch
+        try;close(fn);end
         disp(sprintf('%s : could not plot corrcoeff stats',mfilename));
         cd(cwd);
     end
@@ -313,7 +317,8 @@ for im=im_arr;
     %% PLOT  LOGL
     try
         if nm==1
-            figure_focus((im-1)*10+9);set_paper('landscape');clf;
+            fn=(im-1)*10+9;
+            figure_focus(fn);set_paper('landscape');clf;
             set(gca,'FontSize',options.FS);
             sippi_plot_loglikelihood(mcmc.logL(1:mcmc.i),mcmc.acc(im,1:mcmc.i));
             smcmc=sort(mcmc.logL(1:mcmc.i));y_min=smcmc(ceil(mcmc.i/200));
@@ -329,6 +334,7 @@ for im=im_arr;
             %    title(sprintf('m%d : %s',im,prior{im}.name))
         end
     catch
+        try;close(fn);end
         disp(sprintf('%s : could not plot logL curve',mfilename));
         cd(cwd);
     end

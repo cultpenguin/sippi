@@ -127,11 +127,15 @@ for id=id_array;
         nknown=length(data{id}.i_use);
         
         f1 = -.5*log(2*pi^nknown);
-        if isinf(f1); f1=0;end
         f2 = -0.5*data{id}.logdet;
+        if isinf(f1); f1=-f2;end; 
+        %% this os pretty bad if CD changes !! Because then the determinant also changes..
+        %% Perhaps an warning
+        
         f3 =  -.5 * dd'*data{id}.iCD*dd;
         
         logL(id) = f1 +f2 +f3;
+        logL(id) = f3;
         %try
         %    logL(id) = -.5 * dd*data{id}.iCD*dd';
         %catch

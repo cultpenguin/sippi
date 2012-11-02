@@ -9,7 +9,8 @@ function options=sippi_rejection(data,prior,forward,options)
 %
 %   options.mcmc.rejection_normalize_log = log(options.mcmc.Lmax)
 %
-%   options.mcmc.adaptive_rejection =1, adaptive setting of maxiumum likelihood
+%   options.mcmc.adaptive_rejection=1, adaptive setting of maxiumum likelihood
+%                  (def=[0])
 %                  At each iteration Lmax will be set if log(L(m_cur)=>options.mcmc.logLmax
 %
 % See also sippi_metropolis

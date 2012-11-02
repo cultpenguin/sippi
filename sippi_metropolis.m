@@ -230,6 +230,10 @@ for i=1:mcmc.nite;
     end
     [logL_propose,L_propose,data]=sippi_likelihood(d,data);
 
+    if (logL_propose>0)
+        keyboard
+    end
+    
     if mcmc.store_all==1
         mcmc.logL_pro(i)=logL_propose;
         for im=1:length(prior);
