@@ -100,15 +100,24 @@ elseif strcmp(forward.type,'born');
      end
      if forward.linear==1
         m_use=forward.linear_m;
+        use_eikonal=0; % fastest born kernel
     else
         m_use=m{im};
+        use_eikonal=1; % slower born kernel, but valid for small vel-contrast
     end
     forward.G=zeros(length(data{id}.i_use),prod(prior{im}.dim));
     j=0;
-    for i=data{id}.i_use;%size(forward.sources,1)
+    for i=data{id}.i_use;
         j=j+1;
         progress_txt(i,length(data{id}.d_obs),'setting up kernel');
-        [kernel,L,L1_all,L2_all]=kernel_buursink_2d(m_use,x,y,forward.sources(i,:),forward.receivers(i,:),forward.freq);
+        
+        if forward.is_slowness==1;
+            [kernel,L,L1_all,L2_all]=kernel_buursink_2d(1./m_use,x,y,forward.sources(i,:),forward.receivers(i,:),forward.freq,[],use_eikonal);
+        else
+            [kernel,L,L1_all,L2_all]=kernel_buursink_2d(m_use,x,y,forward.sources(i,:),forward.receivers(i,:),forward.freq,[],use_eikonal);
+        end
+   
+        
         forward.G(j,:)=kernel(:);
     end
     if forward.is_slowness==1
@@ -127,8 +136,6 @@ else
     
 end
     
-
-%%[logL,L,data]=sippi_likelihood(d,data,id);
 
 
 

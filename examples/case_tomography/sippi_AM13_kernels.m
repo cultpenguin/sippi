@@ -3,18 +3,35 @@
 clear all;close all
 D=load('AM13_data.mat');
 
+randn('seed',1),
+rand('seed',1),
+
 %% THE PRIOR
 im=1;
 prior{im}.type='FFTMA';
 prior{im}.name='Velocity (m/ns)';
 prior{im}.m0=0.145;
-prior{im}.Va='.0003 Sph(6)';
+prior{im}.Va='.0003 Gau(3)';
 
 dx=0.125;
 prior{im}.x=[-1:dx:6];
 prior{im}.y=[0:dx:13];
 prior{im}.cax=[0.1 0.18];
+
+% bimodal distribution
+N=10000;
+prob_chan=0.5;
+dd=.014*2;
+d1=randn(1,ceil(N*(1-prob_chan)))*.01+0.145-dd;  %0.1125;
+d2=randn(1,ceil(N*(prob_chan)))*.01+0.145+dd; %0.155;
+d_all=[d1(:);d2(:)];
+[d_nscore,o_nscore]=nscore(d_all,1,1,min(d_all),max(d_all),0);
+prior{im}.o_nscore=o_nscore;
+
+
 prior=sippi_prior_init(prior);
+
+
 %% THE DATA
 id=1;
 data{id}.d_obs=D.d_obs;
@@ -68,6 +85,13 @@ txt{j}='Non-linear Born kernel';
 
 
 %% PLOT KERNELS
+
+figure_focus(11);clf
+imagesc(prior{1}.x,prior{1}.y,m{1});axis image
+title('Reference model')
+colorbar
+print_mul('sippi_kernels_velocity');
+ 
 figure(1);set_paper;clf;
 subplot(1,7,1);
 imagesc(prior{1}.x,prior{1}.y,m{1});axis image
