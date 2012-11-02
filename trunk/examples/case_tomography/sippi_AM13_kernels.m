@@ -68,14 +68,22 @@ txt{j}='Non-linear Born kernel';
 
 
 %% PLOT KERNELS
-
 figure(1);set_paper;clf;
 subplot(1,7,1);
 imagesc(prior{1}.x,prior{1}.y,m{1});axis image
 title('Reference model')
 
 for i=1:length(K);
-figure_fo    subplot(1,7,i+1);
+    figure_focus(i+1);
+    imagesc(prior{1}.x,prior{1}.y,K{i});axis image
+    title(txt{i})
+    caxis([-1 1].*.02)
+    colorbar
+    print_mul(sprintf('sippi_kernels_%s',txt{i}));
+    
+    
+    figure_focus(1)
+    subplot(1,7,i+1);
     imagesc(prior{1}.x,prior{1}.y,K{i});axis image
     title(txt{i})
     caxis([-1 1].*.02)
