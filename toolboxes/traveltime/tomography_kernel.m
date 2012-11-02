@@ -30,7 +30,7 @@ function [K,RAY,Gk,Gray,tS,tR,raypath_mat,raylength_mat]=tomography_kernel(Vel,x
 if nargin<7, T=1; end
 if nargin<8, alpha=1; end
 if nargin<9,
-    Knorm=0;
+    Knorm=1;
 end
 if nargin<10,
     doPlot=0;
