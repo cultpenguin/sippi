@@ -30,13 +30,13 @@ if nargin<9
 end
 
 if nargin<6 % no omega
-    f0=0.1*2;
+    f0=0.1;
     omega=f0;
 end
 
 if nargin<7 % no P_omega
     f0=omega;
-    dt=0.02;
+    dt=.2;
     Nt=1000;
     wl=rickerwavelet(f0,dt,Nt);
     [A,P,Psmooth,kx]=mspectrum(wl,dt);
@@ -45,11 +45,22 @@ if nargin<7 % no P_omega
     P_omega = P_omega ./ sum(P_omega.*(omega(2)-omega(1)));
 end
 
+if isempty(P_omega);
+    f0=omega;
+    dt=.2;
+    Nt=1000;
+    wl=rickerwavelet(f0,dt,Nt);
+    [A,P,Psmooth,kx]=mspectrum(wl,dt);
+    P_omega=A;
+    omega=2*pi*kx;
+    P_omega = P_omega ./ sum(P_omega.*(omega(2)-omega(1)));    
+end
+
 if nargin<8
     useEik=0;
 end
 
-clipOmega=0;
+clipOmega=1;
 if clipOmega==1
     % REMOVE LARGEST P_omega values
     iomega=find(cumsum(P_omega)<0.995*sum(P_omega));
