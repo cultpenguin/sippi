@@ -70,7 +70,9 @@ if (size(tS,3)==1)*(size(tR,3)>1)
     tS=ttS;
     S=repmat(S,[ns 1]);
 end
-fast_fd_clean;
+if exist('fast_fd_clean','file')
+    fast_fd_clean;
+end
 
 SR_dist_linear=sqrt(sum((S-R).^2')');
 

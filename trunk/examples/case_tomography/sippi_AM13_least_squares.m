@@ -74,15 +74,14 @@ options.txt=[txt,'_',forward.type];
 forward.type='fat';
 forward.linear=1;
 options.txt=[txt,'_',forward.type];
-forward.freq=10;
+forward.freq=.1;
 [m_reals_2,m_est_2,Cm_est_2,options_2]=sippi_least_squares(data,prior,forward,n_reals,lsq_type,1,1,options);
-%sippi_plot_posterior(options_2.txt)
-
+sippi_plot_posterior(options_2.txt)
 %% LINEAR BORN FORWARD
 forward.type='born';
 forward.linear=1;
 options.txt=[txt,'_',forward.type];
-forward.freq=10;
+forward.freq=.1;
 [m_reals_3,m_est_3,Cm_est_3,options_3,forward]=sippi_least_squares(data,prior,forward,n_reals,lsq_type,1,1,options);
 %sippi_plot_posterior(options_3.txt)
 

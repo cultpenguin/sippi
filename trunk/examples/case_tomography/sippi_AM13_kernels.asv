@@ -1,0 +1,81 @@
+clear all;close all
+D=load('AM13_data.mat');
+txt='AM13';
+
+%% THE PRIOR
+im=1;
+prior{im}.type='FFTMA';
+prior{im}.name='Velocity (m/ns)';
+prior{im}.m0=0.145;
+prior{im}.Va='.0003 Sph(6)';
+dx=0.1;
+prior{im}.x=[-1:dx:6];
+prior{im}.y=[0:dx:13];
+prior{im}.cax=[0.1 0.18];
+prior=sippi_prior_init(prior);
+%% THE DATA
+id=1;
+data{id}.d_obs=D.d_obs;
+data{id}.d_std=D.d_std;
+data{id}.Ct=0; % modelization error
+data{id}.Ct=D.Ct; % modelization error in style of Cordua et al
+
+
+
+%% FORWARD MODEL
+D=load('AM13_data.mat');
+forward.sources=D.S;
+forward.receivers=D.R;
+forward.forward_function='sippi_forward_traveltime';
+%% CONVERT MODEL TO SLOWNESS
+
+
+%% SOLVE LEAST SQUARES OPTIONS
+lsq_type='lsq';
+%lsq_type='visim';
+%lsq_type='error_sim';
+
+% set number of realization
+n_reals=15;
+
+% select number of data to consider
+%data{1}.i_use=1:50:702;
+
+
+%% KERNELS
+ir=[1,100];
+m=sippi_prior(prior);
+
+j=0;
+forward.freq=.1;
+
+j=j+1;forward.type='ray';forward.linear=1;
+[d{j},forward_mul{j}]=sippi_forward(m,forward,prior,data,id,im)
+K{j} = reshape(sum(forward_mul{j}.G(ir,:)),prior{1}.dim(2),prior{1}.dim(1));
+
+j=j+1;forward.type='ray';forward.linear=0;
+[d{j},forward_mul{j}]=sippi_forward(m,forward,prior,data,id,im)
+K{j} = reshape(sum(forward_mul{j}.G(ir,:)),prior{1}.dim(2),prior{1}.dim(1));
+
+j=j+1;forward.type='fat';forward.linear=1;
+[d{j},forward_mul{j}]=sippi_forward(m,forward,prior,data,id,im)
+K{j} = reshape(sum(forward_mul{j}.G(ir,:)),prior{1}.dim(2),prior{1}.dim(1));
+
+j=j+1;forward.type='fat';forward.linear=0;
+[d{j},forward_mul{j}]=sippi_forward(m,forward,prior,data,id,im)
+K{j} = reshape(sum(forward_mul{j}.G(ir,:)),prior{1}.dim(2),prior{1}.dim(1));
+
+
+
+%% PLOT KERNELS
+
+figure(1);set_paper;clf;
+subplot(1,5,1);
+imagesc(prior{1}.x,prior{1}.y,m{1});axis image
+
+for i=1:length(K);
+    subplot(1,5,i+1);
+    imagesc(prior{1}.x,prior{1}.y,K{i});axis image
+    colormap(1-gray)
+end
+
