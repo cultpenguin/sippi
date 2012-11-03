@@ -14,7 +14,8 @@ data{id}.d_obs=D.d_obs;
 data{id}.d_std=D.d_std;
 % optionally use only a subset of data
 %data{id}.i_use=[10:10:length(data{id}.d_obs)];
-data{id}.Ct=1; % Covaiance describing modelization error
+%data{id}.Ct=D.Ct; % Covaiance describing modelization error
+data{id}.Ct=D.Ct+1; % Covaiance describing modelization error
 
 %% SETUP PRIOR
 im=1;
@@ -22,8 +23,9 @@ prior{im}.type='FFTMA';
 prior{im}.name='Velocity (m/ns)';
 prior{im}.m0=0.145;
 prior{im}.Va='.0003 Sph(6)';
-prior{im}.x=[-1:.15:6];
-prior{im}.y=[0:.15:13];
+dx=0.15;
+prior{im}.x=[-1:dx:6];
+prior{im}.y=[0:dx:13];
 
 prior{im}.cax=[.1 .18];
 
@@ -47,11 +49,13 @@ sippi_plot_model(prior,m)
 forward.forward_function='sippi_forward_traveltime';
 forward.sources=D.S;
 forward.receivers=D.R;
-%forward.type='eikonal';
-forward.type='ray';forward.linear=1;
+forward.type='eikonal';
+%forward.type='ray';forward.linear=1;
+%forward.type='fat';forward.linear=1;forward.freq=0.1;
 
 % Compute the forward response related to the realization of the prior
 % model generated above
+
 [d,forward,prior,data]=sippi_forward(m,forward,prior,data);
 % plot the forward response and compare it to the observed data
 sippi_plot_data(d,data); 
@@ -59,9 +63,9 @@ sippi_plot_data(d,data);
 [logL,L,data]=sippi_likelihood(d,data);
 
 %% SETUP METROPOLIS
-options.mcmc.nite=100000;
-options.mcmc.i_plot=2000;
-%options.mcmc.i_sample=250;
+options.mcmc.nite=1000000;
+options.mcmc.i_plot=1000;
+options.mcmc.i_sample=5000;
 randn('seed',2);rand('seed',2);
 options=sippi_metropolis(data,prior,forward,options);
 
