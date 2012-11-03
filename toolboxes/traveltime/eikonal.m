@@ -19,6 +19,8 @@
 %   subplot(1,2,1);imagesc(x,y,t(:,:,1,1));axis image;colorbar
 %   subplot(1,2,2);imagesc(x,y,t(:,:,1,2));axis image;colorbar
 %
+% See also eikonal_traveltime
+%
 function tmap=eikonal(x,y,z,V,Sources,type);
 
 if nargin<6, type=1; end
