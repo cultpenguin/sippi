@@ -11,12 +11,17 @@
 %
 function [d,forward,prior,data]=sippi_forward_traveltime(m,forward,prior,data,id,im)
 
+
 %if nargin<4;    forward.null='';end
 if nargin<4;    data{1}.null='';end
 if nargin<5;    id=1;end
-if nargin<6;    im=1;end
-
-
+if nargin<6;
+    if isfield(forward,'im')
+        im=forward.im;
+    else
+        im=1;
+    end
+end
 
 if isfield(data{id},'sources')
     forward.sources=data{id}.sources;
@@ -55,7 +60,7 @@ if strcmp(forward.type,'eikonal')
         d{id}=eikonal_traveltime(prior{im}.x,prior{im}.y,prior{im}.z,m{im},forward.sources,forward.receivers,data{id}.i_use,forward.eikonal_type);
     end
 elseif (strcmp(forward.type,'ray')|strcmp(forward.type,'fat'));
-    % RAY APPROXIMATION    
+    % RAY APPROXIMATION
     if ~isfield(forward,'linear');forward.linear=0;end
     if (~isfield(forward,'G')|forward.linear==0);
         % ONLY COMPUTE KERNEL IF linear=1 OR IF G DOES NOT EXIST
@@ -76,7 +81,7 @@ elseif (strcmp(forward.type,'ray')|strcmp(forward.type,'fat'));
         else
             [K,RAY,Gk,Gray]=tomography_kernel(m_use,x,y,z,S(data{id}.i_use,:),R(data{id}.i_use,:),T);
         end
-    
+        
         if strcmp(forward.type,'ray')
             forward.G=Gray;
         else
@@ -88,37 +93,44 @@ elseif (strcmp(forward.type,'ray')|strcmp(forward.type,'fat'));
     else
         s=1./m{im}(:);
         d{id}=forward.G*s;
-    
+        
     end
     
 elseif strcmp(forward.type,'born');
     % BORN APPROXIMATION
     % LIU ET AL (2009) for seismic waves
     % Buursink et al () for electromagnetic waves
-     if ~isfield(forward,'linear_m'),
-            forward.linear_m = m{im}.*0+prior{im}.m0;
-     end
-     if forward.linear==1
+    if ~isfield(forward,'linear_m'),
+        forward.linear_m = m{im}.*0+prior{im}.m0;
+    end
+    if ~isfield(forward,'linear'),forward.linear=1;end
+    if ~isfield(forward,'freq');
+        disp(sprintf('''forward.freq'' field is not set !!',mfilename))
+        pause(1);return
+    end
+    if forward.linear==1
         m_use=forward.linear_m;
         use_eikonal=0; % fastest born kernel
     else
         m_use=m{im};
         use_eikonal=1; % slower born kernel, but valid for small vel-contrast
     end
-    forward.G=zeros(length(data{id}.i_use),prod(prior{im}.dim));
-    j=0;
-    for i=data{id}.i_use;
-        j=j+1;
-        progress_txt(i,length(data{id}.d_obs),'setting up kernel');
-        
-        if forward.is_slowness==1;
-            [kernel,L,L1_all,L2_all]=kernel_buursink_2d(1./m_use,x,y,forward.sources(i,:),forward.receivers(i,:),forward.freq,[],use_eikonal);
-        else
-            [kernel,L,L1_all,L2_all]=kernel_buursink_2d(m_use,x,y,forward.sources(i,:),forward.receivers(i,:),forward.freq,[],use_eikonal);
+    if ~isfield(forward,'G');
+        forward.G=zeros(length(data{id}.i_use),prod(prior{im}.dim));
+        j=0;
+        for i=data{id}.i_use;
+            j=j+1;
+            progress_txt(i,size(forward.sources,1),'setting up kernel');
+            
+            if forward.is_slowness==1;
+                [kernel,L,L1_all,L2_all]=kernel_buursink_2d(1./m_use,x,y,forward.sources(i,:),forward.receivers(i,:),forward.freq,[],use_eikonal);
+            else
+                [kernel,L,L1_all,L2_all]=kernel_buursink_2d(m_use,x,y,forward.sources(i,:),forward.receivers(i,:),forward.freq,[],use_eikonal);
+            end
+            
+            
+            forward.G(j,:)=kernel(:);
         end
-   
-        
-        forward.G(j,:)=kernel(:);
     end
     if forward.is_slowness==1
         d{id}=forward.G*m{im}(:);
@@ -135,7 +147,7 @@ else
     d{id}=[];
     
 end
-    
+
 
 
 

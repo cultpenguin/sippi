@@ -249,6 +249,13 @@ for i=1:mcmc.nite;
         Pacc=(Pacc>=1); %% Pacc = 1 if Pacc>=1, else Pacc=0;
     end
     
+    %%m_propose
+    %%prior_propose{2}.Va
+    %%prior_propose{2}.range_1
+    %%
+    %%figure_focus(17);imagesc(m_propose{2});axis image;drawnow;
+    %%keyboard
+  
     % Optionally accept all proposed models
     if (mcmc.accept_all==1), Pacc=1; end
     

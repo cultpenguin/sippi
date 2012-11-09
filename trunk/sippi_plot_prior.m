@@ -43,17 +43,17 @@ if ~exist('n_reals','var');
     end
 end
 
+if length(n_reals)==1;
+    n_reals=ones(1,length(im_arr)).*n_reals;
+end
+   
 if ~exist('cax','var');
     try
         cax=prior{1}.cax;
     end
 end
 
-
-if length(n_reals)==1;
-    n_reals=ones(1,length(im_arr)).*n_reals;
-end
-    
+ 
 
 nm=length(prior);
 j=0;
@@ -75,7 +75,8 @@ for im=im_arr;
         % HISTOGRAM
         p{1}=prior{im};
         m_reals=zeros(1,n_reals(im));
-        for i=1:n_reals(im);            
+        [m,p]=sippi_prior(p);
+        for i=1:n_reals(im);
             m=sippi_prior(p);
             m_reals(i)=m{1};       
         end

@@ -1,4 +1,11 @@
-% sippi_AM24_metropolis_gaussian.m
+% sippi_AM24_metropolis_gaussian.m 2D Gaussian inversion using the extended Metropolis sampler
+%
+% Example of inverting 2D Arrenæs tomographic data (AM24)
+% using the extended Metropolis sampler and Gaussian a priori model. 
+%
+% See http://dx.doi.org/10.1016/j.cageo.2012.10.001
+%
+
 clear all;close all
 D=load('AM24_data.mat');
 options.txt='AM24';

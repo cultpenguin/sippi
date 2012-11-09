@@ -1,4 +1,12 @@
-% sippi_AM13_metropolis_training_image
+% sippi_AM13_metropolis_training_image 2D inversion using the extended Metropolis sampler (MP prior)
+%
+% Example of inverting 2D Arrenæs tomographic data (AM13)
+% using the extended Metropolis sampler and prior model 
+% based on a training image
+%
+% See http://dx.doi.org/10.1016/j.cageo.2012.10.001
+%
+
 clear all;close all
 D=load('AM13_data.mat');
 options.txt='AM13_ti';

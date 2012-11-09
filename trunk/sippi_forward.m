@@ -10,8 +10,9 @@ function [d,forward,prior,data]=sippi_forward(m,forward,prior,data,id,im)
 
 %if nargin<4;    forward.null='';end
 if nargin<4;    data{1}.null='';end
-if nargin<5;    id=1;end
-if nargin<6;    im=1;end
+%if nargin<5;    id=1;end
+%if nargin<6;    im=1;end
+
 
 if isfield(forward,'forward_function');
     
@@ -19,6 +20,10 @@ if isfield(forward,'forward_function');
         [d,forward,prior,data]=feval(forward.forward_function,m,forward);
     elseif nargin==3
         [d,forward,prior,data]=feval(forward.forward_function,m,forward,prior);
+    elseif nargin==4
+        [d,forward,prior,data]=feval(forward.forward_function,m,forward,prior,data);
+    elseif nargin==5
+        [d,forward,prior,data]=feval(forward.forward_function,m,forward,prior,data,id);
     else
         [d,forward,prior,data]=feval(forward.forward_function,m,forward,prior,data,id,im);
     end

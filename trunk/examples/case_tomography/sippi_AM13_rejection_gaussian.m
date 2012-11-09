@@ -1,4 +1,11 @@
-% sippi_AM13_rejection_gaussian.m
+% sippi_AM13_rejection_gaussian.m 2D inversion using the rejections sampler 
+%
+% Example of inverting 2D Arrenæs tomographic data (AM13)
+% using the rejection sampler
+%
+% See http://dx.doi.org/10.1016/j.cageo.2012.10.001
+%
+
 clear all;close all
 D=load('AM13_data.mat');
 options.txt='AM13';

@@ -1,4 +1,11 @@
-% sippi_AM13_metropolis_uniform.m
+% sippi_AM13_metropolis_uniform 2D inversion using the extended Metropolis sampler (uniform prior)
+%
+% Example of inverting 2D Arrenæs tomographic data (AM13)
+% using the extended Metropolis sampler and a uniform a priori 
+% model
+%
+% See http://dx.doi.org/10.1016/j.cageo.2012.10.001
+%
 clear all;close all
 D=load('AM13_data.mat');
 options.txt='AM13_uniform';

@@ -1,4 +1,4 @@
-% sippi_AM13_kernels : plot som sensitivity kernels associated to forward type
+% sippi_AM13_kernels plot sensitivity kernels associated to choice of forward type
 
 clear all;close all
 D=load('AM13_data.mat');

@@ -1,4 +1,11 @@
-% sippi_AM13_least_squares
+% sippi_AM13_least_squares 2D least squares inversion  
+%
+% Example of inverting 2D Arrenæs tomographic data (AM13)
+% using least squares inversion
+%
+% See http://dx.doi.org/10.1016/j.cageo.2012.10.001
+%
+
 
 %%
 %% Example of least squares tomography on AM13 dataset

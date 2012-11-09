@@ -423,7 +423,9 @@ end
 for im=1:nm;
     if isfield(prior{im},'prior_master');
         imaster=prior{im}.prior_master;
+        if length(prior)>im
         prior{imaster}.(prior{im}.name)=m_propose{im};
+        end
         %disp(sprintf('updated PRIOR%d.%s from PRIOR%d.%s %g',imaster,prior{imaster}.name,im,prior{im}.name,m_propose{im}))
     end
 end
@@ -433,8 +435,10 @@ end
 for im=im_array;
     if isfield(prior{im},'prior_master');
         imaster=prior{im}.prior_master;
-        %disp(sprintf('PRIOR%s has master PRIOR%s',prior{im}.name,prior{imaster}.name))
-        prior{imaster}.run=1;
+        %disp(sprintf('PRIOR ''%s'' has master PRIOR ''%s''',prior{im}.name,prior{imaster}.name))
+        %if length(prior)>imaster
+            prior{imaster}.run=1;
+        %end
         % MAKE SURE TO RUN 'MASTER'
     end
 end
@@ -444,7 +448,7 @@ end
 for im=1:nm;
     if (isfield(prior{im},'run'))
         %disp(sprintf('RUN MASTER %d (%s) AGAIN',im,prior{im}.name));
-        if isfield(prior{im},'FFTMA')
+        if strcmp(prior{im}.type,'FFTMA')
             
             for j=1:(im-1);
                 if strcmp(prior{j}.name,'m0');

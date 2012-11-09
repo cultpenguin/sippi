@@ -7,9 +7,7 @@ function sippi_plot_posterior(fname,im_arr,prior,options,n_reals);
 %
 %
 
-if ~exist('n_reals','var');
-    n_reals=5;
-end
+
 
 if ~exist('supt','var');
     supt=0;
@@ -58,6 +56,22 @@ nm=length(prior);
 if ~exist('im_arr','var');
     im_arr=1:length(prior);
 end
+
+if ~exist('n_reals','var');
+    for j=1:length(im_arr);
+        if prior{im_arr(j)}.ndim<2
+            n_reals(j)=10000;
+        else
+            n_reals(j)=15;
+        end
+    end
+end
+
+if length(n_reals)==1;
+    n_reals=ones(1,length(prior)).*n_reals;
+end
+   
+
 for im=im_arr;
     clear cax;
     % find dimension
@@ -67,7 +81,8 @@ for im=im_arr;
     
     options.null='';
     id=1;
-    [reals,etype_mean,etype_var,reals_all]=sippi_get_sample(data,prior,id,im,n_reals,options);
+   
+    [reals,etype_mean,etype_var,reals_all]=sippi_get_sample(data,prior,id,im,n_reals(im),options);
     
     if ~exist('cax','var');
         if isfield(prior{im},'cax')
@@ -91,8 +106,8 @@ for im=im_arr;
     set_paper('landscape');clf;
     set_paper('portrait');clf;
     
-    i1=ceil(size(reals,1)/n_reals);
-    ii=ceil(linspace(i1,size(reals,1),n_reals));
+    i1=ceil(size(reals,1)/n_reals(im));
+    ii=ceil(linspace(i1,size(reals,1),n_reals(im)));
     if ndim==1
         hx=linspace(cax(1),cax(2),30);
         hist(reals,hx,30);
