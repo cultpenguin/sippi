@@ -50,8 +50,8 @@ forward.sources=D.S;
 forward.receivers=D.R;
 %forward.type='eikonal';
 %forward.type='ray';forward.linear=1;
-%forward.type='fat';forward.linear=1;forward.freq=0.1;
-forward.type='born';forward.linear=1;forward.freq=0.1;
+forward.type='fat';forward.linear=1;forward.freq=0.1;
+%forward.type='born';forward.linear=1;forward.freq=0.1;
 
 % Compute the forward response related to the realization of the prior
 % model generated above

@@ -24,4 +24,4 @@ if (step<prior{im}.seq_gibbs.step_min), step=prior{im}.seq_gibbs.step_min;end
 prior{im}.seq_gibbs.step=step;
 txt_1=sprintf(' %g ',step_old);
 txt_2=sprintf(' %g ',prior{im}.seq_gibbs.step);
-%disp(sprintf('%s adjusting SeqGibbs step size [%s]->[%s]. P_current=%g, P_target=%g',mfilename,txt_1,txt_2,P_current,prior{im}.seq_gibbs.P_target))
+disp(sprintf('%s im=%02d adjusting SeqGibbs step size [%s]->[%s]. P_current=%g, P_target=%g',mfilename,im,txt_1,txt_2,P_current,prior{im}.seq_gibbs.P_target))
