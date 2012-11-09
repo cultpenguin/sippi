@@ -136,7 +136,7 @@ for im=im_arr;
         try;clear m;end
         for i=1:n_reals(im)
             
-            progress_txt(i,n_reals,'computing data response')
+            progress_txt(i,n_reals(im),'computing data response')
             subplot(nsp_y,nsp_x,i);
             
             use_colorbar=0;
