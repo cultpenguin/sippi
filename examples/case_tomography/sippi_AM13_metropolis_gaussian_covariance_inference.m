@@ -27,7 +27,7 @@ im=0;
 im=im+1;
 prior{im}.type='gaussian';
 prior{im}.x=1;
-prior{im}.m0=5;
+prior{im}.m0=6;
 prior{im}.min=0;
 prior{im}.max=20;
 prior{im}.std=4;
@@ -39,9 +39,9 @@ prior{im}.seq_gibbs.step=1;
 prior{im}.norm=50;
 
 % range - vertical
-%im=im+1;
-%prior{im}=prior{im-1};
-%prior{im}.name='range_2';
+im=im+1;
+prior{im}=prior{im-1};
+prior{im}.name='range_2';
 
 
 % rotation
@@ -58,7 +58,7 @@ im=im+1;
 prior{im}.type='FFTMA';
 prior{im}.name='Velocity (m/ns)';
 prior{im}.m0=0.145;
-prior{im}.Va='.0003 Sph(6)';
+prior{im}.Va='.0003 Sph(6,90,1)';
 %prior{im}.Va='.0003 Gau(2)';
 prior{im}.x=[-1:.2:6];
 prior{im}.y=[0:.2:13];
@@ -87,32 +87,42 @@ randn('seed',1);
 rand('seed',1);
 
 %% SETUP METROPOLIS
-prior{1}.seq_gibbs.n_update_history=200;
-prior{1}.seq_gibbs.i_update_step_max=4000;
-prior{2}.seq_gibbs.n_update_history=100;
-prior{2}.seq_gibbs.i_update_step_max=2000;
-options.mcmc.nite=20000;500000;
-options.mcmc.i_plot=100;1000;
-options.mcmc.i_sample=50;250;
-%options.mcmc.pert_strategy.perturb_all=1;
+for im=1:length(prior)
+    prior{im}.seq_gibbs.n_update_history=100;
+    prior{im}.seq_gibbs.i_update_step_max=3000;
+end
+options.mcmc.nite=100000;
+options.mcmc.i_plot=1000;
+options.mcmc.i_sample=500;
 
-options.mcmc.pert_strategy.i_pert=[1 2];
-options.mcmc.pert_strategy.i_pert_freq=[2 1];
+options.mcmc.pert_strategy.i_pert=[1 2 3];
+options.mcmc.pert_strategy.i_pert_freq=[2 2 1];
 
-data{1}.i_use=[10:10:700];
 
+
+
+%% RUN 1, every 10th data
+data{1}.i_use=[10:10:702];
 try;forward=rmfield(forward,'G');end
-profile on;
-[options,data,prior,forward,m_current]=sippi_metropolis(data,prior,forward,options);
-profile report;
-profile off
-sippi_plot_posterior(options.txt);
+options.txt='run1';try,forward=rmfield(forward.G);end
+[o1,data,prior,forward,m_current]=sippi_metropolis(data,prior,forward,options);
+sippi_plot_posterior(o1.txt);
 
-return
-%% PLOT SAMPLE FROM PRIOR
-sippi_plot_prior(options.txt);
-%sippi_plot_prior(prior);
+%% RUN 2, every 2nd data
+data{1}.i_use=[5:5:702];
+try;forward=rmfield(forward,'G');end
+options.txt='run2';
+[o2,data,prior,forward,m_current]=sippi_metropolis(data,prior,forward,options);
+sippi_plot_posterior(o2.txt);
 
-%% PLOT SAMPLE FROM POSTERIOR
-sippi_plot_posterior(options.txt);
+%% RUN 3, all data
+data{1}.i_use=[1:1:702];
+try;forward=rmfield(forward,'G');end
+options.txt='run3';
+[o2,data,prior,forward,m_current]=sippi_metropolis(data,prior,forward,options);
+sippi_plot_posterior(o3.txt);
+
+[m,prior]=sippi_prior(prior)
+[d,forward,prior,data]=sippi_forward(m,forward,prior,data)
+[logL,L,data]=sippi_likelihood(d,data);
 
