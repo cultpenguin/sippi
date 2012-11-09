@@ -1,4 +1,12 @@
-% sippi_AM1234_metropolis_gaussian.m
+% sippi_AM1234_metropolis_gaussian 3D inversion using the extended Metropolis sampler (Gaussian prior) 
+%
+% Example of inverting 2D Arrenæs tomographic data (AM13)
+% using the extended Metropolis sampler and a 
+% Gaussian a priori model
+%
+% See http://dx.doi.org/10.1016/j.cageo.2012.10.001
+%
+
 clear all;close all
 D=load('AM1234_data.mat');
 options.txt='AM1234';
@@ -42,7 +50,6 @@ options=sippi_metropolis(data,prior,forward,options);
 
 %% PLOT SAMPLE FROM PRIOR
 sippi_plot_prior(options.txt);
-%sippi_plot_prior(prior);
 
 %% PLOT SAMPLE FROM POSTERIOR
 sippi_plot_posterior(options.txt);
