@@ -1,7 +1,12 @@
-% sippi_AM13_kernels plot sensitivity kernels associated to choice of forward type
-
+% sippi_tomography_kernels plot sensitivity kernels associated to choice of forward type
+%
+% Call : sippi_tomography kernel
+%
+% Illustrates the sensitivity kernels (the 1st order
+% Frechet derivative) related to the 
+% forward models available in SIPPI
+%
 clear all;close all
-D=load('AM13_data.mat');
 
 randn('seed',1),
 rand('seed',1),
@@ -13,6 +18,7 @@ prior{im}.name='Velocity (m/ns)';
 prior{im}.m0=0.145;
 prior{im}.Va='.0003 Gau(3)';
 
+id=1;data{id}.null='';
 dx=0.125;
 prior{im}.x=[-1:dx:6];
 prior{im}.y=[0:dx:13];
@@ -28,15 +34,7 @@ d_all=[d1(:);d2(:)];
 [d_nscore,o_nscore]=nscore(d_all,1,1,min(d_all),max(d_all),0);
 prior{im}.o_nscore=o_nscore;
 
-
 prior=sippi_prior_init(prior);
-
-
-%% THE DATA
-id=1;
-data{id}.d_obs=D.d_obs;
-data{id}.d_std=D.d_std;
-
 
 %% FORWARD MODEL
 D=load('AM13_data.mat');
@@ -74,15 +72,12 @@ txt{j}='Bended fat beam';
 j=j+1;forward.type='born';forward.linear=1;
 [d{j},forward_mul{j}]=sippi_forward(m,forward,prior,data,id,im);
 K{j} = reshape(sum(forward_mul{j}.G(:,:)),prior{1}.dim(2),prior{1}.dim(1));
-txt{j}='Linear Born kernel';
-
+txt{j}='Linear Born kernel'; 
+ 
 j=j+1;forward.type='born';forward.linear=0;
 [d{j},forward_mul{j}]=sippi_forward_traveltime(m,forward,prior,data,id,im);
 K{j} = reshape(sum(forward_mul{j}.G(:,:)),prior{1}.dim(2),prior{1}.dim(1));
 txt{j}='Non-linear Born kernel';
-
-
-
 
 %% PLOT KERNELS
 
@@ -106,7 +101,7 @@ for i=1:length(K);
     print_mul(sprintf('sippi_kernels_%s',txt{i}));
     
     
-    figure_focus(1)
+    figure_focus(1);
     subplot(1,7,i+1);
     imagesc(prior{1}.x,prior{1}.y,K{i});axis image
     title(txt{i})
