@@ -23,8 +23,11 @@ function [options,data,prior,forward,m_current]=sippi_metropolis(data,prior,forw
 %    options.mcmc.m_init : Manually chosen starting model
 %    options.mcmc.m_ref  : Reference known target model
 %
-%
 %    options_mcmc.accept_only_improvements [0] : Optimization
+%
+%    options.mcmc.pert_strategy.perturb_all=1; % Perturb all priors in each 
+%                                              % iteration. def =[0]
+%
 % See also sippi_rejection
 %
 options.null='';
@@ -220,6 +223,11 @@ for i=1:mcmc.nite;
  
     % SAMPLE PRIOR
     [m_propose,prior_propose] = sippi_prior(prior,m_current);
+    
+    % optionaly plot all model proposals ?
+    % if mcmc.plot_all_proposed_models==1;
+    % sippi_plot_model -->figure(12);imagesc(m_propose{2});axis image;drawnow;
+    % end 
     
     %% FORWARD PROBLEM
     % solve forward problem, and compute likelihood

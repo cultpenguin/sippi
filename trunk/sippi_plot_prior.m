@@ -73,9 +73,10 @@ for im=im_arr;
     
     if prior{im}.ndim<2
         % HISTOGRAM
+        clear p;
         p{1}=prior{im};
         m_reals=zeros(1,n_reals(im));
-        [m,p]=sippi_prior(p);
+        %[m,p]=sippi_prior(p);
         for i=1:n_reals(im);
             m=sippi_prior(p);
             m_reals(i)=m{1};       

@@ -73,6 +73,7 @@ end
    
 
 for im=im_arr;
+
     clear cax;
     % find dimension
     ndim=sum(prior{im}.dim>1);
@@ -133,7 +134,7 @@ for im=im_arr;
             nsp_y=ceil(n_reals(im)/nsp_x);
         end
         try;clear m;end
-        for i=1:n_reals
+        for i=1:n_reals(im)
             
             progress_txt(i,n_reals,'computing data response')
             subplot(nsp_y,nsp_x,i);
@@ -150,8 +151,8 @@ for im=im_arr;
                 else
                     m{i}{im}=reals(:,:,i);
                 end
-                
-                sippi_plot_model(prior,m{i}{id},im,use_colorbar,f_id);
+                sippi_plot_model(prior,m{i},im,use_colorbar,f_id);
+                %sippi_plot_model(prior,m{i}{id},im,use_colorbar,f_id);
             catch
                 disp(sprintf('%s : failed to plot realization %d',mfilename,i))
             end
@@ -173,7 +174,8 @@ for im=im_arr;
             subplot(1,2,1);
         end
         set(gca,'FontSize',options.FS)
-        sippi_plot_model(prior,etype_mean,im,0,f_id);colorbar off;
+        met{im}=etype_mean;
+        sippi_plot_model(prior,met,im,0,f_id);colorbar off;
         caxis(cax);
         colorbar_shift;
         axis image
@@ -185,7 +187,8 @@ for im=im_arr;
             subplot(1,2,2);
         end
         set(gca,'FontSize',options.FS)
-        sippi_plot_model(prior,etype_var,im,0,f_id);colorbar off;
+        met{im}=etype_var;
+        sippi_plot_model(prior,met,im,0,f_id);colorbar off;
         xlabel('X');ylabel('Y');zlabel('Z')
         cax_var=[0 max(etype_var(:))];
         try
