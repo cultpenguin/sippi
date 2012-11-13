@@ -70,10 +70,10 @@ end
 if length(n_reals)==1;
     n_reals=ones(1,length(prior)).*n_reals;
 end
-   
+
 
 for im=im_arr;
-
+    
     clear cax;
     % find dimension
     ndim=sum(prior{im}.dim>1);
@@ -82,7 +82,7 @@ for im=im_arr;
     
     options.null='';
     id=1;
-   
+    
     [reals,etype_mean,etype_var,reals_all]=sippi_get_sample(data,prior,id,im,n_reals(im),options);
     
     if ~exist('cax','var');
@@ -194,7 +194,7 @@ for im=im_arr;
         try
             Va=deformat_variogram(prior{im}.Va);
             cax_var(2)=sum(Va.par1);
-           
+            
         end
         try;caxis(cax_var);end
         colorbar_shift;
@@ -357,10 +357,55 @@ for im=im_arr;
         cd(cwd);
     end
     
-    
-    
 end
 
+
+%% 2D POSTERIOR MARGINALS.
+try
+    im_onedim=[];
+    for j=1:length(im_arr);
+        if max(prior{j}.dim)==1
+            im_onedim=[im_onedim, j];
+        end
+    end
+    
+    for k=1:(length(im_onedim)-1)
+        [reals1,etype_mean1,etype_var1,reals_all1]=sippi_get_sample(data,prior,id,k,1000,options);
+        [reals2,etype_mean2,etype_var2,reals_all2]=sippi_get_sample(data,prior,id,k+1,1000,options);
+        
+        %keyboard
+        figure_focus(50+k);clf;set_paper('landscape');
+        plot(reals_all1,reals_all2,'.')
+        try;xlabel(prior{k}.name);end
+        try;ylabel(prior{k+1}.name);end
+        
+        try;set(gca,'xlim',[prior{k}.min prior{k}.max]);end
+        try;set(gca,'ylim',[prior{k+1}.min prior{k+1}.max]);end
+        print_mul(sprintf('%s_post_marg_m%d_m%d',fname,k,k+1));
+        
+        figure_focus(60+k);clf;set_paper('landscape');
+        try;
+            [Z,x_arr,y_arr] = hist2(reals1',reals2',linspace(prior{k}.min,prior{k}.max,10),linspace(prior{k+1}.min,prior{k+1}.max,10));
+        catch
+            [Z,x_arr,y_arr] = hist2(reals1',reals2');
+        end
+        imagesc(x_arr,y_arr,Z');
+        try;xlabel(prior{k}.name);end
+        try;ylabel(prior{k+1}.name);end
+        colormap(1-gray);
+        set(gca,'ydir','normal');
+        %colorbar
+        print_mul(sprintf('%s_post_marg_hist_m%d_m%d',fname,k,k+1))
+       
+    end
+catch
+    try;close(fn);end
+    disp(sprintf('%s : could not plot 2D marginals',mfilename));
+    cd(cwd);
+end
+
+
+%%
 cd(cwd);
 
 return
