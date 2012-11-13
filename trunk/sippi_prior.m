@@ -76,43 +76,43 @@ end
 
 %% SELECT WHICH MODEL PARAMETERS TO PERTURB
 
-im_array=zeros(1,nm);
-for im=1:nm
-    if isfield(prior{im},'perturb'),
-        if prior{im}.perturb==1;
-            im_array(im)=im;
-        else
-            im_array(im)=0;
-        end
-    else
-        im_array(im)=im;
-    end
-end
-im_array=find(im_array);
-
-% im_array=[];
+% im_array=zeros(1,nm);
 % for im=1:nm
 %     if isfield(prior{im},'perturb'),
 %         if prior{im}.perturb==1;
-%             im_array=[im_array im];
+%             im_array(im)=im;
 %         else
-%             im_array=[im_array im];
+%             im_array(im)=0;
 %         end
 %     else
-%         im_array=[im_array im];
+%         im_array(im)=im;
 %     end
-%     
-%     %if ~isfield(prior{im},'perturb'),prior{im}.perturb=1;end;
-%     %if prior{im}.perturb==1;
-%     %    im_array=[im_array im];
-%     %end
 % end
-% 
+% im_array=find(im_array);
 
-%im_array
-%if nargin==1;
-%    im_array=1:nm; % SAMPLE ALL MODEL PARAMETERS
-%end
+im_array=[];
+for im=1:nm
+    if isfield(prior{im},'perturb'),
+        if prior{im}.perturb==1;
+            im_array=[im_array im];
+        %else
+        %    im_array=[im_array im];
+        end
+    else
+        im_array=[im_array im];
+    end
+    
+    %if ~isfield(prior{im},'perturb'),prior{im}.perturb=1;end;
+    %if prior{im}.perturb==1;
+    %    im_array=[im_array im];
+    %end
+end
+
+
+if nargin==1;
+    im_array=1:nm; % SAMPLE ALL MODEL PARAMETERS
+end
+
 if isempty(im_array)
     disp(sprintf('%s : no model parameters perturbed...',mfilename))
 end
@@ -423,6 +423,7 @@ for im=im_fftma_array;
                     update_master=1;
                 end
             end
+            if nargin==1, update_master=0;end
             if update_master==1;
                 % THIS IM IS A MASTER SO WE CAN UPDATE THE COVARIANCE MODEL
                 % IF CHOSEN 
@@ -462,7 +463,7 @@ for im=im_fftma_array;
         end
         
         %if prior{im}.perturb==0
-        if run_fftma==0;
+        if isempty(run_fftma)|(run_fftma==0);
             % DO NOT PERTURB RANDOM NUMBERS UNLESS THE CURRENT FFT_MA TYPE
             % PRIOR IS ASKED TO BE PERTURBED
             % (ONLY COVARIANCE PROPERTIES ARE PERTURBED)
