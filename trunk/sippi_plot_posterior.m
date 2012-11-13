@@ -370,34 +370,34 @@ try
     end
     
     for k=1:(length(im_onedim)-1)
-        [reals1,etype_mean1,etype_var1,reals_all1]=sippi_get_sample(data,prior,id,k,1000,options);
-        [reals2,etype_mean2,etype_var2,reals_all2]=sippi_get_sample(data,prior,id,k+1,1000,options);
+        [reals1,etype_mean1,etype_var1,reals_all1]=sippi_get_sample(data,prior,id,im_onedim(k),1000,options);
+        [reals2,etype_mean2,etype_var2,reals_all2]=sippi_get_sample(data,prior,id,im_onedim(k+1),1000,options);
         
         %keyboard
         figure_focus(50+k);clf;set_paper('landscape');
         plot(reals_all1,reals_all2,'.')
-        try;xlabel(prior{k}.name);end
-        try;ylabel(prior{k+1}.name);end
+        try;xlabel(prior{im_onedim(k)}.name);end
+        try;ylabel(prior{im_onedim(k+1)}.name);end
         
-        try;set(gca,'xlim',[prior{k}.min prior{k}.max]);end
-        try;set(gca,'ylim',[prior{k+1}.min prior{k+1}.max]);end
-        print_mul(sprintf('%s_post_marg_m%d_m%d',fname,k,k+1));
+        try;set(gca,'xlim',[prior{im_onedim(k)}.min prior{im_onedim(k)}.max]);end
+        try;set(gca,'ylim',[prior{im_onedim(k+1)}.min prior{im_onedim(k+1)}.max]);end
+        print_mul(sprintf('%s_post_marg_m%d_m%d',fname,im_onedim(k),im_onedim(k+1)));
         
         figure_focus(60+k);clf;set_paper('landscape');
         try;
             NX=ceil(sqrt(length(reals1)));
             NY=NX;        
-            [Z,x_arr,y_arr] = hist2(reals1',reals2',linspace(prior{k}.min,prior{k}.max,NX),linspace(prior{k+1}.min,prior{k+1}.max,NY));
+            [Z,x_arr,y_arr] = hist2(reals1',reals2',linspace(prior{im_onedim(k)}.min,prior{im_onedim(k)}.max,NX),linspace(prior{im_onedim(k+1)}.min,prior{im_onedim(k+1)}.max,NY));
         catch
             [Z,x_arr,y_arr] = hist2(reals1',reals2');
         end
         imagesc(x_arr,y_arr,Z');
-        try;xlabel(prior{k}.name);end
-        try;ylabel(prior{k+1}.name);end
+        try;xlabel(prior{im_onedim(k)}.name);end
+        try;ylabel(prior{im_onedim(k+1)}.name);end
         colormap(1-gray);
         set(gca,'ydir','normal');
         %colorbar
-        print_mul(sprintf('%s_post_marg_hist_m%d_m%d',fname,k,k+1))
+        print_mul(sprintf('%s_post_marg_hist_m%d_m%d',fname,im_onedim(k),im_onedim(k+1)))
        
     end
 catch
