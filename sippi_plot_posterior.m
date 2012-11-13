@@ -385,7 +385,9 @@ try
         
         figure_focus(60+k);clf;set_paper('landscape');
         try;
-            [Z,x_arr,y_arr] = hist2(reals1',reals2',linspace(prior{k}.min,prior{k}.max,10),linspace(prior{k+1}.min,prior{k+1}.max,10));
+            NX=ceil(sqrt(length(reals1)));
+            NY=NX;        
+            [Z,x_arr,y_arr] = hist2(reals1',reals2',linspace(prior{k}.min,prior{k}.max,NX),linspace(prior{k+1}.min,prior{k+1}.max,NY));
         catch
             [Z,x_arr,y_arr] = hist2(reals1',reals2');
         end
