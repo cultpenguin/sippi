@@ -104,7 +104,6 @@ options.txt='run1';try,forward=rmfield(forward.G);end
 [o1,data,prior,forward,m_current]=sippi_metropolis(data,prior,forward,options);
 sippi_plot_posterior(o1.txt);
 options.mcmc.m_init=m_current;
-return
  
 %% RUN 2, every 2nd data
 close all;
