@@ -94,25 +94,35 @@ options.mcmc.i_sample=100;
 %options.mcmc.pert_strategy.i_pert=[1 2 3];
 %options.mcmc.pert_strategy.i_pert_freq=[2 2 1];
 
-%% RUN 1, every 10th data
-data{1}.i_use=[10:10:702];
-try;forward=rmfield(forward,'G');end
-options.txt='run1';try,forward=rmfield(forward.G);end
-[o1,data,prior,forward,m_current]=sippi_metropolis(data,prior,forward,options);
-sippi_plot_posterior(o1.txt);
-
-%% RUN 2, every 2nd data
-data{1}.i_use=[5:5:702];
-try;forward=rmfield(forward,'G');end
-options.txt='run2';
-[o2,data,prior,forward,m_current]=sippi_metropolis(data,prior,forward,options);
-sippi_plot_posterior(o2.txt);
+% %% RUN 1, every 10th data
+% data{1}.i_use=[10:10:702];
+% try;forward=rmfield(forward,'G');end
+% options.txt='run1';try,forward=rmfield(forward.G);end
+% [o1,data,prior,forward,m_current]=sippi_metropolis(data,prior,forward,options);
+% sippi_plot_posterior(o1.txt);
+% 
+% %% RUN 2, every 2nd data
+% data{1}.i_use=[5:5:702];
+% try;forward=rmfield(forward,'G');end
+% options.txt='run2';
+% [o2,data,prior,forward,m_current]=sippi_metropolis(data,prior,forward,options);
+% sippi_plot_posterior(o2.txt);
 
 %% RUN 3, all data
-options.mcmc.nite=500000;
-options.mcmc.i_sample=500;
+options.mcmc.i_plot=100;
+
+options.mcmc.nite=20000;
+options.mcmc.i_sample=100;
 data{1}.i_use=[1:1:702];
 try;forward=rmfield(forward,'G');end
 options.txt='run3';
 [o3,data,prior,forward,m_current]=sippi_metropolis(data,prior,forward,options);
-sippi_plot_posterior(o3.txt);
+
+return
+
+%%
+options.mcmc.nite=1000;
+options.mcmc.m_init=m_current;
+[o4,data,prior,forward,m_current]=sippi_metropolis(data,prior,forward,options);
+
+%sippi_plot_posterior(o3.txt);

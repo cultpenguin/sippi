@@ -112,9 +112,6 @@ end
 m_current=m_init;
 
 
-
-
-
 %% INITIAL LIKELIHOODS
 if isfield(forward,'forward_function');
     [d_init,forward,prior,data]=feval(forward.forward_function,m_init,forward,prior,data);
@@ -125,7 +122,6 @@ end
 logL_current=logL_init;
 
 %% COMPUTE TIME PER ITERAION
-
 % COMPUTE THE TIME OF ONE CALL TO SIPPI_PRIOR
 [m_tmp,prior_tmp] = sippi_prior(prior); % make sure prior is set
 tic
