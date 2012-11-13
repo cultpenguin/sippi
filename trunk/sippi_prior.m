@@ -82,16 +82,16 @@ for im=1:nm
     end
 end
 
-if nargin==1;
-    im_array=1:nm; % SAMPLE ALL MODEL PARAMETERS
-end
+%if nargin==1;
+%    im_array=1:nm; % SAMPLE ALL MODEL PARAMETERS
+%end
 if isempty(im_array)
     disp(sprintf('%s : no model parameters perturbed...',mfilename))
 end
 
-run_fftma=0;
-run_snesim=0;
+run_fftma=[];
 
+% FIRST CHECK FOR ALL PRIOR TYPES, EXCEPT MASTER TYPES
 for im=im_array;
     
     if isfield(prior{im},'Cm');
@@ -246,93 +246,6 @@ for im=im_array;
         m_propose{im} = prior{im}.V.D';
         
         
-    elseif (strcmp(prior{im}.type,'FFTMA'))       
-        %% FFTMA
-        % update VA structure from range/ang/sill if possible
-        if ~isstruct(prior{im}.Va); prior{im}.Va=deformat_variogram(prior{im}.Va);end
-        
-        % UPDATE COVARIANCE PARAMETERS IF THE HAVE BEEN DEFINED
-        %[range,rot,sill,Va]=Va2RangeRot(prior{im}.Va);        
-        prior{im}.fftma_options.constant_C=1;
-        
-        % run thorugh the priors that have been updated
-        im2_arr=im_array(1:(find(im_array==im)-1));
-        for j=im2_arr;
-        %for j=1:(im-1);
-            
-            update_master=0;
-            % CHECK IF THIS PRIOR IS A MASTER
-            if isfield(prior{j},'prior_master')
-                if (prior{j}.prior_master==im);
-                    % YES -> current im is master for current j'th prior
-                    update_master=1;
-                end
-            end
-            if update_master==1;
-                % THIS IM IS A MASTER SO WE CAN UPDATE THE COVARIANCE MODEL
-                % IF CHOSEN 
-                if strcmp(prior{j}.name,'m0');
-                    prior{im}.m0=m_propose{j};
-                    prior{im}.fftma_options.constant_C=0;
-                elseif strcmp(prior{j}.name,'sill');
-                    prior{im}.Va.par1(1)=m_propose{j};
-                    prior{im}.fftma_options.constant_C=0;
-                elseif strcmp(prior{j}.name,'range_1');
-                    range(1)=m_propose{j};
-                    prior{im}.Va.par2(1)=range(1);
-                    prior{im}.fftma_options.constant_C=0;
-                elseif strcmp(prior{j}.name,'range_2');
-                    range(2)=m_propose{j};
-                    prior{im}.Va.par2(3)=range(2)/range(1);
-                    %range(2)=m_propose{j};
-                    prior{im}.fftma_options.constant_C=0;
-                elseif strcmp(prior{j}.name,'range_3');
-                    %range(3)=m_propose{j};
-                    prior{im}.fftma_options.constant_C=0;
-                elseif strcmp(prior{j}.name,'ang_1');
-                    ang(1)=m_propose{j};
-                    prior{im}.Va.par2(2)=ang(1);
-                    prior{im}.fftma_options.constant_C=0;
-                end
-            end
-        end
-        
-        % set resim type and step length
-        prior{im}.fftma_options.resim_type=prior{im}.seq_gibbs.type;
-        prior{im}.fftma_options.lim=prior{im}.seq_gibbs.step;
-        
-        % IF CONSTANT_C=1, THEN REMOVE C and FFTC
-        if prior{im}.fftma_options.constant_C==0;
-            try;prior{im}.fftma_options=rmfield(prior{im}.fftma_options,'fftC');end
-            try;prior{im}.fftma_options=rmfield(prior{im}.fftma_options,'C');end
-        end
-        
-        
-        %if (length(prior{im}.z)==1)&(length(prior{im}.y)==1)
-        %    [m_propose{im},prior{im}.fftma_options.z_rand,o]=fft_ma(prior{im}.x,prior{im}.Va,fftma_options);
-        %elseif (length(prior{im}.z)==1)
-        %    [m_propose{im},prior{im}.fftma_options.z_rand,o]=fft_ma(prior{im}.x,prior{im}.y,prior{im}.Va,fftma_options);
-        %else
-        %    [m_propose{im},prior{im}.fftma_options.z_rand,o]=fft_ma(prior{im}.x,prior{im}.y,prior{im}.z,fftma_options);
-        %end
-        [m_propose{im},z_rand,prior{im}.fftma_options]=fft_ma(prior{im}.x,prior{im}.y,prior{im}.z,prior{im}.Va,prior{im}.fftma_options);
-        prior{im}.fftma_options.z_rand=z_rand;
-        
-        
-        % PERFORM NORMAL SCORE OF NEEDED        
-        if isfield(prior{im},'o_nscore');
-            if ~isstruct(prior{im}.Va);
-                prior{im}.Va=deformat_variogram(prior{im}.Va);
-            end
-            Va_par=prior{im}.Va;
-            gvar=sum([Va_par.par1]);
-            m_propose{im}=m_propose{im}./sqrt(gvar);
-            m_propose{im}=inscore(m_propose{im},prior{im}.o_nscore);
-        else
-            m_propose{im}=m_propose{im}+prior{im}.m0;
-        end
-        prior{im}.m=m_propose{im};
-        
     elseif (strcmp(lower(prior{im}.type),'gaussian'))
         %% 1D GENERALIZED GAUSSIAN
         
@@ -408,7 +321,10 @@ for im=im_array;
             m_propose{im}=prior{im}.m0+prior{im}.std*ggauss_real;
             
         end
-        
+       
+    elseif (strcmp(upper(prior{im}.type),'FFTMA'))        
+        % THE FFTMA PRIOR IS HANDLED BELOW
+        run_fftma=[run_fftma im];
     else
         disp(sprintf('%s : ''%s'' type prior model not supported',mfilename,prior{im}.type))
     end
@@ -434,6 +350,125 @@ for im=im_array;
     
     
 end
+
+%% CHECK IF WE NEED TO RUN FFTMA TYPE PRIOR BACUSE IT IS A MASTER 
+run_fftma_as_master=[];
+prior_master=[];
+for im=im_array;
+    
+    if isfield(prior{im},'prior_master');
+        if (strcmp(upper(prior{prior{im}.prior_master}.type),'FFTMA'))
+            run_fftma_as_master=[run_fftma_as_master prior{im}.prior_master];
+        end
+        prior_master=[prior_master prior{im}.prior_master];
+    end
+    prior_master=unique(prior_master);
+    
+end
+run_fftma_as_master=unique(run_fftma_as_master);
+
+
+%%
+% WE NEED TO CHECK FOR FFTMA TYPE PRIOR SEPERATELY, AS IT CAN BE AFFECTED
+% BY OTHER TYPES OF GAUSSIAN 1D TYPE PRIORS
+im_fftma_array=unique([run_fftma_as_master,run_fftma]);
+for im=im_fftma_array;
+    if (strcmp(upper(prior{im}.type),'FFTMA'))
+        %% FFTMA
+        % update VA structure from range/ang/sill if possible
+        if ~isstruct(prior{im}.Va); prior{im}.Va=deformat_variogram(prior{im}.Va);end
+        
+        % UPDATE COVARIANCE PARAMETERS IF THE HAVE BEEN DEFINED
+        %[range,rot,sill,Va]=Va2RangeRot(prior{im}.Va);        
+        prior{im}.fftma_options.constant_C=1;
+        
+        % run thorugh the priors that have been updated
+        im2_arr=im_array(1:(find(im_array==im)-1));
+        im2_arr=1:length(prior);
+        for j=im2_arr;
+            
+            update_master=0;
+            % CHECK IF THIS PRIOR IS A MASTER
+            if isfield(prior{j},'prior_master')
+                if (prior{j}.prior_master==im);
+                    % YES -> current im is master for current j'th prior
+                    update_master=1;
+                end
+            end
+            if update_master==1;
+                % THIS IM IS A MASTER SO WE CAN UPDATE THE COVARIANCE MODEL
+                % IF CHOSEN 
+                if strcmp(prior{j}.name,'m0');
+                    prior{im}.m0=m_propose{j};
+                    prior{im}.fftma_options.constant_C=0;
+                elseif strcmp(prior{j}.name,'sill');
+                    prior{im}.Va.par1(1)=m_propose{j};
+                    prior{im}.fftma_options.constant_C=0;
+                elseif strcmp(prior{j}.name,'range_1');
+                    range(1)=m_propose{j};
+                    prior{im}.Va.par2(1)=range(1);
+                    prior{im}.fftma_options.constant_C=0;
+                elseif strcmp(prior{j}.name,'range_2');
+                    range(2)=m_propose{j};
+                    prior{im}.Va.par2(3)=range(2)/prior{im}.Va.par2(1);
+                    prior{im}.fftma_options.constant_C=0;
+                elseif strcmp(prior{j}.name,'range_3');
+                    %range(3)=m_propose{j};
+                    prior{im}.fftma_options.constant_C=0;
+                elseif strcmp(prior{j}.name,'ang_1');
+                    ang(1)=m_propose{j};
+                    prior{im}.Va.par2(2)=ang(1);
+                    prior{im}.fftma_options.constant_C=0;
+                end
+            end
+        end
+        
+        % set resim type and step length
+        prior{im}.fftma_options.resim_type=prior{im}.seq_gibbs.type;
+        prior{im}.fftma_options.lim=prior{im}.seq_gibbs.step;
+        
+        % IF CONSTANT_C=1, THEN REMOVE C and FFTC
+        if prior{im}.fftma_options.constant_C==0;
+            try;prior{im}.fftma_options=rmfield(prior{im}.fftma_options,'fftC');end
+            try;prior{im}.fftma_options=rmfield(prior{im}.fftma_options,'C');end
+        end
+        
+        if prior{im}.perturb==0
+            % DO NOT PERTURB RANDOM NUMBERS UNLESS THE CURRENT FFT_MA TYPE
+            % PRIOR IS ASKED TO BE PERTURBED
+            % (ONLY COVARIANCE PROPERTIES ARE PERTURBED)
+            prior{im}.fftma_options.lim=0;
+        end
+            
+        
+        %if (length(prior{im}.z)==1)&(length(prior{im}.y)==1)
+        %    [m_propose{im},prior{im}.fftma_options.z_rand,o]=fft_ma(prior{im}.x,prior{im}.Va,fftma_options);
+        %elseif (length(prior{im}.z)==1)
+        %    [m_propose{im},prior{im}.fftma_options.z_rand,o]=fft_ma(prior{im}.x,prior{im}.y,prior{im}.Va,fftma_options);
+        %else
+        %    [m_propose{im},prior{im}.fftma_options.z_rand,o]=fft_ma(prior{im}.x,prior{im}.y,prior{im}.z,fftma_options);
+        %end
+        [m_propose{im},z_rand,prior{im}.fftma_options]=fft_ma(prior{im}.x,prior{im}.y,prior{im}.z,prior{im}.Va,prior{im}.fftma_options);
+        prior{im}.fftma_options.z_rand=z_rand;
+        
+        
+        % PERFORM NORMAL SCORE OF NEEDED        
+        if isfield(prior{im},'o_nscore');
+            if ~isstruct(prior{im}.Va);
+                prior{im}.Va=deformat_variogram(prior{im}.Va);
+            end
+            Va_par=prior{im}.Va;
+            gvar=sum([Va_par.par1]);
+            m_propose{im}=m_propose{im}./sqrt(gvar);
+            m_propose{im}=inscore(m_propose{im},prior{im}.o_nscore);
+        else
+            m_propose{im}=m_propose{im}+prior{im}.m0;
+        end
+        prior{im}.m=m_propose{im};
+    end
+end
+
+return
 
 
 %% UPDATE 'MASTER' PRIOR VARIABLES
@@ -554,7 +589,8 @@ for im=1:nm;
                 m_propose{im}=m_propose{im}+prior{im}.m0;
             end
             prior{im}.m=m_propose{im};
-          
+            disp('FFTMA_2')
+ 
         end
     end
 end

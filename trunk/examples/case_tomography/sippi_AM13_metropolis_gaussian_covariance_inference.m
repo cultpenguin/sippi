@@ -92,9 +92,8 @@ for im=1:length(prior)
     prior{im}.seq_gibbs.n_update_history=100;
     prior{im}.seq_gibbs.i_update_step_max=3000;
 end
-options.mcmc.nite=150000;
-options.mcmc.i_plot=1000;
-options.mcmc.i_sample=250;
+options.mcmc.nite=40000;150000;
+options.mcmc.i_plot=500;1000;
 options.mcmc.i_sample=50;%500;
 
 %options.mcmc.pert_strategy.i_pert=[1 2 3];
@@ -106,6 +105,8 @@ try;forward=rmfield(forward,'G');end
 options.txt='run1';try,forward=rmfield(forward.G);end
 [o1,data,prior,forward,m_current]=sippi_metropolis(data,prior,forward,options);
 sippi_plot_posterior(o1.txt);
+
+return
 
 %% RUN 2, every 2nd data
 data{1}.i_use=[5:5:702];
