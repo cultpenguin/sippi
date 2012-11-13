@@ -16,7 +16,7 @@ data{id}.d_obs=D.d_obs;
 data{id}.d_std=D.d_std;
 data{id}.i_use=[10:10:length(data{id}.d_obs)];
 data{id}.Ct=1; % modelization error
-data{id}.Ct=1+D.Ct; % modelization and static error
+%data{id}.Ct=1+D.Ct; % modelization and static error
 
 %% SETUP PRIOR
 % make that any 'master' prior is defined AFTER the prior types it needs
@@ -74,14 +74,6 @@ end
 
 prior=sippi_prior_init(prior);
 
-%profile on;
-%for i=1:400;
-%    %% 800 CALLS TO FFTMA !!!!!!
-%[m,prior]=sippi_prior(prior);
-%end
-%profile report;
-%return
-
 
 %% SETUP THE FORWARD MODEL
 forward.sources=D.S;
@@ -100,15 +92,13 @@ for im=1:length(prior)
     prior{im}.seq_gibbs.n_update_history=100;
     prior{im}.seq_gibbs.i_update_step_max=3000;
 end
-options.mcmc.nite=100000;
+options.mcmc.nite=150000;
 options.mcmc.i_plot=1000;
 options.mcmc.i_sample=250;
+options.mcmc.i_sample=50;%500;
 
-options.mcmc.pert_strategy.i_pert=[1 2 3];
-options.mcmc.pert_strategy.i_pert_freq=[2 2 1];
-
-
-
+%options.mcmc.pert_strategy.i_pert=[1 2 3];
+%options.mcmc.pert_strategy.i_pert_freq=[2 2 1];
 
 %% RUN 1, every 10th data
 data{1}.i_use=[10:10:702];
@@ -130,4 +120,3 @@ try;forward=rmfield(forward,'G');end
 options.txt='run3';
 [o3,data,prior,forward,m_current]=sippi_metropolis(data,prior,forward,options);
 sippi_plot_posterior(o3.txt);
-
