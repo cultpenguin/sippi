@@ -75,37 +75,16 @@ end
 
 
 %% SELECT WHICH MODEL PARAMETERS TO PERTURB
-
-% im_array=zeros(1,nm);
-% for im=1:nm
-%     if isfield(prior{im},'perturb'),
-%         if prior{im}.perturb==1;
-%             im_array(im)=im;
-%         else
-%             im_array(im)=0;
-%         end
-%     else
-%         im_array(im)=im;
-%     end
-% end
-% im_array=find(im_array);
-
 im_array=[];
 for im=1:nm
     if isfield(prior{im},'perturb'),
         if prior{im}.perturb==1;
             im_array=[im_array im];
-        %else
-        %    im_array=[im_array im];
         end
     else
         im_array=[im_array im];
     end
     
-    %if ~isfield(prior{im},'perturb'),prior{im}.perturb=1;end;
-    %if prior{im}.perturb==1;
-    %    im_array=[im_array im];
-    %end
 end
 
 
