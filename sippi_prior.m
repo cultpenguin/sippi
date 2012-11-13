@@ -354,6 +354,7 @@ end
 %% CHECK IF WE NEED TO RUN FFTMA TYPE PRIOR BACUSE IT IS A MASTER 
 run_fftma_as_master=[];
 prior_master=[];
+
 for im=im_array;
     
     if isfield(prior{im},'prior_master');
