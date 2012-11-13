@@ -73,15 +73,43 @@ if nargin>1
     m_propose=m_current;
 end
 
+
 %% SELECT WHICH MODEL PARAMETERS TO PERTURB
-im_array=[];
+
+im_array=zeros(1,nm);
 for im=1:nm
-    if ~isfield(prior{im},'perturb'),prior{im}.perturb=1;end;
-    if prior{im}.perturb==1;
-        im_array=[im_array im];
+    if isfield(prior{im},'perturb'),
+        if prior{im}.perturb==1;
+            im_array(im)=im;
+        else
+            im_array(im)=0;
+        end
+    else
+        im_array(im)=im;
     end
 end
+im_array=find(im_array);
 
+% im_array=[];
+% for im=1:nm
+%     if isfield(prior{im},'perturb'),
+%         if prior{im}.perturb==1;
+%             im_array=[im_array im];
+%         else
+%             im_array=[im_array im];
+%         end
+%     else
+%         im_array=[im_array im];
+%     end
+%     
+%     %if ~isfield(prior{im},'perturb'),prior{im}.perturb=1;end;
+%     %if prior{im}.perturb==1;
+%     %    im_array=[im_array im];
+%     %end
+% end
+% 
+
+%im_array
 %if nargin==1;
 %    im_array=1:nm; % SAMPLE ALL MODEL PARAMETERS
 %end
@@ -99,8 +127,7 @@ for im=im_array;
             prior{im}.Va=prior{im}.Cm;
         end
     end
-  
-    
+      
     if  (strcmp(prior{im}.type,'SISIM'))
         if ~isfield(prior{im},'S');
             prior{im}.S=sgems_get_par('sisim');
@@ -434,7 +461,8 @@ for im=im_fftma_array;
             try;prior{im}.fftma_options=rmfield(prior{im}.fftma_options,'C');end
         end
         
-        if prior{im}.perturb==0
+        %if prior{im}.perturb==0
+        if run_fftma==0;
             % DO NOT PERTURB RANDOM NUMBERS UNLESS THE CURRENT FFT_MA TYPE
             % PRIOR IS ASKED TO BE PERTURBED
             % (ONLY COVARIANCE PROPERTIES ARE PERTURBED)
@@ -468,138 +496,3 @@ for im=im_fftma_array;
         prior{im}.m=m_propose{im};
     end
 end
-
-return
-
-
-%% UPDATE 'MASTER' PRIOR VARIABLES
-%for im=1:nm;
-%    if isfield(prior{im},'prior_master');
-%        imaster=prior{im}.prior_master;
-%        if length(prior)>im
-%        prior{imaster}.(prior{im}.name)=m_propose{im};
-%        end
-%        %disp(sprintf('updated PRIOR%d.%s from PRIOR%d.%s %g',imaster,prior{imaster}.name,im,prior{im}.name,m_propose{im}))
-%    end
-%end
-
-
-%% CHECK IF ANY OF THE UPDATES AFFECTS A 'MASTER' PRIOR VARIABLE
-for im=im_array;
-    if isfield(prior{im},'prior_master');
-        imaster=prior{im}.prior_master;
-        if (length(prior)<=imaster)
-            prior{imaster}.run=1;
-        end
-    end
-end
-
-%% REMOVE INFORMATION OF MASTER RUN IF SET
-%for i=1:nm
-%    if (isfield(prior{im},'run'))
-%        prior{imaster}=rmfield(prior{imaster},'run')
-%    end
-%end
-
-% %%
-% %% 'UPDATE MASTER' 
-% %% FOR NOW ONLY FFTMA CAN BE USED AS A MASTER; 
-% %%
-for im=1:nm;
-
-    
-    if (isfield(prior{im},'run'))
-        %disp(sprintf('RUN MASTER %d (%s) AGAIN',im,prior{im}.name));
-        if strcmp(prior{im}.type,'FFTMA')
-            
-            if ~isstruct(prior{im}.Va); prior{im}.Va=deformat_variogram(prior{im}.Va);end
-            
-            % update covariance from child priors if any
-            for j=1:(im-1);
-                update_master=0;
-                % CHECK IF THIS PRIOR IS A MASTER
-                if isfield(prior{j},'prior_master')
-                    if (prior{j}.prior_master==im);
-                        % YES -> current im is master for current j'th prior
-                        update_master=1;
-                    end
-                end
-                if update_master==1;
-                    % THIS IM IS A MASTER SO WE CAN UPDATE THE COVARIANCE MODEL
-                    % IF CHOSEN
-                    if strcmp(prior{j}.name,'m0');
-                        prior{im}.m0=m_propose{j};
-                        prior{im}.fftma_options.constant_C=0;
-                    elseif strcmp(prior{j}.name,'sill');
-                        prior{im}.Va.par1(1)=m_propose{j};
-                        prior{im}.fftma_options.constant_C=0;
-                    elseif strcmp(prior{j}.name,'range_1');
-                        range(1)=m_propose{j};
-                        prior{im}.Va.par2(1)=range(1);
-                        prior{im}.fftma_options.constant_C=0;
-                    elseif strcmp(prior{j}.name,'range_2');
-                        range(2)=m_propose{j};
-                        prior{im}.Va.par2(3)=range(2)/range(1);
-                        %range(2)=m_propose{j};
-                        prior{im}.fftma_options.constant_C=0;
-                    elseif strcmp(prior{j}.name,'range_3');
-                        %range(3)=m_propose{j};
-                        prior{im}.fftma_options.constant_C=0;
-                    elseif strcmp(prior{j}.name,'ang_1');
-                        ang(1)=m_propose{j};
-                        prior{im}.Va.par2(2)=ang(1);
-                        prior{im}.fftma_options.constant_C=0;
-                    end
-                end
-            end
-            
-            % set resim type and step length
-            prior{im}.fftma_options.resim_type=prior{im}.seq_gibbs.type;
-            % RANDOM NUMBERS HAVE ALLREADY BEEN UPDATED IF THE FFTMA MASTER
-            % PRIOR HAS BEEN PERTURBEN. HERE ONLY THE COVARIANCE 
-            % PROPERTIES ARE PERTURBED! (random numbers are fixed)
-            prior{im}.fftma_options.lim=0; 
-            % IF CONSTANT_C=1, THEN REMOVE C and FFTC
-            if prior{im}.fftma_options.constant_C==0;
-                try;prior{im}.fftma_options=rmfield(prior{im}.fftma_options,'fftC');end
-                try;prior{im}.fftma_options=rmfield(prior{im}.fftma_options,'C');end
-            end
-            
-            
-            %if (length(prior{im}.z)==1)&(length(prior{im}.y)==1)
-            %    [m_propose{im},prior{im}.fftma_options.z_rand,o]=fft_ma(prior{im}.x,prior{im}.Va,fftma_options);
-            %elseif (length(prior{im}.z)==1)
-            %    [m_propose{im},prior{im}.fftma_options.z_rand,o]=fft_ma(prior{im}.x,prior{im}.y,prior{im}.Va,fftma_options);
-            %else
-            %    [m_propose{im},prior{im}.fftma_options.z_rand,o]=fft_ma(prior{im}.x,prior{im}.y,prior{im}.z,fftma_options);
-            %end
-            [m_propose{im},z_rand,prior{im}.fftma_options]=fft_ma(prior{im}.x,prior{im}.y,prior{im}.z,prior{im}.Va,prior{im}.fftma_options);
-            prior{im}.fftma_options.z_rand=z_rand;
-        
-        
-            % PERFORM NORMAL SCORE OF NEEDED
-            if isfield(prior{im},'o_nscore');
-                if ~isstruct(prior{im}.Va);
-                    prior{im}.Va=deformat_variogram(prior{im}.Va);
-                end
-                Va_par=prior{im}.Va;
-                gvar=sum([Va_par.par1]);
-                m_propose{im}=m_propose{im}./sqrt(gvar);
-                m_propose{im}=inscore(m_propose{im},prior{im}.o_nscore);
-            else
-                m_propose{im}=m_propose{im}+prior{im}.m0;
-            end
-            prior{im}.m=m_propose{im};
-            disp('FFTMA_2')
- 
-        end
-    end
-end
-
-%% REMOVE INFORMATION OF MASTER RUN IF SET
-for im=1:nm
-    if (isfield(prior{im},'run'))
-        prior{im}=rmfield(prior{imaster},'run');
-    end
-end
-

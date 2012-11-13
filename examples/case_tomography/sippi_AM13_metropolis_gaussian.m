@@ -32,10 +32,10 @@ prior{im}.Va='.0003 Sph(6)';
 dx=0.15;
 prior{im}.x=[-1:dx:6];
 prior{im}.y=[0:dx:13];
-
 prior{im}.cax=[.1 .18];
 
 prior=sippi_prior_init(prior);
+
 % plot a sample of the prior model
 sippi_plot_prior(prior);
 
@@ -63,9 +63,9 @@ sippi_plot_data(d,data);
 [logL,L,data]=sippi_likelihood(d,data);
 
 %% SETUP METROPOLIS
-options.mcmc.nite=20000;1000000;
+options.mcmc.nite=500000;
 options.mcmc.i_plot=1000;
-options.mcmc.i_sample=250;5000;
+options.mcmc.i_sample=500;
 randn('seed',2);rand('seed',2);
 options=sippi_metropolis(data,prior,forward,options);
 
