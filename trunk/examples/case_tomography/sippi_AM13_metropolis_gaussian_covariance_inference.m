@@ -19,11 +19,7 @@ data{id}.Ct=1; % modelization error
 %data{id}.Ct=1+D.Ct; % modelization and static error
 
 %% SETUP PRIOR
-% make that any 'master' prior is defined AFTER the prior types it needs
-% any FFTMA master should be defined AFTER associated covariance properties
-
 im=0;
-
 
 % velocity field
 im=im+1;
@@ -60,7 +56,6 @@ prior{im}.prior_master=i_master;
 %prior{im}=prior{im-1};
 %prior{im}.name='range_2';
 
-
 % rotation
 %im=im+1;
 %prior{im}.type='gaussian';
@@ -76,7 +71,7 @@ forward.sources=D.S;
 forward.receivers=D.R;
 forward.type='eikonal';
 forward.type='fat';forward.freq=0.1;forward.linear=1;
-%forward.type='born';forward.freq=0.1;%forward.linear=1;
+forward.type='born';forward.freq=0.1;%forward.linear=1;
 forward.forward_function='sippi_forward_traveltime';
 forward.im = i_master; % 'master' prior / the velocity --> NEEDED WHEN THERE IS MORE THE ONE A PRIORI TYPES
 
@@ -89,14 +84,14 @@ for im=1:length(prior)
     prior{im}.seq_gibbs.i_update_step_max=4000;
     prior{im}.seq_gibbs.i_update_step=100;
 end
-options.mcmc.nite=20000;150000;
-options.mcmc.i_plot=5000;
+options.mcmc.nite=50000;150000;
+options.mcmc.i_plot=1000;
 options.mcmc.i_sample=50;
 
 %options.mcmc.pert_strategy.i_pert=[1 2 3];
 %options.mcmc.pert_strategy.i_pert_freq=[1 1 1];
 
-%% RUN 1, every 10th data
+%% RUN 1,using every 20th data
 close all
 data{1}.i_use=[20:20:702];
 try;forward=rmfield(forward,'G');end
@@ -105,19 +100,29 @@ options.txt='run1';try,forward=rmfield(forward.G);end
 sippi_plot_posterior(o1.txt);
 options.mcmc.m_init=m_current;
  
-%% RUN 2, every 2nd data
+%% RUN 2, using every 10th data
 close all;
-data{1}.i_use=[5:5:702];
+data{1}.i_use=[10:10:702];
 try;forward=rmfield(forward,'G');end
 options.txt='run2';
 [o2,data,prior,forward,m_current]=sippi_metropolis(data,prior,forward,options);
 sippi_plot_posterior(o2.txt);
 options.mcmc.m_init=m_current;
-
-%% RUN 3, all data
-options.mcmc.nite=100000;
-data{1}.i_use=[1:1:702];
+ 
+%% RUN 3, using every 5th data
+close all;
+data{1}.i_use=[5:5:702];
 try;forward=rmfield(forward,'G');end
 options.txt='run3';
 [o3,data,prior,forward,m_current]=sippi_metropolis(data,prior,forward,options);
 sippi_plot_posterior(o3.txt);
+options.mcmc.m_init=m_current;
+
+%% RUN 4, all data
+close all
+options.mcmc.nite=500000;
+data{1}.i_use=[1:1:702];
+try;forward=rmfield(forward,'G');end
+options.txt='run4';
+[o4,data,prior,forward,m_current]=sippi_metropolis(data,prior,forward,options);
+sippi_plot_posterior(o4.txt);
