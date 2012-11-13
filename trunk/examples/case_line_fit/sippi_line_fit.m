@@ -40,12 +40,11 @@ data{1}.d_obs=d_obs+randn(size(d_obs)).*data{1}.d_std;
 
 %% Perform extended Metropolis sampling 
 % set some MCMC options.
-options.mcmc.nite=10000;
-options.mcmc.i_sample=10;
-options.mcmc.i_plot=1000;
+options.mcmc.nite=20000;
+options.mcmc.i_sample=50;
+options.mcmc.i_plot=500;
 options.txt='case_line_fit';
 options=sippi_metropolis(data,prior,forward,options);
-
 
 %% plot some stats
 % get sample from posterior

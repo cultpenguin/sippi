@@ -155,7 +155,7 @@ mcmc.logL=zeros(1,mcmc.nite);
 mcmc.acc=zeros(nm,mcmc.nite);
 mcmc.perturb=zeros(nm,mcmc.nite);
 mcmc.step=zeros(nm,mcmc.nite);
-mcmc.time=zeros(nm,mcmc.nite);
+mcmc.time=zeros(1,mcmc.nite);
 
 N_post_reals=floor(mcmc.nite/mcmc.i_sample);
 mcmc.i_sample_logL=zeros(1,N_post_reals);
