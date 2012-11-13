@@ -23,13 +23,28 @@ data{id}.Ct=1; % modelization error
 % any FFTMA master should be defined AFTER associated covariance properties
 
 im=0;
+
+
+% velocity field
+im=im+1;
+prior{im}.type='FFTMA';
+prior{im}.name='Velocity (m/ns)';
+prior{im}.m0=0.145;
+prior{im}.Va='.0003 Sph(6,90,1)';
+%prior{im}.Va='.0003 Gau(2)';
+dx=0.25;
+prior{im}.x=[-1:dx:6];
+prior{im}.y=[0:dx:13];
+prior{im}.cax=[.1 .18];
+i_master=im;
+
 % range - horizontal
 im=im+1;
 prior{im}.type='gaussian';
 prior{im}.x=1;
 prior{im}.m0=6;
-prior{im}.min=2;
-prior{im}.max=10;
+prior{im}.min=1.5;
+prior{im}.max=10.5;
 prior{im}.std=4;
 prior{im}.name='range_1';
 prior{im}.seq_gibbs.step_min=0.01; 
@@ -37,6 +52,7 @@ prior{im}.seq_gibbs.step_min=0.0; %
 prior{im}.seq_gibbs.step_max=1;
 prior{im}.seq_gibbs.step=1;
 prior{im}.norm=50;
+prior{im}.prior_master=i_master;
 
 % range - vertical
 im=im+1;
@@ -52,28 +68,7 @@ prior{im}.name='range_2';
 %prior{im}.std=10;
 %prior{im}.norm=2;
 
-
-% velocity field
-im=im+1;
-prior{im}.type='FFTMA';
-prior{im}.name='Velocity (m/ns)';
-prior{im}.m0=0.145;
-prior{im}.Va='.0003 Sph(6,90,1)';
-%prior{im}.Va='.0003 Gau(2)';
-dx=0.25;
-prior{im}.x=[-1:dx:6];
-prior{im}.y=[0:dx:13];
-
-prior{im}.cax=[.1 .18];
-
-% update i_master, prior{1}.prior_master = 'id of FFTMA  type prior'
-i_master=im;
-for i=1:(i_master-1);
-    prior{i}.prior_master=i_master;
-end
-
 prior=sippi_prior_init(prior);
-
 
 %% SETUP THE FORWARD MODEL
 forward.sources=D.S;
@@ -94,7 +89,7 @@ for im=1:length(prior)
 end
 options.mcmc.nite=40000;150000;
 options.mcmc.i_plot=500;1000;
-options.mcmc.i_sample=50;%500;
+options.mcmc.i_sample=100;%500;
 
 %options.mcmc.pert_strategy.i_pert=[1 2 3];
 %options.mcmc.pert_strategy.i_pert_freq=[2 2 1];
