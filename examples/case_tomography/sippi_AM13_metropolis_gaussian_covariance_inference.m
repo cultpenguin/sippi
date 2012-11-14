@@ -27,7 +27,7 @@ prior{im}.type='FFTMA';
 prior{im}.name='Velocity (m/ns)';
 prior{im}.m0=0.145;
 prior{im}.Va='.0003 Sph(6,90,1)';
-prior{im}.Va='.0003 Sph(6)';
+%prior{im}.Va='.0003 Sph(6)';
 %prior{im}.Va='.0003 Gau(2)';
 dx=0.25;
 prior{im}.x=[-1:dx:6];
@@ -38,23 +38,18 @@ i_master=im;
 % range - horizontal
 im=im+1;
 prior{im}.type='gaussian';
-prior{im}.x=1;
+prior{im}.name='range_1';
 prior{im}.m0=6;
 prior{im}.min=1.5;
 prior{im}.max=10.5;
 prior{im}.std=4;
-prior{im}.name='range_1';
-prior{im}.seq_gibbs.step_min=0.01; 
-prior{im}.seq_gibbs.step_min=0.0; %
-prior{im}.seq_gibbs.step_max=1;
-prior{im}.seq_gibbs.step=1;
 prior{im}.norm=50;
 prior{im}.prior_master=i_master;
 
-%% range - vertical
-%im=im+1;
-%prior{im}=prior{im-1};
-%prior{im}.name='range_2';
+% range - vertical
+im=im+1;
+prior{im}=prior{im-1};
+prior{im}.name='range_2';
 
 % rotation
 %im=im+1;
@@ -79,17 +74,14 @@ randn('seed',1);
 rand('seed',1);
 
 %% SETUP METROPOLIS
-for im=1:length(prior)
-    prior{im}.seq_gibbs.n_update_history=200;
-    prior{im}.seq_gibbs.i_update_step_max=4000;
-    prior{im}.seq_gibbs.i_update_step=100;
+for im=1:length(prior) 
+    prior{im}.seq_gibbs.n_update_history=200;% optional
+    prior{im}.seq_gibbs.i_update_step_max=4000;% optional
+    prior{im}.seq_gibbs.i_update_step=100;% optional
 end
-options.mcmc.nite=50000;150000;
-options.mcmc.i_plot=1000;
-options.mcmc.i_sample=50;
-
-%options.mcmc.pert_strategy.i_pert=[1 2 3];
-%options.mcmc.pert_strategy.i_pert_freq=[1 1 1];
+options.mcmc.nite=50000;% optional
+options.mcmc.i_plot=1000;% optional
+options.mcmc.i_sample=50;% optional
 
 %% RUN 1,using every 20th data
 close all
@@ -99,7 +91,7 @@ options.txt='run1';try,forward=rmfield(forward.G);end
 [o1,data,prior,forward,m_current]=sippi_metropolis(data,prior,forward,options);
 sippi_plot_posterior(o1.txt);
 options.mcmc.m_init=m_current;
- 
+
 %% RUN 2, using every 10th data
 close all;
 data{1}.i_use=[10:10:702];
