@@ -139,7 +139,7 @@ print_mul('sippi_line_fit_cross_rejection')
 save sippi_line_fit
 
 %% PLOT HIST OF logLikelihoods
-hx=[-145:.5:-133];
+hx=[-35:.5:-15];
 h1=hist(logL,hx);h1=h1./sum(h1);
 h2=hist(options.mcmc.logL,hx);h2=h2./sum(h2);
 plot(hx,[h1;h2]','-');

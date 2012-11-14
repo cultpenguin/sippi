@@ -30,8 +30,8 @@ for i=1:5;
     %ylabel('Y')
 end
 try;load cmap;colormap(cmap);end
-colorbar_shift
-print_mul('prior_reals_visim')
+colorbar_shift;
+print_mul('prior_reals_visim');
 
 
 
@@ -58,9 +58,9 @@ for i=1:5;
     %xlabel('X')
     %ylabel('Y')
 end
-try;load cmap;colormap(cmap);end
-colorbar_shift
-print_mul('prior_reals_visim_target')
+colormap(sippi_colormap(1));
+colorbar_shift;
+print_mul('prior_reals_visim_target');
 
 %% SEQ GIBBS TYPE 1
 try;prior{im}=rmfield(prior{im},'d_target');end
@@ -92,7 +92,7 @@ for i=1:5;
     axis(ax)
     
 end
-try;load cmap;colormap(cmap);end
+colormap(sippi_colormap(1));
 subplot(2,5,5);colorbar_shift;
 print_mul('prior_reals_visim_seqgibbs_type1');
 
@@ -126,7 +126,7 @@ for i=1:5;
     %xlabel('X')
     %ylabel('Y')
 end
-try;load cmap;colormap(cmap);end
+colormap(sippi_colormap(1));
 subplot(2,5,5);colorbar_shift;
 print_mul('prior_reals_visim_seqgibbs_type2');
 
