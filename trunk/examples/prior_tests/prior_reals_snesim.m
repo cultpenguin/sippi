@@ -19,17 +19,10 @@ prior{im}.y=[0:.1:20]; % Y array
 prior{im}.S=sgems_get_par('snesim_std');
 prior=sippi_prior_init(prior);
 
-%prior{im}.scaling=.7;
+prior{im}.scaling=.7;
 prior{im}.rotation=30;
 
-
 randn('seed',1);rand('seed',1);
-
-O=sgems_grid(prior{1}.S)
-
-[m,prior]=sippi_prior(prior);
-sippi_plot_model(prior,m)
-return
 
 %% UNCONDITIONAL
 figure(10);clf
@@ -41,7 +34,7 @@ for i=1:5;
     %xlabel('X')
     %ylabel('Y')
 end
-try;load cmap;colormap(cmap);end
+colormap(sippi_colormap(1));
 colorbar_shift;
 print_mul('prior_reals_snesim');
 suptitle(sprintf('Independant samples from a SNESIM type prior'))
@@ -64,7 +57,7 @@ for i=1:5;
     %xlabel('X')
     %ylabel('Y')
 end
-try;load cmap;colormap(cmap);end
+colormap(sippi_colormap(1));
 colorbar_shift;
 print_mul('prior_reals_snesim_seqgibbs_type1');
 suptitle(sprintf('Sampling from a SNESIM type prior\nSequential Gibbs sampling'))
@@ -86,11 +79,11 @@ for i=1:5;
     %xlabel('X')
     %ylabel('Y')
 end
-try;load cmap;colormap(cmap);end
+colormap(sippi_colormap(1));
 
 colorbar_shift;
 print_mul('prior_reals_snesim_seqgibbs_type2');
 suptitle(sprintf('Sampling from a SNESIM type prior\nSequential Gibbs sampling'))
 
-sgems_clean
+sgems_clean;
 

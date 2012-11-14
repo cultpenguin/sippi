@@ -43,7 +43,7 @@ for i=1:5;
     %ylabel('Y')
 end
 colorbar_shift;
-try;load cmap;colormap(cmap);end
+colormap(sippi_colormap(1));
 print_mul('prior_reals_fftma_cov')
 suptitle(sprintf('FFT-MA with varying covariance properties'))
 
@@ -55,8 +55,7 @@ figure(13);clf
 prior{1}.seq_gibbs.step=.5;
 prior{2}.seq_gibbs.step=.25;
 prior{3}.seq_gibbs.step=0;;
-prior{3}.perturb=1
-;
+prior{3}.perturb=1;
 [m,prior]=sippi_prior(prior);
 for i=1:5;
     [m,prior]=sippi_prior(prior,m);
@@ -68,7 +67,7 @@ for i=1:5;
     %ylabel('Y')
 end
 colorbar_shift;
-try;load cmap;colormap(cmap);end
+colormap(sippi_colormap(1));
 print_mul('prior_reals_fftma_cov_seqgibbs')
 suptitle(sprintf('FFT-MA with varying covariance properties\n Sequential Gibbs sampling'))
 

@@ -24,7 +24,7 @@ for i=1:5;
     %xlabel('X')
     %ylabel('Y')
 end
-try;load cmap;colormap(cmap);end
+colormap(sippi_colormap(1));
 colorbar_shift;
 print_mul('prior_reals_fftma')
 suptitle(sprintf('FFT-MA, Cm=%s',prior{im}.Va))
@@ -51,7 +51,7 @@ for i=1:5;
     %xlabel('X')
     %ylabel('Y')
 end
-try;load cmap;colormap(cmap);end
+colormap(sippi_colormap(1));
 suptitle(sprintf('FFT-MA using target histogram, Cm=%s',prior{im}.Va))
 colorbar_shift;
 print_mul('prior_reals_fftma_nscore')

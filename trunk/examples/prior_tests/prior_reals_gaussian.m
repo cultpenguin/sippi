@@ -14,7 +14,7 @@ prior{im}.m0=10;
 prior{im}.std=2;
 
 %%
-N=100000;
+N=10000;
 m_real1=ones(1,N);
 m_real2=ones(1,N);
 for i=1:N;
@@ -39,8 +39,9 @@ legend('norm=60','norm=2')
 print_mul('prior_reals_gaussian');
 
 %% RANDOM WALK
-
-N=100000;
+prior{1}.seq_gibbs.step=0.1;
+prior{2}.seq_gibbs.step=0.1;
+N=10000;
 m_real=ones(2,N);
 prior=sippi_prior_init(prior);
 [m,prior]=sippi_prior(prior);
