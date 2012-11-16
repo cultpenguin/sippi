@@ -20,7 +20,7 @@
 %
 %
 %
-% data{id}.recompute [default=0], if '1' then data{1}.iCD is recomputed
+% data{id}.recomputeCD [default=0], if '1' then data{1}.iCD is recomputed
 % each time sippi_likelihood is called. This should be used if the noise model
 % changes between each call to sippi_likelihood.
 
@@ -109,12 +109,6 @@ for id=id_array;
         
     end
     
-    if ~isfield(data{id},'iCD')
-        %data{id}.iCD=inv(data{id}.CD);
-        data{id}.logdet = logdet(data{id}.CD(data{id}.i_use,data{id}.i_use));
-        data{id}.iCD=inv(data{id}.CD(data{id}.i_use,data{id}.i_use));
-        
-    end
     
     if isfield(data{id},'dt');
         dd=(data{id}.d_obs(data{id}.i_use)-data{id}.dt(data{id}.i_use))-d{id};
@@ -122,25 +116,44 @@ for id=id_array;
         dd=data{id}.d_obs(data{id}.i_use)-d{id};
     end
     
+    if ~isfield(data{id},'iCD')
+        %data{id}.iCD=inv(data{id}.CD);
+        data{id}.logdet = logdet(data{id}.CD(data{id}.i_use,data{id}.i_use));
+        data{id}.iCD=inv(data{id}.CD(data{id}.i_use,data{id}.i_use));
+        
+    end
+    
+    
    
     if strcmp(data{id}.noise_model,'gaussian')
         nknown=length(data{id}.i_use);
         
-        f1 = -.5*log(2*pi^nknown);
-        f2 = -0.5*data{id}.logdet;
-        if isinf(f1); f1=-f2;end; 
-        %% this os pretty bad if CD changes !! Because then the determinant also changes..
-        %% Perhaps an warning
+        if ~isfield(data{id},'full_likelihood');
+            data{id}.full_likelihood=0;
+        end
+            
+        if data{id}.full_likelihood==1
+            f1 = -.5*log(2*pi^nknown);
+            f2 = -0.5*data{id}.logdet;
+            if isinf(f1); 
+                %% this os pretty bad if CD changes !! Because then the determinant also changes..
+                disp(sprintf('%s : Full likelihood cannot be computed !',mfilename))
+                disp(sprintf('%s : --> ignoring determinant !',mfilename))
+                f1=-f2;
+            end;
+            f3 =  -.5 * dd'*data{id}.iCD*dd;
+            logL(id) = f1 +f2 +f3;
+        else
+            f3 =  -.5 * dd'*data{id}.iCD*dd;
+            logL(id) = f3;
+        end
         
-        f3 =  -.5 * dd'*data{id}.iCD*dd;
+        if (logL(id)>0)
+            disp(sprintf('%s : Likelihood above zero :/',mfilename))
+            keyboard
+        end
+ 
         
-        logL(id) = f1 +f2 +f3;
-        logL(id) = f3;
-        %try
-        %    logL(id) = -.5 * dd*data{id}.iCD*dd';
-        %catch
-        %    logL(id) = -.5 * dd'*data{id}.iCD*dd;
-        %end
     elseif strcmp(data{id}.noise_model,'laplace')
         if ~isfield(data{id},'sigma');
             data{id}.sigma=sqrt(diag(data{id}.CD(data{id}.i_use,data{id}.i_use)))';

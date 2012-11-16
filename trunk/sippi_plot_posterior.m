@@ -247,7 +247,6 @@ for im=im_arr;
             
         end
     catch
-        keyboard
         cd(cwd);
         close(f_handle)
         disp(sprintf('%s : Cannot plot data response. ',mfilename))
