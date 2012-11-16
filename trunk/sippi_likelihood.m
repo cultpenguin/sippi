@@ -23,6 +23,12 @@
 % data{id}.recomputeCD [default=0], if '1' then data{1}.iCD is recomputed
 % each time sippi_likelihood is called. This should be used if the noise model
 % changes between each call to sippi_likelihood.
+%
+%  data{id}.full_likelihood [default=]0; if '1' the the full likelihood
+%  (including the determinant) is computed. This not needed if the data
+%  civariance is constant, but if it changes, then use
+%  data{id}.full_likelihood=1;
+%
 
 
 %% MAKE SURE Cd CT Ct is robust to simple noise models
@@ -77,7 +83,6 @@ for id=id_array;
         %disp('recomputing  iCD');;
     end
     end
-    
     % MAKE SURE GAUSSIAN NOISE MODEL IS PROPERLY SET
     if ~isfield(data{id},'CD')
         if ~isfield(data{id},'Cd');
@@ -123,8 +128,6 @@ for id=id_array;
         
     end
     
-    
-   
     if strcmp(data{id}.noise_model,'gaussian')
         nknown=length(data{id}.i_use);
         
@@ -133,8 +136,9 @@ for id=id_array;
         end
             
         if data{id}.full_likelihood==1
-            f1 = -.5*log(2*pi^nknown);
+            f1 = -(nknown/2)*log(2*pi);
             f2 = -0.5*data{id}.logdet;
+            
             if isinf(f1); 
                 %% this os pretty bad if CD changes !! Because then the determinant also changes..
                 disp(sprintf('%s : Full likelihood cannot be computed !',mfilename))
@@ -148,10 +152,6 @@ for id=id_array;
             logL(id) = f3;
         end
         
-        if (logL(id)>0)
-            disp(sprintf('%s : Likelihood above zero :/',mfilename))
-            keyboard
-        end
  
         
     elseif strcmp(data{id}.noise_model,'laplace')
