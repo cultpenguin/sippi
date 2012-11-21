@@ -1,13 +1,13 @@
 
-INSTALL
+### INSTALL
 
-TO make us of SIPPI, unpack SIPPI.zip to a fodler $SIPPI. 
+To make us of SIPPI, unpack SIPPI.zip to a fodler $SIPPI. 
 The start Matlab add the appropriate paths using
 >> addpath $SIPPI
 >> sippi_set_path
 
 
-DIRECTORIES :
+### DIRECTORIES :
 
 $SIPPI/data
   Currently only contains the data from ARRENAES described in the paper
@@ -45,3 +45,10 @@ $SIPPI/examples/manuscript_examples/tomography
   - using data AM1234 (3D)
   sippi_AM1234_metropolis_gaussian.m : sippi_AM13_metropolis_gaussian.m but for data set AM1234
   
+## Releases
+
+# 0.90
+Initial release
+
+# 0.92
+Fixed plotting of prior and posterior statistic for a scalar, 1D, 2D, and 3D a priori model types
