@@ -334,27 +334,7 @@ for im=im_array;
     else
         disp(sprintf('%s : ''%s'' type prior model not supported',mfilename,prior{im}.type))
     end
-    
-    
-    
-    
-    %% FIX EXTREME VALUES
-    if isfield(prior{im},'min');
-        ii=find(m_propose{im}<prior{im}.min);
-        m_propose{im}(ii)=prior{im}.min;
-        if nargin>2
-            m_propose{im}(ii)=m_current{im}(ii);
-        end
-    end
-    if isfield(prior{im},'max');
-        ii=find(m_propose{im}>prior{im}.max);
-        m_propose{im}(ii)=prior{im}.max;
-        if nargin>2
-            m_propose{im}(ii)=m_current{im}(ii);
-        end
-    end
-    
-    
+        
 end
 
 %% CHECK IF WE NEED TO RUN FFTMA TYPE PRIOR BACUSE IT IS A MASTER 
@@ -476,3 +456,28 @@ for im=im_fftma_array;
         prior{im}.m=m_propose{im};
     end
 end
+
+
+    
+%% FIX EXTREME VALUES
+for im=im_array;
+    if isfield(prior{im},'min');
+        try
+        ii=find(m_propose{im}<prior{im}.min);
+        catch
+            keyboard
+        end
+        m_propose{im}(ii)=prior{im}.min;
+        if nargin>2
+            m_propose{im}(ii)=m_current{im}(ii);
+        end
+    end
+    if isfield(prior{im},'max');
+        ii=find(m_propose{im}>prior{im}.max);
+        m_propose{im}(ii)=prior{im}.max;
+        if nargin>2
+            m_propose{im}(ii)=m_current{im}(ii);
+        end
+    end
+end    
+

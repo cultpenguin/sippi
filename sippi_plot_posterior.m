@@ -77,7 +77,7 @@ for im=im_arr;
     clear cax;
     % find dimension
     ndim=sum(prior{im}.dim>1);
-    if ndim==0;ndim=1;end
+    %if ndim==0;ndim=1;end
     
     
     options.null='';
@@ -105,11 +105,10 @@ for im=im_arr;
     f_id=(im-1)*10+1;
     figure_focus(f_id);
     set_paper('landscape');clf;
-    set_paper('portrait');clf;
     
     i1=ceil(size(reals,1)/n_reals(im));
     ii=ceil(linspace(i1,size(reals,1),n_reals(im)));
-    if ndim==1
+    if ndim==0
         hx=linspace(cax(1),cax(2),30);
         hist(reals,hx,30);
         ylim=get(gca,'ylim');
@@ -123,7 +122,21 @@ for im=im_arr;
             xlim=[prior{im}.min prior{im}.max];
             set(gca,'xlim',xlim);
         end
-        set(gca,'FontSize',16),
+        %set(gca,'FontSize',16),
+    elseif ndim==1
+        plot(prior{im}.x,reals,'k-');
+        hold on
+        %plot(prior{im}.x,etype_mean,'r-','linewidth',2);
+        plot(prior{im}.x,quantile(reals',.025),'r--','linewidth',2);
+        plot(prior{im}.x,quantile(reals',.5),'r-','linewidth',2);
+        plot(prior{im}.x,quantile(reals',.975),'r--','linewidth',2);
+        hold off
+        xlabel('X')
+        ylabel(prior{im}.name)
+        % optonallt set y axis-limits
+        if isfield(prior{im},'cax');
+            set(gca,'ylim',prior{im}.cax);
+        end
         
     else
         if (prior{im}.dim(1)>max(prior{im}.dim(2:3)))
@@ -161,6 +174,8 @@ for im=im_arr;
     if supt==1,
         st=suptitle(sprintf('m%d : %s',im,prior{im}.name));
         set(st,'interp','none','FontSize',18);
+    else
+        title(sprintf('m#%d, posterior',im))
     end
     print_mul(sprintf('%s_m%d_posterior_sample',fname,im))
     
@@ -260,25 +275,33 @@ for im=im_arr;
     
     %% PLOT ACCEPTANCE RATE
     try
+        
         fn=(im-1)*10+5;
         figure_focus(fn);set_paper('landscape');clf;
         acc=mcmc.acc(im,1:mcmc.i);
+        perturb=mcmc.perturb(im,1:mcmc.i);
+        ip=find(perturb==1); % find indice of iteration when parameter has been perturbed
         
-        prior{im}.seq_gibbs.n_update_history;
         fak=(1/10)*length(acc)./prior{im}.seq_gibbs.n_update_history;; % smoothing factor
         fak=1; % smoothing factor
-        AccNum=conv_strip(acc,ones(1,fak*prior{im}.seq_gibbs.n_update_history));
+        AccNum=conv_strip(acc(ip),ones(1,fak*prior{im}.seq_gibbs.n_update_history));
         AccRate_smooth=(1/fak)*AccNum/prior{im}.seq_gibbs.n_update_history;
         AccRate=AccNum/prior{im}.seq_gibbs.n_update_history;
         subplot(2,1,1);
         try;title(sprintf('m%d : %s',im,prior{im}.name));end
-        plot(1:1:length(acc),AccRate_smooth,'-');
+        plot(ip,AccRate_smooth,'-');
         xlabel('Iteration number');
         ylabel('Acceptance rate')
+        title(sprintf('m#%d, posterior',im))
+        ylim=get(gca,'ylim');
+        if ylim(2)>1.1; ylim(2)=1.1;end
+        set(gca,'ylim',ylim);
         subplot(2,1,2);
-        hist(AccRate,20);
+        hist(AccRate,linspace(0,1,21));
+        set(gca,'xlim',[0 1])
         xlabel('Acceptance Rate')
         ylabel('pdf')
+        
         print_mul(sprintf('%s_m%d__rate',fname,im))
     catch
         try;close(fn);end

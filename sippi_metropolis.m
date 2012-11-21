@@ -163,6 +163,7 @@ end
 
 
 %% START THE METROPOLOS ALGORITHM
+disp(sprintf('%s : staring extended Metropolis sampler in %s',mfilename,options.txt))
 t0=now;
 iacc=0;
 isample=0;

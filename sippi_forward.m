@@ -17,9 +17,9 @@ if nargin<4;    data{1}.null='';end
 if isfield(forward,'forward_function');
     
     if nargin==2;
-        [d,forward,prior,data]=feval(forward.forward_function,m,forward);
+        [d,forward]=feval(forward.forward_function,m,forward);
     elseif nargin==3
-        [d,forward,prior,data]=feval(forward.forward_function,m,forward,prior);
+        [d,forward,prior]=feval(forward.forward_function,m,forward,prior);
     elseif nargin==4
         [d,forward,prior,data]=feval(forward.forward_function,m,forward,prior,data);
     elseif nargin==5
