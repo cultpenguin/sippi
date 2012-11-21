@@ -18,15 +18,7 @@ col=[
 
 %% PLOT CURRENT MODELS
 if nargin>3
-    nm=length(m_current);
-    figure_focus(100);subplot(1,1,1);
-    sippi_plot_model(prior,m_current,1:nm,1,100);
-    
-    if isfield(mcmc,'m_ref');
-        figure_focus(110);subplot(1,1,1);
-        sippi_plot_model(prior,mcmc.m_ref,1:nm,1,110);
-    end    
-      
+    sippi_plot_model(prior,m_current);
 end
 
 %% PLOT DATA RESPONSE

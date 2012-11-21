@@ -35,8 +35,10 @@ end
 
 if ~exist('n_reals','var');
     for j=1:length(im_arr);
-        if prior{im_arr(j)}.ndim<2
-            n_reals(j)=10000;
+        if prior{im_arr(j)}.ndim<1
+            n_reals(j)=1000;
+        elseif prior{im_arr(j)}.ndim<2
+            n_reals(j)=100;
         else
             n_reals(j)=15;
         end
@@ -68,11 +70,12 @@ end
 
 for im=im_arr;
     % CLEAR FIGURES
-    figure_focus(99+im);clf;
+    f_id=99+im;
+    figure_focus(f_id);clf;
     set_paper('landscape');
     
-    if prior{im}.ndim<2
-        % HISTOGRAM
+    if prior{im}.ndim<1
+        % SCALAR --> HISTOGRAM
         clear p;
         p{1}=prior{im};
         m_reals=zeros(1,n_reals(im));
@@ -81,20 +84,47 @@ for im=im_arr;
             m=sippi_prior(p);
             m_reals(i)=m{1};       
         end
-
+        
         hist(m_reals,30);
+        ylim=get(gca,'ylim');
+        hold on;
+        plot([1 1].*quantile(m_reals,.025),ylim,'r--','linewidth',2);
+        plot([1 1].*quantile(m_reals,.5),ylim,'r-','linewidth',2);
+        plot([1 1].*quantile(m_reals,.975),ylim,'r--','linewidth',2);
+        hold off
         xlabel(prior{im}.name)
-        
-        if isfield(prior{im},'mlim');
-            set(gca,'xlim',prior{im}.mlim);
+        if isfield(prior{im},'cax');
+            set(gca,'xlim',prior{im}.cax);
         end
-        title(sprintf('m#%d',im))
+               
+        title(sprintf('m#%d, prior',im))
         
+    elseif prior{im}.ndim<2
+        % 1D
+        clear p;clear m_reals;
+        p{1}=prior{im};
+        for i=1:n_reals(im);
+            m=sippi_prior(p);
+            m_reals(i,:)=m{1};       
+        end
+        plot(prior{im}.x,m_reals,'k-');
+        hold on
+        plot(prior{im}.x,quantile(m_reals,.025),'r--','linewidth',2);
+        plot(prior{im}.x,quantile(m_reals,.5),'r-','linewidth',2);
+        plot(prior{im}.x,quantile(m_reals,.975),'r--','linewidth',2);
+        hold off
+        
+        if isfield(prior{im},'cax');
+            set(gca,'ylim',prior{im}.cax);
+        end
+        
+        xlabel('X')
+        ylabel(prior{im}.name)
+        title(sprintf('m#%d, prior',im))
     else
         %% SUBPLOTS       
-        
         for i=1:n_reals(im);
-            progress_txt(i,n_reals,'generating prior sample')
+            progress_txt(i,n_reals(im),'generating prior sample')
             if (prior{im}.dim(1)>max(prior{im}.dim(2:3)))
                 nsp_y=5;
                 nsp_x=ceil(n_reals(im)/nsp_y);
@@ -103,17 +133,22 @@ for im=im_arr;
                 nsp_y=ceil(n_reals(im)/nsp_x);
             end
             
-            try;prior{1}.seed=prior{1}.seed+1;end;
-            m_prior=sippi_prior(prior);
-            figure_focus(99+im);set_paper('portrait');%set_paper('landscape');
+            clear p;clear m_reals;
+            p{1}=prior{im};
+            try;p{1}.seed=p{1}.seed+1;end;
+            m_prior=sippi_prior(p);
+            %try;prior{1}.seed=prior{1}.seed+1;end;
+            %m_prior=sippi_prior(prior);
+            figure_focus(f_id);
+            %set_paper('portrait');
+            %set_paper('landscape');
             subplot(nsp_y,nsp_x,i);
-            use_colorbar=0;
             
+            use_colorbar=0;
             if ((n_reals==i)&(i==(1*nsp_x)))|(i==(2*nsp_x));
                 use_colorbar=1;
             end
-            
-            sippi_plot_model(prior,m_prior,1:nm,use_colorbar);
+            sippi_plot_model(p,m_prior,1,use_colorbar,f_id);
         end
         %%%
         

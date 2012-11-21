@@ -38,6 +38,13 @@ for im=1:length(prior);
     
     prior{im}.ndim=length(find(prior{im}.dim>1));
     
+    if ~isfield(prior{im},'cax');
+    if isfield(prior{im},'min')&isfield(prior{im},'max');
+        prior{im}.cax=[prior{im}.min prior{im}.max];
+    end
+        
+    end
+    
     %% WRITE TI IF APPLICABLE
     if isfield(prior{im},'TI')
         sgems_write(prior{im}.S.ti_file,prior{im}.TI);

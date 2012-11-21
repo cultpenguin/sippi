@@ -42,7 +42,7 @@ for im=im_array;
     ndim=length(nxyz);
     
     
-    if ndim>1
+    if ndim>0
         
         if isfield(prior{im},'cax');
             cax=prior{im}.cax;
@@ -87,23 +87,40 @@ for im=im_array;
                 %camlight('left')
                 lighting gouraud
                 %lighting phong
+
                 
             end
+            colormap(sippi_colormap);
+            if use_colorbar==1
+                colorbar_shift;
+            end
             
-            
+            xlabel('X');
+            ylabel('Y');
+            zlabel('Z');
+        
         elseif ndim==2
             imagesc(x,y,m{im});
             shading interp;
             axis image
+            
+            colormap(sippi_colormap);
+            if use_colorbar==1
+                colorbar_shift;
+            end
+            xlabel('X');
+            ylabel('Y');
+                        
+        elseif ndim==1
+            try
+                plot(x,m{im},'k-*')
+                xlabel('X');
+                ylabel(prior{im}.name)
+            catch
+                disp(sprintf('%s could not plot model #%d',mfilename,im))
+            end
         end
-        colormap(sippi_colormap);
-        xlabel('X');
-        ylabel('Y');
-        zlabel('Z');
         caxis(cax)
-        if use_colorbar==1
-            colorbar_shift;
-        end
         
         if isfield(prior{im},'name');
             title(prior{im}.name,'interpreter','none')
