@@ -3,10 +3,12 @@
 
 To make us of SIPPI, unpack SIPPI.zip to a fodler $SIPPI. 
 The start Matlab add the appropriate paths using
->> addpath $SIPPI
->> sippi_set_path
+	>> addpath $SIPPI
+	>> sippi_set_path
 
-
+Please go to [http://sippi.sourceforge.net] for examples and details on how to use sippi
+	
+	
 ### DIRECTORIES :
 
 $SIPPI/data
@@ -45,10 +47,10 @@ $SIPPI/examples/manuscript_examples/tomography
   - using data AM1234 (3D)
   sippi_AM1234_metropolis_gaussian.m : sippi_AM13_metropolis_gaussian.m but for data set AM1234
   
-## Releases
-
-# 0.90
-Initial release
+## Releases history
 
 # 0.92
 Fixed plotting of prior and posterior statistic for a scalar, 1D, 2D, and 3D a priori model types
+
+# 0.90
+Initial release
