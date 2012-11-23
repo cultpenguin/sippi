@@ -73,6 +73,7 @@ if length(n_reals)==1;
 end
 
 
+
 for im=im_arr;
 
     try;cd(plotdir);end
@@ -86,6 +87,8 @@ for im=im_arr;
     id=1;
     
     [reals,etype_mean,etype_var,reals_all]=sippi_get_sample(data,prior,id,im,n_reals(im),options);
+    
+    m_post{im}=reals;
     
     if ~exist('cax','var');
         if isfield(prior{im},'cax')
@@ -225,49 +228,6 @@ for im=im_arr;
         print_mul(sprintf('%s_m%d_sample_stat',fname,im))
     end
     
-    %% PLOT DATA ASSOCIATED TO REALS
-    try
-        
-        if nm==1
-            f_handle=(im-1)*10+3;
-            figure_focus(f_handle);set_paper('landscape');clf;
-            subplot(1,1,1);
-            set(gca,'FontSize',options.FS);
-            nd=length(data);
-            for id=1:nd;
-                if ~isfield(data{id},'i_use'); data{id}.i_use=1:1:(prod(size(data{id}.d_obs)));end
-                subplot(1,nd,id)
-                for i=1:min([length(m),n_reals]);
-                    [d_real,forward]=sippi_forward(m{i},forward,prior,data,id);
-                    p(1)=plot(d_real{id}(:),'.','col',col(1,:));
-                    d_obs=data{id}.d_obs(data{id}.i_use);
-                    dd(i,:)=d_obs(:)-d_real{id}(:);
-                    hold on
-                end
-                p(2)=plot(data{id}.d_obs(data{id}.i_use),'-*','col',col(2,:),'MarkerSize',2);
-                hold off
-                set(gca,'ylim',[min(data{id}.d_obs(:)).*.95 max(data{id}.d_obs(:)).*1.05])
-                title(sprintf('Data #%d',id))
-            end
-            legend([p(1) p(2)],'d_{cur}','d_{obs}')
-            st=title(sprintf('m%d : %s',im,prior{im}.name));
-            set(st,'interpreter','none');
-            print_mul(sprintf('%s_m%d_posterior_data',fname,im))
-            
-            f_handle=(im-1)*10+3;
-            figure_focus(f_handle);set_paper('landscape');clf;
-            set(gca,'FontSize',options.FS);
-            hist(dd(:),30);
-            xlabel('d_{obs}-d_{est}')
-            ylabel('pdf')
-            print_mul(sprintf('%s_m%d_posterior_datafit_hist',fname,im))
-            
-        end
-    catch
-        cd(cwd);
-        close(f_handle)
-        disp(sprintf('%s : Cannot plot data response. ',mfilename))
-    end
     
     if ~exist('mcmc','var')
         cd(cwd)
@@ -429,6 +389,65 @@ catch
     disp(sprintf('%s : could not plot 2D marginals',mfilename));
     cd(cwd);
 end
+
+
+%% PLOT DATA ASSOCIATED TO REALS
+try
+    
+    %% THIS ONE NEADS SOME HEAVY EDITING TO HANDLE TWO DATA SETS!!!
+    try;cd(plotdir);end
+    
+    %%
+    f_handle=(im-1)*10+3;clf;
+    figure_focus(f_handle);set_paper('landscape');clf;
+    subplot(1,1,1);
+    set(gca,'FontSize',options.FS);
+    nd=length(data);
+    for id=1:nd;
+        %if ~isfield(data{id},'i_use'); data{id}.i_use=1:1:(prod(size(data{id}.d_obs)));end
+        subplot(1,nd,id)
+        
+        np=size(m_post{4},2);
+        ii=ceil(linspace(1,np,min([50 np])));
+        k=0;
+        for i=ii;
+            k=k+1;
+            for im=1:nm;m{im}=m_post{im}(:,i)';end
+            %m=sippi_prior(prior);
+            [d_real,forward]=sippi_forward(m,forward,prior,data,id);
+            p(1)=plot(d_real{id}(:),'-','col',col(1,:));
+            d_obs=data{id}.d_obs(data{id}.i_use);
+            dd(k,:)=d_obs(:)-d_real{id}(:);
+            hold on
+        end
+        p(2)=plot(data{id}.d_obs(data{id}.i_use),'-*','col',col(2,:),'MarkerSize',2);
+        hold off
+        set(gca,'ylim',[min(data{id}.d_obs(:)).*.95 max(data{id}.d_obs(:)).*1.05])
+        title(sprintf('Data #%d',id))
+    end
+    legend([p(1) p(2)],'d_{post}','d_{obs}')
+    st=title(sprintf('m%d : %s',im,prior{im}.name));
+    set(st,'interpreter','none');
+    print_mul(sprintf('%s_m%d_posterior_data',fname,im))
+    
+    f_handle=(im-1)*10+4;
+    figure_focus(f_handle);set_paper('landscape');clf;
+    set(gca,'FontSize',options.FS);
+    hist(dd(:),30);
+    
+    xlabel('d_{obs}-d_{post}')
+    ylabel('pdf')
+    print_mul(sprintf('%s_d%d_posterior_datafit_hist',fname,id))
+    %%
+    
+catch
+    keyboard
+    cd(cwd);
+    close(f_handle)
+    disp(sprintf('%s : Cannot plot data response. ',mfilename))
+end
+
+
 
 
 %%
