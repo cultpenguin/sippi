@@ -38,7 +38,7 @@ if ~exist('n_reals','var');
         if prior{im_arr(j)}.ndim<1
             n_reals(j)=1000;
         elseif prior{im_arr(j)}.ndim<2
-            n_reals(j)=10;
+            n_reals(j)=30;
         else
             n_reals(j)=15;
         end
