@@ -97,7 +97,6 @@ if isempty(im_array)
 end
 
 run_fftma=[];
-
 % FIRST CHECK FOR ALL PRIOR TYPES, EXCEPT MASTER TYPES
 for im=im_array;
     
@@ -357,7 +356,6 @@ for im=im_array;
     
 end
 run_fftma_as_master=unique(run_fftma_as_master);
-run_fftma_as_master;
 
 %%
 % WE NEED TO CHECK FOR FFTMA TYPE PRIOR SEPERATELY, AS IT CAN BE AFFECTED
@@ -376,6 +374,7 @@ for im=im_fftma_array;
         % run thorugh the priors that have been updated
         im2_arr=im_array(1:(find(im_array==im)-1));
         im2_arr=1:length(prior);
+        
         for j=im2_arr;
             
             update_master=0;
@@ -387,8 +386,9 @@ for im=im_fftma_array;
                 end
             end
             
-            if nargin==1, update_master=0;end
+            %if nargin==1, update_master=0;end
             if update_master==1
+                
                 % THIS IM IS A MASTER SO WE CAN UPDATE THE COVARIANCE MODEL
                 % IF CHOSEN 
                 if strcmp(prior{j}.name,'m0');
