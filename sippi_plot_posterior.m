@@ -42,6 +42,7 @@ else
     fname='lsq';
 end
 
+plotdir=pwd;
 try
     fname=options.txt;
 end
@@ -73,7 +74,8 @@ end
 
 
 for im=im_arr;
-    
+
+    try;cd(plotdir);end
     clear cax;
     % find dimension
     ndim=sum(prior{im}.dim>1);
