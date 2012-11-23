@@ -136,6 +136,7 @@ if isfield(forward,'forward_function');
 else
     [d_init,forward,prior,data]=sippi_forward(m_init,forward,prior,data);
 end
+d_current=d_init;
 t_data=toc;
 
 % compute the number of iterations between text updates on the screen based
@@ -270,6 +271,7 @@ for i=1:mcmc.nite;
         
         prior=prior_propose; % NEEDED FOR GAUSSIAN TYPE PRIOR
         m_current=m_propose;
+        d_current=d;
         logL_current=logL_propose;
         iacc=iacc+1;
         mcmc.acc_logL(iacc)=logL_current;
@@ -312,7 +314,7 @@ for i=1:mcmc.nite;
     %% plot current model
     if ((mcmc.i/mcmc.i_plot)==round( mcmc.i/mcmc.i_plot ))
         try
-            sippi_plot_current_model(mcmc,data,d,m_current,prior);
+            sippi_plot_current_model(mcmc,data,d_current,m_current,prior);
         catch
             disp(sprintf('%s : Could not plot current model info',mfilename))
         end
