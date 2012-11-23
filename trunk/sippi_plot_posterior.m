@@ -426,9 +426,7 @@ try
         title(sprintf('Data #%d',id))
     end
     legend([p(1) p(2)],'d_{post}','d_{obs}')
-    st=title(sprintf('m%d : %s',im,prior{im}.name));
-    set(st,'interpreter','none');
-    print_mul(sprintf('%s_m%d_posterior_data',fname,im))
+    print_mul(sprintf('%s_d%d',fname,id))
     
     f_handle=(im-1)*10+4;
     figure_focus(f_handle);set_paper('landscape');clf;
@@ -441,7 +439,6 @@ try
     %%
     
 catch
-    keyboard
     cd(cwd);
     close(f_handle)
     disp(sprintf('%s : Cannot plot data response. ',mfilename))
