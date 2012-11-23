@@ -80,7 +80,7 @@ for im=1:length(prior);
         if ~isfield(prior{im}.seq_gibbs,'step_max');prior{im}.seq_gibbs.step_max=step_max;end
         if ~isfield(prior{im}.seq_gibbs,'step');prior{im}.seq_gibbs.step=prior{im}.seq_gibbs.step_max;end
     else
-        if ~isfield(prior{im}.seq_gibbs,'step_min');prior{im}.seq_gibbs.step_min=1./prod(prior{im}.dim);end
+        if ~isfield(prior{im}.seq_gibbs,'step_min');prior{im}.seq_gibbs.step_min=1./(prod(prior{im}.dim*2));end
         if ~isfield(prior{im}.seq_gibbs,'step_max');prior{im}.seq_gibbs.step_max=1;end
         if ~isfield(prior{im}.seq_gibbs,'step');prior{im}.seq_gibbs.step=1;end
     end

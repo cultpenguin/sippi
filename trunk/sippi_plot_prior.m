@@ -38,7 +38,7 @@ if ~exist('n_reals','var');
         if prior{im_arr(j)}.ndim<1
             n_reals(j)=1000;
         elseif prior{im_arr(j)}.ndim<2
-            n_reals(j)=100;
+            n_reals(j)=10;
         else
             n_reals(j)=15;
         end
@@ -67,6 +67,12 @@ for im=im_arr
     prior{im}.ndim=sum(find(prior{im}.dim>1));
 end
 
+prior_master=zeros(1,length(prior));
+for im=1:length(prior);
+    if isfield(prior{im},'prior_master');
+        prior_master(prior{im}.prior_master)=1;
+    end
+end
 
 for im=im_arr;
     % CLEAR FIGURES
@@ -79,7 +85,6 @@ for im=im_arr;
         clear p;
         p{1}=prior{im};
         m_reals=zeros(1,n_reals(im));
-        %[m,p]=sippi_prior(p);
         for i=1:n_reals(im);
             m=sippi_prior(p);
             m_reals(i)=m{1};       
@@ -102,11 +107,22 @@ for im=im_arr;
     elseif prior{im}.ndim<2
         % 1D
         clear p;clear m_reals;
-        p{1}=prior{im};
-        for i=1:n_reals(im);
-            m=sippi_prior(p);
-            m_reals(i,:)=m{1};       
+        if (prior_master(im)==1);
+            % FULL PRIOR REALS
+            for i=1:n_reals(im);
+                m=sippi_prior(prior);
+                m_reals(i,:)=m{im};
+            end
+        
+        else
+            % ONLY REALS FROM ONE/CURRENT PRIOR
+            p{1}=prior{im};
+            for i=1:n_reals(im);
+                m=sippi_prior(p);
+                m_reals(i,:)=m{1};
+            end
         end
+        
         plot(prior{im}.x,m_reals,'k-');
         hold on
         plot(prior{im}.x,quantile(m_reals,.025),'r--','linewidth',2);
@@ -134,14 +150,19 @@ for im=im_arr;
             end
             
             clear p;clear m_reals;
-            p{1}=prior{im};
-            try;p{1}.seed=p{1}.seed+1;end;
-            m_prior=sippi_prior(p);
-            %try;prior{1}.seed=prior{1}.seed+1;end;
-            %m_prior=sippi_prior(prior);
+            try;clear m_prior;end  
+            if (prior_master(im)==1);
+                % FULL PRIOR REALS
+                m_prior_full=sippi_prior(prior);
+                p{1}=prior{im};
+                m_prior{1}=m_prior_full{im};
+            else
+                p{1}=prior{im};
+                try;p{1}.seed=p{1}.seed+1;end;
+                m_prior=sippi_prior(p);
+            end
             figure_focus(f_id);
-            %set_paper('portrait');
-            %set_paper('landscape');
+            
             subplot(nsp_y,nsp_x,i);
             
             use_colorbar=0;

@@ -344,16 +344,20 @@ prior_master=[];
 for im=im_array;
     
     if isfield(prior{im},'prior_master');
+        try
         if (strcmp(upper(prior{prior{im}.prior_master}.type),'FFTMA'))
             run_fftma_as_master=[run_fftma_as_master prior{im}.prior_master];
         end
         prior_master=[prior_master prior{im}.prior_master];
+        catch
+            % perhaps prioir number prior{im}.prior_master does not exist
+        end
     end
     prior_master=unique(prior_master);
     
 end
 run_fftma_as_master=unique(run_fftma_as_master);
-
+run_fftma_as_master;
 
 %%
 % WE NEED TO CHECK FOR FFTMA TYPE PRIOR SEPERATELY, AS IT CAN BE AFFECTED
@@ -382,8 +386,9 @@ for im=im_fftma_array;
                     update_master=1;
                 end
             end
+            
             if nargin==1, update_master=0;end
-            if update_master==1;
+            if update_master==1
                 % THIS IM IS A MASTER SO WE CAN UPDATE THE COVARIANCE MODEL
                 % IF CHOSEN 
                 if strcmp(prior{j}.name,'m0');
