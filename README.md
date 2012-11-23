@@ -49,6 +49,10 @@ $SIPPI/examples/manuscript_examples/tomography
   
 ## Releases history
 
+#0.93 
+Updates for plotting prior and posterior statistics (sippi_plot_prior, sippi_plot_posterior)
+Updates for fft_ma for better 1D simulation
+
 # 0.92
 Fixed plotting of prior and posterior statistic for a scalar, 1D, 2D, and 3D a priori model types
 
