@@ -211,8 +211,23 @@ for im=im_array;
         
     elseif (strcmp(prior{im}.type,'VISIM')|isfield(prior{im},'V'))
         
-        
         % VISIM PRIOR
+        if isfield(prior{im},'Va');
+            % update VISIM covariance settings
+            if ~isstruct(prior{im}.Va);
+                Va=deformat_variogram(prior{im}.Va);;
+            else
+                Va=prior{im}.Va;
+            end
+            [prior{im}.V]=visim_set_variogram(prior{im}.V,prior{im}.Va);
+            
+        end
+        
+        if isfield(prior{im},'m0')
+            prior{im}.V.gmean=prior{im}.m0; % set global mean
+        end
+        
+        
         
         %% RANDOM SEED
         prior{im}.V.cond_sim=0;
@@ -230,7 +245,6 @@ for im=im_array;
             prior{im}.V.refhist.fname=f_cond;
             prior{im}.V.ccdf=1;
         end
-        
         
         %% SEQUENTIAL GIBBS
         if nargin>1

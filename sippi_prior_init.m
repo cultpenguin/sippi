@@ -15,7 +15,14 @@ for im=1:length(prior);
             prior{im}.Va=prior{im}.Cm;
         end
     end
-   
+    if isfield(prior{im},'Va');
+        if ~isfield(prior{im},'m0');
+            prior{im}.m0=0;
+        end
+    end
+    
+    
+    
     if ~isfield(prior{im},'type'); 
         disp(sprintf('%s : FATAL ERROR : no ''type'' set for prior %03',mfilename,im));
         return
@@ -106,7 +113,7 @@ for im=1:length(prior);
     
     
     %% FFTMA OPTIONS
-    if (strcmp(prior{im}.type,'FFTMA'))
+    if (strcmp(upper(prior{im}.type),'FFTMA'))
         if ~isfield(prior{im},'fft_options');prior{im}.fftma_options.null='';
             if ~isfield(prior{im}.fftma_options,'constant_C');
                 prior{im}.fftma_options.constant_C=1;
@@ -115,7 +122,7 @@ for im=1:length(prior);
     end
     
     %% VISIM OPTIONS    
-    if (strcmp(prior{im}.type,'VISIM'))
+    if (strcmp(upper(prior{im}.type),'VISIM'))
         if ~isfield(prior{im},'V');
             prior{im}.V=visim_init(prior{im}.x,prior{im}.y,prior{im}.z);
         end
@@ -127,18 +134,22 @@ for im=1:length(prior);
         %    end               
         %end
         if isfield(prior{im},'m0');
-           prior{im}.V.m0=prior{im}.m0;
+           prior{im}.V.gmean=prior{im}.m0;
         end        
     end
     
     %% SNESIM OPTIONS    
-    if (strcmp(prior{im}.type,'SNESIM'))
+    if (strcmp(upper(prior{im}.type),'SNESIM'))
         if ~isfield(prior{im},'S');
             prior{im}.S=sgems_get_par('snesim_std');
-            prior{im}.S.dim.x=prior{im}.x;            
-            prior{im}.S.dim.y=prior{im}.y;
-            prior{im}.S.dim.z=prior{im}.z;
+%            prior{im}.S.dim.x=prior{im}.x;            
+%            prior{im}.S.dim.y=prior{im}.y;
+%            prior{im}.S.dim.z=prior{im}.z;
         end
+        prior{im}.S.dim.x=prior{im}.x;
+        prior{im}.S.dim.y=prior{im}.y;
+        prior{im}.S.dim.z=prior{im}.z;
+        
         if isfield(prior{im},'ti');
             if isnumeric(prior{im}.ti);
                  prior{im}.S.ti=prior{im}.ti;
@@ -152,7 +163,7 @@ for im=1:length(prior);
     end
     
     %% SISIM OPTIONS    
-    if (strcmp(prior{im}.type,'SISIM'))
+    if (strcmp(upper(prior{im}.type),'SISIM'))
         if ~isfield(prior{im},'S');
             prior{im}.S=sgems_get_par('sisim');
             prior{im}.S.dim.x=prior{im}.x;            
