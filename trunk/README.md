@@ -49,6 +49,9 @@ $SIPPI/examples/manuscript_examples/tomography
   
 ## Releases history
 
+#0.94
+Updates for handling prior types VISIM/SNESIM/FFTMA/SISIM
+
 #0.93 
 Updates for plotting prior and posterior statistics (sippi_plot_prior, sippi_plot_posterior)
 Updates for fft_ma for better 1D simulation
