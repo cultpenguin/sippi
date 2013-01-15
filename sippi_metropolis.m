@@ -308,7 +308,11 @@ for i=1:mcmc.nite;
     end
     % SAVE WORKSPACE
     if ((mcmc.i/(10*mcmc.i_sample))==round( mcmc.i/(10*mcmc.i_sample) ))
-        save(filename_mat)
+        try
+            save(filename_mat)
+        catch
+            disp(sprintf('%s : failed to save data to %s',mfilename,filename_mat))
+        end
     end
     
     %% plot current model

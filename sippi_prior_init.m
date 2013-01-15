@@ -67,6 +67,26 @@ for im=1:length(prior);
         if ~isfield(prior{im}.seq_gibbs,'step_min');prior{im}.seq_gibbs.step_min=0;end
         if ~isfield(prior{im}.seq_gibbs,'step_max');prior{im}.seq_gibbs.step_max=1;end
         if ~isfield(prior{im}.seq_gibbs,'step');prior{im}.seq_gibbs.step=1;end
+       
+        % m0
+        if ~isfield(prior{im},'m0');
+            if isfield(prior{im},'min')&isfield(prior{im},'max');
+                prior{im}.m0=(prior{im}.max+prior{im}.min)/2;
+            else
+                prior{im}.m0=0;
+            end
+        end
+   
+        % std
+        if ~isfield(prior{im},'std');
+            if isfield(prior{im},'min')&isfield(prior{im},'max');
+                prior{im}.std=(prior{im}.max-prior{im}.min)/2.15;
+            else
+                prior{im}.std=1;
+            end
+        end
+        
+        
     end        
     
     %% 

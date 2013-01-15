@@ -36,17 +36,21 @@ end
 if ~exist('n_reals','var');
     for j=1:length(im_arr);
         if prior{im_arr(j)}.ndim<1
-            n_reals(j)=1000;
+            %n_reals(j)=1000;
+            n_reals(im_arr(j))=1000;
         elseif prior{im_arr(j)}.ndim<2
-            n_reals(j)=30;
+            %n_reals(j)=30;
+            n_reals(im_arr(j))=30;
         else
-            n_reals(j)=15;
+            %n_reals(j)=15;
+            n_reals(im_arr(j))=15;
         end
     end
 end
 
 if length(n_reals)==1;
-    n_reals=ones(1,length(im_arr)).*n_reals;
+    %n_reals=ones(1,length(im_arr)).*n_reals;
+    n_reals=ones(1,length(prior)).*n_reals;
 end
    
 if ~exist('cax','var');
@@ -93,9 +97,12 @@ for im=im_arr;
         hist(m_reals,30);
         ylim=get(gca,'ylim');
         hold on;
-        plot([1 1].*quantile(m_reals,.025),ylim,'r--','linewidth',2);
-        plot([1 1].*quantile(m_reals,.5),ylim,'r-','linewidth',2);
-        plot([1 1].*quantile(m_reals,.975),ylim,'r--','linewidth',2);
+        try
+            % requires statistics toolbox
+            plot([1 1].*quantile(m_reals,.025),ylim,'r--','linewidth',2);
+            plot([1 1].*quantile(m_reals,.5),ylim,'r-','linewidth',2);
+            plot([1 1].*quantile(m_reals,.975),ylim,'r--','linewidth',2);
+        end
         hold off
         xlabel(prior{im}.name)
         if isfield(prior{im},'cax');
