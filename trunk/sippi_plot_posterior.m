@@ -2,11 +2,10 @@ function sippi_plot_posterior(fname,im_arr,prior,options,n_reals);
 % sippi_plot_posterior Plot statistics from posterior sample
 %
 % Call :
-%    m_prior=sippi_plot_posterior(fname,im_arr,prior,options,n_reals);
+%    sippi_plot_posterior(fname,im_arr,prior,options,n_reals);
 %
+% See also sippi_plot_prior
 %
-%
-
 
 
 if ~exist('supt','var');
