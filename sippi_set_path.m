@@ -13,7 +13,7 @@ i=i+1;F{i}=['toolboxes',filesep,'fast_marching_kroon',filesep];
 i=i+1;F{i}=['toolboxes',filesep,'fast_marching_kroon',filesep,'functions',filesep];
 i=i+1;F{i}=['toolboxes',filesep,'fast_marching_kroon',filesep,'shortestpath',filesep];
 i=i+1;F{i}=['toolboxes',filesep,'traveltime',filesep];
-%i=i+1;F{i}=['toolboxes',filesep,'lomgrav',filesep];
+i=i+1;F{i}=['toolboxes',filesep,'lomgrav',filesep];
 %i=i+1;F{i}=['toolboxes',filesep,'reflection',filesep];
 %i=i+1;F{i}=['toolboxes',filesep,'gpr_full_waveform',filesep];
 
