@@ -4,7 +4,6 @@ function [reals_mat,etype_mean,etype_var,reals]=sippi_get_sample(data,prior,id,i
 % Call :
 %  [reals,etype_mean,etype_var]=sippi_get_sample(data,prior,id,im,n_reals,options);
 %
-
 if ~exist('n_reals','var');
     n_reals=15;
 end
@@ -16,7 +15,11 @@ if isfield(data{id},'m_est');
     reals=gaussian_simulation_cholesky(data{im}.m_est,data{im}.Cm_est,n_reals)';
     etype_mean=data{id}.m_est;
     etype_var=diag(data{id}.Cm_est);
-elseif isfield(options,'txt');
+else
+    
+    if ~isfield(options,'txt');
+        [p,options.txt]=fileparts(pwd);
+    end
     try        
         reals=load(sprintf('%s_m%d.asc',options.txt,im));
     catch
@@ -27,6 +30,7 @@ elseif isfield(options,'txt');
     catch
         i1_post=1;
     end
+    
     i1_post=max([i1_post 1]);
     
     nr=size(reals,1);
