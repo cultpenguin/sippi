@@ -369,8 +369,13 @@ try
         figure_focus(60+k);clf;set_paper('landscape');
         try;
             NX=ceil(sqrt(length(reals1)));
-            NY=NX;        
-            [Z,x_arr,y_arr] = hist2(reals1',reals2',linspace(prior{im_onedim(k)}.min,prior{im_onedim(k)}.max,NX),linspace(prior{im_onedim(k+1)}.min,prior{im_onedim(k+1)}.max,NY));
+            NY=NX;
+            try
+                % if prior{im}.min,prior{im}.max exists
+                [Z,x_arr,y_arr] = hist2(reals1',reals2',linspace(prior{im_onedim(k)}.min,prior{im_onedim(k)}.max,NX),linspace(prior{im_onedim(k+1)}.min,prior{im_onedim(k+1)}.max,NY));
+            catch
+                [Z,x_arr,y_arr] = hist2(reals1',reals2',NX,NY);
+            end
         catch
             [Z,x_arr,y_arr] = hist2(reals1',reals2');
         end
@@ -389,7 +394,6 @@ catch
     cd(cwd);
 end
 
-
 %% PLOT DATA ASSOCIATED TO REALS
 try
     
@@ -397,7 +401,7 @@ try
     try;cd(plotdir);end
     
     %%
-    f_handle=(im-1)*10+3;clf;
+    f_handle=(im-1)*10+3;
     figure_focus(f_handle);set_paper('landscape');clf;
     subplot(1,1,1);
     set(gca,'FontSize',options.FS);
@@ -406,14 +410,10 @@ try
         %if ~isfield(data{id},'i_use'); data{id}.i_use=1:1:(prod(size(data{id}.d_obs)));end
         subplot(1,nd,id)
         
-        np=size(m_post{4},2);
+        np=size(m_post{im},2);
         ii=ceil(linspace(1,np,min([50 np])));
-        k=0;
-        for i=ii;
-            k=k+1;
-            for im=1:nm;m{im}=m_post{im}(:,i)';end
-            %m=sippi_prior(prior);
-            [d_real,forward]=sippi_forward(m,forward,prior,data,id);
+        for k=ii:n_reals;
+            [d_real,forward]=sippi_forward(m{k},forward,prior,data,id);
             p(1)=plot(d_real{id}(:),'-','col',col(1,:));
             d_obs=data{id}.d_obs(data{id}.i_use);
             dd(k,:)=d_obs(:)-d_real{id}(:);
