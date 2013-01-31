@@ -351,10 +351,13 @@ try
             im_onedim=[im_onedim, j];
         end
     end
-    
+    n=length(im_onedim);
     for k=1:(length(im_onedim)-1)
         [reals1,etype_mean1,etype_var1,reals_all1]=sippi_get_sample(data,prior,id,im_onedim(k),1000,options);
         [reals2,etype_mean2,etype_var2,reals_all2]=sippi_get_sample(data,prior,id,im_onedim(k+1),1000,options);
+        
+        reals_all(:,k)=reals_all1(:);
+        reals_all(:,k+1)=reals_all2(:);
         
         %keyboard
         figure_focus(50+k);clf;set_paper('landscape');
@@ -372,26 +375,65 @@ try
             NY=NX;
             try
                 % if prior{im}.min,prior{im}.max exists
-                [Z,x_arr,y_arr] = hist2(reals1',reals2',linspace(prior{im_onedim(k)}.min,prior{im_onedim(k)}.max,NX),linspace(prior{im_onedim(k+1)}.min,prior{im_onedim(k+1)}.max,NY));
+                [Z,x_arr,y_arr] = hist2(reals_all1(:),reals_all2(:),linspace(prior{im_onedim(k)}.min,prior{im_onedim(k)}.max,NX),linspace(prior{im_onedim(k+1)}.min,prior{im_onedim(k+1)}.max,NY));
             catch
-                [Z,x_arr,y_arr] = hist2(reals1',reals2',NX,NY);
+                [Z,x_arr,y_arr] = hist2(reals_all1(:),reals_all2(:),NX,NY);
             end
         catch
             [Z,x_arr,y_arr] = hist2(reals1',reals2');
         end
+        
         imagesc(x_arr,y_arr,Z');
         try;xlabel(prior{im_onedim(k)}.name);end
-        try;ylabel(prior{im_onedim(k+1)}.name);end
+        try ylabel(prior{im_onedim(k+1)}.name);end
         colormap(1-gray);
         set(gca,'ydir','normal');
         %colorbar
         print_mul(sprintf('%s_post_marg_hist_m%d_m%d',fname,im_onedim(k),im_onedim(k+1)))
        
     end
+    
+    
+    %% 2d marginals on one plot
+    figure_focus(70);clf;set_paper('landscape');    
+    for j=1:(n-1)
+        for k=((1)+j):n
+        
+            r1=reals_all(:,j);r2=reals_all(:,k);
+            try
+                NX=ceil(1*sqrt(length(reals1)));
+                NY=NX;
+                try
+                    % if prior{im}.min,prior{im}.max exists
+                    [Z,x_arr,y_arr] = hist2(r1(:),r2(:),linspace(prior{im_onedim(j)}.min,prior{im_onedim(j)}.max,NX),linspace(prior{im_onedim(k)}.min,prior{im_onedim(k)}.max,NY));
+                catch
+                    [Z,x_arr,y_arr] = hist2(r1(:),r2(:),NX,NY);
+                end
+            catch
+                [Z,x_arr,y_arr] = hist2(r1(:),r2(:));
+            end
+            levels=hpd_2d(Z,[.1,.5,.9]);
+            Zl=Z.*0;
+            for il=1:length(levels);
+                Zl(Z>levels(il))=il;
+            end
+            %contourf(Z,levels);
+            isp=(j-1)*(n-1)+(k-1);
+            subplot(n-1,n-1,isp);
+            imagesc(x_arr,y_arr,Zl');
+            set(gca,'ydir','normal');
+            %plot(reals_all(:,j),reals_all(:,k),'k.','MarkerSize',.01)
+            xlabel(prior{im_onedim(j)}.name,'interp','none')
+            ylabel(prior{im_onedim(k)}.name,'interp','none')
+            colormap(1-gray);           
+        end
+    end    
+    print_mul(sprintf('%s_post_marg_hist',fname))
 catch
     try;close(fn);end
-    disp(sprintf('%s : could not plot 2D marginals',mfilename));
+    fprintf('%s : could not plot 2D marginals\n',mfilename);
     cd(cwd);
+    keyboard
 end
 
 %% PLOT DATA ASSOCIATED TO REALS
@@ -431,7 +473,7 @@ try
     figure_focus(f_handle);set_paper('landscape');clf;
     set(gca,'FontSize',options.FS);
     hist(dd(:),30);
-    
+    colormap(gray)
     xlabel('d_{obs}-d_{post}')
     ylabel('pdf')
     print_mul(sprintf('%s_d%d_posterior_datafit_hist',fname,id))
@@ -440,7 +482,7 @@ try
 catch
     cd(cwd);
     close(f_handle)
-    disp(sprintf('%s : Cannot plot data response. ',mfilename))
+    fprintf('%s : Cannot plot data response. \n',mfilename)
 end
 
 
