@@ -29,7 +29,7 @@ end
 
 if size(G,2)==nxy    
     
-    l=sum(G');
+    l=sum(G')';
     
     % NORMALIZE KERNEL FOR VELOCITY
     t_app=G*(1./varr);
@@ -44,7 +44,7 @@ if size(G,2)==nxy
     
     if nargin>3
         % COMPUTE Cd_velocity from Cd_traveltime
-        v_obs_noise=l./(t+sqrt(diag(Cd_org)'));
+        v_obs_noise=l./(t+sqrt(diag(Cd_org)));
         Cd_v=diag(v_obs-v_obs_noise).^2;
     end
     

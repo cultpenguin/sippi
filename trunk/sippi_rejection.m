@@ -1,10 +1,10 @@
 function options=sippi_rejection(data,prior,forward,options)
-% sippi_rejection Rejection sampling 
+% sippi_rejection Rejection sampling
 %
 % input arguments
-% 
+%
 %   options.mcmc.i_plot
-%   options.mcmc.nite
+%   options.mcmc.nite     % maximum number of iterations
 %   options.mcmc.logLmax
 %
 %   options.mcmc.rejection_normalize_log = log(options.mcmc.Lmax)
@@ -13,13 +13,17 @@ function options=sippi_rejection(data,prior,forward,options)
 %                  (def=[0])
 %                  At each iteration Lmax will be set if log(L(m_cur)=>options.mcmc.logLmax
 %
+%
+%   options.mcmc.max_run_time_hours = 1; % maximum runtime in hours
+%                                        % (overrides options.mcmc.nite if needed)
+%
 % See also sippi_metropolis
 %
 %
 
 % USE LESS DATA
 
-% USE HIGHER UNCERTAINTY 
+% USE HIGHER UNCERTAINTY
 
 % USE ADAPTIVE NORMALIZATION
 
@@ -37,7 +41,7 @@ try;
     mkdir(options.txt);
     cd(options.txt);
     addpath(['..',filesep])
-   
+    
     for im=1:length(prior);
         try
             if isunix
@@ -57,7 +61,7 @@ end
 filename_mat=[options.txt,'.mat'];
 
 mcmc.null='';
-if isfield(options,'mcmc');mcmc=options.mcmc;end 
+if isfield(options,'mcmc');mcmc=options.mcmc;end
 
 
 if ~isfield(mcmc,'i_plot');mcmc.i_plot=10000;end
@@ -84,8 +88,14 @@ t0=now;
 
 mcmc.logL=zeros(1,mcmc.nite);
 
+if isfield(mcmc,'max_run_time_hours');
+    mcmc.time_end = now + mcmc.max_run_time_hours/24;
+else
+    mcmc.time_end = Inf;
+end
+
 for i=1:mcmc.nite
-   
+    
     m_propose = sippi_prior(prior);
     if isfield(forward,'forward_function');
         [d,forward,prior,data]=feval(forward.forward_function,m_propose,forward,prior,data);
@@ -93,9 +103,9 @@ for i=1:mcmc.nite
         [d,forward,prior,data]=sippi_forward(m_propose,forward,prior,data);
     end
     [logL,L,data]=sippi_likelihood(d,data);
-
+    
     logLPacc = logL-mcmc.rejection_normalize_log;
-
+    
     if log(rand(1))<logLPacc
         iacc=iacc+1;
         mcmc.logL(iacc)=logL;
@@ -107,19 +117,34 @@ for i=1:mcmc.nite
             fprintf(fid,'\n');
             fclose(fid);
         end
-                
+        
     end
     if (i/mcmc.i_plot)==round(i/mcmc.i_plot)
+        
         [t_end_txt,t_left_seconds]=time_loop_end(t0,i,mcmc.nite);
-        disp(sprintf('%s : %06d/%06d (%10s) nacc=%06d - %s',mfilename,i,mcmc.nite,t_end_txt,iacc))
+        nite=mcmc.nite;
+        
+        % time left if using
+        if ~isinf(mcmc.time_end)
+            t_left_seconds_time_end = 3600*24*(mcmc.time_end-now);
+            if (t_left_seconds_time_end<t_left_seconds)
+                t_end_txt = datestr(mcmc.time_end);%'time_limit';
+                % compute reamining number of iterations
+                time_per_ite = ((now-t0)/i);
+                i_left = (mcmc.time_end-now)/time_per_ite;
+                nite = i+ceil(i_left);
+            end
+        end
+        disp(sprintf('%s : %06d/%06d (%10s) nacc=%06d - %s',mfilename,i,nite,t_end_txt,iacc))
+        
     end
     if ((i/(10*mcmc.i_plot))==round( i/(10*mcmc.i_plot) ))
         save(filename_mat)
     end
     
-    if (mcmc.adaptive_rejection==0) 
+    if (mcmc.adaptive_rejection==0)
         % Traditional rejection sampling
-                          
+        
     else
         % Adaptive rejection sampling
         if logL>mcmc.rejection_normalize_log
@@ -128,8 +153,15 @@ for i=1:mcmc.nite
         end
         
     end
-        
-end        
+    
+    if (now>mcmc.time_end);
+        break
+        %else
+        %    disp(sprintf(' %s - %s',datestr(now),datestr(mcmc.time_end)))
+    end
+    
+    
+end
 mcmc.logL=mcmc.logL(1:iacc);
 
 options.mcmc=mcmc;
@@ -140,8 +172,8 @@ disp(sprintf('%s : DONE rejection on %s',mfilename,options.txt))
 
 %%
 cd(start_dir);
-    
-    
-    
-    
+
+
+
+
 end
