@@ -33,9 +33,9 @@ function [options,data,prior,forward,m_current]=sippi_metropolis(data,prior,forw
 options.null='';
 
 if ~isfield(options,'txt')
-    options.txt='sippi_metropolis';
+    options.txt='';
 end
-options.txt=sprintf('%s_metropolis_%s',datestr(now,'YYYYmmdd_HHMM'),options.txt);
+options.txt=sprintf('%s_sippi_metropolis_%s',datestr(now,'YYYYmmdd_HHMM'),options.txt);
 
 try
     options.txt=sprintf('%s_%s',options.txt,forward.type);
