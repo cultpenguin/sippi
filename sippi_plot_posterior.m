@@ -8,6 +8,7 @@ function sippi_plot_posterior(fname,im_arr,prior,options,n_reals);
 %
 
 
+
 if ~exist('supt','var');
     supt=0;
 end
@@ -49,6 +50,14 @@ end
 if ~isfield(options,'FS')
     options.FS=12;
 end
+
+%%
+options.axis_fontsize=8;
+options.width=10;
+options.height=10;
+options.w0=2;
+options.h0=2;
+
 
 %% REALS
 nm=length(prior);
@@ -106,26 +115,69 @@ for im=im_arr;
     z=prior{im}.z;
     
     %% PLOT POSTERIOR REALS
-    f_id=(im-1)*10+1;
+    f_id=(im)*10+1;
     figure_focus(f_id);
     set_paper('landscape');clf;
     
     i1=ceil(size(reals,1)/n_reals(im));
     ii=ceil(linspace(i1,size(reals,1),n_reals(im)));
     if ndim==0
+        N=length(reals);
+        %N=n_reals(im);
+        prior_sample=zeros(1,N);
+        clear p;
+        p{1}=prior{im};
+        for i=1:n_reals(im);
+            m=sippi_prior(p);
+            sample_prior(i)=m{1};       
+        end
+        
         hx=linspace(cax(1),cax(2),30);
-        hist(reals,hx,30);
-        ylim=get(gca,'ylim');
+        h_post=hist(reals,hx);
+        h_post=h_post/sum(h_post);
+        
+        h_prior=hist(sample_prior,hx);
+        h_prior=h_prior/sum(h_prior);
+        
+        bar(hx,h_prior,.8,'k');
         hold on
-        plot([1 1].*etype_mean,ylim,'r-','linewidth',3);
-        plot([1 1].*(etype_mean-2*sqrt(etype_var)),ylim,'r:','linewidth',2);
-        plot([1 1].*(etype_mean+2*sqrt(etype_var)),ylim,'r:','linewidth',2);
+        bar(hx,h_post,.6,'r');
+        hold off
+        ylim=get(gca,'ylim');
+        
+        
+        %% GET p10,050,090
+        
+        p50_post=quantile(reals,.5);
+        p_l_post=quantile(reals,.025);
+        p_h_post=quantile(reals,.975);
+        p50_prior=quantile(sample_prior,.5);
+        p_l_prior=quantile(sample_prior,.025);
+        p_h_prior=quantile(sample_prior,.975);
+        
+        hold on
+        y0=diff(ylim)*.80+ylim(1);
+        yl=diff(ylim)*.74+ylim(1);
+        yu=diff(ylim)*.86+ylim(1);
+        
+        plot([p_l_prior p_h_prior],[1 1].*y0,'k-','LineWidth',3)
+        plot([1 1]*p_l_prior,[yl yu],'k-','LineWidth',3)
+        plot([1 1]*p_h_prior,[yl yu],'k-','LineWidth',3)
+        plot(p50_prior,y0,'k.','MarkerSize',22)
+        
+        plot([p_l_post p_h_post],[1 1].*y0,'r-','LineWidth',1)
+        plot([1 1]*p_l_post,[yl yu],'r-','LineWidth',1)
+        plot([1 1]*p_h_post,[yl yu],'r-','LineWidth',1)
+        plot(p50_post,y0,'r.','MarkerSize',16)
         hold off
         xlabel(prior{im}.name,'interpreter','none')
+        legend('prior','posterior')
         try
-            xlim=[prior{im}.min prior{im}.max];
-            set(gca,'xlim',xlim);
+            set(gca,'xlim',cax);
         end
+        
+        ppp(options.width,options.height,options.axis_fontsize,options.w0,options.h0);
+        
         %set(gca,'FontSize',16),
     elseif ndim==1
         plot(prior{im}.x,reals,'k-');
@@ -179,9 +231,10 @@ for im=im_arr;
         st=suptitle(sprintf('m%d : %s',im,prior{im}.name));
         set(st,'interp','none','FontSize',18);
     else
-        title(sprintf('m#%d, posterior',im))
+        %title(sprintf('m#%d, posterior',im))
     end
     print_mul(sprintf('%s_m%d_posterior_sample',fname,im))
+    
     
     %% PLOT ETYPES
     if ndim>1
@@ -367,6 +420,7 @@ try
         
         try;set(gca,'xlim',[prior{im_onedim(k)}.min prior{im_onedim(k)}.max]);end
         try;set(gca,'ylim',[prior{im_onedim(k+1)}.min prior{im_onedim(k+1)}.max]);end
+        ppp(options.width,options.height,options.axis_fontsize,options.w0,options.h0);
         print_mul(sprintf('%s_post_marg_m%d_m%d',fname,im_onedim(k),im_onedim(k+1)));
         
         figure_focus(60+k);clf;set_paper('landscape');
@@ -389,6 +443,7 @@ try
         colormap(1-gray);
         set(gca,'ydir','normal');
         %colorbar
+        ppp(options.width,options.height,options.axis_fontsize,options.w0,options.h0);
         print_mul(sprintf('%s_post_marg_hist_m%d_m%d',fname,im_onedim(k),im_onedim(k+1)))
        
     end

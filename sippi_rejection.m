@@ -30,9 +30,9 @@ function options=sippi_rejection(data,prior,forward,options)
 
 %% NAME
 if ~isfield(options,'txt')
-    options.txt='sippi_rejection';
+    options.txt='';
 end
-options.txt=sprintf('%s_rejection_%s',datestr(now,'YYYYmmdd_HHMM'),options.txt);
+options.txt=sprintf('%s_sippi_rejection_%s',datestr(now,'YYYYmmdd_HHMM'),options.txt);
 
 
 %% INITIALIZE ASC FILE
