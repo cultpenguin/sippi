@@ -83,7 +83,7 @@ end
 
 
 for im=im_arr;
-
+    
     try;cd(plotdir);end
     clear cax;
     % find dimension
@@ -129,7 +129,7 @@ for im=im_arr;
         p{1}=prior{im};
         for i=1:n_reals(im);
             m=sippi_prior(p);
-            sample_prior(i)=m{1};       
+            sample_prior(i)=m{1};
         end
         
         hx=linspace(cax(1),cax(2),30);
@@ -147,35 +147,36 @@ for im=im_arr;
         
         
         %% GET p10,050,090
-        
-        p50_post=quantile(reals,.5);
-        p_l_post=quantile(reals,.025);
-        p_h_post=quantile(reals,.975);
-        p50_prior=quantile(sample_prior,.5);
-        p_l_prior=quantile(sample_prior,.025);
-        p_h_prior=quantile(sample_prior,.975);
-        
-        hold on
-        y0=diff(ylim)*.80+ylim(1);
-        yl=diff(ylim)*.74+ylim(1);
-        yu=diff(ylim)*.86+ylim(1);
-        
-        plot([p_l_prior p_h_prior],[1 1].*y0,'k-','LineWidth',3)
-        plot([1 1]*p_l_prior,[yl yu],'k-','LineWidth',3)
-        plot([1 1]*p_h_prior,[yl yu],'k-','LineWidth',3)
-        plot(p50_prior,y0,'k.','MarkerSize',22)
-        
-        plot([p_l_post p_h_post],[1 1].*y0,'r-','LineWidth',1)
-        plot([1 1]*p_l_post,[yl yu],'r-','LineWidth',1)
-        plot([1 1]*p_h_post,[yl yu],'r-','LineWidth',1)
-        plot(p50_post,y0,'r.','MarkerSize',16)
-        hold off
+        try
+            % ONLY DO IF QUNTILE EXISTS
+            p50_post=quantile(reals,.5);
+            p_l_post=quantile(reals,.025);
+            p_h_post=quantile(reals,.975);
+            p50_prior=quantile(sample_prior,.5);
+            p_l_prior=quantile(sample_prior,.025);
+            p_h_prior=quantile(sample_prior,.975);
+            
+            hold on
+            y0=diff(ylim)*.80+ylim(1);
+            yl=diff(ylim)*.74+ylim(1);
+            yu=diff(ylim)*.86+ylim(1);
+            
+            plot([p_l_prior p_h_prior],[1 1].*y0,'k-','LineWidth',3)
+            plot([1 1]*p_l_prior,[yl yu],'k-','LineWidth',3)
+            plot([1 1]*p_h_prior,[yl yu],'k-','LineWidth',3)
+            plot(p50_prior,y0,'k.','MarkerSize',22)
+            
+            plot([p_l_post p_h_post],[1 1].*y0,'r-','LineWidth',1)
+            plot([1 1]*p_l_post,[yl yu],'r-','LineWidth',1)
+            plot([1 1]*p_h_post,[yl yu],'r-','LineWidth',1)
+            plot(p50_post,y0,'r.','MarkerSize',16)
+            hold off
+        end
         xlabel(prior{im}.name,'interpreter','none')
         legend('prior','posterior')
         try
             set(gca,'xlim',cax);
         end
-        
         ppp(options.width,options.height,options.axis_fontsize,options.w0,options.h0);
         
         %set(gca,'FontSize',16),
@@ -445,15 +446,15 @@ try
         %colorbar
         ppp(options.width,options.height,options.axis_fontsize,options.w0,options.h0);
         print_mul(sprintf('%s_post_marg_hist_m%d_m%d',fname,im_onedim(k),im_onedim(k+1)))
-       
+        
     end
     
     
     %% 2d marginals on one plot
-    figure_focus(70);clf;set_paper('landscape');    
+    figure_focus(70);clf;set_paper('landscape');
     for j=1:(n-1)
         for k=((1)+j):n
-        
+            
             r1=reals_all(:,j);r2=reals_all(:,k);
             try
                 NX=ceil(1*sqrt(length(reals1)));
@@ -480,9 +481,9 @@ try
             %plot(reals_all(:,j),reals_all(:,k),'k.','MarkerSize',.01)
             xlabel(prior{im_onedim(j)}.name,'interp','none')
             ylabel(prior{im_onedim(k)}.name,'interp','none')
-            colormap(1-gray);           
+            colormap(1-gray);
         end
-    end    
+    end
     print_mul(sprintf('%s_post_marg_hist',fname))
 catch
     try;close(fn);end
