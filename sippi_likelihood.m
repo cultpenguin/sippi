@@ -121,12 +121,20 @@ for id=id_array;
         dd=data{id}.d_obs(data{id}.i_use)-d{id};
     end
     
-    if ~isfield(data{id},'iCD')
+    % Only compute iCD if it is computed only once (i.e.
+    % data{id}.recomputeCD==0)
+    if (~isfield(data{id},'iCD'))&(data{id}.recomputeCD==0)
+        
         %data{id}.iCD=inv(data{id}.CD);
-        data{id}.logdet = logdet(data{id}.CD(data{id}.i_use,data{id}.i_use));
         data{id}.iCD=inv(data{id}.CD(data{id}.i_use,data{id}.i_use));
         
     end
+    
+    % compute logdet(CD) if it does not exist, and if recomputeCD=1;
+    if (~isfield(data{id},'logdet'))|(data{id}.recomputeCD==1)
+        data{id}.logdet = logdet(data{id}.CD(data{id}.i_use,data{id}.i_use));
+    end
+    
     
     if strcmp(data{id}.noise_model,'gaussian')
         nknown=length(data{id}.i_use);
@@ -145,8 +153,16 @@ for id=id_array;
                 disp(sprintf('%s : --> ignoring determinant !',mfilename))
                 f1=-f2;
             end;
-            f3 =  -.5 * dd'*data{id}.iCD*dd;
+            
+            if data{id}.recomputeCD==1
+                f3 = -.5*dd'*(data{id}.CD\dd);
+                % disp(sprintf('f3=%g, logdet=%g',f3,data{id}.logdet))
+            else
+                f3 =  -.5 * dd'*data{id}.iCD*dd;
+            end
+            
             logL(id) = f1 +f2 +f3;
+
         else
             f3 =  -.5 * dd'*data{id}.iCD*dd;
             logL(id) = f3;
