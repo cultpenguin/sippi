@@ -44,6 +44,7 @@ end
 
 for id=id_array;
     
+    
     if ~isfield(data{id},'noise_model');
         data{id}.noise_model='gaussian';
         %data{id}.noise_model='generalized_gaussian';
@@ -121,6 +122,11 @@ for id=id_array;
         dd=data{id}.d_obs(data{id}.i_use)-d{id};
     end
     
+    
+    if ~isfield(data{id},'recomputeCD')
+        data{id}.recomputeCD=0;
+    end
+    
     % Only compute iCD if it is computed only once (i.e.
     % data{id}.recomputeCD==0)
     if (~isfield(data{id},'iCD'))&(data{id}.recomputeCD==0)
@@ -164,7 +170,12 @@ for id=id_array;
             logL(id) = f1 +f2 +f3;
 
         else
-            f3 =  -.5 * dd'*data{id}.iCD*dd;
+            if data{id}.recomputeCD==1
+                f3 = -.5*dd'*(data{id}.CD\dd);
+                % disp(sprintf('f3=%g, logdet=%g',f3,data{id}.logdet))
+            else
+                f3 =  -.5 * dd'*data{id}.iCD*dd;
+            end
             logL(id) = f3;
         end
         
