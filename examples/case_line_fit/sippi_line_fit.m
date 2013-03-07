@@ -44,7 +44,10 @@ options.mcmc.nite=20000;
 options.mcmc.i_sample=50;
 options.mcmc.i_plot=500;
 options.txt='case_line_fit';
-options=sippi_metropolis(data,prior,forward,options);
+
+options.mcmc.nite=20000;
+[options]=sippi_metropolis(data,prior,forward,options);
+
 
 %% plot some stats
 % get sample from posterior
