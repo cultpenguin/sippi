@@ -376,6 +376,7 @@ run_fftma_as_master=unique(run_fftma_as_master);
 % BY OTHER TYPES OF GAUSSIAN 1D TYPE PRIORS
 im_fftma_array=unique([run_fftma_as_master,run_fftma]);
 for im=im_fftma_array;
+    if isempty(im); break;end % Needed as of Matlab R2013a
     if (strcmp(upper(prior{im}.type),'FFTMA'))
         %% FFTMA
         % update VA structure from range/ang/sill if possible
