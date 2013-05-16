@@ -30,7 +30,6 @@ else
     catch
         i1_post=1;
     end
-    
     i1_post=max([i1_post 1]);
     
     nr=size(reals,1);
