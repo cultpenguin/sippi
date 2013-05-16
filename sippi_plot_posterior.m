@@ -95,7 +95,6 @@ for im=im_arr;
     id=1;
     
     [reals,etype_mean,etype_var,reals_all]=sippi_get_sample(data,prior,id,im,n_reals(im),options);
-    
     m_post{im}=reals;
     
     if ~exist('cax','var');
