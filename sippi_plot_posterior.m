@@ -407,8 +407,8 @@ try
     end
     n=length(im_onedim);
     for k=1:(length(im_onedim)-1)
-        [reals1,etype_mean1,etype_var1,reals_all1]=sippi_get_sample(data,prior,id,im_onedim(k),1000,options);
-        [reals2,etype_mean2,etype_var2,reals_all2]=sippi_get_sample(data,prior,id,im_onedim(k+1),1000,options);
+        [reals1,etype_mean1,etype_var1,reals_all1]=sippi_get_sample(data,prior,id,im_onedim(k),100000,options);
+        [reals2,etype_mean2,etype_var2,reals_all2]=sippi_get_sample(data,prior,id,im_onedim(k+1),100000,options);
         
         reals_all(:,k)=reals_all1(:);
         reals_all(:,k+1)=reals_all2(:);
@@ -427,6 +427,7 @@ try
         figure_focus(60+k);clf;set_paper('landscape');
         try;
             NX=ceil(sqrt(length(reals1)));
+            NX=40;
             NY=NX;
             try
                 % if prior{im}.min,prior{im}.max exists
@@ -458,6 +459,7 @@ try
             r1=reals_all(:,j);r2=reals_all(:,k);
             try
                 NX=ceil(1*sqrt(length(reals1)));
+                NX=40;
                 NY=NX;
                 try
                     % if prior{im}.min,prior{im}.max exists
