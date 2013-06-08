@@ -64,7 +64,7 @@ mcmc.null='';
 if isfield(options,'mcmc');mcmc=options.mcmc;end
 
 
-if ~isfield(mcmc,'i_plot');mcmc.i_plot=10000;end
+if ~isfield(mcmc,'i_plot');mcmc.i_plot=500;end
 if ~isfield(mcmc,'adaptive_rejection');mcmc.adaptive_rejection=0;end
 if mcmc.adaptive_rejection==1
     if ~isfield(mcmc,'logLmax')&~isfield(mcmc,'Lmax')
