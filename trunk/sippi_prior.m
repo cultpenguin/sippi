@@ -341,6 +341,13 @@ for im=im_array;
             
         end
        
+        if ~isfield(prior{im},'round_ceil');
+            prior{im}.round_ceil=0;
+        end
+        if prior{im}.round_ceil==1;
+            m_propose{im}=ceil(m_propose{im});
+        end
+        
     elseif (strcmp(upper(prior{im}.type),'FFTMA'))        
         % THE FFTMA PRIOR IS HANDLED BELOW
         run_fftma=[run_fftma im];
