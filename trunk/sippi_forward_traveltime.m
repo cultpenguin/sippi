@@ -97,6 +97,7 @@ elseif (strcmp(forward.type,'ray')|strcmp(forward.type,'fat'));
     end
     
 elseif strcmp(forward.type,'born');
+    disp('born')
     % BORN APPROXIMATION
     % LIU ET AL (2009) for seismic waves
     % Buursink et al () for electromagnetic waves
@@ -139,7 +140,10 @@ elseif strcmp(forward.type,'born');
         d{id}=forward.G*s;
     end
     
-elseif strcmp(forward.type,'fw_firstarrival');
+elseif strcmp(forward.type,'fw');
+    %% ERNST FW CODE WITH KNUDS PARRALLEL MATLAB INTERFACE
+    [d,forward,prior,data]=sippi_forward_gpr_ernst_knud(m,forward,prior,data,id,im);
+ elseif strcmp(forward.type,'fw_firstarrival');
     %% ERNST FW CODE WITH KNUDS PARRALLEL MATLAB INTERFACE
     [d,forward,prior,data]=sippi_forward_gpr_ernst_knud(m,forward,prior,data,id,im);
 else
