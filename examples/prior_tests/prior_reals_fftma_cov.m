@@ -72,3 +72,35 @@ print_mul('prior_reals_fftma_cov_seqgibbs')
 suptitle(sprintf('FFT-MA with varying covariance properties\n Sequential Gibbs sampling'))
 
 
+%% SEQ GIBBS MOVIE
+% 
+fclose all;
+close all
+randn('seed',4);rand('seed',4);
+fig=figure(13);clf
+prior{1}.seq_gibbs.step=.15;
+prior{2}.seq_gibbs.step=.15;
+prior{3}.seq_gibbs.step=0.05;;
+prior{3}.perturb=1;
+[m,prior]=sippi_prior(prior);
+aviobj = avifile('prior_reals_fftma_cov_seqgibbs.avi')
+for i=1:250;
+    [m,prior]=sippi_prior(prior,m);
+    subplot(1,1,1);
+    imagesc(prior{3}.x,prior{3}.y,m{3});
+    caxis([8 12])
+    axis image
+    %colorbar_shift;
+    colormap(sippi_colormap(1));
+    drawnow;
+    F = getframe(fig);
+    aviobj = addframe(aviobj,F);
+     %xlabel('X')
+    %ylabel('Y')
+end
+aviobj = close(aviobj);
+ 
+%print_mul('prior_reals_fftma_cov_seqgibbs')
+%suptitle(sprintf('FFT-MA with varying covariance properties\n Sequential Gibbs sampling'))
+
+

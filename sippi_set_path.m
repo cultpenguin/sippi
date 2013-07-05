@@ -6,28 +6,43 @@ if isempty(p)
     p=pwd;
 end
 
+
 i=0;
 i=i+1;F{i}='';
-i=i+1;F{i}=['data',filesep,'crosshole',filesep];
-i=i+1;F{i}=['toolboxes',filesep,'fast_marching_kroon',filesep];
-i=i+1;F{i}=['toolboxes',filesep,'fast_marching_kroon',filesep,'functions',filesep];
-i=i+1;F{i}=['toolboxes',filesep,'fast_marching_kroon',filesep,'shortestpath',filesep];
-i=i+1;F{i}=['toolboxes',filesep,'traveltime',filesep];
-i=i+1;F{i}=['toolboxes',filesep,'lomgrav',filesep];
-%i=i+1;F{i}=['toolboxes',filesep,'reflection',filesep];
-%i=i+1;F{i}=['toolboxes',filesep,'gpr_full_waveform',filesep];
-
+i=i+1;F{i}=['data',filesep,'crosshole'];
+i=i+1;F{i}=['toolboxes',filesep,'fast_marching_kroon'];
+i=i+1;F{i}=['toolboxes',filesep,'fast_marching_kroon',filesep,'functions'];
+i=i+1;F{i}=['toolboxes',filesep,'fast_marching_kroon',filesep,'shortestpath'];
+%i=i+1;F{i}=['toolboxes',filesep,'traveltime'];
+%i=i+1;F{i}=['toolboxes',filesep,'lomgrav'];
+%i=i+1;F{i}=['toolboxes',filesep,'mGstat'];
 %if exist([p,filesep,F{i}],'dir')
 %    % add path to full waveform GPR forward
-%    i=i+1;F{i}=['toolboxes',filesep,'gpr_full_waveform',filesep,'forward_simulation',filesep];
+%    i=i+1;F{i}=['toolboxes',filesep,'gpr_full_waveform',filesep,'forward_simulation'];
 %    for  j=1:18;
-%        i=i+1;F{i}=['toolboxes',filesep,'gpr_full_waveform',filesep,'forward_simulation',filesep,sprintf('Core%d',j),filesep];
+%        i=i+1;F{i}=['toolboxes',filesep,'gpr_full_waveform',filesep,'forward_simulation',filesep,sprintf('Core%d',j)];
 %    end
 %end
-i=i+1;F{i}=['toolboxes',filesep,'mGstat',filesep];
 
 
+% ALSO ADD ALL DIRS IN 'toolboxes' folder not allready specified
+toolboxes_dir=[p,filesep,'toolboxes'];
+p_tb=dir(toolboxes_dir)
+for i=1:length(p_tb)
+    if (p_tb(i).isdir);
+        dir_txt=['toolboxes',filesep,p_tb(i).name];
+        add_dir=1;
+        for i_f=1:length(F);            
+            if strcmp(F{i_f},dir_txt); add_dir=0; end
+        end
+        if add_dir==1           
+            F{length(F)+1}=dir_txt;
+            disp(sprintf('AAADDING %s',dir_txt))
+        end
+    end
+end
 
+% ACTUALLY ADD THE PATH
 addpath(pwd);
 for i=1:length(F);
     path_str=sprintf('%s%s%s',p,filesep,F{i});
