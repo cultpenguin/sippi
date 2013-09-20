@@ -351,8 +351,12 @@ for im=im_array;
     elseif (strcmp(upper(prior{im}.type),'FFTMA'))        
         % THE FFTMA PRIOR IS HANDLED BELOW
         run_fftma=[run_fftma im];
+    %% DEESSE (CLOSED SOURCE DIRECT SIMULATION
+    elseif (strcmp(upper(prior{im}.type),'DS'))
+        disp(sprintf('%s : ''%s'' type prior not yet implemented',mfilename,prior{im}.type));
+        
     else
-        disp(sprintf('%s : ''%s'' type prior model not supported',mfilename,prior{im}.type))
+        disp(sprintf('%s : ''%s'' type prior model not supported',mfilename,prior{im}.type));
     end
         
 end
