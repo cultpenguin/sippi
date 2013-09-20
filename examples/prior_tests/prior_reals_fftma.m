@@ -56,5 +56,35 @@ suptitle(sprintf('FFT-MA using target histogram, Cm=%s',prior{im}.Va))
 colorbar_shift;
 print_mul('prior_reals_fftma_nscore')
 
+%% MOVIE
+for j=1:2
+randn('seed',1);
+figure(11+j);clf
+set(gcf,'units','normalized','outerposition',[0 0 1 1])
+prior{1}.seq_gibbs.step=0.02;
 
-
+if j==1;
+    fname=[mfilename,'_target','.mp4'];
+    vidObj = VideoWriter(fname);
+else
+    prior{1}=rmfield(prior{1},'o_nscore');
+    fname=[mfilename,'.mp4'];
+    vidObj = VideoWriter(fname);
+end
+open(vidObj)
+for i=1:1000;
+    [m,prior]=sippi_prior(prior,m);
+    imagesc(prior{1}.x,prior{1}.y,m{1});
+    colormap(sippi_colormap(1));
+    caxis([8 12])
+    axis image
+    axis tight
+    set(gca,'nextplot','replacechildren');
+    %xlabel('X')
+    %ylabel('Y')
+     % Write each frame to the file.
+    currFrame = getframe;
+    writeVideo(vidObj,currFrame);
+end
+close(vidObj);
+end
