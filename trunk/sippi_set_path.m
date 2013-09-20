@@ -29,7 +29,7 @@ i=i+1;F{i}=['toolboxes',filesep,'fast_marching_kroon',filesep,'shortestpath'];
 toolboxes_dir=[p,filesep,'toolboxes'];
 p_tb=dir(toolboxes_dir)
 for i=1:length(p_tb)
-    if (p_tb(i).isdir);
+    if (p_tb(i).isdir)&(~strcmp('..',p_tb(i).name))&(~strcmp('.',p_tb(i).name))
         dir_txt=['toolboxes',filesep,p_tb(i).name];
         add_dir=1;
         for i_f=1:length(F);            
