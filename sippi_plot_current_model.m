@@ -24,13 +24,13 @@ end
 %% PLOT DATA RESPONSE
 try
     sippi_plot_data(d,data);
-    subfigure(1,2,1)
+    subfigure(2,2,1)
 end
 
 %%
 
 figure_focus(3);
-subfigure(1,2,2)
+subfigure(2,2,2)
 %%
 subplot(1,3,1);
 try

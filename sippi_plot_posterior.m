@@ -176,6 +176,17 @@ for im=im_arr;
         try
             set(gca,'xlim',cax);
         end
+        % PLOT REFERENCE IF IT EXISTS
+        try
+            if isfield(options.mcmc,'m_ref');
+                hold on
+                %plot(options.mcmc.m_ref{im},y0,'go','MarkerSize',6,'LineWidth',3);
+                plot(options.mcmc.m_ref{im},0,'go','MarkerSize',6,'LineWidth',3);
+                hold off
+            end
+        end
+     
+        
         ppp(options.width,options.height,options.axis_fontsize,options.w0,options.h0);
         
         %set(gca,'FontSize',16),
@@ -426,7 +437,8 @@ try
         figure_focus(60+k);clf;set_paper('landscape');
         try;
             NX=ceil(sqrt(length(reals1)));
-            NX=40;
+            %NX=40;
+            NX=21;
             NY=NX;
             try
                 % if prior{im}.min,prior{im}.max exists
@@ -441,6 +453,16 @@ try
         imagesc(x_arr,y_arr,Z');
         try;xlabel(prior{im_onedim(k)}.name);end
         try ylabel(prior{im_onedim(k+1)}.name);end
+        
+        try
+            if isfield(options.mcmc,'m_ref');
+                hold on
+                plot(options.mcmc.m_ref{k},options.mcmc.m_ref{k+1},'ro','MarkerSize',6,'LineWidth',3);
+                hold off
+            end
+        end
+          
+        
         colormap(1-gray);
         set(gca,'ydir','normal');
         %colorbar
@@ -457,8 +479,9 @@ try
             
             r1=reals_all(:,j);r2=reals_all(:,k);
             try
-                NX=ceil(1*sqrt(length(reals1)));
-                NX=40;
+                %NX=ceil(1*sqrt(length(reals1)));
+                %NX=40;
+                NX=15;
                 NY=NX;
                 try
                     % if prior{im}.min,prior{im}.max exists
@@ -482,6 +505,15 @@ try
             %plot(reals_all(:,j),reals_all(:,k),'k.','MarkerSize',.01)
             xlabel(prior{im_onedim(j)}.name,'interp','none')
             ylabel(prior{im_onedim(k)}.name,'interp','none')
+            
+            try
+                if isfield(options.mcmc,'m_ref');
+                    hold on
+                    plot(options.mcmc.m_ref{j},options.mcmc.m_ref{k},'ro','MarkerSize',6,'LineWidth',3);
+                    hold off
+                end
+            end
+            
             colormap(1-gray);
         end
     end

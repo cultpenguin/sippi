@@ -58,8 +58,15 @@ for id=id_array;
     if strcmp(data{id}.noise_model,'gaussian')&(data{id}.noise_uncorr==1)
         % UNCORRELATED GAUSSIAN NOISE
         
-        dd=data{id}.d_obs-d{id};
-        logL(id)=-.5*sum(sum(sum(dd.^2./(data{id}.d_std.^2))));
+        % dd=data{id}.d_obs-d{id};
+        % d_std could be an array of lenth(data{id}.d_obs)...
+        
+        dd=data{id}.d_obs(data{id}.i_use)-d{id};
+        if length(data{id}.d_std)==1
+            logL(id)=-.5*sum(sum(sum(dd.^2./(data{id}.d_std.^2))));
+        else
+            logL(id)=-.5*sum(sum(sum(dd.^2./(data{id}.d_std(data{id}.i_use).^2))));
+        end
         L(id)=exp(logL);
         
         break
