@@ -209,6 +209,8 @@ for id=id_array;
         end
         logL(id) = sum((abs(dd(:)).^data{id}.norm)./(data{id}.sigma(:).^(data{id}.norm)));
         logL(id) = logL .* (-1./data{id}.norm );
+    elseif (strcmp(data{id}.noise_model,'gaussian'))
+        % ALLEADY DONE
     else
         disp(sprintf('%s : noise model ''%s'' is not supported',mfilename,data{id}.noise_model));
         %keyboard
