@@ -41,9 +41,7 @@ function [logL,L,data]=sippi_likelihood(d,data,id_array);
 if  nargin<3
     id_array=1:length(d);
 end
-
 for id=id_array;
-    
     
     if ~isfield(data{id},'noise_model');
         data{id}.noise_model='gaussian';
@@ -51,9 +49,15 @@ for id=id_array;
         %data{id}.noise_model='laplace';
     end
     
-    if ~isfield(data{id},'noise_uncorr'); data{id}.noise_uncorr=0;end
+    if ~isfield(data{id},'noise_uncorr');
+        if (~isfield(data{id},'Cd')|~isfield(data{id},'CD'))
+            % Force uncorrelated noise in case Cd ot CD is not set!!
+            data{id}.noise_uncorr=1;
+        end
+    end
     
     if ~isfield(data{id},'i_use'); data{id}.i_use=1:1:length(data{id}.d_obs);end
+    
     
     if strcmp(data{id}.noise_model,'gaussian')&(data{id}.noise_uncorr==1)
         % UNCORRELATED GAUSSIAN NOISE
@@ -67,100 +71,102 @@ for id=id_array;
         else
             logL(id)=-.5*sum(sum(sum(dd.^2./(data{id}.d_std(data{id}.i_use).^2))));
         end
-        L(id)=exp(logL);
+        L(id)=exp(logL(id));
         
-        break
-    end
-     
-    N=length(data{id}.d_obs);
-    
-    %% CHECK OF ONE SHOULD REMOVE ICD
-    if isfield(data{id},'recomputeCD');
-        if (data{id}.recomputeCD==1)
-            try; data{id}=rmfield(data{id},'CD');end
-            try; data{id}=rmfield(data{id},'iCD');end
-        end
-    end
-    
-    %% CHECK WHETHER DATA SIZE HAS CHANGED
-    try
-    if ~(size(data{id}.iCD,1)==length(data{id}.i_use))
-        % recompute CD
-        try; data{id}=rmfield(data{id},'CD');end
-        try; data{id}=rmfield(data{id},'iCD');end
-        %disp('recomputing  iCD');;
-    end
-    end
-    % MAKE SURE GAUSSIAN NOISE MODEL IS PROPERLY SET
-    if ~isfield(data{id},'CD')
-        if ~isfield(data{id},'Cd');
-            if isfield(data{id},'d_std')
-                d_var=ones(N,1);
-                d_var=d_var(:).*data{id}.d_std(:).^2;
-                data{id}.Cd=diag(d_var);
-            elseif isfield(data{id},'d_var')
-                d_var=ones(N,1);
-                d_var=d_var(:).*data{id}.d_var(:);
-                data{id}.Cd=diag(d_var);
-            else
-                data{id}.Cd=0; % NO MEASUREMENT INC
+    else
+        
+        N=length(data{id}.d_obs);
+        
+        %% CHECK OF ONE SHOULD REMOVE ICD
+        if isfield(data{id},'recomputeCD');
+            if (data{id}.recomputeCD==1)
+                try; data{id}=rmfield(data{id},'CD');end
+                try; data{id}=rmfield(data{id},'iCD');end
             end
         end
-        if (size(data{id}.Cd,1)==1)
-            data{id}.Cd=eye(length(data{id}.d_obs)).*data{id}.Cd;
-        end
         
-        if ~isfield(data{id},'Ct')
-            % modelization error
-            data{id}.Ct=zeros(size(data{id}.Cd));
+        %% CHECK WHETHER DATA SIZE HAS CHANGED
+        try
+            if ~(size(data{id}.iCD,1)==length(data{id}.i_use))
+                % recompute CD
+                try; data{id}=rmfield(data{id},'CD');end
+                try; data{id}=rmfield(data{id},'iCD');end
+                %disp('recomputing  iCD');;
+            end
         end
-        
+        % MAKE SURE GAUSSIAN NOISE MODEL IS PROPERLY SET
         if ~isfield(data{id},'CD')
-            % modelization and measuremnet error
-            data{id}.CD=data{id}.Ct+data{id}.Cd;
+            if ~isfield(data{id},'Cd');
+                if isfield(data{id},'d_std')
+                    d_var=ones(N,1);
+                    d_var=d_var(:).*data{id}.d_std(:).^2;
+                    data{id}.Cd=diag(d_var);
+                elseif isfield(data{id},'d_var')
+                    d_var=ones(N,1);
+                    d_var=d_var(:).*data{id}.d_var(:);
+                    data{id}.Cd=diag(d_var);
+                else
+                    data{id}.Cd=0; % NO MEASUREMENT INC
+                end
+            end
+            if (size(data{id}.Cd,1)==1)
+                data{id}.Cd=eye(length(data{id}.d_obs)).*data{id}.Cd;
+            end
+            
+            if ~isfield(data{id},'Ct')
+                % modelization error
+                data{id}.Ct=zeros(size(data{id}.Cd));
+            end
+            
+            if ~isfield(data{id},'CD')
+                % modelization and measuremnet error
+                data{id}.CD=data{id}.Ct+data{id}.Cd;
+            end
+            
         end
         
-    end
-    
-    
-    if isfield(data{id},'dt');
-        dd=(data{id}.d_obs(data{id}.i_use)-data{id}.dt(data{id}.i_use))-d{id};
-    else
-        dd=data{id}.d_obs(data{id}.i_use)-d{id};
-    end
-    
-    
-    if ~isfield(data{id},'recomputeCD')
-        data{id}.recomputeCD=0;
-    end
-    
-    % Only compute iCD if it is computed only once (i.e.
-    % data{id}.recomputeCD==0)
-    if (~isfield(data{id},'iCD'))&(data{id}.recomputeCD==0)
         
-        %data{id}.iCD=inv(data{id}.CD);
-        data{id}.iCD=inv(data{id}.CD(data{id}.i_use,data{id}.i_use));
+        if isfield(data{id},'dt');
+            dd=(data{id}.d_obs(data{id}.i_use)-data{id}.dt(data{id}.i_use))-d{id};
+        else
+            dd=data{id}.d_obs(data{id}.i_use)-d{id};
+        end
         
-    end
+        
+        if ~isfield(data{id},'recomputeCD')
+            data{id}.recomputeCD=0;
+        end
+        
+        % Only compute iCD if it is computed only once (i.e.
+        % data{id}.recomputeCD==0)
+        if (~isfield(data{id},'iCD'))&(data{id}.recomputeCD==0)
+            
+            %data{id}.iCD=inv(data{id}.CD);
+            data{id}.iCD=inv(data{id}.CD(data{id}.i_use,data{id}.i_use));
+            
+        end
+        
+        % compute logdet(CD) if it does not exist, and if recomputeCD=1;
+        if (~isfield(data{id},'logdet'))|(data{id}.recomputeCD==1)
+            data{id}.logdet = logdet(data{id}.CD(data{id}.i_use,data{id}.i_use));
+        end
+        
+        
+    end %%%%%%%%%%%%%%%%%
     
-    % compute logdet(CD) if it does not exist, and if recomputeCD=1;
-    if (~isfield(data{id},'logdet'))|(data{id}.recomputeCD==1)
-        data{id}.logdet = logdet(data{id}.CD(data{id}.i_use,data{id}.i_use));
-    end
     
-    
-    if strcmp(data{id}.noise_model,'gaussian')
+    if strcmp(data{id}.noise_model,'gaussian')&(data{id}.noise_uncorr==0)
         nknown=length(data{id}.i_use);
         
         if ~isfield(data{id},'full_likelihood');
             data{id}.full_likelihood=0;
         end
-            
+        
         if data{id}.full_likelihood==1
             f1 = -(nknown/2)*log(2*pi);
             f2 = -0.5*data{id}.logdet;
             
-            if isinf(f1); 
+            if isinf(f1);
                 %% this os pretty bad if CD changes !! Because then the determinant also changes..
                 disp(sprintf('%s : Full likelihood cannot be computed !',mfilename))
                 disp(sprintf('%s : --> ignoring determinant !',mfilename))
@@ -175,7 +181,7 @@ for id=id_array;
             end
             
             logL(id) = f1 +f2 +f3;
-
+            
         else
             if data{id}.recomputeCD==1
                 f3 = -.5*dd'*(data{id}.CD\dd);
@@ -185,8 +191,6 @@ for id=id_array;
             end
             logL(id) = f3;
         end
-        
- 
         
     elseif strcmp(data{id}.noise_model,'laplace')
         if ~isfield(data{id},'sigma');
@@ -207,11 +211,13 @@ for id=id_array;
         logL(id) = logL .* (-1./data{id}.norm );
     else
         disp(sprintf('%s : noise model ''%s'' is not supported',mfilename,data{id}.noise_model));
+        %keyboard
     end
-  
+    
 end
 
 if nargout>1
-    L=exp(logL);
+    L=logL;
 end
-    
+
+logL=sum(logL);
