@@ -144,7 +144,7 @@ t_data=toc;
 if isfield(options,'i_update_txt');
     i_update_txt=options.i_update_txt;
 else
-    i_update_txt=max([1 ceil(5./(t_data+t_prior))]);
+    i_update_txt=max([1 ceil(10./(t_data+t_prior))]);
 end
 
 %% PRE ALLOCATE ARRAY FOR MCMC OUTPUT
