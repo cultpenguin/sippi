@@ -81,6 +81,12 @@ if length(n_reals)==1;
 end
 
 
+pl_base=1;
+pl_2d_marg=0;
+pl_data=1;
+
+%for im=im_arr;
+if pl_base==1;
 
 for im=im_arr;
     
@@ -96,7 +102,7 @@ for im=im_arr;
     
     [reals,etype_mean,etype_var,reals_all]=sippi_get_sample(data,prior,id,im,n_reals(im),options);
     m_post{im}=reals;
-    
+
     if ~exist('cax','var');
         if isfield(prior{im},'cax')
             cax=prior{im}.cax;
@@ -131,7 +137,7 @@ for im=im_arr;
             sample_prior(i)=m{1};
         end
         
-        hx=linspace(cax(1),cax(2),30);
+        hx=linspace(cax(1),cax(2),31);
         h_post=hist(reals,hx);
         h_post=h_post/sum(h_post);
         
@@ -185,7 +191,7 @@ for im=im_arr;
                 hold off
             end
         end
-     
+        
         
         ppp(options.width,options.height,options.axis_fontsize,options.w0,options.h0);
         
@@ -333,11 +339,12 @@ for im=im_arr;
         disp(sprintf('%s : could not plot acceptance rate',mfilename));
         cd(cwd);
     end
-    
     %% PLOT CORRELATION COEFFICIENT / FIND NITE PER INDEPENDANT POST REAL
     try
-        
-        if ndim>1
+        if ndim==0
+            % autocorrelation analysis... to come
+            
+        elseif ndim>1
             fn=(im-1)*10+6;
             figure_focus(fn);set_paper('landscape');clf;
             set(gca,'FontSize',options.FS)
@@ -405,10 +412,13 @@ for im=im_arr;
     end
     
 end
-
+end
 
 %% 2D POSTERIOR MARGINALS.
+if pl_2d_marg==1,
 try
+    try;cd(plotdir);end
+    
     im_onedim=[];
     for j=1:length(im_arr);
         if max(prior{j}.dim)==1
@@ -416,25 +426,37 @@ try
         end
     end
     n=length(im_onedim);
+    j=0;
     for k=1:(length(im_onedim)-1)
         [reals1,etype_mean1,etype_var1,reals_all1]=sippi_get_sample(data,prior,id,im_onedim(k),100000,options);
-        [reals2,etype_mean2,etype_var2,reals_all2]=sippi_get_sample(data,prior,id,im_onedim(k+1),100000,options);
-        
         reals_all(:,k)=reals_all1(:);
-        reals_all(:,k+1)=reals_all2(:);
+    for l=(k+1):(length(im_onedim))
+        j=j+1;
         
-        %keyboard
-        figure_focus(50+k);clf;set_paper('landscape');
-        plot(reals_all1,reals_all2,'.')
+        %% 2d marg scatter
+        [reals2,etype_mean2,etype_var2,reals_all2]=sippi_get_sample(data,prior,id,im_onedim(l),100000,options);
+        reals_all(:,l)=reals_all2(:);
+        
+        figure_focus(50+j);clf;set_paper('landscape');
+        plot(reals_all1,reals_all2,'k.')
         try;xlabel(prior{im_onedim(k)}.name);end
-        try;ylabel(prior{im_onedim(k+1)}.name);end
+        try;ylabel(prior{im_onedim(l)}.name);end
         
         try;set(gca,'xlim',[prior{im_onedim(k)}.min prior{im_onedim(k)}.max]);end
-        try;set(gca,'ylim',[prior{im_onedim(k+1)}.min prior{im_onedim(k+1)}.max]);end
+        try;set(gca,'ylim',[prior{im_onedim(l)}.min prior{im_onedim(l)}.max]);end
+        % REF MODEL
+        if isfield(options.mcmc,'m_ref');
+            try
+                hold on;plot(options.mcmc.m_ref{k},options.mcmc.m_ref{l},'ro','MarkerSize',6,'LineWidth',3);hold off
+            end
+        end
         ppp(options.width,options.height,options.axis_fontsize,options.w0,options.h0);
         print_mul(sprintf('%s_post_marg_m%d_m%d',fname,im_onedim(k),im_onedim(k+1)));
-        
-        figure_focus(60+k);clf;set_paper('landscape');
+       
+        %% 2d marg image
+        pl_2d_marg_image=0;
+        if pl_2d_marg_image==1;
+        figure_focus(60+j);clf;set_paper('landscape');
         try;
             NX=ceil(sqrt(length(reals1)));
             %NX=40;
@@ -442,7 +464,7 @@ try
             NY=NX;
             try
                 % if prior{im}.min,prior{im}.max exists
-                [Z,x_arr,y_arr] = hist2(reals_all1(:),reals_all2(:),linspace(prior{im_onedim(k)}.min,prior{im_onedim(k)}.max,NX),linspace(prior{im_onedim(k+1)}.min,prior{im_onedim(k+1)}.max,NY));
+                [Z,x_arr,y_arr] = hist2(reals_all1(:),reals_all2(:),linspace(prior{im_onedim(k)}.min,prior{im_onedim(k)}.max,NX),linspace(prior{im_onedim(l)}.min,prior{im_onedim(l)}.max,NY));
             catch
                 [Z,x_arr,y_arr] = hist2(reals_all1(:),reals_all2(:),NX,NY);
             end
@@ -452,36 +474,32 @@ try
         
         imagesc(x_arr,y_arr,Z');
         try;xlabel(prior{im_onedim(k)}.name);end
-        try ylabel(prior{im_onedim(k+1)}.name);end
-        
-        try
-            if isfield(options.mcmc,'m_ref');
-                hold on
-                plot(options.mcmc.m_ref{k},options.mcmc.m_ref{k+1},'ro','MarkerSize',6,'LineWidth',3);
-                hold off
+        try ylabel(prior{im_onedim(l)}.name);end
+        % REF MODEL
+        if isfield(options.mcmc,'m_ref');
+            try
+                hold on;plot(options.mcmc.m_ref{k},options.mcmc.m_ref{l},'ro','MarkerSize',6,'LineWidth',3);hold off
             end
         end
-          
         
         colormap(1-gray);
         set(gca,'ydir','normal');
         %colorbar
         ppp(options.width,options.height,options.axis_fontsize,options.w0,options.h0);
         print_mul(sprintf('%s_post_marg_hist_m%d_m%d',fname,im_onedim(k),im_onedim(k+1)))
-        
+        end
     end
-    
+    end
     
     %% 2d marginals on one plot
     figure_focus(70);clf;set_paper('landscape');
     for j=1:(n-1)
         for k=((1)+j):n
             
-            r1=reals_all(:,j);r2=reals_all(:,k);
+            r1=reals_all(:,j);
+            r2=reals_all(:,k);
             try
-                %NX=ceil(1*sqrt(length(reals1)));
-                %NX=40;
-                NX=15;
+                NX=25;
                 NY=NX;
                 try
                     % if prior{im}.min,prior{im}.max exists
@@ -524,8 +542,10 @@ catch
     cd(cwd);
     keyboard
 end
+end
 
 %% PLOT DATA ASSOCIATED TO REALS
+if pl_data==1,
 try
     
     %% THIS ONE NEADS SOME HEAVY EDITING TO HANDLE TWO DATA SETS!!!
@@ -573,7 +593,7 @@ catch
     close(f_handle)
     fprintf('%s : Cannot plot data response. \n',mfilename)
 end
-
+end
 
 
 
