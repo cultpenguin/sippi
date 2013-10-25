@@ -140,7 +140,6 @@ for id=id_array;
         % Only compute iCD if it is computed only once (i.e.
         % data{id}.recomputeCD==0)
         if (~isfield(data{id},'iCD'))&(data{id}.recomputeCD==0)
-            
             %data{id}.iCD=inv(data{id}.CD);
             data{id}.iCD=inv(data{id}.CD(data{id}.i_use,data{id}.i_use));
             
