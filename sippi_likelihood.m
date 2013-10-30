@@ -54,6 +54,11 @@ for id=id_array;
             % Force uncorrelated noise in case Cd ot CD is not set!!
             data{id}.noise_uncorr=1;
         end
+        if (isfield(data{id},'Ct'))
+            % Force Correlated noise in case Cd ot CD is not set!!
+            data{id}.noise_uncorr=0;
+        end
+        
     end
     
     if ~isfield(data{id},'i_use'); data{id}.i_use=1:1:length(data{id}.d_obs);end
