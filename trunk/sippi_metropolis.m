@@ -25,8 +25,15 @@ function [options,data,prior,forward,m_current]=sippi_metropolis(data,prior,forw
 %
 %    options_mcmc.accept_only_improvements [0] : Optimization
 %
-%    options.mcmc.pert_strategy.perturb_all=1; % Perturb all priors in each 
+%   %% PERTUBATION STRATEGY
+%   options.mcmc.pert_strategy.perturb_all=1; % Perturb all priors in each 
 %                                              % iteration. def =[0]
+%    %% SIMULATED ANNEALING 
+%    options.mcmc.anneal.i_begin=1; % default, iteration number when annealing begins
+%    options.mcmc.anneal.i_end=100000; %  iteration number when annealing begins
+%    options.mcmc.anneal.fac_begin=20; % default, noise is scaled by fac_begin at iteration i_begin
+%    options.mcmc.anneal.fac_end=1; % default, noise is scaled by fac_end at iteration i_end
+%
 %
 % See also sippi_rejection
 %
@@ -112,13 +119,23 @@ end
 m_current=m_init;
 
 
+
+
 %% INITIAL LIKELIHOODS
-if isfield(forward,'forward_function');
-    [d_init,forward,prior,data]=feval(forward.forward_function,m_init,forward,prior,data);
-else
+%if isfield(forward,'forward_function');
+%    [d_init,forward,prior,data]=feval(forward.forward_function,m_init,forward,prior,data);
+%else
     [d_init,forward,prior,data]=sippi_forward(m_init,forward,prior,data);
+%end
+
+
+%% Initialize
+data_init=data;
+if isfield(mcmc,'anneal');
+    % SET ANNEALING IF APPLICABLE
+    [data_init,mcmc]=sippi_anneal_adjust_noise(data,120,options.mcmc,prior);
 end
-[logL_init,L_init,data]=sippi_likelihood(d_init,data);
+[logL_init,L_init]=sippi_likelihood(d_init,data_init);
 logL_current=logL_init;
 
 %% COMPUTE TIME PER ITERAION
@@ -164,7 +181,7 @@ end
 
 
 %% START THE METROPOLOS ALGORITHM
-disp(sprintf('%s : starting extended Metropolis sampler in %s',mfilename,options.txt))
+disp(sprintf('%s : staring extended Metropolis sampler in %s',mfilename,options.txt))
 t0=now;
 iacc=0;
 isample=0;
@@ -230,13 +247,26 @@ for i=1:mcmc.nite;
     
     %% FORWARD PROBLEM
     % solve forward problem, and compute likelihood
-    if isfield(forward,'forward_function');
-        [d,forward,prior_propose,data]=feval(forward.forward_function,m_propose,forward,prior_propose,data);
+    %if isfield(forward,'forward_function');
+    %    [d,forward,prior_propose,data]=feval(forward.forward_function,m_propose,forward,prior_propose,data);
+    %else
+    [d,forward,prior_propose,data]=sippi_forward(m_propose,forward,prior_propose,data);
+    %end
+    do_anneal=0;
+    if isfield(mcmc,'anneal');
+        if (i>mcmc.anneal.i_begin)&(i<mcmc.anneal.i_end)
+            do_anneal=1;
+        end
+    end 
+    if do_anneal==1,
+        % DO ANNEAL
+        [data_test]=sippi_anneal_adjust_noise(data,i,options.mcmc,prior);
+        [logL_propose,L_propose]=sippi_likelihood(d,data_test);
+        [logL_current]=sippi_likelihood(d_current,data_test);
     else
-        [d,forward,prior_propose,data]=sippi_forward(m_propose,forward,prior_propose,data);
+        [logL_propose,L_propose,data]=sippi_likelihood(d,data);
     end
-    [logL_propose,L_propose,data]=sippi_likelihood(d,data);
-
+    
     if mcmc.store_all==1
         mcmc.logL_pro(i)=logL_propose;
         for im=1:length(prior);
