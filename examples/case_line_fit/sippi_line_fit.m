@@ -40,14 +40,29 @@ data{1}.d_obs=d_obs+randn(size(d_obs)).*data{1}.d_std;
 
 %% Perform extended Metropolis sampling 
 % set some MCMC options.
-options.mcmc.nite=20000;
+options.mcmc.nite=40000;
 options.mcmc.i_sample=50;
 options.mcmc.i_plot=500;
 options.txt='case_line_fit';
 
-options.mcmc.nite=20000;
+options_anneal=options;
 [options]=sippi_metropolis(data,prior,forward,options);
 
+
+%% ANNEALING
+options_anneal.txt='case_line_fit_anneal';
+options_anneal.mcmc.nite=20000;
+options_anneal.mcmc.anneal.i_begin=1; % default, iteration number when annealing begins
+options_anneal.mcmc.anneal.i_end=options.mcmc.nite; %  iteration number when annealing begins
+options_anneal.mcmc.anneal.fac_begin=1; % default, noise is scaled by fac_begin at iteration i_begin
+options_anneal.mcmc.anneal.fac_end=.00001; % default, noise is scaled by fac_end at iteration i_end
+ 
+ 
+[options_anneal]=sippi_metropolis(data,prior,forward,options_anneal);
+
+for i=1:length(prior);
+disp(sprintf('%s ref=%g, optimal=%g ',prior{i}.name,prior{i}.m_true,options_anneal.mcmc.m_current{i}))
+end
 
 %% plot some stats
 % get sample from posterior
@@ -92,14 +107,21 @@ try;close(2);end;figure(2);clf;set_paper('portrait');
 plot(m1_prior,m2_prior,'r.','MarkerSize',6)
 hold on
 plot(m1_post,m2_post,'g.','MarkerSize',14)
-plot(prior{1}.m_true,prior{2}.m_true,'k.','MarkerSize',24);
-
+plot(prior{1}.m_true,prior{2}.m_true,'b.','MarkerSize',24);
+try
+    plot(options_anneal.mcmc.m_current{1},options_anneal.mcmc.m_current{2},'k.','MarkerSize',12)
+    plot(options_anneal.mcmc.m_current{1},options_anneal.mcmc.m_current{2},'w.','MarkerSize',8)
+end
 hold off
 xlabel('Gradient')
 ylabel('Intercept')
-legend('A priori, \rho','A posteriori, \sigma','true model')
+legend('A priori, \rho','A posteriori, \sigma','true model','Annealing')
 ppp(8,8,12)
 print_mul('sippi_line_fit_cross')
+
+
+return
+
 
 %%
 for i=1:length(m1_post);
