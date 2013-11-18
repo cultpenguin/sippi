@@ -18,7 +18,7 @@ function [options,data,prior,forward,m_current]=sippi_metropolis(data,prior,forw
 %
 %    options.mcmc.nite [1]  : Number if iterations
 %    options.mcmc.i_plot [1]: Number of iterations between updating plots
-%    options.mcmc.i_sample=500: Number of iterations between saving model to disk
+%    options.mcmc.i_sample=: Number of iterations between saving model to disk
 %
 %    options.mcmc.m_init : Manually chosen starting model
 %    options.mcmc.m_ref  : Reference known target model
@@ -179,7 +179,6 @@ if mcmc.store_all==1
     mcmc.m_pro = zeros(nm,mcmc.nite);
 end
 
-
 %% START THE METROPOLOS ALGORITHM
 disp(sprintf('%s : staring extended Metropolis sampler in %s',mfilename,options.txt))
 t0=now;
@@ -254,7 +253,7 @@ for i=1:mcmc.nite;
     %end
     do_anneal=0;
     if isfield(mcmc,'anneal');
-        if (i>mcmc.anneal.i_begin)&(i<mcmc.anneal.i_end)
+        if (i>=mcmc.anneal.i_begin)&(i<=mcmc.anneal.i_end)
             do_anneal=1;
         end
     end 
@@ -372,6 +371,7 @@ catch
 end
 
 %% return mcmc options
+mcmc.m_current=m_current;
 options.mcmc=mcmc;
 
 %%

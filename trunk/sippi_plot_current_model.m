@@ -6,9 +6,9 @@
 function sippi_plot_current_model(mcmc,data,d,m_current,prior);
 
 col=[
-    0 0 0 
+    0 0 0
     1 0 0
-    0 1 0 
+    0 1 0
     0 0 1
     1 1 0
     0 0 1
@@ -61,16 +61,16 @@ subplot(1,3,3);
 
 for id=1:length(data);
     %try
-        if isfield(data{id},'Cd')
-            [h,hx]=hist(data{id}.d_obs(data{id}.i_use)-d{id}(:),30);
-            h_true=normpdf(hx,0,sqrt(data{id}.Cd(1)));
-        elseif isfield(data{id},'d_std')
-            [h,hx]=hist(data{id}.d_obs(data{id}.i_use)-d{id}(:),30);
-            h_true=normpdf(hx,0,sqrt(data{id}.d_std(1).^2));
-        else
-            [h,hx]=hist(data{id}.d_obs(data{id}.i_use)-d{id}(:),30);
-            h_true=normpdf(hx,0,sqrt(data{id}.d_var(1)));
-        end
+    if isfield(data{id},'Cd')
+        [h,hx]=hist(data{id}.d_obs(data{id}.i_use)-d{id}(:),30);
+        h_true=normpdf(hx,0,sqrt(data{id}.Cd(1)));
+    elseif isfield(data{id},'d_std')
+        [h,hx]=hist(data{id}.d_obs(data{id}.i_use)-d{id}(:),30);
+        h_true=normpdf(hx,0,sqrt(data{id}.d_std(1).^2));
+    else
+        [h,hx]=hist(data{id}.d_obs(data{id}.i_use)-d{id}(:),30);
+        h_true=normpdf(hx,0,sqrt(data{id}.d_var(1)));
+    end
     %end
     %h_true=normpdf(hx,0,sqrt(data{id}.Cd(1)));
     h_true=sum(h)*h_true./sum(h_true);
