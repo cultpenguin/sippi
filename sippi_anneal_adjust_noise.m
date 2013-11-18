@@ -5,7 +5,6 @@
 function [data,mcmc]=sippi_anneal_adjust_noise(data_org,i,mcmc,prior);
 
 data=data_org;
-
 %% GET NOISE SCALING FACTOR
 if nargin==4;
     [fac,mcmc]=sippi_anneal_factor(mcmc,i,prior);

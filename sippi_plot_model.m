@@ -95,6 +95,10 @@ for im=im_array;
                 colorbar_shift;
             end
             
+            if isfield(prior{im},'daspect');
+                daspect(prior{im}.daspect);
+            end
+            
             xlabel('X');
             ylabel('Y');
             zlabel('Z');
@@ -110,7 +114,11 @@ for im=im_array;
             end
             xlabel('X');
             ylabel('Y');
-                        
+            
+            if isfield(prior{im},'daspect');
+                daspect(prior{im}.daspect);
+            end
+            
         elseif ndim==1
             try
                 plot(x,m{im},'k-*')
