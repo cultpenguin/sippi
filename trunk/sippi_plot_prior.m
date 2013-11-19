@@ -20,6 +20,7 @@ if isstr(prior)
         load([fname,'.mat']);
     end
 end
+prior=sippi_prior_init(prior);
 
 if nargin>1
     if isempty(im_arr)
@@ -84,6 +85,30 @@ for im=im_arr;
     figure_focus(f_id);clf;
     set_paper('landscape');
     
+    
+    % FIND SCALE/ORIENTATION
+    ax_lscape=1;
+    try
+        % if 'lim' is set
+        if prior{im}.lim(1)<max(prior{im}.lim(2:3))
+            ax_lscape=0;
+        end
+    end
+    try
+        % if 'daspect' is set
+        r=prior{im}.lim./prior{im}.daspect;
+        if r(1)<max(r(2:3))
+            ax_lscape=0;
+        end
+    end
+    
+    if isfield(prior{im},'name');
+        title_txt=sprintf('m%d: %s',im,prior{im}.name);
+    else
+        title_txt=sprintf('m%d',im);
+    end
+    
+    
     if prior{im}.ndim<1
         % SCALAR --> HISTOGRAM
         clear p;
@@ -109,7 +134,7 @@ for im=im_arr;
             set(gca,'xlim',prior{im}.cax);
         end
                
-        title(sprintf('m#%d, prior',im))
+        title(title_txt)
         
     elseif prior{im}.ndim<2
         % 1D
@@ -143,18 +168,18 @@ for im=im_arr;
         
         xlabel('X')
         ylabel(prior{im}.name)
-        title(sprintf('m#%d, prior',im))
+        title(title_txt)
     else
         %% SUBPLOTS       
         for i=1:n_reals(im);
             progress_txt(i,n_reals(im),'generating prior sample')
-            if (prior{im}.dim(1)>max(prior{im}.dim(2:3)))
+             if ax_lscape==1;
                 nsp_y=5;
                 nsp_x=ceil(n_reals(im)/nsp_y);
             else
                 nsp_x=5;
                 nsp_y=ceil(n_reals(im)/nsp_x);
-            end
+             end
             
             clear p;clear m_reals;
             try;clear m_prior;end  
@@ -173,9 +198,9 @@ for im=im_arr;
             subplot(nsp_y,nsp_x,i);
             
             use_colorbar=0;
-            if ((n_reals==i)&(i==(1*nsp_x)))|(i==(2*nsp_x));
-                use_colorbar=1;
-            end
+            i_cb=ceil((nsp_y+1)/2)*nsp_x;
+            if i==i_cb; use_colorbar=1;end
+            
             sippi_plot_model(p,m_prior,1,use_colorbar,f_id);
         end
         %%%

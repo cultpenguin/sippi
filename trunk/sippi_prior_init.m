@@ -41,6 +41,11 @@ for im=1:length(prior);
         prior{im}.dim(3)=length(prior{im}.z);
     end
     [prior{im}.xx,prior{im}.yy,prior{im}.zz]=meshgrid(prior{im}.x,prior{im}.y,prior{im}.z);
+    % RANGE FOR EACH DIM
+    try,prior{im}.lim(1)=max(prior{im}.x)-min(prior{im}.x);end
+    try,prior{im}.lim(2)=max(prior{im}.y)-min(prior{im}.y);end
+    try,prior{im}.lim(3)=max(prior{im}.z)-min(prior{im}.z);end
+    
     
     
     prior{im}.ndim=length(find(prior{im}.dim>1));

@@ -8,7 +8,6 @@ function sippi_plot_posterior(fname,im_arr,prior,options,n_reals);
 %
 
 
-
 if ~exist('supt','var');
     supt=0;
 end
@@ -58,6 +57,8 @@ options.height=10;
 options.w0=2;
 options.h0=2;
 
+prior=sippi_prior_init(prior);
+
 
 %% REALS
 nm=length(prior);
@@ -90,11 +91,35 @@ if pl_base==1;
     
     for im=im_arr;
         
+        if isfield(prior{im},'name');
+            title_txt=sprintf('m%d: %s',im,prior{im}.name);
+        else
+            title_txt=sprintf('m%d',im);
+        end
+    
+        
         try;cd(plotdir);end
         clear cax;
         % find dimension
         ndim=sum(prior{im}.dim>1);
         %if ndim==0;ndim=1;end
+        
+        
+        % FIND SCALE/ORIENTATION
+        ax_lscape=1;
+        try
+            % if 'lim' is set
+            if prior{im}.lim(1)<max(prior{im}.lim(2:3))
+                ax_lscape=0;
+            end
+        end
+        try
+            % if 'daspect' is set
+            r=prior{im}.lim./prior{im}.daspect;
+            if r(1)<max(r(2:3))
+                ax_lscape=0;
+            end
+        end
         
         
         options.null='';
@@ -212,7 +237,7 @@ if pl_base==1;
             end
             
         else
-            if (prior{im}.dim(1)>max(prior{im}.dim(2:3)))
+            if ax_lscape==1;
                 nsp_y=5;
                 nsp_x=ceil(n_reals(im)/nsp_y);
             else
@@ -226,10 +251,15 @@ if pl_base==1;
                 subplot(nsp_y,nsp_x,i);
                 
                 use_colorbar=0;
-                if ((n_reals==i)&(i==(1*nsp_x)))|(i==(2*nsp_x));
-                    %if (i==(2*nsp_x));
-                    use_colorbar=1;
-                end
+                i_cb=ceil((nsp_y+1)/2)*nsp_x;
+                if i==i_cb; use_colorbar=1;end
+       
+                
+                %use_colorbar=0;
+                %if ((n_reals==i)&(i==(1*nsp_x)))|(i==(2*nsp_x));
+                %    %if (i==(2*nsp_x));
+                %    use_colorbar=1;
+                %end
                 
                 try
                     if (length(z)>1)
@@ -245,19 +275,20 @@ if pl_base==1;
             end
         end
         if supt==1,
-            st=suptitle(sprintf('m%d : %s',im,prior{im}.name));
+            st=suptitle(title_txt);
             set(st,'interp','none','FontSize',18);
         else
-            %title(sprintf('m#%d, posterior',im))
+            %title(title_txt)
         end
         print_mul(sprintf('%s_m%d_posterior_sample',fname,im))
-        
         
         %% PLOT ETYPES
         if ndim>1
             f_id=(im-1)*10+2;
             figure_focus(f_id);set_paper('landscape');clf;
-            if (prior{im}.dim(1)>max(prior{im}.dim(2:3)))
+            
+            % ETYPE MEAN
+            if (ax_lscape==1)
                 subplot(2,1,1);
             else
                 subplot(1,2,1);
@@ -266,11 +297,11 @@ if pl_base==1;
             met{im}=etype_mean;
             sippi_plot_model(prior,met,im,0,f_id);colorbar off;
             caxis(cax);
-            colorbar_shift;
-            axis image
-            title('sample mean')
+            cb=colorbar_shift;
+            set(get(cb,'Ylabel'),'String','Sample Mean')
             
-            if (prior{im}.dim(1)>max(prior{im}.dim(2:3)))
+            % ETYPE VARIANCE
+            if (ax_lscape==1)
                 subplot(2,1,2);
             else
                 subplot(1,2,2);
@@ -286,12 +317,12 @@ if pl_base==1;
                 
             end
             try;caxis(cax_var);end
-            colorbar_shift;
-            axis image
+            cb=colorbar_shift;
+            set(get(cb,'Ylabel'),'String','Sample Variance')
             
-            title('sample variance')
+            % SUPTITLE
             if supt==1,
-                st=suptitle(sprintf('m%d : %s',im,prior{im}.name));
+                st=suptitle(sprintf('m%d: %s',im,prior{im}.name));
                 set(st,'interpreter','none');
             end
             print_mul(sprintf('%s_m%d_sample_stat',fname,im))
@@ -323,7 +354,7 @@ if pl_base==1;
             plot(ip,AccRate_smooth,'-');
             xlabel('Iteration number');
             ylabel('Acceptance rate')
-            title(sprintf('m#%d, posterior',im))
+            title(title_txt)
             ylim=get(gca,'ylim');
             if ylim(2)>1.1; ylim(2)=1.1;end
             set(gca,'ylim',ylim);
@@ -415,7 +446,8 @@ if pl_base==1;
 end
 
 %% 2D POSTERIOR MARGINALS.
-if pl_2d_marg==1,
+if (length(prior)<2); pl_2d_marg=0;end
+if (pl_2d_marg==1),
     try
         try;cd(plotdir);end
         im_onedim=[];
@@ -491,7 +523,7 @@ if pl_2d_marg==1,
         end
         
         %% 2d marginals on one plot
-        figure_focus(70);clf;set_paper('landscape');
+        fn=figure_focus(70);clf;set_paper('landscape');
         for j=1:(n-1)
             for k=((1)+j):n
                 

@@ -90,14 +90,16 @@ for im=im_array;
 
                 
             end
+            
+            if isfield(prior{im},'daspect');
+                daspect(prior{im}.daspect);
+            end
+            
             colormap(sippi_colormap);
             if use_colorbar==1
                 colorbar_shift;
             end
             
-            if isfield(prior{im},'daspect');
-                daspect(prior{im}.daspect);
-            end
             
             xlabel('X');
             ylabel('Y');
@@ -108,6 +110,10 @@ for im=im_array;
             shading interp;
             axis image
             
+            if isfield(prior{im},'daspect');
+                daspect(prior{im}.daspect);
+            end
+            
             colormap(sippi_colormap);
             if use_colorbar==1
                 colorbar_shift;
@@ -115,9 +121,6 @@ for im=im_array;
             xlabel('X');
             ylabel('Y');
             
-            if isfield(prior{im},'daspect');
-                daspect(prior{im}.daspect);
-            end
             
         elseif ndim==1
             try
