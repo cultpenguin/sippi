@@ -61,20 +61,17 @@ subplot(1,3,3);
 
 for id=1:length(data);
     %try
+    [h,hx]=hist(data{id}.d_obs(data{id}.i_use)-d{id}(:),30);
+    bar(hx,[h],'EdgeColor',col(id+1,:),'FaceColor','none','BarWidth',1)
+
     if isfield(data{id},'Cd')
-        [h,hx]=hist(data{id}.d_obs(data{id}.i_use)-d{id}(:),30);
         h_true=normpdf(hx,0,sqrt(data{id}.Cd(1)));
     elseif isfield(data{id},'d_std')
-        [h,hx]=hist(data{id}.d_obs(data{id}.i_use)-d{id}(:),30);
         h_true=normpdf(hx,0,sqrt(data{id}.d_std(1).^2));
     else
-        [h,hx]=hist(data{id}.d_obs(data{id}.i_use)-d{id}(:),30);
         h_true=normpdf(hx,0,sqrt(data{id}.d_var(1)));
     end
-    %end
-    %h_true=normpdf(hx,0,sqrt(data{id}.Cd(1)));
     h_true=sum(h)*h_true./sum(h_true);
-    bar(hx,[h],'EdgeColor',col(id+1,:),'FaceColor','none','BarWidth',1)
     if (id==1);hold on;end
     plot(hx,[h],'Color',col(id+1,:),'LineWidth',2)
     plot(hx,[h_true],'color',col(id+1,:).*.8,'LineWidth',2)
