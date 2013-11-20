@@ -7,6 +7,9 @@ function sippi_plot_posterior(fname,im_arr,prior,options,n_reals);
 % See also sippi_plot_prior
 %
 
+if nargin==0;
+    [f1,fname]=fileparts(pwd);
+end
 
 if ~exist('supt','var');
     supt=0;
@@ -51,12 +54,14 @@ if ~isfield(options,'FS')
 end
 
 %%
-options.axis_fontsize=8;
-options.width=10;
-options.height=10;
-options.w0=2;
-options.h0=2;
+options.axis.null='';
+if ~isfield(options.axis,'fontsize');options.axis.fontsize=8;end
+if ~isfield(options.axis,'width');options.axis.width=10;end
+if ~isfield(options.axis,'height');options.axis.height=10;end
+if ~isfield(options.axis,'w0');options.axis.w0=2;end
+if ~isfield(options.axis,'h0');options.axis.h0=2;end
 
+options.axis.fontsize=12;
 prior=sippi_prior_init(prior);
 
 
@@ -202,7 +207,9 @@ if pl_base==1;
                 plot(p50_post,y0,'r.','MarkerSize',16)
                 hold off
             end
-            xlabel(prior{im}.name,'interpreter','none')
+            xlabel(prior{im}.name,'interpreter','none','FontSize',options.axis.fontsize+2)
+            ylabel('Frequency','interpreter','none','FontSize',options.axis.fontsize+2)
+            set(gca,'ytick',[]);
             legend('prior','posterior')
             try
                 set(gca,'xlim',cax);
@@ -218,7 +225,7 @@ if pl_base==1;
             end
             
             
-            ppp(options.width,options.height,options.axis_fontsize,options.w0,options.h0);
+            ppp(options.axis.width,options.axis.height,options.axis.fontsize,options.axis.w0,options.axis.h0);
             
             %set(gca,'FontSize',16),
         elseif ndim==1
@@ -481,7 +488,7 @@ if (pl_2d_marg==1),
                         hold on;plot(options.mcmc.m_ref{k},options.mcmc.m_ref{l},'ro','MarkerSize',6,'LineWidth',3);hold off
                     end
                 end
-                ppp(options.width,options.height,options.axis_fontsize,options.w0,options.h0);
+                ppp(options.axis.width,options.axis.height,options.axis.fontsize,options.axis.w0,options.axis.h0);
                 print_mul(sprintf('%s_post_marg_m%d_m%d',fname,im_onedim(k),im_onedim(k+1)));
                 
                 %% 2d marg image
@@ -516,7 +523,7 @@ if (pl_2d_marg==1),
                     colormap(1-gray);
                     set(gca,'ydir','normal');
                     %colorbar
-                    ppp(options.width,options.height,options.axis_fontsize,options.w0,options.h0);
+                    ppp(options.axis.width,options.axis.height,options.axis.fontsize,options.axis.w0,options.axis.h0);
                     print_mul(sprintf('%s_post_marg_hist_m%d_m%d',fname,im_onedim(k),im_onedim(k+1)))
                 end
             end
