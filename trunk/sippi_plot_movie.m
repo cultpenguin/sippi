@@ -11,6 +11,11 @@ function sippi_plot_movie(fname,im_array,n_frames,skip_burnin);
 % sippi_plot_movie('20130812_Metropolis',1,1000,0);
 %
 
+
+if nargin==0;
+    [f1,fname]=fileparts(pwd);
+end
+
 if nargin<4, skip_burnin=1;end
 if nargin<3, n_frames=100;end
 
@@ -53,7 +58,6 @@ options.h0=2;
 
 %%
 for im=im_array
-    disp(im)
     
     ndim=length(find(prior{im}.dim>1));
     if ndim>1 % ONLY PLOT MOVIE FOR 2D and 3D PARAMETERS
@@ -69,6 +73,9 @@ for im=im_array
         n_frames=min([n_frames (ns-i1)]);
         i_frames=ceil(linspace(i1,ns,n_frames));
         
+
+        try;disp(sprintf('Prior #%d : %s, plotting %d of %d posterior realizations',im,prior{im}.name,n_frames,ns));end
+
         
         %% POSTERIOR
         vname=sprintf('%s_m%d_posterior.mp4',options.txt,im);
@@ -114,6 +121,9 @@ for im=im_array
         fclose(fid);
         
         %% PRIOR
+        for i=1:length(prior);
+            prior{i}.seq_gibbs.step=prior{i}.seq_gibbs.step_max;
+        end
         vname=sprintf('%s_m%d_prior.mp4',options.txt,im);
         try
             if exist(vname,'file');
@@ -136,6 +146,8 @@ for im=im_array
         close(writerObj);
     
         
+    else
+        try;disp(sprintf('''%s'' only applies to 2D/3D parameters (not prior #%d : %s)',mfilename,im,prior{im}.name));end
     end
 end
 %%
