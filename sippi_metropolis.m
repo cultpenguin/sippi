@@ -30,7 +30,7 @@ function [options,data,prior,forward,m_current]=sippi_metropolis(data,prior,forw
 %                                              % iteration. def =[0]
 %    %% SIMULATED ANNEALING 
 %    options.mcmc.anneal.i_begin=1; % default, iteration number when annealing begins
-%    options.mcmc.anneal.i_end=100000; %  iteration number when annealing begins
+%    options.mcmc.anneal.i_end=100000; %  iteration number when annealing stops
 %    options.mcmc.anneal.fac_begin=20; % default, noise is scaled by fac_begin at iteration i_begin
 %    options.mcmc.anneal.fac_end=1; % default, noise is scaled by fac_end at iteration i_end
 %
