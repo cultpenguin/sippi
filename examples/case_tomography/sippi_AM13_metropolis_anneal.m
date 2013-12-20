@@ -66,22 +66,28 @@ sippi_plot_data(d,data);
 options.mcmc.nite=500000;
 options.mcmc.i_plot=1000;
 options.mcmc.i_sample=500;
-randn('seed',2);rand('seed',2);
+randn('seed',1);rand('seed',1);
 
 % OPTIMIZATION
+options.mcmc.i_plot=100;
 options.mcmc.nite=100000;
+options.mcmc.i_sample=100;
 options.mcmc.anneal.i_begin=1; % default, iteration number when annealing begins
 options.mcmc.anneal.i_end=options.mcmc.nite; %  iteration number when annealing stops
-options.mcmc.anneal.fac_begin=20; % default, noise is scaled by fac_begin at iteration i_begin
+options.mcmc.anneal.fac_begin=4; % default, noise is scaled by fac_begin at iteration i_begin
 options.mcmc.anneal.fac_end=.1; % default, noise is scaled by fac_end at iteration i_end
 for i=1:length(prior);
     prior{i}.seq_gibbs.i_update_step_max=options.mcmc.nite;
 end
+
 % ONLY ANNEALING IN AN INITIAL (BURNIN) PHASE
-%options.mcmc.anneal.i_begin=1; % default, iteration number when annealing begins
-%options.mcmc.anneal.i_end=50000; %  iteration number when annealing stops
-%options.mcmc.anneal.fac_begin=20; % default, noise is scaled by fac_begin at iteration i_begin
-%options.mcmc.anneal.fac_end=1; % default, noise is scaled by fac_end at iteration i_end
+% options.mcmc.nite=10000;
+% options.mcmc.i_plot=100;
+% options.mcmc.i_sample=25;
+% options.mcmc.anneal.i_begin=1; % default, iteration number when annealing begins
+% options.mcmc.anneal.i_end=2000; %  iteration number when annealing stops
+% options.mcmc.anneal.fac_begin=2; % default, noise is scaled by fac_begin at iteration i_begin
+% options.mcmc.anneal.fac_end=1; % default, noise is scaled by fac_end at iteration i_end
 
 % START SAMPLING/OPTIMIZATION
 options=sippi_metropolis(data,prior,forward,options);
@@ -93,9 +99,15 @@ sippi_plot_prior(options.txt);
 %% PLOT SAMPLE FROM POSTERIOR
 sippi_plot_posterior(options.txt);
 
+%% PLOT PRIOR AND POSTERIOR MOVIE
+sippi_plot_movie(options.txt,1,1000,0);
+
 %% PLOT LAST MODEL / 'OPTIMAL' MODEL
-sippi_plot_model(prior,options.mcmc.m_current)
+clf;sippi_plot_model(prior,options.mcmc.m_current);
+print_mul(sprintf('%s_last_model',options.txt))
+
 [d,forward,prior,data]=sippi_forward(options.mcmc.m_current,forward,prior,data);
 sippi_plot_data(d,data); 
+
 
 

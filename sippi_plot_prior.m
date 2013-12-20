@@ -81,7 +81,7 @@ end
 
 for im=im_arr;
     % CLEAR FIGURES
-    f_id=99+im;
+    f_id=90+im;
     figure_focus(f_id);clf;
     set_paper('landscape');
     
