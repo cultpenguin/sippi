@@ -1,11 +1,17 @@
 function sippi_plot_movie(fname,im_array,n_frames,skip_burnin);
-% sippi_plot_movie
+% sippi_plot_movie plot movie of prior and posterior realizations
 %
 % Call :
 %   sippi_plot_movie(fname);
+%   sippi_plot_movie(fname,im_array,n_frames,skip_burnin);
+%      fname : name of folder with results (e.g. options.txt)
+%      im_array : array of indexes of model parameters to make into movies
+%      n_frames [200] : number of frames in movie
+%      skip_burnin [200] : start movie after burn_in;
 %
 % Ex: 
 % sippi_plot_movie('20130812_Metropolis');
+% sippi_plot_movie(options.txt);
 %
 % %% 1000 realization including burn-in, for prior number 1
 % sippi_plot_movie('20130812_Metropolis',1,1000,0);
@@ -78,15 +84,16 @@ for im=im_array
 
         
         %% POSTERIOR
-        vname=sprintf('%s_m%d_posterior.mp4',options.txt,im);
+        vname=sprintf('%s_m%d_posterior',options.txt,im);
         try
             if exist(vname,'file');
                 delete(vname);
             end
         end
         
-        writerObj = VideoWriter(vname,'MPEG-4');
-        writerObj.Quality=100;
+        writerObj = VideoWriter(vname);
+        %writerObj = VideoWriter(vname,'MPEG-4'); % Awful quality ?
+        writerObj.FrameRate=25;
         open(writerObj);
         
         fname=sprintf('%s_m%d.asc',options.txt,im);
@@ -131,7 +138,9 @@ for im=im_array
             end
         end
         
-        writerObj = VideoWriter(vname,'MPEG-4');
+        writerObj = VideoWriter(vname);
+        %writerObj = VideoWriter(vname,'MPEG-4'); % Awful quality ?
+        writerObj.FrameRate=25;
         writerObj.Quality=100;
         open(writerObj);
         
