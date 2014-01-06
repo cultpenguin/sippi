@@ -85,7 +85,7 @@ for im=1:length(prior);
         % std
         if ~isfield(prior{im},'std');
             if isfield(prior{im},'min')&isfield(prior{im},'max');
-                prior{im}.std=(prior{im}.max-prior{im}.min)/2.15;
+                prior{im}.std=(prior{im}.max-prior{im}.min)/2.300;
             else
                 prior{im}.std=1;
             end
