@@ -42,7 +42,9 @@ options.null='';
 if ~isfield(options,'txt')
     options.txt='';
 end
-options.txt=sprintf('%s_sippi_metropolis_%s',datestr(now,'YYYYmmdd_HHMM'),options.txt);
+if length(options.txt)>0
+    options.txt=sprintf('%s_sippi_metropolis_%s',datestr(now,'YYYYmmdd_HHMM'),options.txt);
+end
 
 try
     options.txt=sprintf('%s_%s',options.txt,forward.type);
