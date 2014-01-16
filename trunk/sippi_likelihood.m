@@ -136,7 +136,7 @@ for id=id_array;
         else
             dd=data{id}.d_obs(data{id}.i_use)-d{id};
         end
-        
+
         
         if ~isfield(data{id},'recomputeCD')
             data{id}.recomputeCD=0;
@@ -157,7 +157,6 @@ for id=id_array;
         
         
     end %%%%%%%%%%%%%%%%%
-    
     
     if strcmp(data{id}.noise_model,'gaussian')&(data{id}.noise_uncorr==0)
         nknown=length(data{id}.i_use);
@@ -183,13 +182,12 @@ for id=id_array;
             else
                 f3 =  -.5 * dd'*data{id}.iCD*dd;
             end
-            
             logL(id) = f1 +f2 +f3;
             
         else
             if data{id}.recomputeCD==1
                 f3 = -.5*dd'*(data{id}.CD\dd);
-                % disp(sprintf('f3=%g, logdet=%g',f3,data{id}.logdet))
+                %disp(sprintf('f3=%g, logdet=%g',f3,data{id}.logdet));
             else
                 f3 =  -.5 * dd'*data{id}.iCD*dd;
             end
