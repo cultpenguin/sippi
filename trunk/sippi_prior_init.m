@@ -10,6 +10,10 @@ disp(sprintf('%s : Initializing prior options',mfilename))
 
 
 for im=1:length(prior);
+    
+    
+    prior{im}.init=0;
+    
     if isfield(prior{im},'Cm');
         if ~isfield(prior{im},'Va');
             prior{im}.Va=prior{im}.Cm;
@@ -203,7 +207,9 @@ for im=1:length(prior);
             [d_nscore,prior{im}.o_nscore]=nscore(prior{im}.d_target,1,1);
         end
     end
-    
+  
+    % confirmation of initialization;
+    prior{im}.init=1;
     
 end
 

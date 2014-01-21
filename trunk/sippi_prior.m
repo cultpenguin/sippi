@@ -19,13 +19,13 @@
 %
 %% A simple 2D multivariate Gaissian based prior model based on the 
 %% FFT-MA method, can be defined using 
-%   id=1;
-%   prior{id}.type='FFTMA';
-%   prior{id}.name='A SIMPLE PRIOR';
-%   prior{id}.x=[0:1:100];
-%   prior{id}.y=[0:1:100];
-%   prior{id}.m0=10;
-%   prior{id}.Va='1 Sph(10)';
+%   im=1;
+%   prior{im}.type='FFTMA';
+%   prior{im}.name='A SIMPLE PRIOR';
+%   prior{im}.x=[0:1:100];
+%   prior{im}.y=[0:1:100];
+%   prior{im}.m0=10;
+%   prior{im}.Va='1 Sph(10)';
 %   prior=sippi_prior_init(prior);
 %% A realization from this prior model can be generated using
 %   m=sippi_prior(prior);
@@ -36,23 +36,23 @@
 %
 %%%% A PRIOR MODEL WITH SEVERAL 'TYPES OF A PRIORI MODEL'
 %
-%   id=1;
-%   prior{id}.type='FFTMA';
-%   prior{id}.x=[0:1:100];
-%   prior{id}.y=[0:1:100];
-%   prior{id}.m0=10;
-%   prior{id}.Cm='1 Sph(10)';
-%   id=2;
-%   prior{id}.type='SISIM';
-%   prior{id}.x=[0:1:100];
-%   prior{id}.y=[0:1:100];
-%   prior{id}.m0=10;
-%   prior{id}.Cm='1 Sph(10)';
-%   id=3;
-%   prior{id}.type='GAUSSIAN';
-%   prior{id}.m0=100;
-%   prior{id}.std=50;
-%   prior{id}.norm=100;
+%   im=1;
+%   prior{im}.type='FFTMA';
+%   prior{im}.x=[0:1:100];
+%   prior{im}.y=[0:1:100];
+%   prior{im}.m0=10;
+%   prior{im}.Cm='1 Sph(10)';
+%   im=2;
+%   prior{im}.type='SISIM';
+%   prior{im}.x=[0:1:100];
+%   prior{im}.y=[0:1:100];
+%   prior{im}.m0=10;
+%   prior{im}.Cm='1 Sph(10)';
+%   im=3;
+%   prior{im}.type='GAUSSIAN';
+%   prior{im}.m0=100;
+%   prior{im}.std=50;
+%   prior{im}.norm=100;
 %   prior=sippi_prior_init(prior);
 %
 %   sippi_plot_model(prior);
@@ -67,6 +67,15 @@
 %
 
 function [m_propose,prior]=sippi_prior(prior,m_current);
+
+      
+for im=1:length(prior);
+    if ~isfield(prior{im},'init')
+        prior=sippi_prior_init(prior);{
+    end
+end
+  
+      
 
 nm=length(prior);
 if nargin>1
