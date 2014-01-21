@@ -71,7 +71,7 @@ function [m_propose,prior]=sippi_prior(prior,m_current);
       
 for im=1:length(prior);
     if ~isfield(prior{im},'init')
-        prior=sippi_prior_init(prior);{
+        prior=sippi_prior_init(prior);
     end
 end
   
