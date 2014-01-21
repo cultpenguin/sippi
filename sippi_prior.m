@@ -68,14 +68,38 @@
 
 function [m_propose,prior]=sippi_prior(prior,m_current);
 
+
+
+% Check for obsolete coding
+for im=1:length(prior);
+    if isfield(prior{im},'prior')
+        if isfield(prior{im}.prior,'x');
+            disp(sprintf('Using ''prior{im}.prior.x'' is now obsolete and should be ''prior{im}.x'' '))
+            prior{im}.x=prior{im}.prior.x;
+        end
+        if isfield(prior{im}.prior,'y');
+            disp(sprintf('Using ''prior{im}.prior.y'' is now obsolete and should be ''prior{im}.y'' '))
+            prior{im}.x=prior{im}.prior.x;
+        end
+        if isfield(prior{im}.prior,'z');
+            disp(sprintf('Using ''prior{im}.prior.z'' is now obsolete and should be ''prior{im}.z'' '))
+            prior{im}.x=prior{im}.prior.x;
+        end
+        try
+            disp(sprintf('Removing ''prior{im}.prior'''))
+            prior{im}=rmfield(prior{im},'prior');
+        end
+    end
+end
       
+
+% Check for initialization
 for im=1:length(prior);
     if ~isfield(prior{im},'init')
         prior=sippi_prior_init(prior);
     end
 end
-  
-      
+
 
 nm=length(prior);
 if nargin>1
