@@ -168,6 +168,9 @@ end
 
 %% PRE ALLOCATE ARRAY FOR MCMC OUTPUT
 mcmc.logL=zeros(1,mcmc.nite);
+if length(data)>1
+    mcmc.logL_all=zeros(length(data),mcmc.nite);
+end
 mcmc.acc=zeros(nm,mcmc.nite);
 mcmc.perturb=zeros(nm,mcmc.nite);
 mcmc.step=zeros(nm,mcmc.nite);
@@ -263,7 +266,7 @@ for i=1:mcmc.nite;
         % DO ANNEAL
         [data_test]=sippi_anneal_adjust_noise(data,i,options.mcmc,prior);
         [logL_propose,L_propose]=sippi_likelihood(d,data_test);
-        [logL_current]=sippi_likelihood(d_current,data_test);
+        [logL_current,L_current]=sippi_likelihood(d_current,data_test);
     else
         [logL_propose,L_propose,data]=sippi_likelihood(d,data);
     end
@@ -304,6 +307,7 @@ for i=1:mcmc.nite;
         m_current=m_propose;
         d_current=d;
         logL_current=logL_propose;
+        L_current=L_propose;
         iacc=iacc+1;
         mcmc.acc_logL(iacc)=logL_current;
         mcmc.acc(im_perturb,mcmc.i)=1;
@@ -325,6 +329,10 @@ for i=1:mcmc.nite;
     end
     
     mcmc.logL(i)=logL_current;
+    if length(data)>1
+        % store logL for all data types seperately
+        mcmc.logL_all(:,i)=L_current(:);
+    end
     
     % SAVE CURRENT MODEL
     if ((mcmc.i/mcmc.i_sample)==round( mcmc.i/mcmc.i_sample ))

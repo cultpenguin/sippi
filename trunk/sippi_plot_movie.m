@@ -118,7 +118,7 @@ for im=im_array
                 m{im}=real;
                 
                 sippi_plot_model(prior,m,im);
-                text(.02,.02,sprintf('#%05d',i),'units','normalized')
+                text(.02,.02,sprintf('#%05d, posterior',i),'units','normalized')
                 drawnow;
                 frame = getframe;
                 writeVideo(writerObj,frame);
@@ -128,10 +128,9 @@ for im=im_array
         fclose(fid);
         
         %% PRIOR
-        for i=1:length(prior);
-            prior{i}.seq_gibbs.step=prior{i}.seq_gibbs.step_max;
-        end
-        vname=sprintf('%s_m%d_prior.mp4',options.txt,im);
+        prior{im}.seq_gibbs.step=prior{im}.seq_gibbs.step_max;
+        prior{im}.perturb=1;
+        vname=sprintf('%s_m%d_prior',options.txt,im);
         try
             if exist(vname,'file');
                 delete(vname);
@@ -145,9 +144,9 @@ for im=im_array
         open(writerObj);
         
         for i=1:length(i_frames)
-            m=sippi_prior(prior,m);
+            [m,prior]=sippi_prior(prior,m);
             sippi_plot_model(prior,m,im);
-            text(.02,.02,sprintf('#%05d',i),'units','normalized')
+            text(.02,.02,sprintf('#%05d, prior',i),'units','normalized')
             drawnow;
             frame = getframe;
             writeVideo(writerObj,frame);
