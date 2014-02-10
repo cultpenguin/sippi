@@ -25,7 +25,14 @@ if nargin<4
 end
 
 xlim=[1 nit];
-plot(i,logL,'k-')
+p=plot(i,logL,'k-');
+for ip=1:length(p);
+    if ip==1; set(p(ip),'Color',[0 0 0]);end
+    if ip==2; set(p(ip),'Color',[1 0 0]);end
+    if ip==3; set(p(ip),'Color',[0 0 1]);end
+    if ip==4; set(p(ip),'Color',[0 1 0]);end
+    if ip==5; set(p(ip),'Color',[1 0 1]);end
+end
 %semilogy(i_acc,logL,'k-')
 set(gca,'xlim',xlim)
 

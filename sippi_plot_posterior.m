@@ -64,6 +64,34 @@ if ~isfield(options.axis,'h0');options.axis.h0=2;end
 options.axis.fontsize=12;
 prior=sippi_prior_init(prior);
 
+%% logL curve
+figure(31);set_paper('landscape');
+for i=1:length(prior);i_update_step_max(i)=prior{i}.seq_gibbs.i_update_step_max;end
+i_update_step_max=max(i_update_step_max);
+try
+    sippi_plot_loglikelihood(mcmc.logL_all);
+    legend(num2str([1:size(mcmc.logL_all,1)]'))
+    y1=max(max(mcmc.logL_all));
+    try
+        y2=min(min(mcmc.logL_all(:,i_update_step_max)));
+    catch
+        y2=min(min(mcmc.logL_all));
+    end
+    
+catch
+    sippi_plot_loglikelihood(mcmc.logL);
+    y1=max(max(mcmc.logL));
+    try
+        y2=(min(mcmc.logL(:,i_update_step_max)));
+    catch
+        y2=(min(mcmc.logL));
+    end
+end
+set(gca,'ylim',[y2 y1])
+print_mul(sprintf('%s_logL',fname))
+
+return
+
 
 %% REALS
 nm=length(prior);
