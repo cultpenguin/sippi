@@ -1,6 +1,6 @@
 % sippi_AM13_metropolis_gaussian_covariance_inference 2D inversion with uncertain covariance model 
 %
-% Example of inverting 2D Arrenæs tomographic data (AM13)
+% Example of inverting 2D Arrenï¿½s tomographic data (AM13)
 % with uncertainty covariance properties. 
 %
 % 
@@ -65,8 +65,8 @@ prior=sippi_prior_init(prior);
 forward.sources=D.S;
 forward.receivers=D.R;
 forward.type='eikonal';
-forward.type='fat';forward.freq=0.1;forward.linear=1;
-forward.type='born';forward.freq=0.1;%forward.linear=1;
+%forward.type='fat';forward.freq=0.1;forward.linear=1;
+%forward.type='born';forward.freq=0.1;%forward.linear=1;
 forward.forward_function='sippi_forward_traveltime';
 forward.im = i_master; % 'master' prior / the velocity --> NEEDED WHEN THERE IS MORE THE ONE A PRIORI TYPES
 
@@ -79,9 +79,9 @@ for im=1:length(prior)
     prior{im}.seq_gibbs.i_update_step_max=4000;% optional
     prior{im}.seq_gibbs.i_update_step=100;% optional
 end
-options.mcmc.nite=50000;% optional
+options.mcmc.nite=500000;% optional
 options.mcmc.i_plot=1000;% optional
-options.mcmc.i_sample=50;% optional
+options.mcmc.i_sample=500;% optional
 
 %% RUN 1,using every 20th data
 close all
