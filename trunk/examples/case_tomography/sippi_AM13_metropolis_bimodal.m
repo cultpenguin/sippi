@@ -1,6 +1,6 @@
 % sippi_AM13_metropolis_bimodal 2D inversion using the extended Metropolis sampler (Bimodal prior) 
 %
-% Example of inverting 2D Arrenæs tomographic data (AM13)
+% Example of inverting 2D Arrenï¿½s tomographic data (AM13)
 % using the extended Metropolis sampler and a 
 % Bimodal a priori model
 %
@@ -55,8 +55,8 @@ forward.forward_function='sippi_forward_traveltime';
 
 
 %% SETUP METROPOLIS
-options.mcmc.nite=500000;
-options.mcmc.i_plot=500;
+options.mcmc.nite=5000000;
+options.mcmc.i_plot=5000;
 options.mcmc.i_sample=2000;
 
 options=sippi_metropolis(data,prior,forward,options);
