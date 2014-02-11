@@ -90,8 +90,6 @@ end
 set(gca,'ylim',[y2 y1])
 print_mul(sprintf('%s_logL',fname))
 
-return
-
 
 %% REALS
 nm=length(prior);
