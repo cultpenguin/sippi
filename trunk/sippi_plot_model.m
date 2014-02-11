@@ -121,6 +121,9 @@ for im=im_array;
             xlabel('X');
             ylabel('Y');
             
+            if isfield(prior{im},'ydir');
+                set(gca,'ydir',prior{im}.ydir);
+            end            
             
         elseif ndim==1
             try

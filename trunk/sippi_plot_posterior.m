@@ -340,7 +340,8 @@ if pl_base==1;
                 subplot(1,2,2);
             end
             set(gca,'FontSize',options.FS)
-            met{im}=etype_var;
+            %met{im}=etype_var;
+            met{im}=sqrt(etype_var);
             sippi_plot_model(prior,met,im,0,f_id);colorbar off;
             xlabel('X');ylabel('Y');zlabel('Z')
             cax_var=[0 max(etype_var(:))];
@@ -349,9 +350,11 @@ if pl_base==1;
                 cax_var(2)=sum(Va.par1);
                 
             end
-            try;caxis(cax_var);end
+            %try;caxis(cax_var);end
+            try;caxis(sqrt(cax_var));end
             cb=colorbar_shift;
-            set(get(cb,'Ylabel'),'String','Sample Variance')
+            %set(get(cb,'Ylabel'),'String','Sample Variance')
+            set(get(cb,'Ylabel'),'String','Sample STD')
             
             % SUPTITLE
             if supt==1,
