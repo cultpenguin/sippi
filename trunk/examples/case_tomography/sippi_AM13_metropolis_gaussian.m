@@ -64,6 +64,7 @@ sippi_plot_data(d,data);
 
 %% SETUP METROPOLIS
 options.mcmc.nite=500000;
+options.mcmc.nite=100000;
 options.mcmc.i_plot=1000;
 options.mcmc.i_sample=500;
 randn('seed',2);rand('seed',2);

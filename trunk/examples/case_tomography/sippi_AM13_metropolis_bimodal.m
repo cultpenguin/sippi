@@ -48,8 +48,8 @@ prior=sippi_prior_init(prior);
 forward.sources=D.S;
 forward.receivers=D.R;
 forward.type='eikonal';
-forward.type='fat';
-forward.linear=1;
+%forward.type='fat';
+%forward.linear=1;
 forward.freq=0.1;
 forward.forward_function='sippi_forward_traveltime';
 
