@@ -73,21 +73,36 @@ try
     legend(num2str([1:size(mcmc.logL_all,1)]'))
     y1=max(max(mcmc.logL_all));
     try
-        y2=min(min(mcmc.logL_all(:,i_update_step_max)));
+        y2=min(min(mcmc.logL_all(:,i_update_step_max)))
     catch
         y2=min(min(mcmc.logL_all));
     end
-    
 catch
     sippi_plot_loglikelihood(mcmc.logL);
     y1=max(max(mcmc.logL));
     try
-        y2=(min(mcmc.logL(:,i_update_step_max)));
+        y2=(min(mcmc.logL(:,i_update_step_max:end)));
     catch
         y2=(min(mcmc.logL));
     end
 end
+try
+    xlim=get(gca,'xlim');
+    % GET TOTAL NUMBER OF DATA
+    N=0;for l=1:length(data);N=N+length(data{l}.d_obs);end;
+    hold on
+    plot(xlim,[1 1].*(-N/2),'r-')
+    plot(xlim,[1 1].*(-N/2-2*sqrt(N/2)),'r--')
+    plot(xlim,[1 1].*(-N/2+2*sqrt(N/2)),'r--')
+    hold off
+    if y2>(-N/2-2*sqrt(N/2)), y2=(-N/2-2.1*sqrt(N/2));end
+    if y1<(-N/2+2*sqrt(N/2)), y1=(-N/2+2.1*sqrt(N/2));end
+    
+end
+
 set(gca,'ylim',[y2 y1])
+
+
 print_mul(sprintf('%s_logL',fname))
 
 
@@ -165,8 +180,6 @@ if pl_base==1;
             else
                 try
                     cax=[prior{im}.min prior{im}.max];
-                catch
-                    cax=[min(reals(:)) max(reals(:))];
                 end
             end
         end
@@ -191,6 +204,10 @@ if pl_base==1;
             for i=1:n_reals(im);
                 m=sippi_prior(p);
                 sample_prior(i)=m{1};
+            end
+        
+            if ~exist('cax','var');
+                cax=[min(sample_prior) max(sample_prior)];
             end
             
             hx=linspace(cax(1),cax(2),31);
@@ -253,8 +270,7 @@ if pl_base==1;
             
             ppp(options.axis.width,options.axis.height,options.axis.fontsize,options.axis.w0,options.axis.h0);
             
-            %set(gca,'FontSize',16),
-        elseif ndim==1
+         elseif ndim==1
             plot(prior{im}.x,reals,'k-');
             hold on
             %plot(prior{im}.x,etype_mean,'r-','linewidth',2);
@@ -287,13 +303,6 @@ if pl_base==1;
                 i_cb=ceil((nsp_y+1)/2)*nsp_x;
                 if i==i_cb; use_colorbar=1;end
        
-                
-                %use_colorbar=0;
-                %if ((n_reals==i)&(i==(1*nsp_x)))|(i==(2*nsp_x));
-                %    %if (i==(2*nsp_x));
-                %    use_colorbar=1;
-                %end
-                
                 try
                     if (length(z)>1)
                         m{i}{im}=reals(:,:,:,i);
