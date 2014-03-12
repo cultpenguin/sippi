@@ -49,6 +49,15 @@ $SIPPI/examples/manuscript_examples/tomography
   
 ## Releases history
 
+#0.96 (12-03-2014)
+Many updates for 
+sippi_metropolis
+sippi_plot_prior
+sippi_plot_posterior
+
+
+#0.95
+
 #0.94
 Updates for handling prior types VISIM/SNESIM/FFTMA/SISIM
 

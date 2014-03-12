@@ -42,28 +42,14 @@ data{1}.d_obs=d_obs+randn(size(d_obs)).*data{1}.d_std;
 % set some MCMC options.
 options.mcmc.nite=40000;
 options.mcmc.i_sample=50;
-options.mcmc.i_plot=500;
+options.mcmc.i_plot=2500;
 options.txt='case_line_fit';
 
 options_anneal=options;
 [options]=sippi_metropolis(data,prior,forward,options);
-
-
-%% ANNEALING
-options_anneal.txt='case_line_fit_anneal';
-options_anneal.mcmc.nite=20000;
-options_anneal.mcmc.anneal.i_begin=1; % default, iteration number when annealing begins
-options_anneal.mcmc.anneal.i_end=options.mcmc.nite; %  iteration number when annealing begins
-options_anneal.mcmc.anneal.fac_begin=1; % default, noise is scaled by fac_begin at iteration i_begin
-options_anneal.mcmc.anneal.fac_end=.00001; % default, noise is scaled by fac_end at iteration i_end
- 
- 
-[options_anneal]=sippi_metropolis(data,prior,forward,options_anneal);
-
-for i=1:length(prior);
-disp(sprintf('%s ref=%g, optimal=%g ',prior{i}.name,prior{i}.m_true,options_anneal.mcmc.m_current{i}))
-end
-
+sippi_plot_prior(options.txt);
+sippi_plot_posterior(options.txt);
+return
 %% plot some stats
 % get sample from posterior
 m1_post=load(sprintf('%s%s%s_m1.asc',options.txt,filesep,options.txt))';
@@ -120,8 +106,6 @@ ppp(8,8,12)
 print_mul('sippi_line_fit_cross')
 
 
-return
-
 
 %%
 for i=1:length(m1_post);
@@ -177,4 +161,20 @@ xlabel('log(Likelihood)')
 ylabel('Count (#)')
 set(gca,'xlim',[hx(1) hx(length(hx))])
 print_mul('sippi_line_fit_cross_metro_rejection')
+
+%% ANNEALING
+options_anneal.txt='case_line_fit_anneal';
+options_anneal.mcmc.nite=2000;
+options_anneal.mcmc.anneal.i_begin=1; % default, iteration number when annealing begins
+options_anneal.mcmc.anneal.i_end=options.mcmc.nite; %  iteration number when annealing begins
+options_anneal.mcmc.anneal.fac_begin=1; % default, noise is scaled by fac_begin at iteration i_begin
+options_anneal.mcmc.anneal.fac_end=.00001; % default, noise is scaled by fac_end at iteration i_end
+ 
+ 
+[options_anneal]=sippi_metropolis(data,prior,forward,options_anneal);
+
+for i=1:length(prior);
+disp(sprintf('%s ref=%g, optimal=%g ',prior{i}.name,prior{i}.m_true,options_anneal.mcmc.m_current{i}))
+end
+
 
