@@ -13,6 +13,9 @@ col=[
     1 1 0
     0 0 1
     .5 .5 .5
+    .4 .4 .4
+    .3 .3 .3
+    .2 .2 .2
     ];
 
 
@@ -34,16 +37,16 @@ subfigure(2,2,2)
 %%
 subplot(1,3,1);
 try
+    
     % CHANGE TO SUPPORT MORE THAN ONE DATA SET
-    sippi_plot_loglikelihood(mcmc.logL(1:mcmc.i),mcmc.acc(1:mcmc.i),data{1}.N);
+    N=0;
+    for i=1:length(data);
+        N=N+length(data{i}.d_obs);
+    end
+    
+    sippi_plot_loglikelihood(mcmc.logL(1:mcmc.i),mcmc.acc(1:mcmc.i),N);
 end
-if exist('logL_ref','var');
-    xlim=get(gca,'xlim');
-    hold on
-    plot(xlim,[1 1].*logL_ref,'k--','linewidth',2)
-    hold off
-end
-%%
+
 subplot(1,3,2);
 try
     % MAKE SURE THIS WORKS FOR MANY PRIOR MODELS

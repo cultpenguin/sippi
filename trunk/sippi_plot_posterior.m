@@ -99,9 +99,9 @@ try
     if y1<(-N/2+2*sqrt(N/2)), y1=(-N/2+2.1*sqrt(N/2));end
     
 end
-
+try
 set(gca,'ylim',[y2 y1])
-
+end
 
 print_mul(sprintf('%s_logL',fname))
 
