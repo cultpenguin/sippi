@@ -139,6 +139,7 @@ if isfield(mcmc,'anneal');
 end
 [logL_init,L_init]=sippi_likelihood(d_init,data_init);
 logL_current=logL_init;
+L_current=L_init;
 
 %% COMPUTE TIME PER ITERAION
 % COMPUTE THE TIME OF ONE CALL TO SIPPI_PRIOR
@@ -327,7 +328,6 @@ for i=1:mcmc.nite;
             disp(sprintf('%06d/%06d (%10s):     %5g %5g %s',mcmc.i,mcmc.nite,t_end_txt,logL_current,logL_propose))
         end
     end
-    
     mcmc.logL(i)=logL_current;
     if length(data)>1
         % store logL for all data types seperately
@@ -358,10 +358,10 @@ for i=1:mcmc.nite;
     if ((mcmc.i/mcmc.i_plot)==round( mcmc.i/mcmc.i_plot ))
         try
             sippi_plot_current_model(mcmc,data,d_current,m_current,prior);
-            try;figure_focus(3);print('-dpng','current_status');end
         catch
             disp(sprintf('%s : Could not plot current model info',mfilename))
         end
+        try;figure_focus(3);print('-dpng','current_status');end
         drawnow;
     end
 end
