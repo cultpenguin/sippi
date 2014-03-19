@@ -128,9 +128,9 @@ if length(n_reals)==1;
 end
 
 
-pl_base=1;
+pl_base=0;
 pl_2d_marg=1;
-pl_data=1;
+pl_data=0;
 
 %for im=im_arr;
 if pl_base==1;
@@ -527,7 +527,7 @@ if (pl_2d_marg==1),
                     end
                 end
                 ppp(options.axis.width,options.axis.height,options.axis.fontsize,options.axis.w0,options.axis.h0);
-                print_mul(sprintf('%s_post_marg_m%d_m%d',fname,im_onedim(k),im_onedim(k+1)));
+                print_mul(sprintf('%s_post_marg_m%d_m%d',fname,im_onedim(k),im_onedim(l)));
                 
                 %% 2d marg image
                 pl_2d_marg_image=0;
@@ -562,7 +562,7 @@ if (pl_2d_marg==1),
                     set(gca,'ydir','normal');
                     %colorbar
                     ppp(options.axis.width,options.axis.height,options.axis.fontsize,options.axis.w0,options.axis.h0);
-                    print_mul(sprintf('%s_post_marg_hist_m%d_m%d',fname,im_onedim(k),im_onedim(k+1)))
+                    print_mul(sprintf('%s_post_marg_hist_m%d_m%d',fname,im_onedim(k),im_onedim(l)))
                 end
             end
         end
