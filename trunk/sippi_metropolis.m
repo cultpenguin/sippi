@@ -111,7 +111,7 @@ end
 
 
 %% STARTING  MODEL
-rand('seed',1);
+%rand('seed',1);
 if isfield(mcmc,'m_init');
     m_init=mcmc.m_init;
     disp(sprintf('Using supplied model as starting model',mfilename))
@@ -130,12 +130,12 @@ m_current=m_init;
     [d_init,forward,prior,data]=sippi_forward(m_init,forward,prior,data);
 %end
 
-
 %% Initialize
 data_init=data;
 if isfield(mcmc,'anneal');
     % SET ANNEALING IF APPLICABLE
-    [data_init,mcmc]=sippi_anneal_adjust_noise(data,120,options.mcmc,prior);
+    for id=1:length(data_init);data_init{id}.recomputeCD=1;end
+    [data_init,mcmc]=sippi_anneal_adjust_noise(data_init,1,options.mcmc,prior);
 end
 [logL_init,L_init]=sippi_likelihood(d_init,data_init);
 logL_current=logL_init;
@@ -266,6 +266,7 @@ for i=1:mcmc.nite;
     if do_anneal==1,
         % DO ANNEAL
         [data_test]=sippi_anneal_adjust_noise(data,i,options.mcmc,prior);
+        for id=1:length(data_test);data_test{id}.recomputeCD=1;end
         [logL_propose,L_propose]=sippi_likelihood(d,data_test);
         [logL_current,L_current]=sippi_likelihood(d_current,data_test);
     else
@@ -292,7 +293,7 @@ for i=1:mcmc.nite;
     %%prior_propose{2}.range_1
     %%
     %%figure_focus(17);imagesc(m_propose{2});axis image;drawnow;
-    %%keyboard
+    %%oard
   
     % Optionally accept all proposed models
     if (mcmc.accept_all==1), Pacc=1; end
