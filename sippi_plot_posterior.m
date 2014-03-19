@@ -128,9 +128,9 @@ if length(n_reals)==1;
 end
 
 
-pl_base=0;
+pl_base=1;
 pl_2d_marg=1;
-pl_data=0;
+pl_data=1;
 
 %for im=im_arr;
 if pl_base==1;
