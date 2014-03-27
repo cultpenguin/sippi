@@ -428,7 +428,7 @@ for im=im_fftma_array;
         
         % UPDATE COVARIANCE PARAMETERS IF THE HAVE BEEN DEFINED
         %[range,rot,sill,Va]=Va2RangeRot(prior{im}.Va);        
-        prior{im}.fftma_options.constant_C=1;
+        %prior{im}.fftma_options.constant_C=1;
         
         % run thorugh the priors that have been updated
         im2_arr=im_array(1:(find(im_array==im)-1));
@@ -479,7 +479,7 @@ for im=im_fftma_array;
         prior{im}.fftma_options.resim_type=prior{im}.seq_gibbs.type;
         prior{im}.fftma_options.lim=prior{im}.seq_gibbs.step;
         
-        % IF CONSTANT_C=1, THEN REMOVE C and FFTC
+        % IF CONSTANT_C=0, THEN REMOVE C and FFTC
         if prior{im}.fftma_options.constant_C==0;
             try;prior{im}.fftma_options=rmfield(prior{im}.fftma_options,'fftC');end
             try;prior{im}.fftma_options=rmfield(prior{im}.fftma_options,'C');end
