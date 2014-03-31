@@ -62,6 +62,8 @@ options.height=10;
 options.w0=2;
 options.h0=2;
 
+FrameRate=10;
+Quality=90;
 %%
 for im=im_array
     
@@ -93,7 +95,8 @@ for im=im_array
         
         writerObj = VideoWriter(vname);
         %writerObj = VideoWriter(vname,'MPEG-4'); % Awful quality ?
-        writerObj.FrameRate=25;
+        writerObj.FrameRate=FrameRate;
+        writerObj.Quality=Quality;
         open(writerObj);
         
         fname=sprintf('%s_m%d.asc',options.txt,im);
@@ -139,12 +142,12 @@ for im=im_array
         
         writerObj = VideoWriter(vname);
         %writerObj = VideoWriter(vname,'MPEG-4'); % Awful quality ?
-        writerObj.FrameRate=25;
-        writerObj.Quality=100;
+        writerObj.FrameRate=FrameRate;
+        writerObj.Quality=Quality;
         open(writerObj);
         
         for i=1:length(i_frames)
-            [m,prior]=sippi_prior(prior,m);
+            [m,prior]=sippi_prior(prior);
             sippi_plot_model(prior,m,im);
             text(.02,.02,sprintf('#%05d, prior',i),'units','normalized')
             drawnow;
@@ -158,5 +161,5 @@ for im=im_array
         try;disp(sprintf('''%s'' only applies to 2D/3D parameters (not prior #%d : %s)',mfilename,im,prior{im}.name));end
     end
 end
-%%
+%%db
 cd(cwd)
