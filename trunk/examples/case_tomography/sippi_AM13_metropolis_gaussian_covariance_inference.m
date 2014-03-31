@@ -64,8 +64,8 @@ prior=sippi_prior_init(prior);
 %% SETUP THE FORWARD MODEL
 forward.sources=D.S;
 forward.receivers=D.R;
-forward.type='eikonal';
-%forward.type='fat';forward.freq=0.1;forward.linear=1;
+%forward.type='eikonal';
+forward.type='fat';forward.freq=0.1;forward.linear=1;
 %forward.type='born';forward.freq=0.1;%forward.linear=1;
 forward.forward_function='sippi_forward_traveltime';
 forward.im = i_master; % 'master' prior / the velocity --> NEEDED WHEN THERE IS MORE THE ONE A PRIORI TYPES
@@ -79,7 +79,7 @@ for im=1:length(prior)
     prior{im}.seq_gibbs.i_update_step_max=4000;% optional
     prior{im}.seq_gibbs.i_update_step=100;% optional
 end
-options.mcmc.nite=500000;% optional
+options.mcmc.nite=1000000;% optional
 options.mcmc.i_plot=1000;% optional
 options.mcmc.i_sample=500;% optional
 
@@ -112,7 +112,6 @@ options.mcmc.m_init=m_current;
 
 %% RUN 4, all data
 close all
-options.mcmc.nite=500000;
 data{1}.i_use=[1:1:702];
 try;forward=rmfield(forward,'G');end
 options.txt='run4';
