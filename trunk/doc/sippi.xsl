@@ -6,8 +6,8 @@
 <xsl:template name="user.footer.content">
   <HR/><TABLE WIDTH="100%"><TR>
   <!--<TD class="copyright">&#x00A9; 2013-2014 Thomas Mejer Hansen.</TD>-->
-  <TD class="copyright" ALIGN="right" VALIGN="middle">This site is hosted by
-<A href="http://sourceforge.net/projects/mgstat/">
+  <TD class="copyright" ALIGN="right" VALIGN="middlef">This site is hosted by
+<A href="http://sourceforge.net/projects/sippi/">
 <IMG src="http://sourceforge.net/sflogo.php?group_id=102150" width="88" height="31" border="0" alt="SourceForge Logo"></IMG></A></TD>
   </TR></TABLE>
 <script src="http://www.google-analytics.com/urchin.js" type="text/javascript">
