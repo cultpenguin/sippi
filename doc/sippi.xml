@@ -67,11 +67,13 @@ book SYSTEM "/usr/share/xml/docbook/schema/dtd/5.0/docbook.dtd"
         </affiliation>
       </author>
     </authorgroup>
+<!--
     <copyright>
-      <year>2013-2014;yearnow;</year>
+      <year>2013-2014;</year>
       <holder role="mailto:thomas.mejer.hansen@gmail.com">Thomas
       Mejer Hansen</holder>
     </copyright>
+-->
     <edition>version 1.0</edition>
     <!-- <pubdate>01/04/2014</pubdate> -->
 

@@ -1,12 +1,12 @@
 <?xml version="1.0" encoding="ISO-8859-1"?>
 <xsl:stylesheet version="1.0" xmlns:xsl="http://www.w3.org/1999/XSL/Transform">
-<xsl:import href="/usr/share/xml/docbook/stylesheet/nwalsh/xhtml/chunk.xsl"/>
+<xsl:import href="/usr/share/xml/docbook/stylesheet/docbook-xsl/html/chunk.xsl"/>
 
 
 <xsl:template name="user.footer.content">
   <HR/><TABLE WIDTH="100%"><TR>
-  <TD class="copyright">&#x00A9; 2013-2010 Thomas Mejer Hansen.</TD>
-  <TD class="copyright" ALIGN="right">This site is hosted by
+  <!--<TD class="copyright">&#x00A9; 2013-2014 Thomas Mejer Hansen.</TD>-->
+  <TD class="copyright" ALIGN="right" VALIGN="middle">This site is hosted by
 <A href="http://sourceforge.net/projects/mgstat/">
 <IMG src="http://sourceforge.net/sflogo.php?group_id=102150" width="88" height="31" border="0" alt="SourceForge Logo"></IMG></A></TD>
   </TR></TABLE>
