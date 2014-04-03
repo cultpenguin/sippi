@@ -1,0 +1,37 @@
+<sect1 xml:id="sec_ex_linefit"><title>Line fitting</title>
+<para>
+The forward problem consists of computing the y-value as a function of the x-position of the data, and the polynomial coefficients determining the line. <link linkend="sippi_forward_linefit">sippi_forward_linefit.m</link>:
+<screen xml:id="sippi_forward_linefit">
+% sippi_forward_linefit Line fit forward solver for SIPPI 
+%
+% [d,forward,prior,data]=sippi_forward_linefit(m,forward,prior,data);
+%
+function [d,forward,prior,data]=sippi_forward_linefit(m,forward,prior,data);
+
+if length(m)==1;
+    d{1}=forward.x*m{1};
+elseif length(m)==2;
+    d{1}=forward.x*m{1}+m{2};
+else
+    d{1}=forward.x.^2*m{1}+forward.x*m{2}+m{3};
+end
+</screen>
+</para>
+
+</sect1>
+
+<sect1 xml:id="sec_ex_covariance_inference"><title>Covariance model inference</title>
+<para>
+</para>
+</sect1>
+
+<sect1 xml:id="sec_ex_tomography"><title>Cross hole tomography</title>
+<para>
+</para>
+</sect1>
+
+<sect1 xml:id="sec_ex_reflection"><title>Reflection seismic inversion</title>
+<para>
+</para>
+</sect1>
+

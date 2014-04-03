@@ -1,0 +1,23 @@
+<para>
+The latest version of &sippi; is available from 
+<link xlink:href="http://sourceforge.net/project/showfiles.php?group_id=102150">Sourceforge</link>
+
+
+<!--
+<figure xml:id="ex.pythagorean">
+    <title>The Pythagorean Theorem Illustrated</title>
+-->
+    <mediaobject>
+      <imageobject condition="print">
+        <imagedata fileref="figures/prior_example_1_2d_gaussian.png"/>
+      </imageobject>
+      <imageobject condition="web">
+        <imagedata fileref="figures/prior_example_1_2d_gaussian.png"/>
+      </imageobject>
+      <textobject><phrase>An illustration of the Pythagorean Theorem</phrase></textobject>
+    </mediaobject>
+ <!--   </figure> -->
+
+</para>
+
+
