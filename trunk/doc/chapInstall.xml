@@ -1,0 +1,44 @@
+<sect1 xml:id="InstallSippi"><title>SIPPI</title>
+<para>
+<link xlink:href="https://sourceforge.net/projects/sippi/files/latest/download?source=fileshttps://sourceforge.net/projects/sippi/files/latest/download?source=files">Download</link> the latest version of SIPPI from <link xlink:href="http://sippi.sourceforge.net">http://sippi.sourceforge.net</link>.
+</para>
+
+<para>
+Unpack ZIPPI_1.0.zip somewhere, for example to 'c:\Users\tmh\SIPPI'. Then setup the Matlab path to point to the appropriate SIPPI directories:
+</para>
+<screen>
+addpath c:\Users\tmh\SIPPI
+sippi_set_path
+</screen>
+<para>
+
+
+
+<!--
+<figure xml:id="ex.pythagorean">
+    <title>The Pythagorean Theorem Illustrated</title>
+    <mediaobject>
+      <imageobject condition="print">
+        <imagedata fileref="figures/prior_example_1_2d_gaussian.png"/>
+      </imageobject>
+      <imageobject condition="web">
+        <imagedata fileref="figures/prior_example_1_2d_gaussian.png"/>
+      </imageobject>
+      <textobject><phrase>An illustration of the Pythagorean Theorem</phrase></textobject>
+    </mediaobject>
+   </figure> 
+-->
+
+</para>
+
+<sect2 xml:id="InstallSgems"><title>SGeMS (optional)</title>
+<para>
+To make use of the SISIM and SNESIM type priori models SGeMS needs to be available.
+</para>
+<para>
+Currently only SGeMS version 2.1 (<link xlink:href="http://sourceforge.net/projects/sgems/files/sgems/sgems-2.1Beta/sgems_2.1beta_installer.exe/download">download</link>) for Windows is supported. 
+</para>
+</sect2>
+
+
+</sect1>

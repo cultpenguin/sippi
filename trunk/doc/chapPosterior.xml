@@ -1,0 +1,32 @@
+<sect1 xml:id="chapposterior"><title>Sampling the a posteriori probability density</title>
+<para>
+</para>
+
+<sect2 xml:id="sec_rejection"><title>The rejection sampler</title>
+<para></para>
+</sect2>
+
+<sect2 xml:id="sec_extendedmetropolis"><title>The extended Metropolis sampler</title>
+<para></para>
+
+<sect3 xml:id="sec_independentmetropolis"><title>The extended independent Metropolis sampler</title>
+<para></para>
+</sect3>
+
+</sect2>
+
+<!-- LSQ-->
+<sect2 xml:id="sec_lsq"><title>linear least squares</title>
+<para></para>
+</sect2>
+
+
+<!-- SIMULATED ANNEALING -->
+
+
+</sect1>
+
+<sect1 xml:id="sec_simanneal"><title>Simulated Annealing</title>
+<para></para>
+</sect1>
+
