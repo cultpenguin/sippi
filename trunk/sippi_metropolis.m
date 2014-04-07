@@ -42,12 +42,14 @@ options.null='';
 if ~isfield(options,'txt')
     options.txt='';
 end
-if length(options.txt)>0
+if isempty(options.txt)>0
     options.txt=sprintf('%s_sippi_metropolis_%s',datestr(now,'YYYYmmdd_HHMM'),options.txt);
 end
 
 try
     options.txt=sprintf('%s_%s',options.txt,forward.type);
+catch
+    % No forward.type
 end
 try
     if forward.linear==1;
@@ -56,6 +58,9 @@ try
         t='nonlin';
     end
     options.txt=sprintf('%s_%s',options.txt,t);
+catch
+    % no obsolete, only applies when using the traveltime toolbox. Perhaps
+    % remove?
 end
 
 nm=length(prior);
@@ -111,7 +116,6 @@ end
 
 
 %% STARTING  MODEL
-%rand('seed',1);
 if isfield(mcmc,'m_init');
     m_init=mcmc.m_init;
     disp(sprintf('Using supplied model as starting model',mfilename))
