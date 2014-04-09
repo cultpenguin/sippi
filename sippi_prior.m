@@ -37,29 +37,50 @@
 %%%% A PRIOR MODEL WITH SEVERAL 'TYPES OF A PRIORI MODEL'
 %
 %   im=1;
+%   prior{im}.type='GAUSSIAN';
+%   prior{im}.m0=100;
+%   prior{im}.std=50;
+%   prior{im}.norm=100;
+%   im=2;
 %   prior{im}.type='FFTMA';
 %   prior{im}.x=[0:1:100];
 %   prior{im}.y=[0:1:100];
 %   prior{im}.m0=10;
 %   prior{im}.Cm='1 Sph(10)';
-%   im=2;
+%   im=3;
 %   prior{im}.type='SISIM';
 %   prior{im}.x=[0:1:100];
 %   prior{im}.y=[0:1:100];
 %   prior{im}.m0=10;
 %   prior{im}.Cm='1 Sph(10)';
-%   im=3;
-%   prior{im}.type='GAUSSIAN';
-%   prior{im}.m0=100;
-%   prior{im}.std=50;
-%   prior{im}.norm=100;
-%   prior=sippi_prior_init(prior);
+%   im=4;
+%   prior{im}.type='SNESIM';
+%   prior{im}.x=[0:1:100];
+%   prior{im}.y=[0:1:100];
 %
 %   sippi_plot_model(prior);
 %
 %%% Sequential Gibbs sampling
-%% For more information, see <a href="matlab:web('http://dx.doi.org/10.1007/s10596-011-9271-1')">Hansen, T. M., Cordua, K. S., and Mosegaard, K., 2012. Inverse problems with non-trivial priors - Efficient solution through Sequential Gibbs Sampling. Computational Geosciences</a>.
 %
+%   All a priori model types can be perturbed, such that a new realization 
+%   is generated in the vicinity of a current model. 
+%   To do this Sequential Gibbs Sampling is used.
+%   For more information, see <a href="matlab:web('http://dx.doi.org/10.1007/s10596-011-9271-1')">Hansen, T. M., Cordua, K. S., and Mosegaard, K., 2012. Inverse problems with non-trivial priors - Efficient solution through Sequential Gibbs Sampling. Computational Geosciences</a>.
+%   The type of sequential Gibbs sampling can be controlled in the
+%   'seq_gibbs' structures, e.g. prior{1}.seq_gibbs
+%
+%   im=1;
+%   prior{im}.type='SNESIM';
+%   prior{im}.x=[0:1:100];
+%   prior{im}.y=[0:1:100];
+%
+%   [m,prior]=sippi_prior(prior);
+%   prior{1}.seq_gibbs.step=1; % Large step--> independant realizations
+%   prior{1}.seq_gibbs.step=.1; % Smaller step--> Dependant realizations
+%   for i=1:30;
+%      [m,prior]=sippi_prior(prior,m); % One iteration of Sequential Gibbs
+%      sippi_plot_model(prior,m);
+%   end
 %
 % See also: sippi_prior_init, sippi_plot_prior, sippi_prior_set_steplength.m
 %

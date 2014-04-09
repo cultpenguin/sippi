@@ -1,6 +1,9 @@
 function options=sippi_rejection(data,prior,forward,options)
 % sippi_rejection Rejection sampling
 %
+% Call : 
+%     options=sippi_rejection(data,prior,forward,options)
+%
 % input arguments
 %
 %   options.mcmc.i_plot
@@ -29,10 +32,13 @@ function options=sippi_rejection(data,prior,forward,options)
 
 
 %% NAME
-if ~isfield(options,'txt')
-    options.txt='';
+options.null='';
+if ~isfield(options,'txt');options.txt='';end
+if length(options.txt)>0    
+    options.txt=sprintf('%s_sippi_rejection_%s',datestr(now,'YYYYmmdd_HHMM'),options.txt);
+else
+    options.txt=sprintf('%s_sippi_rejection',datestr(now,'YYYYmmdd_HHMM'));
 end
-options.txt=sprintf('%s_sippi_rejection_%s',datestr(now,'YYYYmmdd_HHMM'),options.txt);
 
 
 %% INITIALIZE ASC FILE

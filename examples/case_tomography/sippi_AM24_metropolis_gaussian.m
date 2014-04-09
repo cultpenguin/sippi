@@ -15,7 +15,7 @@ options.txt='AM24';
 id=1;
 data{id}.d_obs=D.d_obs;
 data{id}.d_std=D.d_std;
-%data{id}.i_use=[10:10:length(data{id}.d_obs)];
+data{id}.i_use=[10:10:length(data{id}.d_obs)];
 data{id}.Ct=1; % modelization error
 data{id}.Ct=1+D.Ct; % modelization and static error
 

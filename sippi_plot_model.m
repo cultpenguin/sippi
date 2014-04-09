@@ -19,6 +19,14 @@ function sippi_plot_model(prior,m,im_array,use_colorbar,fhandle);
 %
 % See also sippi_plot_prior
 
+
+% Check for initialization
+for im=1:length(prior);
+    if ~isfield(prior{im},'init')
+        prior=sippi_prior_init(prior);
+    end
+end
+
 if nargin<2 m=sippi_prior(prior); end
 if nargin<3, im_array=1:1:length(m);end
 if nargin<4, use_colorbar=1;end
