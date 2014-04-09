@@ -38,12 +38,11 @@ function [options,data,prior,forward,m_current]=sippi_metropolis(data,prior,forw
 % See also sippi_rejection
 %
 options.null='';
-
-if ~isfield(options,'txt')
-    options.txt='';
-end
+if ~isfield(options,'txt');options.txt='';end
 if isempty(options.txt)>0
     options.txt=sprintf('%s_sippi_metropolis_%s',datestr(now,'YYYYmmdd_HHMM'),options.txt);
+else
+    options.txt=sprintf('%s_sippi_metropolis',datestr(now,'YYYYmmdd_HHMM'));
 end
 
 try

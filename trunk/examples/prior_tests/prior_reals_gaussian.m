@@ -1,24 +1,40 @@
 % prior_reals_gaussian Sampling two 1D GAUSSIAN type prior models
 
-clear all
+clear all;close all
+
 
 im=1;
 prior{im}.type='GAUSSIAN';
+prior{im}.name='Gaussian';
+prior{im}.m0=10;
+prior{im}.std=2;
+
+im=2;
+prior{im}.type='GAUSSIAN';
+prior{im}.name='Laplace';
+prior{im}.m0=10;
+prior{im}.std=2;
+prior{im}.norm=1;
+
+im=3;
+prior{im}.type='GAUSSIAN';
+prior{im}.name='Uniform';
 prior{im}.m0=10;
 prior{im}.std=2;
 prior{im}.norm=60;
 
-im=2;
-prior{im}.type='GAUSSIAN';
-prior{im}.m0=10;
-prior{im}.std=2;
-
+%%
+sippi_plot_prior(prior,1:3,10000);
+for im=1:length(prior);
+    figure(90+im);print_mul(['prior_gaussian_1d_',prior{im}.name])
+end
+return
 %%
 N=10000;
 m_real1=ones(1,N);
 m_real2=ones(1,N);
 for i=1:N;
-    m=sippi_prior(prior);
+    [m,prior]=sippi_prior(prior);
     m_real1(i)=m{1};
     m_real2(i)=m{2};
 end
