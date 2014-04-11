@@ -24,6 +24,7 @@ book SYSTEM "/usr/share/xml/docbook/schema/dtd/5.0/docbook.dtd"
 <!ENTITY chapForward SYSTEM "chapForward.xml"> 
 <!ENTITY chapSIPPI SYSTEM "chapSIPPI.xml"> 
 <!ENTITY chapExamples SYSTEM "chapExamples.xml"> 
+<!ENTITY chapBibliography SYSTEM "chapBibliography.xml"> 
 <!ENTITY % xinclude SYSTEM "xinclude.mod">
 %xinclude;
 ]>
@@ -135,6 +136,9 @@ In order to make use of SIPPI one has to
     &chapExamples;
   </chapter>
 
+  <!-- BIBLIOGRAPHY -->
+  &chapBibliography;
+  
 
 
 

@@ -6,4 +6,30 @@ All information about the a priori model are defined in the Matlab structure cal
 <para></para>
 </sect2>
 
+<sect2><title>movie</title>
+<para>
+<mediaobject>
+      <videoobject>
+       <videodata fileref='figures/movie.avi'/>
+      </videoobject>
+     <imageobject>
+        <imagedata fileref='figures/prior_example_2_2d_visim.png'/>
+    </imageobject>
+      <textobject>
+      <para>This video illustrates the proper way to assemble an
+        inverting time distortion device.
+      </para>
+        <warning>
+        <para>It is imperative that the primary and secondary temporal
+          couplings not be mounted in the wrong order. Temporal
+        catastrophe is the likely result. The future you destroy
+          may be your own.
+        </para>
+        </warning>
+    </textobject>
+    </mediaobject>
+</para>
+<sect2>
+
+
 </sect1>
