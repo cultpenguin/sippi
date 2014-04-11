@@ -2,6 +2,129 @@
 <sect1 xml:id="chapprior"><title>The a priori model</title>
 <para>
 </para>
+
+<sect2 xml:id="prior_types"><title>Types of a priori models</title>
+<para>
+</para>
+
+
+<sect3 xml:id="prior_gaussian"><title>1D Generalized Gaussian</title>
+<para>
+A 1D generalized Gaussian prior model can be specified using the 'gaussian' type prior model
+</para>
+<screen>
+prior{1}.type='gaussian';
+</screen>
+
+<para>
+A simple 1D Gaussian distribution with mean 10, and standard deviation 2, can be specified using
+</para>
+<screen>
+prior{1}.type='gaussian';
+prior{1}.m0=10;
+prior{1}.std=2;
+</screen>
+
+<para>
+The norm of a generalized Gaussian can be set using the 'norm' field. A generalized 1D Gaussian with mean 10, standard devation of 2, and a norm of 70, can be specified using 
+(The norm is equivelent ot the beta factor referenced in <link xlink:href="http://en.wikipedia.org/wiki/Generalized_normal_distribution">Wikipedia:Generalized_normal_distribution</link>)
+</para>
+<screen>
+prior{1}.type='gaussian';
+prior{1}.m0=10;
+prior{1}.std=2;
+prior{1}.norm=70;
+</screen>
+</sect3>
+
+
+<sect3 xml:id="prior_visim"><title>VISIM</title>
+<para></para>
+</sect3>
+
+<sect3 xml:id="prior_fftma"><title>FFTMA</title>
+<para></para>
+</sect3>
+
+<sect3 xml:id="prior_sisim"><title>SISIM</title>
+<para></para>
+</sect3>
+
+<sect3 xml:id="prior_snesim"><title>SNESIM</title>
+<para></para>
+</sect3>
+
+</sect2>
+
+<sect2 xml:id="prior_sampling"><title>Sampling the prior</title>
+<para>
+Once the prior data structure has been defined a sample from the prior distribution can be generated using 
+<screen>
+m=sippi_prior(prior);
+</screen>
+'m' is a Matlab data structure of the same size as the 'prior' data structure. Thus, if two prior distributions have been defined in 'prior{1}' and 'prior{2}', then 'm{1}' will hold a realization of 'prior{1}', 
+and 'm{2}' will hold a realization of 'prior{2}'. 
+</para>
+<para>
+Each time 'm=sippi_prior(prior)' is called, a new independant realization of the prior will be generated.
+</para>
+
+</sect2>
+
+<sect2><title>Sequential Gibbs sampling / Conditional Resampling</title>
+<para>
+All the available a priori types available allow perturbing one realization of a prior into a new realization of prior, in the vicinity of the first one. To do this we make use of sequential Gibbs sampling <citation>HCM12</citation>. Sequential Gibbs in essence is a type of conditional resampling. From a current realization of a prior, a number of model parameters are discarded and treated as unknown, and the simulated conditional to the fixed values of the model parameters.  
+</para>
+<para>
+In order to generate a new realiztion 'm2' in the viciinity of the realization 'm1' use
+<screen>
+m1=sippi_prior(prior);
+[m2,prior]=sippi_prior(prior,m1);
+</screen>
+If this process is iterated, then a random walk in the space of a priori acceptable models will be perform. And, the collection of realization obatined, will represent a sample from prior distribution.  
+</para>
+
+
+
+
+<sect3><title>Controlling sequential Gibbs sampling / Conditional Resampling</title>
+<para>
+All properties related to sequential Gibbs sampling can be set in the 'seq_gibbs' data struture, for each prior type. The follwing two parameters determined how the a current model is perturbed
+</para>
+<screen>
+prior{m}.seq_gibbs.step=1;
+prior{m}.seq_gibbs.type=2;
+</screen>
+<para>
+One can also optionally, as part of running the <link linkend="sec_extendedmetropolis">extended Metropolis sampler</link>, automatically update the 'step'-length in order to ensure a specific approximate acceptance ratio 'P_target' of the Metropolios sampler. See <citation>CHM12</citation> for details.
+</para>
+<para>
+The default parameters for adjusting the step length is givel below. These parameters will be set the fisrt time 'sippi_prior' is called with the 'prior' structure as output.The default parameters.
+<citation>Hansen et al., 2012</citation>
+</para>
+<screen>
+prior{m}.seq_gibbs.step_min=0;
+prior{m}.seq_gibbs.step_min=1;
+prior{m}.seq_gibbs.i_update_step=50
+prior{m}.seq_gibbs.i_update_step_max=1000
+prior{m}.seq_gibbs.n_update_history=50
+prior{m}.seq_gibbs.P_target=0.3000
+</screen>
+<para>By default adustment of the step length, in order to achieve an acceptance ratio of 0.3 ('prior{m}.seq_gibbs.P_target='), will be performed for every 50 ('prior{m}.seq_gibbs.i_update_step') iterations, using the acceptabce ratio observed in the last 50 ('prior{m}.seq_gibbs.i_update_history') iteration.
+ </para>
+<para>
+Adjustment of the step length will be performed only in the first 1000 ('prior{m}.seq_gibbs.i_update_step_max') iterations. 
+</para>
+<para>
+In order to disable automatiuc adjustment of the step length simply set 
+<screen>
+prior{m}.seq_gibbs.i_update_step_max=0; % disable automatic step length
+</screen>
+</para>
+</sect3>
+</sect2>
+
+
 </sect1>
 
 <sect1 xml:id="chapdata"><title>The data and the noise</title>
