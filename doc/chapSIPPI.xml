@@ -71,7 +71,7 @@ Each time 'm=sippi_prior(prior)' is called, a new independant realization of the
 
 </sect2>
 
-<sect2><title>Sequential Gibbs sampling / Conditional Resampling</title>
+<sect2 xml:id="sec_seq_gibbs"><title>Sequential Gibbs sampling / Conditional Resampling</title>
 <para>
 All the available a priori types available allow perturbing one realization of a prior into a new realization of prior, in the vicinity of the first one. To do this we make use of sequential Gibbs sampling <citation>HCM12</citation>. Sequential Gibbs in essence is a type of conditional resampling. From a current realization of a prior, a number of model parameters are discarded and treated as unknown, and the simulated conditional to the fixed values of the model parameters.  
 </para>
@@ -87,7 +87,7 @@ If this process is iterated, then a random walk in the space of a priori accepta
 
 
 
-<sect3><title>Controlling sequential Gibbs sampling / Conditional Resampling</title>
+<sect3 xml:id="sec_seq_gibbs_step"><title>Controlling sequential Gibbs sampling / Conditional Resampling</title>
 <para>
 All properties related to sequential Gibbs sampling can be set in the 'seq_gibbs' data struture, for each prior type. The follwing two parameters determined how the a current model is perturbed
 </para>
@@ -95,32 +95,6 @@ All properties related to sequential Gibbs sampling can be set in the 'seq_gibbs
 prior{m}.seq_gibbs.step=1;
 prior{m}.seq_gibbs.type=2;
 </screen>
-<para>
-One can also optionally, as part of running the <link linkend="sec_extendedmetropolis">extended Metropolis sampler</link>, automatically update the 'step'-length in order to ensure a specific approximate acceptance ratio 'P_target' of the Metropolios sampler. See <citation>CHM12</citation> for details.
-</para>
-<para>
-The default parameters for adjusting the step length is givel below. These parameters will be set the fisrt time 'sippi_prior' is called with the 'prior' structure as output.The default parameters.
-<citation>Hansen et al., 2012</citation>
-</para>
-<screen>
-prior{m}.seq_gibbs.step_min=0;
-prior{m}.seq_gibbs.step_min=1;
-prior{m}.seq_gibbs.i_update_step=50
-prior{m}.seq_gibbs.i_update_step_max=1000
-prior{m}.seq_gibbs.n_update_history=50
-prior{m}.seq_gibbs.P_target=0.3000
-</screen>
-<para>By default adustment of the step length, in order to achieve an acceptance ratio of 0.3 ('prior{m}.seq_gibbs.P_target='), will be performed for every 50 ('prior{m}.seq_gibbs.i_update_step') iterations, using the acceptabce ratio observed in the last 50 ('prior{m}.seq_gibbs.i_update_history') iteration.
- </para>
-<para>
-Adjustment of the step length will be performed only in the first 1000 ('prior{m}.seq_gibbs.i_update_step_max') iterations. 
-</para>
-<para>
-In order to disable automatiuc adjustment of the step length simply set 
-<screen>
-prior{m}.seq_gibbs.i_update_step_max=0; % disable automatic step length
-</screen>
-</para>
 </sect3>
 </sect2>
 

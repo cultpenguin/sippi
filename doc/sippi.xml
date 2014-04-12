@@ -1,7 +1,8 @@
 <?xml version="1.0"?>
 <!DOCTYPE 
-book SYSTEM "/usr/share/xml/docbook/schema/dtd/5.0/docbook.dtd"
+book SYSTEM "docbook.dtd"
 [
+<!-- book SYSTEM "/usr/share/xml/docbook/schema/dtd/5.0/docbook.dtd" -->
 <!ENTITY company "Niels Bohr Institute">
 <!ENTITY sippi "SIPPI">
 <!ENTITY matlab "Matlab"> 
