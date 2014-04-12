@@ -9,7 +9,40 @@
 <sect2 xml:id="sec_extendedmetropolis"><title>The extended Metropolis sampler</title>
 <para></para>
 
+<sect3 xml:id="sec_controling_step_length"><title>Controling the step length</title>
+<para></para>
+<para>
+One optionally, as part of running the <link linkend="sec_extendedmetropolis">extended Metropolis sampler</link>, automatically update the 'step'-length of the <link linkend="sec_seq_gibbs">sequential Gibbs sampler</link> in order to ensure a specific approximate acceptance ratio of the Metropolios sampler. See <citation>CHM12</citation> for details.
+</para>
+<para>
+The default parameters for adjusting the step length, as given below, are set in the '<link linkend="sec_seq_gibbs_step">prior.seq_gibbs</link>' structure. These parameters will be set the first time 'sippi_prior' is called with the 'prior' structure as output.The default parameters.
+</para>
+<screen>
+prior{m}.seq_gibbs.step_min=0;
+prior{m}.seq_gibbs.step_min=1;
+prior{m}.seq_gibbs.i_update_step=50
+prior{m}.seq_gibbs.i_update_step_max=1000
+prior{m}.seq_gibbs.n_update_history=50
+prior{m}.seq_gibbs.P_target=0.3000
+</screen>
+<para>By default, adjustment of the step length, in order to achieve an acceptance ratio of 0.3 ('prior{m}.seq_gibbs.P_target'), will be performed for every 50 ('prior{m}.seq_gibbs.i_update_step') iterations, using the acceptance ratio observed in the last 50 ('prior{m}.seq_gibbs.i_update_history') iterations.
+ </para>
+<para>
+Adjustment of the step length will be performed only in the first 1000 ('prior{m}.seq_gibbs.i_update_step_max') iterations. 
+</para>
+<para>
+In order to disable automatiuc adjustment of the step length simply set 
+<screen>
+prior{m}.seq_gibbs.i_update_step_max=0; % disable automatic step length
+</screen>
+</para>
+</sect3>
+
 <sect3 xml:id="sec_independentmetropolis"><title>The extended independent Metropolis sampler</title>
+<para></para>
+</sect3>
+
+<sect3 xml:id="sec_metropolis_annealing"><title>Annealing schedule</title>
 <para></para>
 </sect3>
 
