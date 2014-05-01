@@ -11,6 +11,9 @@ A few implementations of solutions to forward problems are included as examples 
 
 <sect1 xml:id="sec_ex_linefit"><title>Polynomial line fitting</title>
 <para>
+
+</para>
+<para>
 The forward problem consists of computing the y-value as a function of the x-position of the data, and the polynomial coefficients determining the line. <link linkend="sippi_forward_linefit">sippi_forward_linefit.m</link>:
 <screen xml:id="sippi_forward_linefit">
 % sippi_forward_linefit Line fit forward solver for SIPPI 

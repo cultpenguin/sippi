@@ -140,7 +140,7 @@ In order to make use of SIPPI one has to
   <!-- BIBLIOGRAPHY -->
   &chapBibliography;
 
-  <chapter xml:id="chapReference"><title>Referece</title>
+  <chapter xml:id="chapReference"><title>Reference</title>
   <sect1><title>SIPPI</title>
   <para></para>
   &funcSIPPI;
