@@ -26,6 +26,8 @@ book SYSTEM "docbook.dtd"
 <!ENTITY chapSIPPI SYSTEM "chapSIPPI.xml"> 
 <!ENTITY chapExamples SYSTEM "chapExamples.xml"> 
 <!ENTITY chapBibliography SYSTEM "chapBibliography.xml"> 
+<!ENTITY funcSIPPI SYSTEM "sippi_functions.xml"> 
+<!ENTITY funcTRAVELTIME SYSTEM "sippi_functions_toolboxes_traveltime.xml"> 
 <!ENTITY % xinclude SYSTEM "xinclude.mod">
 %xinclude;
 ]>
@@ -111,15 +113,13 @@ In order to make use of SIPPI one has to
   </preface>
 
   <!-- INTRODUCTION -->
-  <!--	
   <chapter xml:id="Introduction"><title>Introduction</title>
     &chapIntroduction;
   </chapter>
-  -->
 
   <!-- INSTALLATION -->
   <chapter xml:id="Installation"><title>Installation</title>
-    &chapInstall;
+     &chapInstall;
   </chapter>
 
   <!-- PRIOR/DATA/FORWARD -->
@@ -139,8 +139,17 @@ In order to make use of SIPPI one has to
 
   <!-- BIBLIOGRAPHY -->
   &chapBibliography;
-  
 
+  <chapter xml:id="chapReference"><title>Referece</title>
+  <sect1><title>SIPPI</title>
+  <para></para>
+  &funcSIPPI;
+  </sect1>
+  <sect1><title>SIPPI toolbox: Traveltime tomography</title>
+  <para></para>
+  &funcTRAVELTIME;
+  </sect1>
+  </chapter>
 
 
 
