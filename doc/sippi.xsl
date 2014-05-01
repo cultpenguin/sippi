@@ -18,6 +18,7 @@ urchinTracker();
 </script>
 </xsl:template>
 
+<xsl:param name="chunk.section.depth" select="3"></xsl:param>
 
 <xsl:param name="use.id.as.filename" select="1"/>
 
