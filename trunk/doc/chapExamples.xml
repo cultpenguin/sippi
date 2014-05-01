@@ -1,4 +1,15 @@
-<sect1 xml:id="sec_ex_linefit"><title>Line fitting</title>
+<para>
+SIPPI can be used as a convenient approach for unconditional an conditional simulation.
+</para>
+<para>
+In ordet to use SIPPI to solve inverse problems, one must provide the solution to the forward problem. Essentially this amounts to implementing a Matlab function that solves the <link linkend="chapforward">forward problem</link> in using a specific input/output format. If a solution to the forward problem allready exist, this can be quite easily done simply using a Matlab wrapper function. 
+<!-- <link linkend="sippi_forward">forward problem</link> -->
+</para>
+<para>
+A few implementations of solutions to forward problems are included as examples as part of SIPPI. These will be demonstrated in the following 
+</para>
+
+<sect1 xml:id="sec_ex_linefit"><title>Polynomial line fitting</title>
 <para>
 The forward problem consists of computing the y-value as a function of the x-position of the data, and the polynomial coefficients determining the line. <link linkend="sippi_forward_linefit">sippi_forward_linefit.m</link>:
 <screen xml:id="sippi_forward_linefit">
