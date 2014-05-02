@@ -1,10 +1,10 @@
 body{
-       font-size: 10pt;	 
+       // font-size: 14pt;	 
        margin-left:  30px; 
        margin-right: 30px;
        margin-top:   30px;  
        color: black;
-       background: #ffffff;
+       background: white;
        font-family: Bodini, Helvetica, Syntax;
      }
 
@@ -19,32 +19,34 @@ A:visited {        color: #990000;
 
 
 H1, H2, H3, H4, H5, H6{
-        font-weight: 900;
+        font-weight: 100;
         }
 
 H1 {
-	font-size:16pt;
-        padding-left: 30px;
-        padding-right: 10px;
-        padding-top: 10px;
-        padding-bottom: 10px;
+	font-size:160%;
+        padding: 30px;
+        //margin-left: -20px;
+        //margin-right: -20px;
+        //margin-top: 20px;
+        //margin-bottom: 20px;
 }
+
 H2 {
-	font-size:12pt;
+	font-size:140%;
         padding-left: 30px;
         padding-right: 5px;
         padding-top: 5px;
         padding-bottom: 5px;
 }
 H3 {
-	font-size:10pt;
+	font-size:120%;
         padding-left: 30px;
         padding-right: 3px;
         padding-top: 3px;
         padding-bottom: 3px;
 }
 H4 {
-	font-size:8pt;
+	font-size:100%;
         padding-left: 30px;
         padding-right: 1px;
         padding-top: 10px;
@@ -52,8 +54,22 @@ H4 {
 	margin-right: 300px;
 }
 
+
+.title  {
+        //color: #ffffff; 
+         background: GhostWhite; 
+        border: dashed #000000 1px;
+        border-bottom: dashed #000000 1px;
+        border-left: dotted #000000 3px;
+        font-weight: bold;
+        text-align: left;
+        padding: 3pt;
+        padding-left: 15pt;
+}
+
+
 .abstract {
-	font-size:8pt;
+	font-size:80%;
         padding-left: 30px;
         padding-right: 10px;
         padding-top: 10px;
@@ -64,15 +80,6 @@ H4 {
 
 }
 
-
-
-.title  {color: #ffffff; 
-        background: #000000; 
-        font-weight: bold;
-        text-align: left;
-        padding: 3pt;
-
-        }
 
 .subtitle  {color: #ffffff; 
         background: #000000; 
@@ -146,6 +153,7 @@ pre.programlisting
         font-family:monospace;
         white-space: pre;
         background-color: #eeeeee;
+        background-color: #khaki;
         border:solid;
         color: #000000;
         border-color: #993333;
@@ -166,7 +174,8 @@ pre.screen
         border:solid;
         color: #000000;
         border-color: #993333;
-        border-left: solid #993333 2px;
+        background-color: #khaki;
+        border-left: solid #993333 12px;
         border-right: solid #993333 2px;
         border-top: solid #993333 2px;
         border-bottom: solid #993333 2px;
