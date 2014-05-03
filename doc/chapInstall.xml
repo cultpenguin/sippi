@@ -4,7 +4,7 @@
 </para>
 
 <para>
-Unpack ZIPPI_1.0.zip somewhere, for example to 'c:\Users\tmh\SIPPI'. Then setup the Matlab path to point to the appropriate SIPPI directories:
+Unpack ZIPPI.zip somewhere, for example to 'c:\Users\tmh\SIPPI'. Then setup the Matlab path to point to the appropriate SIPPI directories:
 </para>
 <screen>
 addpath c:\Users\tmh\SIPPI
