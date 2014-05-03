@@ -34,8 +34,7 @@ book SYSTEM "docbook.dtd"
 <book>
   <title>SIPPI</title>
   <titleabbrev>Example</titleabbrev>
-
-
+   
   <info>
     <authorgroup>
       <author>
@@ -47,11 +46,13 @@ book SYSTEM "docbook.dtd"
         <affiliation>
           <!-- <shortaffil>NBI</shortaffil> -->
           <!-- <jobtitle>Associate Professor</jobtitle> -->
+		  <!--
           <orgname>Niels Bohr Instute</orgname>
           <orgdiv>Computational Geoscience</orgdiv>
-          <address>
+		  <address>
             <email>thomas.mejer.hansen@gmail.com</email>
           </address>
+		  -->          
         </affiliation>
       </author>
       <author>
@@ -63,11 +64,13 @@ book SYSTEM "docbook.dtd"
         <affiliation>
           <!-- <shortaffil>NBI</shortaffil> -->
           <!-- <jobtitle>Associate Professor</jobtitle> -->
-          <orgname>Niels Bohr Instute</orgname>
+          <!-- 
+		  <orgname>Niels Bohr Instute</orgname>
           <orgdiv>Computational Geoscience</orgdiv>
-          <address>
+	       <address>
             <email>knudcordua@gmail.com</email>
           </address>
+		  -->         
         </affiliation>
       </author>
     </authorgroup>
@@ -84,6 +87,7 @@ book SYSTEM "docbook.dtd"
 
 
   </info>
+ 
   <preface>
     <title>About</title>
     <para>

@@ -43,13 +43,23 @@ html:
 	make validate
 	mkdir -p htmldoc
 	mkdir -p htmldoc/figures
-#	mkdir -p htmldoc/data
 	cp figures/*.png htmldoc/figures/.
-#	cp data/*.* htmldoc/data/.
 	cp style.css htmldoc/.
 	xsltproc --xinclude --stringparam html.stylesheet style.css -o htmldoc sippi.xsl sippi.xml
 	mv *.html htmldoc/.
-#xsltproc -o mybook.fo docbook.xsl mybook.xml
+
+html_cygwin:
+	make validate
+	mkdir -p htmldoc
+	mkdir -p htmldoc/figures
+	cp figures/*.png htmldoc/figures/.
+	cp style.css htmldoc/.
+	xsltproc --xinclude --stringparam html.stylesheet style.css -o htmldoc sippi_cygwin.xsl sippi.xml
+	mv *.html htmldoc/.
+
+	
+	
+
 linkbook:
 	ln -s sippiBook.xml sippi.xml
 linkarticle:
