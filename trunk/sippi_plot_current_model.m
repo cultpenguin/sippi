@@ -41,7 +41,11 @@ try
     % CHANGE TO SUPPORT MORE THAN ONE DATA SET
     N=0;
     for i=1:length(data);
-        N=N+length(data{i}.d_obs);
+        if isfield(data{i},'i_use');
+            N=N+length(data{i}.i_use);
+        else
+            N=N+length(data{i}.d_obs);
+        end
     end
     
     sippi_plot_loglikelihood(mcmc.logL(1:mcmc.i),mcmc.acc(1:mcmc.i),N);

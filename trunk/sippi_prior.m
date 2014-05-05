@@ -160,7 +160,7 @@ for im=im_array;
         end
     end
       
-    if  (strcmp(prior{im}.type,'SISIM'))
+    if  (strcmp(upper(prior{im}.type),'SISIM'))
         if ~isfield(prior{im},'S');
             prior{im}.S=sgems_get_par('sisim');
         end
@@ -204,7 +204,7 @@ for im=im_array;
         prior{im}.S = sgems_grid(prior{im}.S);
         m_propose{im} = prior{im}.S.D';
         
-    elseif  (strcmp(prior{im}.type,'SNESIM')|isfield(prior{im},'S'))
+    elseif  (strcmp(upper(prior{im}.type),'SNESIM')|isfield(prior{im},'S'))
         % SGEMS / SNESIM
         
         % REMOVE CONDITIONAL DATA.
@@ -263,13 +263,12 @@ for im=im_array;
         end
         
         
-    elseif (strcmp(prior{im}.type,'VISIM')|isfield(prior{im},'V'))
-        
+    elseif (strcmp(upper(prior{im}.type),'VISIM')|isfield(prior{im},'V'))
         % VISIM PRIOR
         if isfield(prior{im},'Va');
             % update VISIM covariance settings
             if ~isstruct(prior{im}.Va);
-                Va=deformat_variogram(prior{im}.Va);;
+                Va=deformat_variogram(prior{im}.Va);
             else
                 Va=prior{im}.Va;
             end
