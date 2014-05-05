@@ -41,19 +41,25 @@
 %   prior{im}.m0=100;
 %   prior{im}.std=50;
 %   prior{im}.norm=100;
-%   im=2;
+%   im=im+1;
 %   prior{im}.type='FFTMA';
 %   prior{im}.x=[0:1:100];
 %   prior{im}.y=[0:1:100];
 %   prior{im}.m0=10;
 %   prior{im}.Cm='1 Sph(10)';
-%   im=3;
+%   im=im+1;
+%   prior{im}.type='VISIM';
+%   prior{im}.x=[0:1:100];
+%   prior{im}.y=[0:1:100];
+%   prior{im}.m0=10;
+%   prior{im}.Cm='1 Sph(10)';
+%   im=im+1;
 %   prior{im}.type='SISIM';
 %   prior{im}.x=[0:1:100];
 %   prior{im}.y=[0:1:100];
 %   prior{im}.m0=10;
 %   prior{im}.Cm='1 Sph(10)';
-%   im=4;
+%   im=im+1;
 %   prior{im}.type='SNESIM';
 %   prior{im}.x=[0:1:100];
 %   prior{im}.y=[0:1:100];
@@ -297,6 +303,19 @@ for im=im_array;
             end
             prior{im}.V.refhist.fname=f_cond;
             prior{im}.V.ccdf=1;
+            
+            if isfield(prior{im},'min')
+                prior{im}.V.tail.zmin=prior{im}.min;
+            else
+                prior{im}.V.tail.zmin=min(prior{im}.d_target);
+            end
+            if isfield(prior{im},'max')
+                prior{im}.V.tail.zmin=prior{im}.max;
+            else
+                prior{im}.V.tail.zmax=max(prior{im}.d_target);
+            end
+                
+            
         end
         
         %% SEQUENTIAL GIBBS
