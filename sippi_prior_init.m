@@ -152,6 +152,7 @@ for im=1:length(prior);
     
     %% VISIM OPTIONS    
     if (strcmp(upper(prior{im}.type),'VISIM'))
+        visim_clean;
         if ~isfield(prior{im},'V');
             prior{im}.V=visim_init(prior{im}.x,prior{im}.y,prior{im}.z);
         end
