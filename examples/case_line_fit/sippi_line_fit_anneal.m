@@ -2,6 +2,9 @@
 clear all;close all
 rand('seed',1);randn('seed',1);
 
+%% LOAD DATA
+D=load('sippi_linefit_data');
+
 %% Setting up the prior model
 
 % the intercept
@@ -10,7 +13,7 @@ prior{im}.type='gaussian';
 prior{im}.name='intercept';
 prior{im}.m0=0;
 prior{im}.std=30;
-prior{im}.m_true=-30;
+prior{im}.m_true=D.intercept;
 
 % 1st order, the gradient
 im=2;
@@ -19,7 +22,7 @@ prior{im}.name='gradient';
 prior{im}.m0=0;
 prior{im}.std=4;
 prior{im}.norm=80;
-prior{im}.m_true=2;
+prior{im}.m_true=D.grad;
 
 % 2nd order
 im=3;
@@ -28,23 +31,16 @@ prior{im}.name='2nd';
 prior{im}.m0=0;
 prior{im}.std=1;
 prior{im}.norm=80;
-prior{im}.m_true=.9;
+prior{im}.m_true=D.poly2;
 
 
 %% Setup the forward model in the 'forward' structure
-nd=40;
-forward.x=linspace(1,20,nd)';
+forward.x=D.x;
 forward.forward_function='sippi_forward_linefit';
 
 %% Set up the 'data' structure
-for ip=1:length(prior);
-    m_true{ip}=prior{ip}.m_true;
-end
-d=sippi_forward_linefit(m_true,forward);
-d_obs=d{1};
-% Add noise top data
-data{1}.d_std=10;
-data{1}.d_obs=d_obs+randn(size(d_obs)).*data{1}.d_std;
+data{1}.d_obs=D.d_obs;
+data{1}.d_std=D.d_std;
 
 %% Perform extended Metropolis sampling 
 % set some MCMC options.
@@ -62,5 +58,5 @@ options.mcmc.anneal.fac_end=.01; % default, noise is scaled by fac_end at iterat
 [options]=sippi_metropolis(data,prior,forward,options);
 
 for i=1:length(prior);
-    disp(sprintf('%s ref=%g, optimal=%g ',prior{i}.name,prior{i}.m_true,options.mcmc.m_current{i}))
+    disp(sprintf('%s ref=%g, true=%g ',prior{i}.name,prior{i}.m_true,options.mcmc.m_current{i}))
 end
