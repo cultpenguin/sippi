@@ -1,4 +1,4 @@
-% Fiting line using SIPPI, simulated annealing
+% sippi_linefit_2nd_order: Fiting line using SIPPI
 clear all;close all
 rand('seed',1);randn('seed',1);
 
@@ -30,7 +30,6 @@ prior{im}.std=1;
 prior{im}.norm=80;
 prior{im}.m_true=.9;
 
-
 %% Setup the forward model in the 'forward' structure
 nd=40;
 forward.x=linspace(1,20,nd)';
@@ -48,19 +47,11 @@ data{1}.d_obs=d_obs+randn(size(d_obs)).*data{1}.d_std;
 
 %% Perform extended Metropolis sampling 
 % set some MCMC options.
-options.mcmc.nite=2000;
-options.mcmc.i_plot=300;
-options.txt='case_line_fit';
+options.mcmc.nite=40000;
+options.mcmc.i_sample=50;
+options.mcmc.i_plot=2500;
+options.txt='case_line_fit_2nd_order';
 
-    
-%options.mcmc.anneal.i_begin=1; % default, iteration number when annealing begins
-options.mcmc.anneal.i_end=options.mcmc.nite; %  iteration number when annealing begins
-options.mcmc.anneal.fac_begin=2; % default, noise is scaled by fac_begin at iteration i_begin
-options.mcmc.anneal.fac_end=.01; % default, noise is scaled by fac_end at iteration i_end
- 
- 
 [options]=sippi_metropolis(data,prior,forward,options);
-
-for i=1:length(prior);
-    disp(sprintf('%s ref=%g, optimal=%g ',prior{i}.name,prior{i}.m_true,options.mcmc.m_current{i}))
-end
+sippi_plot_prior_sample(options.txt);
+sippi_plot_posterior(options.txt);
