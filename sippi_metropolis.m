@@ -249,7 +249,7 @@ for i=1:mcmc.nite;
     
     % optionaly plot all model proposals ?
     % if mcmc.plot_all_proposed_models==1;
-    % sippi_plot_model -->figure(12);imagesc(m_propose{2});axis image;drawnow;
+    % sippi_plot_prior -->figure(12);imagesc(m_propose{2});axis image;drawnow;
     % end 
     
     %% FORWARD PROBLEM

@@ -41,7 +41,7 @@ sippi_plot_prior(prior);
 
 % generate and plot one realization of the prior model
 [m,prior]=sippi_prior(prior);
-sippi_plot_model(prior,m)
+sippi_plot_prior(prior,m)
 
 
 %% SETUP THE FORWARD MODEL

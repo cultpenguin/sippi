@@ -41,7 +41,7 @@ prior=sippi_prior_init(prior);
 
 % generate and plot one realization of the prior model
 [m,prior]=sippi_prior(prior);
-sippi_plot_model(prior,m)
+sippi_plot_prior(prior,m)
 
 
 %% SETUP THE FORWARD MODEL
@@ -103,7 +103,7 @@ sippi_plot_posterior(options.txt);
 sippi_plot_movie(options.txt,1,1000,0);
 
 %% PLOT LAST MODEL / 'OPTIMAL' MODEL
-clf;sippi_plot_model(prior,options.mcmc.m_current);
+clf;sippi_plot_prior(prior,options.mcmc.m_current);
 print_mul(sprintf('%s_last_model',options.txt))
 
 [d,forward,prior,data]=sippi_forward(options.mcmc.m_current,forward,prior,data);

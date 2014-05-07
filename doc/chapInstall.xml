@@ -31,7 +31,7 @@ sippi_set_path
 
 </para>
 
-<sect2 xml:id="InstallSgems"><title>SGeMS (optional)</title>
+<sect2 xml:id="SGEMS"><title>SGeMS (optional)</title>
 <para>
 To make use of the SISIM and SNESIM type priori models SGeMS needs to be available.
 </para>

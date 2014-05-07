@@ -64,7 +64,7 @@
 %   prior{im}.x=[0:1:100];
 %   prior{im}.y=[0:1:100];
 %
-%   sippi_plot_model(prior);
+%   sippi_plot_prior(prior);
 %
 %%% Sequential Gibbs sampling
 %
@@ -85,10 +85,10 @@
 %   prior{1}.seq_gibbs.step=.1; % Smaller step--> Dependant realizations
 %   for i=1:30;
 %      [m,prior]=sippi_prior(prior,m); % One iteration of Sequential Gibbs
-%      sippi_plot_model(prior,m);
+%      sippi_plot_prior(prior,m);
 %   end
 %
-% See also: sippi_prior_init, sippi_plot_prior, sippi_prior_set_steplength.m
+% See also: sippi_prior_init, sippi_plot_prior, sippi_plot_prior_sample, sippi_prior_set_steplength.m
 %
 % TMH/2012
 %

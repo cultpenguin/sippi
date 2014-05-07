@@ -1,9 +1,0 @@
-<sect1 xml:id="chapprior"><title>A priori information</title>
-<para>
-All information about the a priori model are defined in the Matlab structure called prior which can specify any number of the following types of a priori model
-</para>
-<sect2><title></title>
-<para></para>
-</sect2>
-
-</sect1>

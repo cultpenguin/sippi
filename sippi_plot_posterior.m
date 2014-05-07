@@ -309,8 +309,8 @@ if pl_base==1;
                     else
                         m{i}{im}=reals(:,:,i);
                     end
-                    sippi_plot_model(prior,m{i},im,use_colorbar,f_id);
-                    %sippi_plot_model(prior,m{i}{id},im,use_colorbar,f_id);
+                    sippi_plot_prior(prior,m{i},im,use_colorbar,f_id);
+                    %sippi_plot_prior(prior,m{i}{id},im,use_colorbar,f_id);
                 catch
                     disp(sprintf('%s : failed to plot realization %d',mfilename,i))
                 end
@@ -337,7 +337,7 @@ if pl_base==1;
             end
             set(gca,'FontSize',options.FS)
             met{im}=etype_mean;
-            sippi_plot_model(prior,met,im,0,f_id);colorbar off;
+            sippi_plot_prior(prior,met,im,0,f_id);colorbar off;
             caxis(cax);
             cb=colorbar_shift;
             set(get(cb,'Ylabel'),'String','Sample Mean')
@@ -351,7 +351,7 @@ if pl_base==1;
             set(gca,'FontSize',options.FS)
             %met{im}=etype_var;
             met{im}=sqrt(etype_var);
-            sippi_plot_model(prior,met,im,0,f_id);colorbar off;
+            sippi_plot_prior(prior,met,im,0,f_id);colorbar off;
             xlabel('X');ylabel('Y');zlabel('Z')
             cax_var=[0 max(etype_var(:))];
             try

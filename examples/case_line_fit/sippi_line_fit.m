@@ -47,7 +47,7 @@ options.txt='case_line_fit';
 
 options_anneal=options;
 [options]=sippi_metropolis(data,prior,forward,options);
-sippi_plot_prior(options.txt);
+sippi_plot_prior_sample(options.txt);
 sippi_plot_posterior(options.txt);
 return
 %% plot some stats

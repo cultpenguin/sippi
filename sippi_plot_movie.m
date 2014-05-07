@@ -120,7 +120,7 @@ for im=im_array
                 end
                 m{im}=real;
                 
-                sippi_plot_model(prior,m,im);
+                sippi_plot_prior(prior,m,im);
                 text(.02,.02,sprintf('#%05d, posterior',i),'units','normalized')
                 drawnow;
                 frame = getframe;
@@ -148,7 +148,7 @@ for im=im_array
         
         for i=1:length(i_frames)
             [m,prior]=sippi_prior(prior);
-            sippi_plot_model(prior,m,im);
+            sippi_plot_prior(prior,m,im);
             text(.02,.02,sprintf('#%05d, prior',i),'units','normalized')
             drawnow;
             frame = getframe;

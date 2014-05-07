@@ -15,7 +15,7 @@ prior{im}.Cm='200 Sph(30)';     % the a priori covariance/semivariogram model
 
 prior=sippi_prior_init(prior); % initialize the prior model
 m=sippi_prior(prior);          % generate a realization from the prior model
-sippi_plot_model(prior,m)      % visualize the realization from the prior
+sippi_plot_prior(prior,m)      % visualize the realization from the prior
 print_mul('prior_example_1_2d_gaussian')
 
 sippi_plot_prior(prior)      % visualize the realization from the prior
@@ -34,7 +34,7 @@ prior{im}.Cm='200 Sph(30)';     % the a priori covariance/semivariogram model
 prior=sippi_prior_init(prior); % initialize the prior model
 m=sippi_prior(prior);          % generate a realization from the prior model
 
-sippi_plot_model(prior,m,im)      % visualize the realization from the prior
+sippi_plot_prior(prior,m,im)      % visualize the realization from the prior
 print_mul('prior_example_2_2d_visim')
 
 
@@ -49,7 +49,7 @@ prior{im}.Cm='200 Sph(30,40,.33)';     % the a priori covariance/semivariogram m
 
 prior=sippi_prior_init(prior); % initialize the prior model
 m=sippi_prior(prior);          % generate a realization from the prior model
-sippi_plot_model(prior,m,im)      % visualize the realization from the prior
+sippi_plot_prior(prior,m,im)      % visualize the realization from the prior
 print_mul('prior_example_3_2d_fftma')
 
 
@@ -64,7 +64,7 @@ prior{im}.marginal_prob=[0.4 0.2 .4];
 
 prior=sippi_prior_init(prior); % initialize the prior model
 m=sippi_prior(prior);          % generate a realization from the prior model
-sippi_plot_model(prior,m,im)      % visualize the realization from the prior
+sippi_plot_prior(prior,m,im)      % visualize the realization from the prior
 print_mul('prior_example_4_2d_sisim')
 
 
@@ -79,7 +79,7 @@ prior{im}.scaling=0.5;                 % scaling of the training image
 prior{im}.rotation=30;                 % rotation of the training image
 prior=sippi_prior_init(prior); % initialize the prior model
 m=sippi_prior(prior);          % generate a realization from the prior model
-sippi_plot_model(prior,m,im)      % visualize the realization from the prior
+sippi_plot_prior(prior,m,im)      % visualize the realization from the prior
 print_mul('prior_example_5_2d_snesim')
 
 
@@ -128,4 +128,4 @@ prior{im}.rotation=00;
 % generate a realization
 p=sippi_prior_init(p);
 m=sippi_prior(p);
-sippi_plot_model(p,m)
+sippi_plot_prior(p,m)
