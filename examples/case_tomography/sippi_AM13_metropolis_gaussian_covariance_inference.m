@@ -68,7 +68,9 @@ forward.receivers=D.R;
 forward.type='fat';forward.freq=0.1;forward.linear=1;
 %forward.type='born';forward.freq=0.1;%forward.linear=1;
 forward.forward_function='sippi_forward_traveltime';
-forward.im = i_master; % 'master' prior / the velocity --> NEEDED WHEN THERE IS MORE THE ONE A PRIORI TYPES
+forward.im = i_master; % 'master' prior / the velocity --> 
+                       % NEEDED WHEN THERE IS MORE THE ONE A PRIORI TYPES
+                       % (def, im=1);
 
 randn('seed',1);
 rand('seed',1);
@@ -83,6 +85,7 @@ options.mcmc.nite=1000000;% optional
 options.mcmc.i_plot=1000;% optional
 options.mcmc.i_sample=500;% optional
 
+options.mcmc.nite=100000;% optional
 
 %% RUN 1,using every 20th data
 close all
