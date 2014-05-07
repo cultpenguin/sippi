@@ -43,7 +43,6 @@ sippi_plot_prior(prior);
 [m,prior]=sippi_prior(prior);
 sippi_plot_prior(prior,m)
 
-
 %% SETUP THE FORWARD MODEL
 forward.forward_function='sippi_forward_traveltime';
 forward.sources=D.S;
@@ -64,16 +63,14 @@ sippi_plot_data(d,data);
 
 %% SETUP METROPOLIS
 options.mcmc.nite=500000;
-options.mcmc.nite=100000;
 options.mcmc.i_plot=1000;
 options.mcmc.i_sample=500;
 randn('seed',2);rand('seed',2);
 options=sippi_metropolis(data,prior,forward,options);
 
 %% PLOT SAMPLE FROM PRIOR
-sippi_plot_prior(options.txt);
-%sippi_plot_prior(prior);
+sippi_plot_prior_sample(options.txt);
 
-%% PLOT SAMPLE FROM POSTERIOR
+%% PLOT SAMPLE AND STATS FROM POSTERIOR
 sippi_plot_posterior(options.txt);
 
