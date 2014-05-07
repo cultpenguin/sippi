@@ -86,15 +86,61 @@ prior{1}.norm=70;
 The FFT moving average method provides an efficient approach for computing unconditional realizations of a Gaussian random field.
 </para>
 <para>
+A 2D covariance model with mean 10, and a Spherical type covariance model can be defined in a 101x101 size grid (1m between cells) using
 </para>
 <screen>
-im=im+1;
+im=1;
 prior{im}.type='FFTMA';
 prior{im}.x=[0:1:100];
 prior{im}.y=[0:1:100];
 prior{im}.m0=10;
 prior{im}.Cm='1 Sph(10)';
 </screen>
+   <mediaobject>
+      <imageobject condition="web">
+        <imagedata fileref="figures/prior_fftma_2d_gaussian.png" width="100%" scalefit="1"/>
+      </imageobject>
+      <textobject><phrase></phrase></textobject>
+    </mediaobject>
+
+<para>
+Optionally one can translate the output of the Gaussian simulation into an arbitrarily shaped 'target' distribution, using normal score transformation. Note that this transformation will ensure a certin distribtion, but will alter the assumed covariance model, such the covariance model properties are no longer esnured. To ensure the covariance model properties are honored, make use of the VISIM type prior model. 
+</para>
+<screen>
+im=1;
+prior{im}.type='FFTMA';
+prior{im}.x=[0:1:100];
+prior{im}.y=[0:1:100];
+prior{im}.m0=10;
+prior{im}.Cm='1 Sph(10)';
+
+% Create target distribution
+N=10000;
+prob_chan=0.5;
+d1=randn(1,ceil(N*(1-prob_chan)))*.5+8.5;
+d2=randn(1,ceil(N*(prob_chan)))*.5+11.5;
+d_target=[d1(:);d2(:)];
+prior{im}.d_target=d_target;
+</screen>
+<para>
+Alternatively, the normal score transformation can be defined manually to control tail behaviour using
+</para>
+<screen>
+N=10000;
+prob_chan=0.5;
+d1=randn(1,ceil(N*(1-prob_chan)))*.5+8.5;
+d2=randn(1,ceil(N*(prob_chan)))*.5+11.5;
+d_target=[d1(:);d2(:)];
+[d_nscore,o_nscore]=nscore(d_target,1,1,min(d_target),max(d_target),0);
+prior{im}.o_nscore=o_nscore;
+</screen>
+   <mediaobject>
+      <imageobject condition="web">
+        <imagedata fileref="figures/prior_fftma_2d_target.png" width="100%" scalefit="1"/>
+      </imageobject>
+      <textobject><phrase></phrase></textobject>
+    </mediaobject>
+	
 </sect3>
 
 <sect3 xml:id="prior_visim"><title>VISIM</title>
@@ -108,6 +154,43 @@ prior{im}.y=[0:1:100];
 prior{im}.m0=10;
 prior{im}.Cm='1 Sph(10)';
 </screen>
+   <mediaobject>
+      <imageobject condition="web">
+        <imagedata fileref="figures/prior_visim_2d_gaussian.png" width="100%" scalefit="1"/>
+      </imageobject>
+      <textobject><phrase></phrase></textobject>
+    </mediaobject>
+<para>
+As with the FFTMA type prior the VISIM type prior can make use of a target distribution. However, if a target distribution is set, the use of the VISIM type prior will utilize direct sequential simulation, which will ensure both histogram and covariance reproduction. 
+</para>
+<para>
+Except for the <varname>type</varname> the use of a target distribtion is similat to that of the FFTMA type prior
+</para>
+<screen>
+clear all;close all;
+im=1;
+prior{im}.type='VISIM';
+prior{im}.x=[0:1:40];
+prior{im}.y=[0:1:40];
+prior{im}.m0=10;
+prior{im}.Cm='1 Sph(10)';
+
+% Create target distribution
+N=10000;
+prob_chan=0.5;
+d1=randn(1,ceil(N*(1-prob_chan)))*.5+8.5;
+d2=randn(1,ceil(N*(prob_chan)))*.5+11.5;
+d_target=[d1(:);d2(:)];
+prior{im}.d_target=d_target;
+</screen>
+  <mediaobject>
+      <imageobject condition="web">
+        <imagedata fileref="figures/prior_visim_2d_target.png" width="100%" scalefit="1"/>
+      </imageobject>
+      <textobject><phrase></phrase></textobject>
+    </mediaobject>
+
+
 
 <sect4 xml:id="prior_visim_2d"><title>VISIM:2D</title>
 <para></para>

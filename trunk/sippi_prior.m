@@ -543,6 +543,14 @@ for im=im_fftma_array;
         [m_propose{im},z_rand,prior{im}.fftma_options]=fft_ma(prior{im}.x,prior{im}.y,prior{im}.z,prior{im}.Va,prior{im}.fftma_options);
         prior{im}.fftma_options.z_rand=z_rand;
         
+         if isfield(prior{im},'d_target')
+              % UPDATE PRIOR STRUCTURE TO USE TARGET DISTRIBUTION
+             d_min=min(prior{im}.d_target);
+             d_max=max(prior{im}.d_target);
+             [d_nscore,o_nscore]=nscore(prior{im}.d_target,1,1,d_min,d_max,0);
+             prior{im}.o_nscore=o_nscore;
+         end
+        
         
         % PERFORM NORMAL SCORE OF NEEDED        
         if isfield(prior{im},'o_nscore');
