@@ -1,11 +1,20 @@
-% Fiting line using SIPPI
+% sippi_linefit: Fiting straight line using SIPPI
 clear all;close all
 rand('seed',1);randn('seed',1);
 
 %% Setting up the prior model
 
-% the gradient
+
+% the intercept
 im=1;
+prior{im}.type='gaussian';
+prior{im}.name='intercept';
+prior{im}.m0=0;
+prior{im}.std=30;
+prior{im}.m_true=-30;
+
+% 1st order, the gradient
+im=2;
 prior{im}.type='gaussian';
 prior{im}.name='gradient';
 prior{im}.m0=0;
@@ -13,25 +22,15 @@ prior{im}.std=4;
 prior{im}.norm=80;
 prior{im}.m_true=2;
 
-% the intercept
-im=im+1;
-prior{im}.type='gaussian';
-prior{im}.name='intercept';
-prior{im}.m0=0;
-prior{im}.std=30;
-prior{im}.m_true=-30;
-
-prior=sippi_prior_init(prior);
-
 %% Setup the forward model in the 'forward' structure
 nd=40;
 forward.x=linspace(1,20,nd)';
 forward.forward_function='sippi_forward_linefit';
 
 %% Set up the 'data' structure
-id=1;
-m_true{1}=prior{1}.m_true;
-m_true{2}=prior{2}.m_true;
+for ip=1:length(prior);
+    m_true{ip}=prior{ip}.m_true;
+end
 d=sippi_forward_linefit(m_true,forward);
 d_obs=d{1};
 % Add noise top data
@@ -45,11 +44,10 @@ options.mcmc.i_sample=50;
 options.mcmc.i_plot=2500;
 options.txt='case_line_fit';
 
-options_anneal=options;
 [options]=sippi_metropolis(data,prior,forward,options);
 sippi_plot_prior_sample(options.txt);
 sippi_plot_posterior(options.txt);
-return
+
 %% plot some stats
 % get sample from posterior
 m1_post=load(sprintf('%s%s%s_m1.asc',options.txt,filesep,options.txt))';
@@ -59,7 +57,7 @@ m2_post=m2_post(100:end);
 % get sample prior
 N=length(m1_post);
 for i=1:1:N
-    m=sippi_prior(prior);
+    [m,prior]=sippi_prior(prior);
     m1_prior(i)=m{1};
     m2_prior(i)=m{2};
 end  
@@ -76,36 +74,31 @@ ppp(8,8,12)
 axis(ax);print_mul('sippi_line_fit_data')
 
 for i=ceil(linspace(1,N,100))
-    plot(x1,m1_prior(i).*x1+m2_prior(i),'r-','linewidth',.8);
+    plot(x1,m2_prior(i).*x1+m1_prior(i),'r-','linewidth',.8);
 end
 errorbar(forward.x,data{1}.d_obs,ones(size(forward.x)).*data{1}.d_std,'k.','linewidth',2)
 axis(ax);print_mul('sippi_line_fit_data_prior')
 
 for i=ceil(linspace(1,N,100))
-    plot(x1,m1_post(i).*x1+m2_post(i),'g-','linewidth',.8);
+    plot(x1,m2_post(i).*x1+m1_post(i),'g-','linewidth',.8);
 end
 errorbar(forward.x,data{1}.d_obs,ones(size(forward.x)).*data{1}.d_std,'k.','linewidth',2)
 hold off
 print_mul('sippi_line_fit')
 
+return
 %%
 try;close(2);end;figure(2);clf;set_paper('portrait');
 plot(m1_prior,m2_prior,'r.','MarkerSize',6)
 hold on
 plot(m1_post,m2_post,'g.','MarkerSize',14)
 plot(prior{1}.m_true,prior{2}.m_true,'b.','MarkerSize',24);
-try
-    plot(options_anneal.mcmc.m_current{1},options_anneal.mcmc.m_current{2},'k.','MarkerSize',12)
-    plot(options_anneal.mcmc.m_current{1},options_anneal.mcmc.m_current{2},'w.','MarkerSize',8)
-end
 hold off
 xlabel('Gradient')
 ylabel('Intercept')
-legend('A priori, \rho','A posteriori, \sigma','true model','Annealing')
+legend('A priori, \rho','A posteriori, \sigma','true model')
 ppp(8,8,12)
 print_mul('sippi_line_fit_cross')
-
-
 
 %%
 for i=1:length(m1_post);
@@ -161,20 +154,4 @@ xlabel('log(Likelihood)')
 ylabel('Count (#)')
 set(gca,'xlim',[hx(1) hx(length(hx))])
 print_mul('sippi_line_fit_cross_metro_rejection')
-
-%% ANNEALING
-options_anneal.txt='case_line_fit_anneal';
-options_anneal.mcmc.nite=2000;
-options_anneal.mcmc.anneal.i_begin=1; % default, iteration number when annealing begins
-options_anneal.mcmc.anneal.i_end=options.mcmc.nite; %  iteration number when annealing begins
-options_anneal.mcmc.anneal.fac_begin=1; % default, noise is scaled by fac_begin at iteration i_begin
-options_anneal.mcmc.anneal.fac_end=.00001; % default, noise is scaled by fac_end at iteration i_end
- 
- 
-[options_anneal]=sippi_metropolis(data,prior,forward,options_anneal);
-
-for i=1:length(prior);
-disp(sprintf('%s ref=%g, optimal=%g ',prior{i}.name,prior{i}.m_true,options_anneal.mcmc.m_current{i}))
-end
-
 
