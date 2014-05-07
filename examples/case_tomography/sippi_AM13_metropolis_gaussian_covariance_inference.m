@@ -83,6 +83,8 @@ options.mcmc.nite=1000000;% optional
 options.mcmc.i_plot=1000;% optional
 options.mcmc.i_sample=500;% optional
 
+options.mcmc.nite=5000;options.mcmc.i_sample=options.mcmc.nite./100;
+
 %% RUN 1,using every 20th data
 close all
 data{1}.i_use=[20:20:702];
@@ -91,7 +93,7 @@ options.txt='run1';try,forward=rmfield(forward.G);end
 [o1,data,prior,forward,m_current]=sippi_metropolis(data,prior,forward,options);
 sippi_plot_posterior(o1.txt);
 options.mcmc.m_init=m_current;
-
+return
 %% RUN 2, using every 10th data
 close all;
 data{1}.i_use=[10:10:702];

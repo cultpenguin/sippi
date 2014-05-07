@@ -19,6 +19,19 @@ function sippi_plot_prior(prior,m,im_array,use_colorbar,fhandle);
 %
 % See also sippi_plot_prior
 
+if isstr(prior);
+    disp(sprintf('%s: You probably intend to call sippi_plot_prior_sample',mfilename));   
+    sippi_plot_prior_sample(prior);
+    return
+end
+
+if nargin>1
+    if ~iscell(m);
+    disp(sprintf('%s: You probably intend to call sippi_plot_prior_sample',mfilename));   
+    sippi_plot_prior_sample(prior);
+    return
+    end
+end
 
 % Check for initialization
 for im=1:length(prior);
