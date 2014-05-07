@@ -1,31 +1,56 @@
 
 <sect1 xml:id="chapprior"><title>The a priori model</title>
 <para>
+A priori information is defined by the <varname>prior</varname> Matlab structure. Any mumber of types of a priori models can be defined. For example a 1D uniform prior can be defined in <varname>prior{1}</varname>, and 2D Gaussian prior can be defined in <varname>prior{2}</varname>.   
 </para>
 <para>
-Once a prior data stricture has been defined, and realization from the prior model can be generated using 
+Once a prior data stricture has been defined, a realization from the prior model can be generated using 
 <screen>
-m=sippi_prior(prior)
+m=sippi_prior(prior);
 </screen>
 The realization from the prior can be visualized using 
 <screen>
-sippi_plot_prior(prior) [UPDATE] % 
-sippi_plot_prior(prior,m) [UPDATE]
+sippi_plot_prior(prior);
+sippi_plot_prior(prior,m);
 </screen>
 A sample from the prior can be visualized using
 <screen>
-m=sippi_plot_prior_sample(prior [UPDATE]
+m=sippi_plot_prior_sample(prior);
 </screen>
 </para>
 
 
 <sect2 xml:id="prior_types"><title>Types of a priori models</title>
 <para>
-
-
+5 types of a priori models are available, and can be selected by setting the <varname>type</varname> in the <varname>prior</varname> structure using e.q. <varname>prior{1}.type='gaussian'</varname>.  
+</para>
+<para>
+</para>
+<para>
+The <link linkend="prior_gaussian">GAUSSIAN</link> type prior specifes a 1D generalized Gaussian model.
+</para>
+<para>
+The <link linkend="prior_fftma">FFTMA</link> specifes 1D-3D Gaussian Gaussian modelm using efficient unconditional sampling,
+</para>
+<para>
+The <link linkend="prior_visim">VISIM</link> type prior model specifes a 1D-3D Gaussian Gaussian model, utilizing both sequential Gaussian simulation and direct sequential simulation, and conditioning the data of point support and linear average data. 
+</para>
+<!--
+<para>
+The <link linkend="prior_sisim">SISIM</link> type prior model specifes a 1D-3D prior model based on Gaussian indicator statistics. This type of prior requires <link linkend="SGEMS">SGEMS</link> to be installed.
+</para>
+-->
+<para>
+The <link linkend="prior_snesim">SNESIM</link> type prior model specifes a 1D-3D multiple point statistical model, relying on traning images to infer a model multiple point statistics. This type of prior requires <link linkend="SGEMS">SGEMS</link> to be installed.
+</para>
+<para>
+The following section documents the properties of each type of prior model.
+</para>
+<para>
+Examples of different types of (combinations of) a priori model can be found in the <link linkend="sec_ex_prior">examples section</link>. 
 </para>
 
-
+<!-- GAUSSIAN -->
 <sect3 xml:id="prior_gaussian"><title>1D Generalized Gaussian</title>
 <para>
 A 1D generalized Gaussian prior model can be specified using the 'gaussian' type prior model
@@ -56,7 +81,7 @@ prior{1}.norm=70;
 </sect3>
 
 
-<sect3 xml:id="prior_fftma"><title>3D Gaussian model - FFTMA</title>
+<sect3 xml:id="prior_fftma"><title>FFTMA - 3D Gaussian model</title>
 <para>
 The FFT moving average method provides an efficient approach for computing unconditional realizations of a Gaussian random field.
 </para>

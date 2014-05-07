@@ -21,7 +21,7 @@ col=[
 
 %% PLOT CURRENT MODELS
 if nargin>3
-    sippi_plot_model(prior,m_current);
+    sippi_plot_prior(prior,m_current);
 end
 
 %% PLOT DATA RESPONSE

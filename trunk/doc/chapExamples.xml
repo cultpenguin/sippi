@@ -9,6 +9,50 @@ In ordet to use SIPPI to solve inverse problems, one must provide the solution t
 A few implementations of solutions to forward problems are included as examples as part of SIPPI. These will be demonstrated in the following 
 </para>
 
+<sect1 xml:id="sec_ex_prior"><title>Examples of A priori models</title>
+<para>
+A prior model consisting of three independent 1D distributions (a Gaussian, Laplace, and Uniform distribution) can be defined using
+</para>
+<screen>
+ip=1;
+prior{ip}.type='GAUSSIAN';
+prior{ip}.name='Gaussian';
+prior{ip}.m0=10;
+prior{ip}.std=2;
+
+ip=2;
+prior{ip}.type='GAUSSIAN';
+prior{ip}.name='Laplace';
+prior{ip}.m0=10;
+prior{ip}.std=2;
+prior{ip}.norm=1;
+
+ip=3;
+prior{ip}.type='GAUSSIAN';
+prior{ip}.name='Uniform';
+prior{ip}.m0=10;
+prior{ip}.std=2;
+prior{ip}.norm=60;
+
+m=sippi_prior(prior);
+
+m = 
+
+    [14.3082]    [9.4436]    [10.8294]
+</screen>
+<para>1D histograms of a sample (consisting of 1000 realizations) of the prior models can be visualized using 
+</para>
+<screen>
+sippi_plot_prior_sample(prior);
+</screen>
+    <mediaobject>
+      <imageobject condition="web">
+        <imagedata fileref="figures/prior_gaussian_1d_Gaussian.png" width="4in" depth="3in" scalefit="1"/>
+      </imageobject>
+      <textobject><phrase></phrase></textobject>
+    </mediaobject>
+</sect1>
+
 <sect1 xml:id="sec_ex_linefit"><title>Polynomial line fitting</title>
 <para>
 

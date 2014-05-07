@@ -2,31 +2,30 @@
 
 clear all;close all
 
+ip=1;
+prior{ip}.type='GAUSSIAN';
+prior{ip}.name='Gaussian';
+prior{ip}.m0=10;
+prior{ip}.std=2;
 
-im=1;
-prior{im}.type='GAUSSIAN';
-prior{im}.name='Gaussian';
-prior{im}.m0=10;
-prior{im}.std=2;
+ip=2;
+prior{ip}.type='GAUSSIAN';
+prior{ip}.name='Laplace';
+prior{ip}.m0=10;
+prior{ip}.std=2;
+prior{ip}.norm=1;
 
-im=2;
-prior{im}.type='GAUSSIAN';
-prior{im}.name='Laplace';
-prior{im}.m0=10;
-prior{im}.std=2;
-prior{im}.norm=1;
-
-im=3;
-prior{im}.type='GAUSSIAN';
-prior{im}.name='Uniform';
-prior{im}.m0=10;
-prior{im}.std=2;
-prior{im}.norm=60;
+ip=3;
+prior{ip}.type='GAUSSIAN';
+prior{ip}.name='Uniform';
+prior{ip}.m0=10;
+prior{ip}.std=2;
+prior{ip}.norm=60;
 
 %%
-sippi_plot_prior(prior,1:3,10000);
-for im=1:length(prior);
-    figure(90+im);print_mul(['prior_gaussian_1d_',prior{im}.name])
+sippi_plot_prior_sample(prior,1:3,10000);
+for ip=1:length(prior);
+    figure(90+ip);print_mul(['prior_gaussian_1d_',prior{im}.name])
 end
 return
 %%

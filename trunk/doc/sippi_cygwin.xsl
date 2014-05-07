@@ -26,7 +26,11 @@ urchinTracker();
 
 <xsl:param name="generate.toc" select="'book toc'"/> <!-- ONLY MAIN TOC-->
 
-<xsl:param name="chunk.section.depth" select="3"></xsl:param>
+<xsl:param name="chunk.section.depth" select="8"></xsl:param>
+<xsl:param name="chunk.tocs.and.lots" select="0"></xsl:param>
+<xsl:param name="chunk.separate.lots" select="0"></xsl:param>
+
+
 
 <xsl:param name="use.id.as.filename" select="1"/>
 
