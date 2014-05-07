@@ -54,7 +54,7 @@ html_cygwin:
 	mkdir -p htmldoc/figures
 	cp figures/*.png htmldoc/figures/.
 	cp style_offline.css htmldoc/.
-	xsltproc --xinclude --stringparam html.stylesheet style_offline.css -o htmldoc sippi_cygwin.xsl sippi.xml
+	xsltproc --xinclude --stringparam html.stylesheet style.css -o htmldoc sippi_cygwin.xsl sippi.xml
 	mv *.html htmldoc/.
 
 	
