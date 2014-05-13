@@ -340,6 +340,14 @@ for im=im_array;
     elseif (strcmp(lower(prior{im}.type),'gaussian'))
         %% 1D GENERALIZED GAUSSIAN
         
+        if (isfield(prior{im},'d_target'))&(~isfield(prior{im},'o_nscore'))
+            % UPDATE PRIOR STRUCTURE TO USE TARGET DISTRIBUTION
+            d_min=min(prior{im}.d_target);
+            d_max=max(prior{im}.d_target);
+            [d_nscore,o_nscore]=nscore(prior{im}.d_target,1,1,d_min,d_max,0);
+            prior{im}.o_nscore=o_nscore;
+        end        
+        
         if ~isfield(prior{im},'norm');
             prior{im}.norm=2;
         end
@@ -361,7 +369,11 @@ for im=im_array;
         
         if prior{im}.norm==2
             if nargin>1
-                gauss_real=(m_current{im}-prior{im}.m0)./prior{im}.std;
+                if isfield(prior{im},'gauss_real')
+                    gauss_real=prior{im}.gauss_real;
+                else
+                    gauss_real=(m_current{im}-prior{im}.m0)./prior{im}.std;
+                end
                 gauss_real_new=randn(1);
                 step=pi/2*prior{im}.seq_gibbs.step;
                 gauss_real=(cos(step)*gauss_real+sin(step)*gauss_real_new);
@@ -370,7 +382,13 @@ for im=im_array;
             else
                 gauss_real=randn(1);
             end
-            m_propose{im}=gauss_real.*prior{im}.std+prior{im}.m0;
+            prior{im}.gauss_real=gauss_real;
+            if isfield(prior{im},'o_nscore')
+                m_propose{im}=inscore(gauss_real,prior{im}.o_nscore);
+            else
+                m_propose{im}=gauss_real.*prior{im}.std+prior{im}.m0;
+            end
+            
         else
             if nargin>1
                 if isfield(prior{im},'gauss_real');
@@ -543,7 +561,7 @@ for im=im_fftma_array;
         [m_propose{im},z_rand,prior{im}.fftma_options]=fft_ma(prior{im}.x,prior{im}.y,prior{im}.z,prior{im}.Va,prior{im}.fftma_options);
         prior{im}.fftma_options.z_rand=z_rand;
         
-         if isfield(prior{im},'d_target')
+         if (isfield(prior{im},'d_target'))&(~isfield(prior{im},'o_nscore'))
               % UPDATE PRIOR STRUCTURE TO USE TARGET DISTRIBUTION
              d_min=min(prior{im}.d_target);
              d_max=max(prior{im}.d_target);
