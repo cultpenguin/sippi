@@ -52,7 +52,7 @@ html_cygwin:
 	make validate
 	mkdir -p htmldoc
 	mkdir -p htmldoc/figures
-	cp figures/*.png htmldoc/figures/.
+	cp -r figures htmldoc/.
 	cp style_offline.css htmldoc/.
 	xsltproc --xinclude --stringparam html.stylesheet style.css -o htmldoc sippi_cygwin.xsl sippi.xml
 	mv *.html htmldoc/.

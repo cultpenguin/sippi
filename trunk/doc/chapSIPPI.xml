@@ -18,7 +18,12 @@ A sample from the prior can be visualized using
 m=sippi_plot_prior_sample(prior);
 </screen>
 </para>
-
+<para>
+Each prior type is defined by setting a number field in the <varname>prior</varname> Matlab structure. For example, an decsriptive name (which is can be optionallyt set) decsribing the prior can be set in the <varname>name</varname> field, e.g.
+<screen>
+prior{1}.name='My Prior';
+</screen>
+</para>
 
 <sect2 xml:id="prior_types"><title>Types of a priori models</title>
 <para>
@@ -63,9 +68,10 @@ prior{1}.type='gaussian';
 A simple 1D Gaussian distribution with mean 10, and standard deviation 2, can be specified using
 </para>
 <screen>
-prior{1}.type='gaussian';
-prior{1}.m0=10;
-prior{1}.std=2;
+ip=1;
+prior{ip}.type='gaussian';
+prior{ip}.m0=10;
+prior{ip}.std=2;
 </screen>
 
 <para>
@@ -73,11 +79,50 @@ The norm of a generalized Gaussian can be set using the 'norm' field. A generali
 (The norm is equivelent ot the beta factor referenced in <link xlink:href="http://en.wikipedia.org/wiki/Generalized_normal_distribution">Wikipedia:Generalized_normal_distribution</link>)
 </para>
 <screen>
-prior{1}.type='gaussian';
-prior{1}.m0=10;
-prior{1}.std=2;
-prior{1}.norm=70;
+ip=2;
+prior{ip}.type='gaussian';
+prior{ip}.m0=10;
+prior{ip}.std=2;
+prior{ip}.norm=70;
 </screen>
+
+<para>
+A 1D distribution with an arbitrary distrution shape, can be defined by setting <varname>d_target</varname>, which must contain a sample of the distribtion that onw would like to replicate. For example, to generate a sample from a non-symmetric bimodal distrbution, one can use e.g.
+</para>
+<screen>
+% Create target distribution
+N=10000;
+prob_chan=0.3;
+d1=randn(1,ceil(N*(1-prob_chan)))*.5+8.5;
+d2=randn(1,ceil(N*(prob_chan)))*.5+11.5;
+d_target=[d1(:);d2(:)];
+
+% set the target distribution
+ip=3;
+prior{ip}.type='gaussian';
+prior{ip}.d_target=d_target;
+</screen>
+<para>
+The following figure shows the 1D histrogram of a sample, consisting of 8000 realizations, generated using 
+<screen>
+sippi_plot_prior_sample(prior,1:ip,8000);
+</screen>
+</para>
+   <mediaobject>
+      <imageobject condition="web">
+	    <imagedata fileref="figures/prior_gaussian_1d.png" width="100%" scalefit="1"/>
+<!--
+        <imagedata fileref="figures/prior_gaussian_normal.png" width="33%" scalefit="1"/>
+        <imagedata fileref="figures/prior_gaussian_generalized.png" width="33%" scalefit="1"/>
+        <imagedata fileref="figures/prior_gaussian_target.png" width="33%" scalefit="1"/>
+-->
+		</imageobject>
+      <textobject><phrase></phrase></textobject>
+    </mediaobject>
+
+
+
+
 </sect3>
 
 
