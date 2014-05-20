@@ -16,6 +16,7 @@ book SYSTEM "docbook.dtd"
 <!ENTITY pubdate SYSTEM "pubdate.xml"> 
 <!ENTITY yearnow SYSTEM "yearnow.xml"> 
 <!ENTITY chapIntroduction SYSTEM "chapIntroduction.xml"> 
+<!ENTITY chapPreface SYSTEM "chapPreface.xml"> 
 <!ENTITY chapInstall SYSTEM "chapInstall.xml"> 
 <!ENTITY chapAbout SYSTEM "chapAbout.xml"> 
 <!ENTITY chapExamples SYSTEM "chapExamples.xml"> 
@@ -88,38 +89,14 @@ book SYSTEM "docbook.dtd"
 
   </info>
  
-  <preface>
-    <title>About</title>
-    <para>
-SIPPI is a Matlab toolbox (compatible with GNU Octave) that allow sampling the solution of non-linear inverse problems with realistic a priori information.
-</para>
-<para>
-In order to make use of SIPPI one has to
+  <!-- PREFACE -->
+  &chapPreface;
 
-<itemizedlist mark='bullet'>
-      <listitem>
-        <para>Install and setup SIPPI</para>
-      </listitem>
-      <listitem>
-        <para>Define the <link linkend="chapprior">prior model</link>, in form of the prior data structure</para>
-      </listitem>
-      <listitem>
-        <para>Define the <link linkend="chapforward">forward model</link>, in form of the forward data structure, and the sippi_forward.m m-file</para>
-      </listitem>
-      <listitem>
-        <para>Define the <link linkend="chapdata">data and noise model</link>, in form of the prior data structure</para>
-      </listitem>
-      <listitem>
-        <para>Choose a method for <link linkend="chapposterior">sampling the a posteriori probability density</link>.</para>
-      </listitem>
-    </itemizedlist>
-</para>
-  </preface>
-
-  <!-- INTRODUCTION -->
+  <!-- INTRODUCTION 
   <chapter xml:id="Introduction"><title>Introduction</title>
     &chapIntroduction;
   </chapter>
+-->
 
   <!-- INSTALLATION -->
   <chapter xml:id="Installation"><title>Installation</title>
