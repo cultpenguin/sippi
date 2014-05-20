@@ -1,3 +1,26 @@
+<para>
+This section contains information about how to use and control SIPPI, which requires one to   
+<itemizedlist mark='bullet'>
+      <listitem>
+        <para>Define the <link linkend="chapprior">prior model</link>, in form of the prior data structure</para>
+      </listitem>
+      <listitem>
+        <para>Define the <link linkend="chapforward">forward model</link>, in form of the forward data structure, and the sippi_forward.m m-file</para>
+      </listitem>
+      <listitem>
+        <para>Define the <link linkend="chapdata">data and noise model</link>, in form of the prior data structure</para>
+      </listitem>
+<!--
+      <listitem>
+        <para>Choose a method for <link linkend="chapposterior">sampling the a posteriori probability density</link>.</para>
+      </listitem>
+-->
+</itemizedlist>
+</para>
+<para>
+[For examples of how to apply SIPPI for different problems, see <link linkend="chapExamples">the section with examples</link>].
+</para>
+
 
 <sect1 xml:id="chapprior"><title>The a priori model</title>
 <para>
@@ -131,6 +154,9 @@ sippi_plot_prior_sample(prior,1:ip,8000);
 The FFT moving average method provides an efficient approach for computing unconditional realizations of a Gaussian random field.
 </para>
 <para>
+The mean and the covariance model must be specified in the <varname>m0</varname> and <varname>Cm</varname> fields. The format for describing the covariance model follows 'gstat'-type notation, and is described in more details in the <link xlink:href="http://mgstat.sourceforge.net/htmldoc/Spatial.html">mGstat manual</link>.  
+</para>
+<para>
 A 2D covariance model with mean 10, and a Spherical type covariance model can be defined in a 101x101 size grid (1m between cells) using
 </para>
 <screen>
@@ -237,6 +263,7 @@ prior{im}.d_target=d_target;
 
 
 
+<!--
 <sect4 xml:id="prior_visim_2d"><title>VISIM:2D</title>
 <para></para>
 <screen>
@@ -248,15 +275,15 @@ prior{im}.m0=10;
 prior{im}.Cm='1 Sph(10)';
 </screen>
 </sect4>
-
+-->
 
 </sect3>
 
-
+<!--
 <sect3 xml:id="prior_sisim"><title>SISIM</title>
 <para></para>
 </sect3>
-
+-->
 <sect3 xml:id="prior_snesim"><title>SNESIM</title>
 <para></para>
 </sect3>
@@ -310,7 +337,54 @@ prior{m}.seq_gibbs.type=2;
 
 <sect1 xml:id="chapdata"><title>The data and the noise</title>
 <para>
+The <varname>data</varname> is Matlab structure that defines any number of data and a corresponding noise model.
 </para>
+<para>
+<varname>data{1}</varname> defines the first data set (which must always be defined), and ny number of additional data sets can be defined in 
+<varname>data{2}</varname>, 
+<varname>data{3}</varname>, ...
+</para>
+<para>
+This allow to consider for example seismic data in <varname>data{1}</varname>, and electromagnetic data in <varname>data{2}</varname>. 
+ </para>
+<para>
+For each set of data, a Gaussian noise model (both correlated and uncorrelated) can be specified). The noise model for different data types (e.g. <varname>data{1}</varname> and <varname>data{2}</varname> are independent).
+
+</para>
+
+<para>
+Once the noise model has been defined
+<screen>
+logL=sippi_likelihood(data,d)
+</screen>
+where <varname>d</varname> is the output of <link linkend="chapprior">sippi_forward</link>.
+
+</para>
+
+
+<sect2 xml:id="sec_noise_gauss_uncorr"><title>Uncorrelated Gaussian noise</title>
+<para>
+To define a set of observed data, [0,1,2], with an associated uncertainty defined by a Gaussian model with mean 0 and standard deviation 2, use
+<screen>
+data{1}.d_obs=[0 1 2];
+data{1}.d_std=[2 2 2];
+</screen>
+which is equivalent to (as the noise model for each data the same, and independent) 
+<screen>
+data{1}.d_obs=[0 1 2];
+data{1}.d_std=2;
+</screen>
+One can also choose to define the uncertainty using a variance as opposed to the standard deviation
+<screen>
+data{1}.d_obs=[0 1 2];
+data{1}.d_var=4;
+</screen>
+</para>
+
+<para>
+</para>
+</sect2>
+
 </sect1>
 
 <sect1 xml:id="chapforward"><title>The forward model</title>

@@ -1,0 +1,38 @@
+  <preface>
+    <title>About</title>
+    <para>
+SIPPI is a Matlab toolbox (compatible with GNU Octave) that allow sampling the solution of non-linear inverse problems with realistic a priori information.
+</para>
+<para>
+In order to make use of SIPPI one has to
+
+<itemizedlist mark='bullet'>
+      <listitem>
+        <para>Install and setup SIPPI</para>
+      </listitem>
+      <listitem>
+        <para>Define the <link linkend="chapprior">prior model</link>, in form of the prior data structure</para>
+      </listitem>
+      <listitem>
+        <para>Define the <link linkend="chapforward">forward model</link>, in form of the forward data structure, and the sippi_forward.m m-file</para>
+      </listitem>
+      <listitem>
+        <para>Define the <link linkend="chapdata">data and noise model</link>, in form of the prior data structure</para>
+      </listitem>
+      <listitem>
+        <para>Choose a method for <link linkend="chapposterior">sampling the a posteriori probability density</link>.</para>
+      </listitem>
+    </itemizedlist>
+</para>
+<para>
+Details about the implentation and the methods implemented in SIPPI can be found in 
+<citation>HCM12</citation>, 
+<citation>CHM12</citation>,
+<citation>HCLM13a</citation>,
+<citation>HCLM13b</citation> and,
+<citation>HCM14</citation>.
+</para>
+
+  </preface>
+
+
