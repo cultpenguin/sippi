@@ -1,13 +1,75 @@
 <sect1 xml:id="chapposterior"><title>Sampling the a posteriori probability density</title>
 <para>
+Once the 
+<varname>prior</varname>,
+<varname>data</varname>, and
+<varname>forward</varname> data structures have been defined, the associated a posteriori probability can be sampled using the rejection sampler and the extended Metropolis sampler.
 </para>
 
 <sect2 xml:id="sec_rejection"><title>The rejection sampler</title>
-<para></para>
+<para>
+The rejection sampler provides a simples, and also in many cases inefficient, approach to sample the posterior distribtution.  
+</para>
+<para>
+At each iteration of the rejection sample an independent realization, m_pro, of the prior is generated, and the model is accepted as a realization of the posterior with probability Pacc = L(m_pro)/L_max. It can be initiated using 
+<screen>
+options.mcmc.nite=400000; % Number of iteration, defaults to 1000 
+options.mcmc.i_plot=500; % Number of iteration between visual updates, defaults to 500 
+options=sippi_rejection(data,prior,forward,options);
+</screen>
+By default the rejection sampler is run assuming a maximum likelihood of 1 (i.e. L_max = 1).
+If L_max is known, then it can be set using in the <varname>options.Lmax</varname> or <varname>options.logLmax</varname> fields
+<screen>
+options.mcmc.Lmax=1e-9;
+options=sippi_rejection(data,prior,forward,options);
+</screen>
+or
+<screen>
+options.mcmc.logLmax=log(1e-9);
+options=sippi_rejection(data,prior,forward,options);
+</screen>
+</para>
+<para>
+Alternatively, L_max can be automatically adjusted to reflect the maximum likelihood found while running the rejection sampler using 
+<screen>
+options.mcmc.adaptive_rejection=1
+options=sippi_rejection(data,prior,forward,options);
+</screen>
+</para>
+<para>
+An alternative to rejection sampling, also utilizing independant realizations of the prior, that does not require one to set L_max is the <link linkend="sec_independentmetropolis">independant extended metropolis sampler</link>, which may be computatinoally superior to the rejection sampler,
+</para>
 </sect2>
 
+
+<!-- METROPOLIS -->
 <sect2 xml:id="sec_extendedmetropolis"><title>The extended Metropolis sampler</title>
-<para></para>
+<para>The extended Metropolis algorithm is in general a mcuh more efficient algroirthm for sampling the a posteriori probability</para>
+<para>
+The extended Metropolis sampler can be run using 
+<screen>
+options.mcmc.nite=40000; 	% number of iterations, default nite=30000
+options.mcmc.i_sample=50;	% save the current model for every 50 iterations, default, i_sample=500
+options.mcmc.i_plot=1000;   % plot progress of the Metropolis sampler for every 100 iterations
+                            % default i_plot=50;
+options.txt='case_line_fit'; % descriptive name appended to output foldername, default txt='';
+
+[options,data,prior,forward,m_current]=sippi_metropolis(data,prior,forward,options)
+</screen>
+One can choose to accept all steps in the Metropolis sampler, which will result in an algorthm sampling the prior model, using 
+<screen>
+options.mcmc.accept_all=1; % default [0]
+</screen>
+One can choose to accept models that lead to an improvement in the likelihood, which results in an optimization like algorithm using 
+<screen>
+options.mcmc.accept_only_improvements=1; % default [0]
+</screen>
+
+</para>
+
+<para>
+See <link linkend="sippi_metropolis">sippi_metropolis</link> for more details.
+</para>
 
 <sect3 xml:id="sec_controling_step_length"><title>Controling the step length</title>
 <para></para>
@@ -38,28 +100,72 @@ prior{m}.seq_gibbs.i_update_step_max=0; % disable automatic step length
 </para>
 </sect3>
 
-<sect3 xml:id="sec_independentmetropolis"><title>The extended independent Metropolis sampler</title>
-<para></para>
+<sect3 xml:id="sec_independentmetropolis"><title>The independent extended Metropolis sampler</title>
+<para>The 'independent' extended Metropolis sampler, in which each proposed model is independant of the previsouly visited model, can be chosen by forcing the 'step'-length to be 1 (i.e. leading to independant samples from the prior), using e.g.
+<screen>
+% force indepedant prior sampling
+for ip=1:length(prior);
+	prior{ip}.seq_gibbs.step=1;
+	prior{ip}.seq_gibbs.i_update_step_max=0;	
+end
+% run 'independent' extended Metropolis sampling
+[options,data,prior,forward,m_current]=sippi_metropolis(data,prior,forward,options)
+</screen>
+
+</para>
 </sect3>
 
 <sect3 xml:id="sec_metropolis_annealing"><title>Annealing schedule</title>
-<para></para>
+<para>
+Simulated annealing like behaviour can be controleld in the <varname>options.mcmc.anneal</varname> structure. By default annealing is disabled.
+</para>
+<para>
+Annealing consist of multiplying the the noise level using an exponentially decerasing noise factor from  
+<varname>options.mcmc.anneal.fac_begin</varname> to 
+<varname>options.mcmc.anneal.fac_end</varname>, from iteration number 
+<varname>options.mcmc.anneal.i_begin</varname> to 
+<varname>options.mcmc.anneal.i_end</varname>.
+</para>
+<para>
+The annealing schedule can be used start a Metropolis sampler that allow to explore more of the model space in the beginning. Recall though that the posterior is not sampled until (at least) the annealing has been ended at iteration, <varname>options.mcmc.anneal.i_end</varname>, if the <varname>options.mcmc.anneal.fac_end=1</varname>. This can potentially help not to get trapped in a local minima.
+</para>
+<para>
+To use this type of annealing, where the annealing stops after 10000 iterations, after which the algorothm performs like a regular Metropolis sampler, use for example
+
+<screen>
+options.mcmc.anneal.i_begin=1; % default, iteration number when annealing begins
+options.mcmc.anneal.i_end=10000; %  iteration number when annealing stops
+</screen>
+which is equivalent to 
+<screen>
+options.mcmc.anneal.i_begin=1; % default, iteration number when annealing begins
+options.mcmc.anneal.i_end=10000; %  iteration number when annealing stops
+options.mcmc.anneal.fac_begin=20; % default, noise is scaled by fac_begin at iteration i_begin
+options.mcmc.anneal.fac_end=1; % default, noise is scaled by fac_end at iteration i_end 
+</screen>
+</para>
 </sect3>
 
 </sect2>
 
 <!-- LSQ-->
+<!--
 <sect2 xml:id="sec_lsq"><title>linear least squares</title>
 <para></para>
 </sect2>
-
+-->
 
 <!-- SIMULATED ANNEALING -->
 
 
 </sect1>
-
 <sect1 xml:id="sec_simanneal"><title>Simulated Annealing</title>
-<para></para>
+<para>Simulated annealing type optimization can be setup using an <link linkend="sec_metropolis_annealing">annealing schedule</link> that is enable to the entire run og the Metropolis sampler, and that ends by a noise scaling factor less than 1. This can be obtained using e.g.
+<screen>
+options.mcmc.anneal.i_begin=1; % default, iteration number when annealing begins
+options.mcmc.anneal.i_end=options.mcmc.nite; %  iteration number when annealing stops
+options.mcmc.anneal.fac_begin=20; % default, noise is scaled by fac_begin at iteration i_begin
+options.mcmc.anneal.fac_end=0.01; % 1/100 of the noise level
+</screen>
+</para>
 </sect1>
-
