@@ -2,7 +2,7 @@
 SIPPI can be used as a convenient approach for unconditional an conditional simulation.
 </para>
 <para>
-In ordet to use SIPPI to solve inverse problems, one must provide the solution to the forward problem. Essentially this amounts to implementing a Matlab function that solves the <link linkend="chapforward">forward problem</link> in using a specific input/output format. If a solution to the forward problem allready exist, this can be quite easily done simply using a Matlab wrapper function. 
+In order to use SIPPI to solve inverse problems, one must provide the solution to the forward problem. Essentially this amounts to implementing a Matlab function that solves the <link linkend="chapforward">forward problem</link> in using a specific input/output format. If a solution to the forward problem already exist, this can be quite easily done simply using a Matlab wrapper function. 
 <!-- <link linkend="sippi_forward">forward problem</link> -->
 </para>
 <para>
@@ -40,23 +40,17 @@ m =
 
     [14.3082]    [9.4436]    [10.8294]
 </screen>
-<para>1D histograms of a sample (consisting of 1000 realizations) of the prior models can be visualized using 
+<para>1D histograms of a sample (consisting of 1000 realizations) of the prior models can be visualized using ...
 </para>
 <screen>
 sippi_plot_prior_sample(prior);
 </screen>
-    <mediaobject>
-      <imageobject condition="web">
-        <imagedata fileref="figures/prior_gaussian_1d_Gaussian.png" width="4in" depth="3in" scalefit="1"/>
-      </imageobject>
-      <textobject><phrase></phrase></textobject>
-    </mediaobject>
 </sect1>
 
 <!-- POLY LINE FITTING -->
 <sect1 xml:id="sec_ex_linefit"><title>Polynomial line fitting</title>
 <para>
-Here simple ploynomial (or order 0, 1 or 2) line-fitting is considered.
+Here a simple polynomial (of order 0, 1 or 2) line-fitting is considered.
 </para>
 <para>
 First, the forward problem is defined. Then examples of stochastic inversion using SIPPI is demonstrated using a a synthetic data set.
@@ -80,51 +74,132 @@ else
     d{1}=forward.x.^2*m{1}+forward.x*m{2}+m{3};
 end
 </screen>
-the <varname>forward.x</varname> must be an array of the x-locations, for which the y-values of the correspsonding line will be evaluated.
+the <varname>forward.x</varname> must be an array of the x-locations, for which the y-values of the corresponding line will be evaluated.
 </para>
 <para>
 Note that the prior must be defined such that <varname>prior{1}</varname> refer to the intercept, <varname>prior{2}</varname> to the gradient, and <varname>prior{3}</varname> to the 2nd order polynomial coefficient.
 </para>
 <para>
-If only one prior type is defined then the forward respons will just be a constant, and if two prior types are defined, then the forward respone will be a straight line.
+If only one prior type is defined then the forward response will just be a constant, and if two prior types are defined, then the forward response will be a straight line.
 </para>
 
 </sect2>
 
 
-<sect2 xml:id="linefit_data"><title>Reference data</title>
+<sect2 xml:id="linefit_data"><title>Reference data, data, forward</title>
 <para>
+A reference data set can be computed using 
 </para>
 <screen>
+clear all;close all;
 rand('seed',1);randn('seed',1);
 
-grad=2;
-intercept=-30;
-poly2=0;
+%% Select reference model
+m_ref{1}=-30;
+m_ref{2}=2;
+m_ref{3}=0; 
 
+%% Setup the forward model in the 'forward' structure
 nd=40;
-x=linspace(1,20,nd)';
-d_obs=x.^2.*poly2+x.*grad+intercept;
+forward.x=linspace(1,20,nd);
+forward.forward_function='sippi_forward_linefit';
 
+%% Compute a reference set of observed data
+d=sippi_forward(m_ref,forward);
+d_obs=d{1};
 d_std=10;
 d_obs=d_obs+randn(size(d_obs)).*d_std;
 
-%
 data{1}.d_obs=d_obs;
 data{1}.d_std=d_std;
-
-%% Setup the forward model in the 'forward' structure
-forward.x=D.x;
-forward.forward_function='sippi_forward_linefit';
-
-%% Set up the 'data' structure
-data{1}.d_std=D.d_std;
-data{1}.d_obs=D.d_obs;
-
-
 </screen>
+   <mediaobject>
+      <imageobject condition="web">
+	    <imagedata fileref="figures/sippi_linefit_data_40.png" width="40%" scalefit="1"/>
+		</imageobject>
+      <textobject><phrase></phrase></textobject>
+    </mediaobject>
+
 </sect2>
 
+<sect2><title>The prior model</title>
+<para>
+</para>
+<screen>
+%% Setting up the prior model
+
+% the intercept
+im=1;
+prior{im}.type='gaussian';
+prior{im}.name='intercept';
+prior{im}.m0=0;
+prior{im}.std=30;
+prior{im}.m_true=m_ref{1};
+
+% 1st order, the gradient
+im=2;
+prior{im}.type='gaussian';
+prior{im}.name='gradient';
+prior{im}.m0=0;
+prior{im}.std=4;
+prior{im}.norm=80;
+prior{im}.m_true=m_ref{2};
+
+% 2nd order
+im=3;
+prior{im}.type='gaussian';
+prior{im}.name='2nd';
+prior{im}.m0=0;
+prior{im}.std=1;
+prior{im}.norm=80;
+prior{im}.m_true=m_ref{3};
+
+sippi_plot_prior_sample(prior);
+</screen>
+<mediaobject>
+      <imageobject condition="web">
+	    <imagedata fileref="figures/sippi_line_fit_m1_3_prior_sample.png" width="100%" scalefit="1"/>
+		</imageobject>
+      <textobject><phrase></phrase></textobject>
+    </mediaobject>
+
+</sect2>
+   
+<sect2><title>Setup and run the Metropolis sampler</title>
+<para>
+Now, information about the model parameters can be inferred by running the extended Metropolis sampler using
+</para>   
+<screen>
+options.mcmc.nite=40000;  % Run for 40000 iterations
+options.mcmc.i_sample=50; % Save every 50th visited model to disc
+options.mcmc.i_plot=2500; % Plot the progress information for every 2500 iterations
+options.txt='case_line_fit_2nd_order'; % descriptive name for the output folder
+
+[options]=sippi_metropolis(data,prior,forward,options);
+
+% plot posterior statistics, such as 1D and 2D marginals from the prior and posterior distributions
+sippi_plot_prior_sample(options.txt);
+sippi_plot_posterior(options.txt);
+20140521_1644_sippi_metropolis_case_line_fit_2nd_order_m1_3_posterior_sample.png
+</screen>
+
+
+ <mediaobject><imageobject condition="web">
+	    <imagedata fileref="figures/20140521_1644_sippi_metropolis_case_line_fit_2nd_order_m1_3_posterior_sample.png" width="100%" scalefit="1"/>
+		</imageobject>
+      <textobject><phrase>1D marginal a priori and posteriori distributions</phrase></textobject>
+ </mediaobject>
+
+<mediaobject><imageobject condition="web">
+	    <imagedata fileref="figures/20140521_1644_sippi_metropolis_case_line_fit_2nd_order_post_marg_hist.png" width="70%" scalefit="1" align="center"/>
+		</imageobject>
+      <textobject><phrase>2D marginal a posteriori distributions</phrase></textobject>
+ </mediaobject>
+
+ 
+ 
+
+</sect2>
 </sect1>
 
 <!--
