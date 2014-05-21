@@ -50,7 +50,7 @@ sippi_plot_prior_sample(prior);
 <!-- POLY LINE FITTING -->
 <sect1 xml:id="sec_ex_linefit"><title>Polynomial line fitting</title>
 <para>
-Here a simple polynomial (of order 0, 1 or 2) line-fitting is considered.
+Here follows simple polynomial (of order 0, 1 or 2) line-fitting is considered. Example m-files can be found in the <filename>SIPPI/examples/case_linefit</filename> folder.
 </para>
 <para>
 First, the forward problem is defined. Then examples of stochastic inversion using SIPPI is demonstrated using a a synthetic data set.
@@ -167,7 +167,7 @@ sippi_plot_prior_sample(prior);
    
 <sect2><title>Setup and run the Metropolis sampler</title>
 <para>
-Now, information about the model parameters can be inferred by running the extended Metropolis sampler using
+Now, information about the model parameters can be inferred by running the <link linkend="sec_extendedmetropolis">extended Metropolis sampler</link> using
 </para>   
 <screen>
 options.mcmc.nite=40000;  % Run for 40000 iterations
@@ -197,9 +197,20 @@ sippi_plot_posterior(options.txt);
  </mediaobject>
 
  
- 
+</sect2>
+
+<sect2><title>Setup and run the rejection sampler</title>
+<para>
+In a similar manner the <link linkend="sec_rejection">rejection sampler</link> can be setup and run using 
+</para>
+<screen>
+options.mcmc.adaptive_rejection=1; % automatically adjust the normalizing likelihood
+options.mcmc.nite=100000;
+options=sippi_rejection(data,prior,forward,options);
+</screen>
 
 </sect2>
+
 </sect1>
 
 <!--
@@ -210,6 +221,7 @@ sippi_plot_posterior(options.txt);
 -->
 <sect1 xml:id="sec_ex_tomography"><title>Cross hole tomography</title>
 <para>
+For now, please see <citation>HCLM2013b</citation> for example of using SIPPI to sample the posterior for cross hole tomograohic inverse problems.
 </para>
 </sect1>
 

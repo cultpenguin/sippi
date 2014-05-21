@@ -3,7 +3,7 @@ clear all;close all
 rand('seed',1);randn('seed',1);
 
 %% LOAD DATA
-D=load('sippi_linefit_data');
+load('sippi_linefit_data');
 
 %% Setting up the prior model
 
@@ -13,7 +13,7 @@ prior{im}.type='gaussian';
 prior{im}.name='intercept';
 prior{im}.m0=0;
 prior{im}.std=30;
-prior{im}.m_true=D.intercept;
+prior{im}.m_true=m_ref{1};
 
 % 1st order, the gradient
 im=2;
@@ -22,7 +22,7 @@ prior{im}.name='gradient';
 prior{im}.m0=0;
 prior{im}.std=4;
 prior{im}.norm=80;
-prior{im}.m_true=D.grad;
+prior{im}.m_true=m_ref{2};
 
 % 2nd order
 im=3;
@@ -31,15 +31,9 @@ prior{im}.name='2nd';
 prior{im}.m0=0;
 prior{im}.std=1;
 prior{im}.norm=80;
-prior{im}.m_true=D.poly2;
+prior{im}.m_true=m_ref{3};
 
-%% Setup the forward model in the 'forward' structure
-forward.x=D.x;
-forward.forward_function='sippi_forward_linefit';
-
-%% Set up the 'data' structure
-data{1}.d_obs=D.d_obs;
-data{1}.d_std=D.d_std;
+sippi_plot_prior_sample(prior)
 
 %% Perform extended Metropolis sampling 
 % set some MCMC options.
