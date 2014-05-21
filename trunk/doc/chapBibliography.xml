@@ -74,7 +74,7 @@
   <biblioentry role="article" xml:id="hansen2014modelingerror">
     <abbrev xml:id="hansen2014modelingerror.abbrev">HCM14</abbrev>
     <biblioset role="article">
-  <authorgroup><author><personname><firstname>T. M.</firstname><surname>Hansen</surname></personname></author><author><personname><firstname>K. S.</firstname><surname>Cordua</surname></personname></author><author><personname><firstname>K.</firstname><surname>Mosegaard</surname></personname></author></authorgroup>
+  <authorgroup><author><personname><firstname>T. M.</firstname><surname>Hansen</surname></personname></author><author><personname><firstname>K. S.</firstname><surname>Cordua</surname></personname></author><author><personname><firstname>B. H.</firstname><surname>Jacobsen</surname></personname></author><author><personname><firstname>K.</firstname><surname>Mosegaard</surname></personname></author></authorgroup>
       <title>Accounting for imperfect forward modeling in geophysical inverse
   problems - exemplified for cross hole tomography</title>
       <pagenums>xx</pagenums>

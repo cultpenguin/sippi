@@ -53,10 +53,16 @@ sippi_plot_prior_sample(prior);
     </mediaobject>
 </sect1>
 
+<!-- POLY LINE FITTING -->
 <sect1 xml:id="sec_ex_linefit"><title>Polynomial line fitting</title>
 <para>
-
+Here simple ploynomial (or order 0, 1 or 2) line-fitting is considered.
 </para>
+<para>
+First, the forward problem is defined. Then examples of stochastic inversion using SIPPI is demonstrated using a a synthetic data set.
+</para>
+
+<sect2 xml:id="linefit_forward"><title>The forward problem</title>
 <para>
 The forward problem consists of computing the y-value as a function of the x-position of the data, and the polynomial coefficients determining the line. <link linkend="sippi_forward_linefit">sippi_forward_linefit.m</link>:
 <screen xml:id="sippi_forward_linefit">
@@ -74,22 +80,67 @@ else
     d{1}=forward.x.^2*m{1}+forward.x*m{2}+m{3};
 end
 </screen>
+the <varname>forward.x</varname> must be an array of the x-locations, for which the y-values of the correspsonding line will be evaluated.
 </para>
+<para>
+Note that the prior must be defined such that <varname>prior{1}</varname> refer to the intercept, <varname>prior{2}</varname> to the gradient, and <varname>prior{3}</varname> to the 2nd order polynomial coefficient.
+</para>
+<para>
+If only one prior type is defined then the forward respons will just be a constant, and if two prior types are defined, then the forward respone will be a straight line.
+</para>
+
+</sect2>
+
+
+<sect2 xml:id="linefit_data"><title>Reference data</title>
+<para>
+</para>
+<screen>
+rand('seed',1);randn('seed',1);
+
+grad=2;
+intercept=-30;
+poly2=0;
+
+nd=40;
+x=linspace(1,20,nd)';
+d_obs=x.^2.*poly2+x.*grad+intercept;
+
+d_std=10;
+d_obs=d_obs+randn(size(d_obs)).*d_std;
+
+%
+data{1}.d_obs=d_obs;
+data{1}.d_std=d_std;
+
+%% Setup the forward model in the 'forward' structure
+forward.x=D.x;
+forward.forward_function='sippi_forward_linefit';
+
+%% Set up the 'data' structure
+data{1}.d_std=D.d_std;
+data{1}.d_obs=D.d_obs;
+
+
+</screen>
+</sect2>
 
 </sect1>
 
+<!--
 <sect1 xml:id="sec_ex_covariance_inference"><title>Covariance model inference</title>
 <para>
 </para>
 </sect1>
-
+-->
 <sect1 xml:id="sec_ex_tomography"><title>Cross hole tomography</title>
 <para>
 </para>
 </sect1>
 
+<!--
 <sect1 xml:id="sec_ex_reflection"><title>Reflection seismic inversion</title>
 <para>
 </para>
 </sect1>
-
+-->
