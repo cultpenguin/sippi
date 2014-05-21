@@ -22,7 +22,7 @@ This section contains information about how to use and control SIPPI, which requ
 </para>
 
 
-<sect1 xml:id="chapprior"><title>The a priori model</title>
+<sect1 xml:id="chapprior"><title><varname>prior</varname>: The a priori model</title>
 <para>
 A priori information is defined by the <varname>prior</varname> Matlab structure. Any mumber of types of a priori models can be defined. For example a 1D uniform prior can be defined in <varname>prior{1}</varname>, and 2D Gaussian prior can be defined in <varname>prior{2}</varname>.   
 </para>
@@ -335,9 +335,10 @@ prior{m}.seq_gibbs.type=2;
 
 </sect1>
 
-<sect1 xml:id="chapdata"><title>The data and the noise</title>
+<!-- DATA -->
+<sect1 xml:id="chapdata"><title><varname>data</varname>: The data and the noise</title>
 <para>
-The <varname>data</varname> is Matlab structure that defines any number of data and a corresponding noise model.
+<varname>data</varname> is Matlab structure that defines any number of data and a corresponding noise model.
 </para>
 <para>
 <varname>data{1}</varname> defines the first data set (which must always be defined), and ny number of additional data sets can be defined in 
@@ -349,45 +350,175 @@ This allow to consider for example seismic data in <varname>data{1}</varname>, a
  </para>
 <para>
 For each set of data, a Gaussian noise model (both correlated and uncorrelated) can be specified). The noise model for different data types (e.g. <varname>data{1}</varname> and <varname>data{2}</varname> are independent).
-
 </para>
 
 <para>
-Once the noise model has been defined
+Once the noise model has been defined the log-likelihood related to any model, <varname>m</varname>, with the corressponding <link linkend="chapforward">forward response</link>, <varname>d</varname>, can be computed using
 <screen>
 logL=sippi_likelihood(data,d)
 </screen>
-where <varname>d</varname> is the output of <link linkend="chapprior">sippi_forward</link>.
+where <varname>d</varname> is the output of <link linkend="sippi_forward">sippi_forward</link>.
 
 </para>
+<para>
+The specification of the noise model can be divided into a description of the <link linkend="sec_meas_noise_gauss">measurement noise</link> (mandatory) and the <link linkend="sec_model_noise_gauss">modeling error</link> (optional).
+</para>
 
-
-<sect2 xml:id="sec_noise_gauss_uncorr"><title>Uncorrelated Gaussian noise</title>
+<sect2 xml:id="sec_meas_noise_gauss"><title>Gaussian measurement noise</title>
+<para>
+</para>
+<sect3 xml:id="sec_meas_noise_gauss_uncorr"><title>Uncorrelated Gaussian measurement noise</title>
 <para>
 To define a set of observed data, [0,1,2], with an associated uncertainty defined by a Gaussian model with mean 0 and standard deviation 2, use
 <screen>
-data{1}.d_obs=[0 1 2];
-data{1}.d_std=[2 2 2];
+data{1}.d_obs=[0 1 2]';
+data{1}.d_std=[2 2 2]';
 </screen>
 which is equivalent to (as the noise model for each data the same, and independent) 
 <screen>
-data{1}.d_obs=[0 1 2];
+data{1}.d_obs=[0 1 2]';
 data{1}.d_std=2;
 </screen>
 One can also choose to define the uncertainty using a variance as opposed to the standard deviation
 <screen>
-data{1}.d_obs=[0 1 2];
+data{1}.d_obs=[0 1 2]';
 data{1}.d_var=4;
 </screen>
 </para>
+</sect3>
 
+<sect3 xml:id="sec_meas_noise_gauss_corr"><title>correlated Gaussian measurement noise</title>
 <para>
+Correlated Gaussian measurement uncertainty can be specified using the <varname>Cd</varname> field, as for example
+<screen>
+data{1}.Cd=[4 1 0 ; 1 4 1 ; 0 1 4];
+</screen>
+Note that <varname>data{1}.Cd</varname> must be of size [NDxND], where ND is the the number of data in <varname>data{1}.d_obs</varname>.
+</para>
+
+</sect3>
+
+</sect2>
+
+<sect2 xml:id="sec_model_noise_gauss"><title>Gaussian modeling error</title>
+<para>
+The modeling error refer to errors caused by using for example an imperfect forward model, see <citation>HCM14</citation>.
+</para>
+<para>
+A Gaussian model of the modeling error can is specified by the mean, <varname>dt</varname>, and the covariance, <varname>Ct</varname>.
+</para>
+<para>
+For example
+<screen>
+data{1}.dt=[0 0 0];
+data{1}.Ct=[4 4 4; 4 4 4; 4 4 4];
+</screen>
+is equivalent to 
+<screen>
+data{1}.Ct=4
+</screen>
+which implies a zero mean modeling error with a coavraince model where all model paremeters has a covariace of 4. 
+</para>
+<para>See the <link linkend="sec_ex_tomography">tomography example</link>, for an example of accounting for correlated modeling errors.
 </para>
 </sect2>
 
 </sect1>
 
-<sect1 xml:id="chapforward"><title>The forward model</title>
+<!-- FORWARD-->
+<sect1 xml:id="chapforward"><title><varname>forward</varname>: The forward model</title>
 <para>
+The specification of the <varname>prior</varname> and <varname>data</varname> is intended to be generic, applicable to any inverse problem considered. The forward problem, on the other hand, is typically specific for each different inverse problem.
 </para>
+<para> 
+In order to make use of SIPPI to sample the posterior distribtion, the solution to the forward problem, must be embedded in a Matlab function with the following input and output arguments:
+</para>
+<screen>
+[d,forward,prior,data]=sippi_forward(m,forward,prior,data,id)
+</screen>
+<para>
+<varname>m</varname> is a realization of the prior model, and <varname>prior</varname> and <varname>data</varname> are the Matlab structures defining the prior and the noise model (see <link linkend="chapprior">Prior</link> and <link linkend="chapdata">Data</link>)
+</para>
+<para>
+<varname>id</varname> is optional, and can be used to compute the forward response of a subset of the diffrent types of data avaialable (i.e. <varname>data{1}</varname>, <varname>data{2}</varname>,... )
+</para> 
+
+<para>
+The <varname>forward</varname> variable is a Matlab stucture that can contain any information needed to solve the forward problem. Thus, the parameters for the The <varname>forward</varname> structure is problem dependant. One option, <varname>forward.forward_function</varname> is though generic, and point to the m-file that implements the forward problem.
+</para> 
+<para>
+The output variable <varname>d</varname> is a Matlab stucture of the same size of <varname>data</varname>.
+Thus, if 4 types of data have been specified, then <varname>d</varname> must also be a structures of size 4.
+<screen>
+length(data) == length(d);
+</screen> 
+Further, <varname>d{i}</varname> must refer to an array of the same size as <varname>data{i}.d_obs</varname>.
+</para> 
+<para>
+An example of an implementation of the forward problem related to a simple line fitting problem can be:
+
+</para>
+<screen>
+function [d,forward,prior,data]=sippi_forward_linefit(m,forward,prior,data);
+    d{1}=forward.x*m{2}+m{1};
+</screen>
+<para>
+This implementation requires that the 'x'-locations, for which the y-values of the straight line is to be computed, is specified through <varname>forward.x</varname>. Say some some y-data has been observed at locations x=[1,5,8], with the values [2,4,9], and a standard devation of 1 specifying the uncertainty, the forward stucture must be set as 
+<screen>
+forward.forward_function='sippi_forward_linefit';
+forward.x=[1,5,8];
+</screen>
+while the data structure will be
+<screen>
+data{1}.d_obs=[2 4 9]
+data{1}.d_std=1;
+</screen>
+</para>
+
+<para>
+This implementation also requires that the prior model consists of two 1D prior types, such that 
+<screen>
+m=sippi_prior(prior)
+</screen> 
+returns the intercept in <varname>m{1}</varname> and the gradient in <varname>m{2}</varname>.
+</para>
+<para>
+An example of computing the forward response using an intercept of 0, and a gradients of 2 is then 
+<screen>
+m{1}=0;
+m{2}=2;
+d=sippi_forward(m,forward)
+</screen>
+and the correspnding log-likelihood of m, can be computed using
+</para>
+<screen>
+logL=sippi_likelihood(data,d);
+</screen>
+
+<para>
+[see more deatils and example related to polynomial line fitting  at <link linkend="sec_ex_linefit">polynomial line fittting</link>].
+</para>
+<para>
+The <link linkend="chapExamples">Examples</link> section contains more example of implementation of different forward problems.
+</para>
+</sect1>
+
+
+<!-- CHECKINGF THE SETUP -->
+<sect1 xml:id="secTestSetup"><title>Validating <varname>prior</varname>, <varname>data</varname>, and <varname>forward</varname></title>
+<para>
+A simple way to test the validity of 
+<varname>prior</varname>,
+<varname>data</varname>, and
+<varname>forward</varname> 
+is test if the following sequence can be eavlauted without errors: 
+</para>
+<screen>
+% Generate a realization, m, of the prior model
+m=sippi_prior(prior);
+% Compute the forward response
+d=sippi_forward(m,forward,prior,data);
+% Evaluate the log-likelihood of m
+logL=sippi_likelihood(data,d);
+</screen>
 </sect1>
