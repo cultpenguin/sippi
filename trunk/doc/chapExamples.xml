@@ -221,7 +221,7 @@ options=sippi_rejection(data,prior,forward,options);
 -->
 <sect1 xml:id="sec_ex_tomography"><title>Cross hole tomography</title>
 <para>
-For now, please see <citation>HCLM2013b</citation> for example of using SIPPI to sample the posterior for cross hole tomograohic inverse problems.
+For now, please see <citation>HCLM13b</citation> for example of using SIPPI to sample the posterior for cross hole tomograohic inverse problems.
 </para>
 </sect1>
 

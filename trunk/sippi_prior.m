@@ -528,6 +528,10 @@ for im=im_fftma_array;
                     ang(1)=m_propose{j};
                     prior{im}.Va.par2(2)=ang(1);
                     prior{im}.fftma_options.constant_C=0;
+                elseif strcmp(prior{j}.name,'nu');
+                    nu=m_propose{j};
+                    prior{im}.Va.nu=nu;
+                    prior{im}.fftma_options.constant_C=0;
                 end
             end
         end
