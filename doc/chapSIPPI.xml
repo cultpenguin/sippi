@@ -355,6 +355,7 @@ For each set of data, a Gaussian noise model (both correlated and uncorrelated) 
 <para>
 Once the noise model has been defined the log-likelihood related to any model, <varname>m</varname>, with the corressponding <link linkend="chapforward">forward response</link>, <varname>d</varname>, can be computed using
 <screen>
+d=[d,forward,prior,data]=sippi_forward(m,forward,prior,data,
 logL=sippi_likelihood(data,d)
 </screen>
 where <varname>d</varname> is the output of <link linkend="sippi_forward">sippi_forward</link>.

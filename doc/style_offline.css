@@ -10,14 +10,18 @@ body{
      }
 
 
-
+/*
 A:hover {       color: #993333;
 		text-decoration: underline;}
 A:link {        color: #993333;
-		text-decoration: none;}
 A:visited {        color: #990000;
 		text-decoration: none;}
-
+*/
+A {         
+    color: #993333;
+    font-weight: Bold;
+    text-decoration: none;
+ }
 
 H1, H2, H3, H4, H5, H6{
         font-weight: 100;
@@ -25,47 +29,32 @@ H1, H2, H3, H4, H5, H6{
 
 H1 {
 	font-size:160%;
-        padding: 30px;
-        //margin-left: -20px;
-        //margin-right: -20px;
-        //margin-top: 20px;
-        //margin-bottom: 20px;
+        border: solid #000000 3px;
 }
 
 H2 {
 	font-size:140%;
-        padding-left: 30px;
-        padding-right: 5px;
-        padding-top: 5px;
-        padding-bottom: 5px;
+        border: solid #000000 1px;
 }
 H3 {
 	font-size:120%;
-        padding-left: 30px;
-        padding-right: 3px;
-        padding-top: 3px;
-        padding-bottom: 3px;
+        border-bottom: dashed #000000 1px;
+
 }
 H4 {
 	font-size:100%;
-        padding-left: 30px;
-        padding-right: 1px;
-        padding-top: 10px;
-        padding-bottom: 1px;
+        border-bottom: dashed #000000 1px;
 	margin-right: 300px;
 }
 
 
 .title  {
         //color: #ffffff; 
-         background: GhostWhite; 
-        border: dashed #000000 1px;
-        border-bottom: dashed #000000 1px;
-        border-left: dotted #000000 3px;
+        background-color: white; 
         font-weight: bold;
         text-align: left;
         padding: 3pt;
-        padding-left: 15pt;
+        padding-left: 10pt;
 }
 
 
@@ -135,10 +124,14 @@ H4 {
         }
 
 .varname {color: #000000; 
-        font-family:monospace;
+        font-family:monospace,courier;
         font-weight: bold;
+        background: #eeeeee;
+        color: #000000; 
+	/*
         border-bottom: solid #993333 1px;
         border-top: solid #993333 1px;
+	*/
         }
 
 
@@ -169,17 +162,19 @@ pre.programlisting
 
 pre.screen
 {
+    	font-size:100%;
         font-family:monospace;
         white-space: pre;
-        background-color: #dddddd;
-        border:solid;
-        color: #000000;
+        background-color:  #CCC66C;
+        border:solid #000000 1px;
+        /*
         border-color: #993333;
         background-color: #khaki;
-        border-left: solid #993333 12px;
+	border-left: solid #993333 12px;
         border-right: solid #993333 2px;
         border-top: solid #993333 2px;
         border-bottom: solid #993333 2px;
+	*/
 
         padding: 3pt;
         padding-left: 15pt;

@@ -22,22 +22,12 @@ sourceforge.net</A></TD>
 </script>
 </xsl:template>
 
-<xsl:param name="chunk.section.depth" select="1"></xsl:param>
+<xsl:param name="chunk.section.depth" select="2"></xsl:param>
 
 <xsl:param name="use.id.as.filename" select="1"/>
 
 <xsl:param name="xref.with.number.and.title" select="1"/>
 <xsl:param name="insert.xref.page.number">yes</xsl:param>
-
-<l:i18n xmlns:l="http://docbook.sourceforge.net/xmlns/l10n/1.0"> 
-  <l:l10n language="en"> 
-    <l:context name="xref-number-and-title"> 
-      <l:template name="appendix" text="Appendix %n: &#8220;%t&#8221;"/> 
-      <l:template name="chapter" text="Chapter %n: &#8220;%t&#8221;"/> 
-      <l:template name="sect1" text="&#8220;%t&#8221;"/>
-    </l:context>    
-  </l:l10n>
-</l:i18n>
 
 <xsl:param name="html.stylesheet">style.css</xsl:param>
 
