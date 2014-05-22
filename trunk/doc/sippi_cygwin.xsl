@@ -19,11 +19,9 @@
 
 <xsl:param name="generate.toc" select="'book toc'"/> <!-- ONLY MAIN TOC-->
 
-<xsl:param name="chunk.section.depth" select="8"></xsl:param>
+<xsl:param name="chunk.section.depth" select="1"></xsl:param>
 <xsl:param name="chunk.tocs.and.lots" select="0"></xsl:param>
 <xsl:param name="chunk.separate.lots" select="0"></xsl:param>
-
-
 
 <xsl:param name="use.id.as.filename" select="1"/>
 
@@ -40,7 +38,7 @@
   </l:l10n>
 </l:i18n>
 
-<xsl:param name="html.stylesheet">style.css</xsl:param>
+<xsl:param name="html.stylesheet">style_offline.css</xsl:param>
 
 </xsl:stylesheet>
 
