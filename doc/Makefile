@@ -11,7 +11,7 @@ validate:
 xalan:
 	java -jar /usr/share/java/xalan2-2.7.1.jar -in sippi.xml -xsl sippi.xsl -out sippi.html
 dblatex:
-	dblatex -P doc.collab.show=0 -P latex.output.revhistory=0 -P doc.toc.show=1 sippi.xml
+	dblatex -T simple -P doc.collab.show=0 -P latex.output.revhistory=0 -P doc.toc.show=1 sippi.xml
 
 saxon:
 	saxon-xslt sippi.xml sippi.xsl
