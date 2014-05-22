@@ -8,8 +8,11 @@ In order to use SIPPI to solve inverse problems, one must provide the solution t
 <para>
 A few implementations of solutions to forward problems are included as examples as part of SIPPI. These will be demonstrated in the following 
 </para>
-
+<!-- PRIOR EXAMPLES -->
 <sect1 xml:id="sec_ex_prior"><title>Examples of A priori models</title>
+<para></para>
+
+<sect2 xml:id="sec_ex_prior_multi_1d_gauss"><title>Multiple 1D Gaussian prior model</title>
 <para>
 A prior model consisting of three independent 1D distributions (a Gaussian, Laplace, and Uniform distribution) can be defined using
 </para>
@@ -45,6 +48,85 @@ m =
 <screen>
 sippi_plot_prior_sample(prior);
 </screen>
+</sect2>
+
+<sect2 xml:id="sec_ex_prior_multi_fft_ma_cov"><title>Multivariate Gaussian prior with unknown covariance model properties.</title>
+<para>
+The <link linkend="prior_fftma">FFT-MA</link> type a priori model allow seperation of properties of the covariance model (covariance parameters, such as range, and anisotropy ratio) and the random compoent of a Gaussian model. This allow one to define a Gaussian a priori model, where the covariance parameters can be treated as unknown variables.
+</para>
+<para>
+In order to treat the covariance parameters as unknowns, one must define one a priori model of type <varname>FFTMA</varname>, and then a number of 1D <varname>GAUSSIAN</varname> type a priori models, one for each covariance parameter. Each gaussian type prior model must have a descriptive name, corresponding to the covariance parameter that is should describe: 
+<screen>
+prior{im}.type='gaussian';
+prior{im}.name='m_0';     % to define a prior for the mean 
+prior{im}.name='sill';    % to define a prior for sill (variance)
+prior{im}.name='range_1'; % to define a prior for the range parameter 1
+prior{im}.name='range_2'; % to define a prior for the range parameter 2
+prior{im}.name='range_3'; % to define a prior for the range parameter 3
+prior{im}.name='ang_1';   % to define a prior for the first angle of rotation
+prior{im}.name='ang_2';   % to define a prior for the second angle of rotation
+prior{im}.name='ang_3';   % to define a prior for the third angle of rotation
+prior{im}.name='nu';      % to define a prior for nu 
+						  %   (only applies when the Matern type Covariance model is used)
+</screen>
+</para>
+<para>
+A very simple example of a prior model defining a 1D Sperical type covariance model with a range between 5 and 15 meters, can be defined using: 
+<screen>
+im=1; 
+prior{im}.type='FFTMA';
+prior{im}.x=[0:.1:10]; % X array 
+prior{im}.m0=10;
+prior{im}.Va='1 Sph(10)';
+prior{im}.fftma_options.constant_C=0;
+
+
+im=2;
+prior{im}.type='gaussian';
+prior{im}.name='range_1';
+prior{im}.m0=10;
+prior{im}.std=5
+prior{im}.norm=80;
+prior{im}.prior_master=1; % -- NOTE, set this to the FFT-MA type prior for which this prior type
+                          % should desriibe the range
+</screen> 
+</para>
+<para>
+Note that the the field <varname>prior_master</varname> must be set to point the to the FFT-MA type a priori model (through its id/number) for which it should define a covariance parameter (in this case the range). 
+</para>
+<para>
+10 independent realizations of this type of a priori model are shown in the following figure
+</para>
+   <mediaobject>
+      <imageobject condition="web">
+	    <imagedata fileref="figures/prior_reals_fftma_1d_range.png" width="70%" scalefit="1"/>
+		</imageobject>
+      <textobject><phrase></phrase></textobject>
+    </mediaobject>
+
+<para>
+Such a prior, as all prior models available in SIPPI, works with <link linkend="sec_seq_gibbs">sequential Gibbs sampling</link>, allowing a random walk in the space of a prior acceptable models, that will sample the prior model. An example of such a random walk can be performed using
+<screen>
+prior{1}.seq_gibbs.step=.005;
+prior{2}.seq_gibbs.step=0.1;
+clear m_real;
+for i=1:150;
+    [m,prior]=sippi_prior(prior,m);
+    m_real(:,i)=m{1};
+end
+</screen>
+An example of such a set of 150 dependent realization of the prior can be seen below
+</para>
+<mediaobject>
+      <imageobject condition="web">
+	    <imagedata fileref="figures/prior_reals_fftma_1d_range_waterfall.png" width="70%" scalefit="1"/>
+		</imageobject>
+      <textobject><phrase></phrase></textobject>
+    </mediaobject>
+
+	
+</sect2>
+
 </sect1>
 
 <!-- POLY LINE FITTING -->
