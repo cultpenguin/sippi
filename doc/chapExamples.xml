@@ -66,8 +66,8 @@ prior{im}.name='range_3'; % to define a prior for the range parameter 3
 prior{im}.name='ang_1';   % to define a prior for the first angle of rotation
 prior{im}.name='ang_2';   % to define a prior for the second angle of rotation
 prior{im}.name='ang_3';   % to define a prior for the third angle of rotation
-prior{im}.name='nu';      % to define a prior for nu 
-						  %   (only applies when the Matern type Covariance model is used)
+prior{im}.name='nu';      % to define a prior for the shape patemeter, nu 
+			  %   (only applies when the Mater type Covariance model is used)
 </screen>
 </para>
 <para>
