@@ -57,7 +57,7 @@ end
 aviobj = close(aviobj);
 
 %%
-figure(2);clf;;set_paper('portrait');
+figure(2);clf;set_paper('portrait');
 x=prior{1}.x;
 ii=10:10:size(m_real,2);
 ii=1:1:150;
