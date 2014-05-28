@@ -26,13 +26,13 @@ im=im+1;
 prior{im}.type='FFTMA';
 prior{im}.name='Velocity (m/ns)';
 prior{im}.m0=0.145;
-prior{im}.Va='.0003 Sph(6,90,1)';
-%prior{im}.Va='.0003 Sph(6)';
-%prior{im}.Va='.0003 Va(2,1)';
+prior{im}.Va='.0003 Mat(2,1)';
 dx=0.25;
 prior{im}.x=[-1:dx:6];
 prior{im}.y=[0:dx:13];
 prior{im}.cax=[.1 .18];
+prior{im}.fftma_options.pad_x=150;
+prior{im}.fftma_options.pad_y=150;
 i_master=im;
 
 % range - horizontal
@@ -63,10 +63,10 @@ prior{im}.name='range_2';
 im=im+1;
 prior{im}.type='gaussian';
 prior{im}.name='nu';
-prior{im}.m0=1;
-prior{im}.std=0.9;
+prior{im}.m0=.5;
+prior{im}.std=0.25;
 prior{im}.norm=80;
-
+prior{im}.prior_master=i_master;
 
 prior=sippi_prior_init(prior);
 
