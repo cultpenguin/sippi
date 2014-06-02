@@ -8,32 +8,22 @@ validate:
 	date "+%b %d, %Y" > pubdate.xml	
 	xmllint --valid --noout sippi.xml
 
-xalan:
-	java -jar /usr/share/java/xalan2-2.7.1.jar -in sippi.xml -xsl sippi.xsl -out sippi.html
 
 dblatex:
-	dblatex -T simple -P doc.collab.show=0 -P latex.output.revhistory=0 -P doc.toc.show=1 -b xetex sippi.xml
+	dblatex -T simple -p xsl/dblatex.xsl -b xetex sippi.xml
 
-dblatexfont:
-	dblatex -p xsl/dblatex-pdf.xsl -b xetex -o test.pdf sippi.xml
+dblatex_ubuntu:
+	dblatex -p xsl/dblatex-ubuntu.xsl -b xetex -o sippi.pdf sippi.xml
 
+
+xalan:
+	java -jar /usr/share/java/xalan2-2.7.1.jar -in sippi.xml -xsl xsl/sippi.xsl -out sippi.html
 
 saxon:
 	saxon-xslt sippi.xml sippi.xsl
 
-pdf_old:
-	make validate
-	xsltproc  --output sippi.fo \
-	--stringparam fop.extensions 1 \
-	file:///usr/share/xml/docbook/stylesheet/nwalsh/fo/docbook.xsl sippi.xml
-	fop  -fo  sippi.fo  -pdf  sippi.pdf
-
-pdf_ldp:
-	fop -xml sippi.xml -xsl /usr/share/xml/docbook/stylesheet/ldp/fo/tldp-print.xsl  -pdf sippi_ldp.pdf
-
 fo:
 	xsltproc -o sippi.fo /usr/share/xml/docbook/stylesheet/nwalsh/fo/docbook.xsl sippi.xml
-
 
 pdf:fo
 	fop -pdf sippi.pdf -fo sippi.fo
@@ -50,7 +40,7 @@ html:
 	mkdir -p htmldoc/figures
 	cp figures/*.png htmldoc/figures/.
 	cp style*.css htmldoc/.
-	xsltproc --xinclude --stringparam html.stylesheet style.css -o htmldoc sippi.xsl sippi.xml
+	xsltproc --xinclude --stringparam html.stylesheet style.css -o htmldoc xsl/sippi.xsl sippi.xml
 	mv *.html htmldoc/.
 
 html_cygwin:
@@ -59,45 +49,12 @@ html_cygwin:
 	mkdir -p htmldoc/figures
 	cp -r figures htmldoc/.
 	cp style*.css htmldoc/.
-	xsltproc --xinclude --stringparam -o htmldoc sippi_cygwin.xsl sippi.xml
+	xsltproc --xinclude --stringparam -o htmldoc xsl/sippi_cygwin.xsl sippi.xml
 	mv *.html htmldoc/.
 
 tidy:
 	tidy -m -quiet htmldoc/*.html
-	
 
-linkbook:
-	ln -s sippiBook.xml sippi.xml
-linkarticle:
-	ln -s sippiArticle.xml sippi.xml
-validateall:
-	xmllint --valid --noout sippiBook.xml
-	xmllint --valid --noout sippiArticle.xml
-
-
-
-
-htmlall:
-	xsltproc  --output \
-	sippiArticle.html\
-	file:///usr/share/xml/docbook/stylesheet/nwalsh/xhtml/docbook.xsl sippiArticle.xml
-
-	xsltproc  --output \
-	sippiBook.html\
-	file:///usr/share/xml/docbook/stylesheet/nwalsh/xhtml/docbook.xsl sippiBook.xml
-
-allpdf:
-	xsltproc  --output sippiBook.fo \
-	--stringparam fop.extensions 1 \
-	file:///usr/share/xml/docbook/stylesheet/nwalsh/fo/docbook.xsl sippiBook.xml
-
-	fop  -fo  sippiBook.fo  -pdf  sippiBook.pdf
-
-	xsltproc  --output sippiArticle.fo \
-	--stringparam fop.extensions 1 \
-	file:///usr/share/xml/docbook/stylesheet/nwalsh/fo/docbook.xsl sippiArticle.xml
-
-	fop  -fo  sippiArticle.fo  -pdf  sippiArticle.pdf
 
 clean:
 	rm -f *.htmldoc
@@ -105,7 +62,11 @@ clean:
 	rm -f *.op
 	rm -f *.pdf
 
-all:html dblatex
+	
+update_sf:
+	./updateSF
+	
+all:html dblatex_ubuntu tidy update_sf
 
 
 
