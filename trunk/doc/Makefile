@@ -10,8 +10,13 @@ validate:
 
 xalan:
 	java -jar /usr/share/java/xalan2-2.7.1.jar -in sippi.xml -xsl sippi.xsl -out sippi.html
+
 dblatex:
-	dblatex -T simple -P doc.collab.show=0 -P latex.output.revhistory=0 -P doc.toc.show=1 sippi.xml
+	dblatex -T simple -P doc.collab.show=0 -P latex.output.revhistory=0 -P doc.toc.show=1 -b xetex sippi.xml
+
+dblatexfont:
+	dblatex -p xsl/dblatex-pdf.xsl -b xetex -o test.pdf sippi.xml
+
 
 saxon:
 	saxon-xslt sippi.xml sippi.xsl
