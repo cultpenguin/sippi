@@ -1,6 +1,7 @@
 % sippi_set_path Set paths for running sippi
 
-function [F,p]=sippi_set_path();
+function sippi_set_path();
+%function [F,p]=sippi_set_path();
 [p]=fileparts(which('sippi_set_path.m'));
 if (isempty(p)|strcmp(p,'.'))
     p=pwd;

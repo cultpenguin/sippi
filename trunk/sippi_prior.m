@@ -231,6 +231,7 @@ for im=im_array;
         end
         %disp(prior{im}.S.XML.parameters.Seed.value)
         % CHECK FOR SCALING AND ROTATION
+          
         if isfield(prior{im},'rotation')
             prior{im}.S.XML.parameters.Use_Rotation.value=1;
             prior{im}.S.XML.parameters.Use_Global_Rotation.value=1;
