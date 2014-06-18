@@ -33,7 +33,6 @@ prior{im}.std=1;
 prior{im}.norm=80;
 prior{im}.m_true=m_ref{3};
 
-sippi_plot_prior_sample(prior)
 
 %% Perform extended Metropolis sampling 
 % set some MCMC options.
