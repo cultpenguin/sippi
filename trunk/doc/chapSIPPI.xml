@@ -411,7 +411,8 @@ m1=sippi_prior(prior);
 If this process is iterated, then a random walk in the space of a priori acceptable models will be perform. Moreover, the collection of realization obtained in this way will represent a sample from prior distribution.  
 </para>
 
-<!-- Example of sampling the prior using Sequential Gibbs Sampling
+<!-- 
+Example of sampling the prior using Sequential Gibbs Sampling
 EXAMPLE OF USING SGS TO SAMPLE THE PRIOR
 -->
 

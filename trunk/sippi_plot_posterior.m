@@ -16,6 +16,13 @@ if ~exist('supt','var');
 end
 
 
+
+pl_logL=1;
+pl_base=1;
+pl_2d_marg=1;
+pl_data=1;
+
+
 % color codes
 col=[
     0 0 0
@@ -49,61 +56,98 @@ try
     fname=options.txt;
 end
 
-if ~isfield(options,'FS')
-    options.FS=12;
-end
+%if ~isfield(options,'FS')
+%    options.FS=12;
+%end
 
-%%
+%% PERHAPS SET THE OPTIONS IN A SEPERATE MFILE
 options.axis.null='';
-if ~isfield(options.axis,'fontsize');options.axis.fontsize=8;end
+if ~isfield(options.axis,'fontsize');options.axis.fontsize=14;end
 if ~isfield(options.axis,'width');options.axis.width=10;end
 if ~isfield(options.axis,'height');options.axis.height=10;end
-if ~isfield(options.axis,'w0');options.axis.w0=2;end
-if ~isfield(options.axis,'h0');options.axis.h0=2;end
+if ~isfield(options.axis,'w0');options.axis.w0=1;end
+if ~isfield(options.axis,'h0');options.axis.h0=1;end
 
-options.axis.fontsize=12;
 prior=sippi_prior_init(prior);
 
 %% logL curve
-figure(31);set_paper('landscape');
-for i=1:length(prior);i_update_step_max(i)=prior{i}.seq_gibbs.i_update_step_max;end
-i_update_step_max=max(i_update_step_max);
-try
-    sippi_plot_loglikelihood(mcmc.logL_all);
-    legend(num2str([1:size(mcmc.logL_all,1)]'))
-    y1=max(max(mcmc.logL_all));
-    try
-        y2=min(min(mcmc.logL_all(:,i_update_step_max)))
-    catch
-        y2=min(min(mcmc.logL_all));
-    end
-catch
-    sippi_plot_loglikelihood(mcmc.logL);
-    y1=max(max(mcmc.logL));
-    try
-        y2=(min(mcmc.logL(:,i_update_step_max:end)));
-    catch
-        y2=(min(mcmc.logL));
-    end
-end
-try
-    xlim=get(gca,'xlim');
-    % GET TOTAL NUMBER OF DATA
-    N=0;for l=1:length(data);N=N+length(data{l}.d_obs);end;
-    hold on
-    plot(xlim,[1 1].*(-N/2),'r-')
-    plot(xlim,[1 1].*(-N/2-2*sqrt(N/2)),'r--')
-    plot(xlim,[1 1].*(-N/2+2*sqrt(N/2)),'r--')
-    hold off
-    if y2>(-N/2-2*sqrt(N/2)), y2=(-N/2-2.1*sqrt(N/2));end
-    if y1<(-N/2+2*sqrt(N/2)), y1=(-N/2+2.1*sqrt(N/2));end
+if pl_logL==1;
     
-end
-try
-set(gca,'ylim',[y2 y1])
+    figure(31);set_paper('landscape');
+    set(gca,'FontSize',options.axis.fontsize);
+    for i=1:length(prior);i_update_step_max(i)=prior{i}.seq_gibbs.i_update_step_max;end
+    i_update_step_max=max(i_update_step_max);
+    try
+        sippi_plot_loglikelihood(mcmc.logL_all);
+        legend(num2str([1:size(mcmc.logL_all,1)]'))
+        y1=max(max(mcmc.logL_all));
+        try
+            y2=min(min(mcmc.logL_all(:,i_update_step_max)))
+        catch
+            y2=min(min(mcmc.logL_all));
+        end
+    catch
+        sippi_plot_loglikelihood(mcmc.logL);
+        y1=max(max(mcmc.logL));
+        try
+            y2=(min(mcmc.logL(:,i_update_step_max:end)));
+        catch
+            y2=(min(mcmc.logL));
+        end
+    end
+    try
+        xlim=get(gca,'xlim');
+        % GET TOTAL NUMBER OF DATA
+        N=0;for l=1:length(data);N=N+length(data{l}.d_obs);end;
+        hold on
+        plot(xlim,[1 1].*(-N/2),'r-')
+        plot(xlim,[1 1].*(-N/2-2*sqrt(N/2)),'r--')
+        plot(xlim,[1 1].*(-N/2+2*sqrt(N/2)),'r--')
+        hold off
+        if y2>(-N/2-4*sqrt(N/2)), y2=(-N/2-4.1*sqrt(N/2));end
+        if y1<(-N/2+4*sqrt(N/2)), y1=(-N/2+4.1*sqrt(N/2));end
+        
+    end
+    try
+        set(gca,'ylim',[y2 y1])
+    end
+    
+    print_mul(sprintf('%s_logL',fname))
+    xlim=get(gca,'xlim');
+    set(gca,'xlim',[xlim(1) xlim(2)/20]);
+    print_mul(sprintf('%s_logL_start',fname))
+    
+    
+    %% autocorrelation
+    try
+        figure(3);clf;set_paper('landscape');
+        
+        %nite=length(mcmc.logL);
+        i1=1;
+        for i=1:length(prior);
+            i1 = max([prior{i}.seq_gibbs.i_update_step_max i1]);
+        end
+        
+        ii=i1:length(mcmc.logL);
+        c=xcorr(mcmc.logL(ii)-mean(mcmc.logL(ii)));
+        c=c(length(ii):end);
+        c=c./max(c);
+        xc=[0:1:(length(c))-1];
+        plot(xc,c,'-');grid on
+        ic0=find(c<0);ic0=ic0(1);
+        axis([0 xc(ic0)*8 -.5 1])
+        hold on;
+        plot([1 1].*xc(ic0),[-1 1]*.2,'-','linewidth',3);
+        text(xc(ic0)+0.01*diff(get(gca,'xlim')),0.1,sprintf('Nite=%d',xc(ic0)))
+        hold off
+        
+        xlabel('iteration #')
+        ylabel('autocorrelation of logL')
+        print_mul(sprintf('%s_logL_autocorr',fname))
+        
+    end
 end
 
-print_mul(sprintf('%s_logL',fname))
 
 
 %% REALS
@@ -128,9 +172,6 @@ if length(n_reals)==1;
 end
 
 
-pl_base=1;
-pl_2d_marg=1;
-pl_data=1;
 
 %for im=im_arr;
 if pl_base==1;
@@ -142,7 +183,7 @@ if pl_base==1;
         else
             title_txt=sprintf('m%d',im);
         end
-    
+        
         
         try;cd(plotdir);end
         clear cax;
@@ -171,7 +212,8 @@ if pl_base==1;
         options.null='';
         id=1;
         
-        [reals,etype_mean,etype_var,reals_all]=sippi_get_sample(data,prior,id,im,n_reals(im),options);
+        
+        [reals,etype_mean,etype_var,reals_all,ite_reals]=sippi_get_sample(data,prior,id,im,n_reals(im),options);
         m_post{im}=reals;
         
         if ~exist('cax','var');
@@ -196,6 +238,30 @@ if pl_base==1;
         i1=ceil(size(reals,1)/n_reals(im));
         ii=ceil(linspace(i1,size(reals,1),n_reals(im)));
         if ndim==0
+            
+            %% Plot the value of the 1D prior as a function of iterations number
+            try
+                figure_focus(im*10+3);
+                set_paper('landscape');clf;
+                ii=[1:1:length(reals_all)].*options.mcmc.i_sample;
+                plot(ii(:),reals_all);
+                
+                ylim=get(gca,'ylim');
+                if isfield(prior{im},'cax');ylim=prior{im}.cax;end
+                if isfield(prior{im},'min');ylim(1)=prior{im}.min;end
+                if isfield(prior{im},'max');ylim(2)=prior{im}.max;end
+                set(gca,'ylim',ylim);
+                
+                xlabel('Iteration #')
+                ylabel(prior{im}.name)
+                print_mul(sprintf('%s_m%d_posterior_values',fname,im))
+                
+            catch
+                disp(sprintf('%s : failed to plot 1D posterior values for prior #%d',mfilename,im));
+            end
+            
+            figure_focus(f_id);
+            %% continue
             N=length(reals);
             %N=n_reals(im);
             prior_sample=zeros(1,N);
@@ -205,7 +271,7 @@ if pl_base==1;
                 m=sippi_prior(p);
                 sample_prior(i)=m{1};
             end
-        
+            
             if ~exist('cax','var');
                 cax=[min(sample_prior) max(sample_prior)];
             end
@@ -252,8 +318,10 @@ if pl_base==1;
             end
             xlabel(prior{im}.name,'interpreter','none','FontSize',options.axis.fontsize+2)
             ylabel('Frequency','interpreter','none','FontSize',options.axis.fontsize+2)
-            set(gca,'ytick',[]);
+            % BUG/20140619 : It seems Matlab R2014b does not handle legend
+            % very well when using ppp.m ..
             legend('prior','posterior')
+            set(gca,'ytick',[]);
             try
                 set(gca,'xlim',cax);
             end
@@ -267,10 +335,9 @@ if pl_base==1;
                 end
             end
             
+            %ppp(options.axis.width,options.axis.height,options.axis.fontsize,options.axis.w0,options.axis.h0);
             
-            ppp(options.axis.width,options.axis.height,options.axis.fontsize,options.axis.w0,options.axis.h0);
-            
-         elseif ndim==1
+        elseif ndim==1
             plot(prior{im}.x,reals,'k-');
             hold on
             %plot(prior{im}.x,etype_mean,'r-','linewidth',2);
@@ -302,7 +369,7 @@ if pl_base==1;
                 use_colorbar=0;
                 i_cb=ceil((nsp_y+1)/2)*nsp_x;
                 if i==i_cb; use_colorbar=1;end
-       
+                
                 try
                     if (length(z)>1)
                         m{i}{im}=reals(:,:,:,i);
@@ -335,7 +402,7 @@ if pl_base==1;
             else
                 subplot(1,2,1);
             end
-            set(gca,'FontSize',options.FS)
+            set(gca,'FontSize',options.axis.fontsize)
             met{im}=etype_mean;
             sippi_plot_prior(prior,met,im,0,f_id);colorbar off;
             caxis(cax);
@@ -348,7 +415,7 @@ if pl_base==1;
             else
                 subplot(1,2,2);
             end
-            set(gca,'FontSize',options.FS)
+            set(gca,'FontSize',options.axis.fontsize)
             %met{im}=etype_var;
             met{im}=sqrt(etype_var);
             sippi_plot_prior(prior,met,im,0,f_id);colorbar off;
@@ -376,6 +443,7 @@ if pl_base==1;
         
         if ~exist('mcmc','var')
             cd(cwd)
+            
             return
         end
         
@@ -418,12 +486,41 @@ if pl_base==1;
         %% PLOT CORRELATION COEFFICIENT / FIND NITE PER INDEPENDANT POST REAL
         try
             if ndim==0
-                % autocorrelation analysis... to come
+                %% autocorrelation analysis... to come
+                fn=(im-1)*10+6;
+                figure_focus(fn);set_paper('landscape');clf;
+                set(gca,'FontSize',options.axis.fontsize)
+                
+                c_reals=reals_all;
+                
+                % ONLY USE REALS AFTER SEQ GIBBS HAS FINISHED...
+                try
+                    c_i1=prior{im}.seq_gibbs.i_update_step_max/options.mcmc.i_sample;
+                    c_reals=reals_all(c_i1:size(reals_all,1),:);
+                end
+                
+                c=xcorr(c_reals-mean(c_reals));
+                c=c(length(c_reals):end);
+                c=c./max(c);
+                xc=[0:1:(length(c))-1].*options.mcmc.i_sample;
+                plot(xc,c,'-','linewidth',2);grid on
+                ic0=find(c<0);ic0=ic0(1);
+                axis([0 xc(ic0)*8 -.5 1])
+                hold on;
+                plot([1 1].*xc(ic0),[-1 1]*.2,'-','linewidth',3);
+                text(xc(ic0)+0.01*diff(get(gca,'xlim')),0.1,sprintf('Nite=%d',xc(ic0)))
+                hold off
+                
+                xlabel('iteration #')
+                ylabel(sprintf('autocorrelation of %s(m%d)',prior{im}.name,im))
+                print_mul(sprintf('%s_autocorr_m%d',fname,im))
+                
+                %%
                 
             elseif ndim>1
                 fn=(im-1)*10+6;
                 figure_focus(fn);set_paper('landscape');clf;
-                set(gca,'FontSize',options.FS)
+                set(gca,'FontSize',options.axis.fontsize)
                 nr=size(reals_all,1);
                 it=[1:1:nr].*mcmc.i_sample;
                 for i=1:nr;
@@ -441,7 +538,7 @@ if pl_base==1;
                 i_threshold=max(find(cc<lev(1)));
                 n_threshold=it(nr)-it(i_threshold);
                 txt=sprintf('About %d iterations between independant realizations',n_threshold);
-                t=text(.1,.9,txt,'units','normalized','FontSize',options.FS);
+                t=text(.1,.9,txt,'units','normalized','FontSize',options.axis.fontsize);
                 i_independant=it(nr)-[n_threshold:n_threshold:it(nr)];
                 try;set(gca,'xlim',[1 options.mcmc.nite]);end
                 for i=1:length(i_independant)
@@ -467,7 +564,7 @@ if pl_base==1;
             if nm==1
                 fn=(im-1)*10+9;
                 figure_focus(fn);set_paper('landscape');clf;
-                set(gca,'FontSize',options.FS);
+                set(gca,'FontSize',options.axis.fontsize);
                 sippi_plot_loglikelihood(mcmc.logL(1:mcmc.i),mcmc.acc(im,1:mcmc.i));
                 smcmc=sort(mcmc.logL(1:mcmc.i));y_min=smcmc(ceil(mcmc.i/200));
                 ylim=get(gca,'ylim');
@@ -631,7 +728,7 @@ if pl_data==1,
         f_handle=(im-1)*10+3;
         figure_focus(f_handle);set_paper('landscape');clf;
         subplot(1,1,1);
-        set(gca,'FontSize',options.FS);
+        set(gca,'FontSize',options.axis.fontsize);
         nd=length(data);
         for id=1:nd;
             %if ~isfield(data{id},'i_use'); data{id}.i_use=1:1:(prod(size(data{id}.d_obs)));end
@@ -656,7 +753,7 @@ if pl_data==1,
         
         f_handle=(im-1)*10+4;
         figure_focus(f_handle);set_paper('landscape');clf;
-        set(gca,'FontSize',options.FS);
+        set(gca,'FontSize',options.axis.fontsize);
         hist(dd(:),30);
         colormap(gray)
         xlabel('d_{obs}-d_{post}')
