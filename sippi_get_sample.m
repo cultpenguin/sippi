@@ -1,16 +1,29 @@
-function [reals_mat,etype_mean,etype_var,reals]=sippi_get_sample(data,prior,id,im,n_reals,options);
-% sippi_get_sample Get a posterior sample 
+function [reals_mat,etype_mean,etype_var,reals_all,ite_num]=sippi_get_sample(data,prior,id,im,n_reals,options);
+% sippi_get_sample: Get a posterior sample
 %
 % Call :
-%  [reals,etype_mean,etype_var]=sippi_get_sample(data,prior,id,im,n_reals,options);
+%  [reals,etype_mean,etype_var,reals_all,reals_ite]=sippi_get_sample(data,prior,id,im,n_reals,options);
 %
+
+%% BUG/19062014 : remove any reference to the data structure
+
 if ~exist('n_reals','var');
     n_reals=15;
 end
 if ~exist('id','var');id=1;end
 if ~exist('im','var');im=1;end
 if ~exist('options','var');options.null='';end
+
+% implement option to skip seq-gibbs phase
+skip_seq_gibbs=1; % only consider posterior realization AFTER seq gibbs has finished
+%skip_seq_gibbs=0; % coniser posterior realization from iteration number 1
+
+
 %% LSQ
+
+%% BUG/19062014 : remove any reference to the data structure
+
+%% BUG/19062014 : m_est should go in forward structure
 if isfield(data{id},'m_est');
     reals=gaussian_simulation_cholesky(data{im}.m_est,data{im}.Cm_est,n_reals)';
     etype_mean=data{id}.m_est;
@@ -20,11 +33,13 @@ else
     if ~isfield(options,'txt');
         [p,options.txt]=fileparts(pwd);
     end
-    try        
+    try
         reals=load(sprintf('%s_m%d.asc',options.txt,im));
     catch
         reals=load(sprintf('%s%s%s_m%d.asc',options.txt,filesep,options.txt,im));
     end
+    reals_all=reals;
+    % GET ITERATION NUMBER AFTER SEQ GIBBS HAS FINISHED, i1
     try
         i1_post=prior{im}.seq_gibbs.i_update_step_max./options.mcmc.i_sample;
     catch
@@ -32,25 +47,49 @@ else
     end
     i1_post=max([i1_post 1]);
     
-    nr=size(reals,1);
-    if (nr<n_reals)
-        n_reals=nr;
+    if skip_seq_gibbs==0;
+        i1_post=1;
     end
-    i1=ceil(size(reals,1)/n_reals);
-    i1=max([i1 i1_post]);
+    
+    
+    %i1=ceil(size(reals,1)/n_reals);
+    %i1=max([i1 i1_post]);
+    
     
     % ONLY REALS FROM POSTERIOR
     if i1_post>n_reals
         i1_post=1;
     end
-    reals=reals(i1_post:end,:);
+    
+    %% TAKE OUT ALL POSTERIOR REALIZATION AND THE ITERATION NUMBER
+    nr=size(reals,1);
+    ii_post_reals=i1_post:nr;
+    ni_post_reals=ii_post_reals*options.mcmc.i_sample;
+    reals=reals(ii_post_reals,:);
+    nr=size(reals,1);
+    
+    %% TAKE OUT ONLY n_reals REALIZATION
+    if (nr<n_reals)
+        n_reals=nr;
+    end
+    N=length(ii_post_reals);
+    
+    
+    i_use = ceil(linspace(1,N,n_reals));
+    
+    ii=ii_post_reals(i_use);
+    ni=ni_post_reals(i_use);
+    
+    
+    n_reals=min([n_reals size(reals,1)]);
     
     ii=ceil(linspace(1,size(reals,1),n_reals));
-    
-    
+    ite_num=ii*options.mcmc.i_sample;
+    reals=reals(i_use,:);
+        
     x=prior{im}.x;y=prior{im}.y;z=prior{im}.z;
-   
-  
+    
+    
     %% GET ETYPES
     etype_mean=mean(reals);
     etype_var=var(reals);
@@ -65,18 +104,17 @@ else
     
     %% GET REQUESTED SAMPLE
     
-        
-        for i=1:n_reals
-            if prior{im}.dim(3)>1
-                % 3D
-                reals_mat(:,:,:,i)=reshape(reals(ii(i),:),length(y),length(x),length(z));
-            elseif prior{im}.dim(2)>1
-                % 2D
-                reals_mat(:,:,i)=reshape(reals(ii(i),:),length(y),length(x));
-            else
-                % 1D
-                reals_mat(:,i)=reals(ii(i),:);
-            end
+    for i=1:n_reals
+        if prior{im}.dim(3)>1
+            % 3D
+            reals_mat(:,:,:,i)=reshape(reals(i,:),length(y),length(x),length(z));
+        elseif prior{im}.dim(2)>1
+            % 2D
+            reals_mat(:,:,i)=reshape(reals(i,:),length(y),length(x));
+        else
+            % 1D
+            reals_mat(:,i)=reals(i,:);
         end
-        
+    end
+    
 end
