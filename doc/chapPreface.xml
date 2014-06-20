@@ -32,7 +32,9 @@ Details about the implementation and the methods implemented in SIPPI can be fou
 <citation>HCLM13b</citation> and,
 <citation>HCM14</citation>.
 </para>
-
+<para>
+This version of the documentation was compiled on &pubdate;, and refer to SIPPI version &sippi-version;.
+</para>
   </preface>
 
 
