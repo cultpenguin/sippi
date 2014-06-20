@@ -83,7 +83,7 @@ book SYSTEM "docbook.dtd"
     </copyright>
 -->
     <edition>version 1.0</edition>
-    <!-- <pubdate>01/04/2014</pubdate> -->
+    <pubdate>&pubdate;</pubdate>
 
 
 

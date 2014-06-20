@@ -53,7 +53,7 @@ html_cygwin:
 	mv *.html htmldoc/.
 
 tidy:
-	tidy -m -quiet htmldoc/*.html
+	tidy  -f tidyerrrors.txt  -m  -quiet  htmldoc/*.html
 
 
 clean:
@@ -62,13 +62,10 @@ clean:
 	rm -f *.op
 	rm -f *.pdf
 
-	
 update_sf:
 	./updateSF
-	
-all:html dblatex_ubuntu tidy update_sf
 
-
+all:clean html dblatex_ubuntu update_sf
 
 help:
 	# USAGE
