@@ -62,11 +62,11 @@ end
 
 %% PERHAPS SET THE OPTIONS IN A SEPERATE MFILE
 options.axis.null='';
-if ~isfield(options.axis,'fontsize');options.axis.fontsize=14;end
-if ~isfield(options.axis,'width');options.axis.width=10;end
-if ~isfield(options.axis,'height');options.axis.height=10;end
-if ~isfield(options.axis,'w0');options.axis.w0=1;end
-if ~isfield(options.axis,'h0');options.axis.h0=1;end
+if ~isfield(options.axis,'fontsize');options.axis.fontsize=20;end
+if ~isfield(options.axis,'width');options.axis.width=8;end
+if ~isfield(options.axis,'height');options.axis.height=8;end
+if ~isfield(options.axis,'w0');options.axis.w0=2;end
+if ~isfield(options.axis,'h0');options.axis.h0=2;end
 
 prior=sippi_prior_init(prior);
 
@@ -111,7 +111,7 @@ if pl_logL==1;
     try
         set(gca,'ylim',[y2 y1])
     end
-    
+     set(gca,'FontSize',options.axis.fontsize)           
     print_mul(sprintf('%s_logL',fname))
     xlim=get(gca,'xlim');
     set(gca,'xlim',[xlim(1) xlim(2)/20]);
@@ -138,11 +138,12 @@ if pl_logL==1;
         axis([0 xc(ic0)*8 -.5 1])
         hold on;
         plot([1 1].*xc(ic0),[-1 1]*.2,'-','linewidth',3);
-        text(xc(ic0)+0.01*diff(get(gca,'xlim')),0.1,sprintf('Nite=%d',xc(ic0)))
+        text(xc(ic0)+0.01*diff(get(gca,'xlim')),0.1,sprintf('Nite=%d',xc(ic0)),'FontSize',options.axis.fontsize)
         hold off
         
         xlabel('iteration #')
         ylabel('autocorrelation of logL')
+        set(gca,'FontSize',options.axis.fontsize)           
         print_mul(sprintf('%s_logL_autocorr',fname))
         
     end
@@ -251,7 +252,7 @@ if pl_base==1;
                 if isfield(prior{im},'min');ylim(1)=prior{im}.min;end
                 if isfield(prior{im},'max');ylim(2)=prior{im}.max;end
                 set(gca,'ylim',ylim);
-                
+                set(gca,'FontSize',options.axis.fontsize)
                 xlabel('Iteration #')
                 ylabel(prior{im}.name)
                 print_mul(sprintf('%s_m%d_posterior_values',fname,im))
@@ -508,11 +509,13 @@ if pl_base==1;
                 axis([0 xc(ic0)*8 -.5 1])
                 hold on;
                 plot([1 1].*xc(ic0),[-1 1]*.2,'-','linewidth',3);
-                text(xc(ic0)+0.01*diff(get(gca,'xlim')),0.1,sprintf('Nite=%d',xc(ic0)))
+                text(xc(ic0)+0.01*diff(get(gca,'xlim')),0.1,sprintf('Nite=%d',xc(ic0)),'FontSize',options.axis.fontsize)
                 hold off
                 
                 xlabel('iteration #')
                 ylabel(sprintf('autocorrelation of %s(m%d)',prior{im}.name,im))
+                set(gca,'FontSize',options.axis.fontsize)           
+        
                 print_mul(sprintf('%s_autocorr_m%d',fname,im))
                 
                 %%
@@ -590,7 +593,7 @@ end
 %% 2D POSTERIOR MARGINALS.
 if (length(prior)<2); pl_2d_marg=0;end
 if (pl_2d_marg==1),
-    try
+    %try
         try;cd(plotdir);end
         im_onedim=[];
         for j=1:length(im_arr);
@@ -600,18 +603,21 @@ if (pl_2d_marg==1),
         end
         n=length(im_onedim);
         j=0;
+        clear reals*;
         for k=1:(length(im_onedim)-1)
             [reals1,etype_mean1,etype_var1,reals_all1]=sippi_get_sample(data,prior,id,im_onedim(k),100000,options);
-            reals_all(:,k)=reals_all1(:);
+            %reals_all(:,k)=reals_all1(:);
+            reals_all(:,k)=reals1(:);
             for l=(k+1):(length(im_onedim))
                 j=j+1;
                 
                 %% 2d marg scatter
                 [reals2,etype_mean2,etype_var2,reals_all2]=sippi_get_sample(data,prior,id,im_onedim(l),100000,options);
-                reals_all(:,l)=reals_all2(:);
+                %reals_all(:,l)=reals_all2(:);
+                reals_all(:,l)=reals2(:);
                 
                 figure_focus(50+j);clf;set_paper('landscape');
-                plot(reals_all1,reals_all2,'k.')
+                plot(reals_all(:,k),reals_all(:,l),'k.')
                 try;xlabel(prior{im_onedim(k)}.name);end
                 try;ylabel(prior{im_onedim(l)}.name);end
                 
@@ -624,8 +630,7 @@ if (pl_2d_marg==1),
                     end
                 end
                 ppp(options.axis.width,options.axis.height,options.axis.fontsize,options.axis.w0,options.axis.h0);
-                print_mul(sprintf('%s_post_marg_m%d_m%d',fname,im_onedim(k),im_onedim(l)));
-                
+                print_mul(sprintf('%s_post_marg_m%d_m%d_scatter',fname,im_onedim(k),im_onedim(l)));
                 %% 2d marg image
                 pl_2d_marg_image=0;
                 if pl_2d_marg_image==1;
@@ -637,9 +642,9 @@ if (pl_2d_marg==1),
                         NY=NX;
                         try
                             % if prior{im}.min,prior{im}.max exists
-                            [Z,x_arr,y_arr] = hist2(reals_all1(:),reals_all2(:),linspace(prior{im_onedim(k)}.min,prior{im_onedim(k)}.max,NX),linspace(prior{im_onedim(l)}.min,prior{im_onedim(l)}.max,NY));
+                            [Z,x_arr,y_arr] = hist2(reals_all(:,k),reals_all(:,l),linspace(prior{im_onedim(k)}.min,prior{im_onedim(k)}.max,NX),linspace(prior{im_onedim(l)}.min,prior{im_onedim(l)}.max,NY));
                         catch
-                            [Z,x_arr,y_arr] = hist2(reals_all1(:),reals_all2(:),NX,NY);
+                            [Z,x_arr,y_arr] = hist2(reals_all(:,k),reals_all(:,l),NX,NY);
                         end
                     catch
                         [Z,x_arr,y_arr] = hist2(reals1',reals2');
@@ -659,7 +664,7 @@ if (pl_2d_marg==1),
                     set(gca,'ydir','normal');
                     %colorbar
                     ppp(options.axis.width,options.axis.height,options.axis.fontsize,options.axis.w0,options.axis.h0);
-                    print_mul(sprintf('%s_post_marg_hist_m%d_m%d',fname,im_onedim(k),im_onedim(l)))
+                    print_mul(sprintf('%s_post_marg_hist_m%d_m%d_gray',fname,im_onedim(k),im_onedim(l)))
                 end
             end
         end
@@ -709,12 +714,12 @@ if (pl_2d_marg==1),
             end
         end
         print_mul(sprintf('%s_post_marg_hist',fname))
-    catch
-        try;close(fn);end
-        fprintf('%s : could not plot 2D marginals\n',mfilename);
-        cd(cwd);
-        keyboard
-    end
+    %catch
+%         try;close(fn);end
+%         fprintf('%s : could not plot 2D marginals\n',mfilename);
+%         cd(cwd);
+%         keyboard
+    %end
 end
 
 %% PLOT DATA ASSOCIATED TO REALS
@@ -725,43 +730,116 @@ if pl_data==1,
         try;cd(plotdir);end
         
         %%
-        f_handle=(im-1)*10+3;
-        figure_focus(f_handle);set_paper('landscape');clf;
-        subplot(1,1,1);
-        set(gca,'FontSize',options.axis.fontsize);
         nd=length(data);
-        for id=1:nd;
-            %if ~isfield(data{id},'i_use'); data{id}.i_use=1:1:(prod(size(data{id}.d_obs)));end
-            subplot(1,nd,id)
-            
-            np=size(m_post{im},2);
-            ii=ceil(linspace(1,np,min([50 np])));
-            for k=ii:n_reals;
-                [d_real,forward]=sippi_forward(m{k},forward,prior,data,id);
-                p(1)=plot(d_real{id}(:),'-','col',col(1,:));
-                d_obs=data{id}.d_obs(data{id}.i_use);
-                dd(k,:)=d_obs(:)-d_real{id}(:);
-                hold on
-            end
-            p(2)=plot(data{id}.d_obs(data{id}.i_use),'-*','col',col(2,:),'MarkerSize',2);
-            hold off
-            set(gca,'ylim',[min(data{id}.d_obs(:)).*.95 max(data{id}.d_obs(:)).*1.05])
-            title(sprintf('Data #%d',id))
-        end
-        legend([p(1) p(2)],'d_{post}','d_{obs}')
-        print_mul(sprintf('%s_d%d',fname,id))
         
-        f_handle=(im-1)*10+4;
-        figure_focus(f_handle);set_paper('landscape');clf;
-        set(gca,'FontSize',options.axis.fontsize);
-        hist(dd(:),30);
-        colormap(gray)
-        xlabel('d_{obs}-d_{post}')
-        ylabel('pdf')
-        print_mul(sprintf('%s_d%d_posterior_datafit_hist',fname,id))
+        %% MFILE TO OBTAIN m_sample_1, m_real_2
+        clear m_post
+        N=15;
+        for im=1:length(prior);
+            [reals]=sippi_get_sample(data,prior,id,im,N+1,options);
+            for j=1:N;
+                m_post{j}{im}=reals(:,j+1);
+            end
+        end
+        for j=1:N
+            [d_real{j}]=sippi_forward(m_post{j},forward,prior,data);
+        end
+        
         %%
         
+        for id=1:nd;
+            
+            %% PLOT REALIZATOIN OF NOISE
+            if isfield(data{id},'d0');
+                noise_real=gaussian_simulation_cholesky(data{1}.d0,data{1}.CD,N);
+            else
+                noise_real=gaussian_simulation_cholesky(0,data{1}.CD,N);
+            end
+            
+            %% GET DATA AND RESIDUAL FOR 5 REALIZATIONS FROM POST
+            for i=1:N;
+                data_obs(:,i)=data{1}.d_obs;
+                data_forward(:,i)=d_real{i}{id};
+                data_res(:,i)=data{1}.d_obs-d_real{i}{id};
+            end
+            
+            %%
+            f_handle=70+id;
+            figure_focus(f_handle);set_paper('landscape');clf;
+            wiggle(1:N,1:size(noise_real,1),data_forward,'wiggle',.1);
+            hold on;
+            wiggle(1:N,1:size(noise_real,1),data_obs,'wiggle',.1);
+            hold off
+            set(gca,'FontSize',options.axis.fontsize);
+            xlabel('realization #')
+            ylabel('data #')
+            print_mul(sprintf('%s_id%d_post',fname,id))
+            
+            %%
+            f_handle=80+id;
+            figure_focus(f_handle);set_paper('landscape');clf;
+            subplot(1,1,1);
+            wiggle(1:N,1:size(noise_real,1),data_res,'VA',.1);
+            set(gca,'FontSize',options.axis.fontsize);
+            xlabel('realization #')
+            ylabel('data #')
+            title('Data residual')
+            print_mul(sprintf('%s_id%d_res',fname,id))
+            %%
+            f_handle=85+id;
+            figure_focus(f_handle);set_paper('landscape');clf;
+            subplot(1,1,1);
+            wiggle(1:N,1:size(noise_real,1),noise_real,'VA',.1);
+            set(gca,'FontSize',options.axis.fontsize);
+            xlabel('realization #')
+            ylabel('data #')
+            title('Noise realization')
+            print_mul(sprintf('%s_id%d_noise',fname,id))
+            %%
+            f_handle=90+id;
+            figure_focus(f_handle);set_paper('landscape');clf;
+            subplot(1,1,1);
+            wiggle(1:N,1:size(noise_real,1),noise_real,'wiggle',.1);
+            hold on
+            wiggle(1:N,1:size(noise_real,1),data_res,'wiggle',.1);
+            hold off
+            set(gca,'FontSize',options.axis.fontsize);
+            xlabel('realization #')
+            ylabel('data #')
+            title('Realizations of noise model (black) and posterior data residuals (red)')
+            print_mul(sprintf('%s_id%d_res_noise',fname,id))
+            
+            %%
+            f_handle=95+id;
+            figure_focus(f_handle);set_paper('landscape');clf;
+            plot(data{id}.CD(:,1),'k-','LineWidth',2)
+            set(gca,'xlim',[0 size(data{id}.CD,1)/4])
+            xlabel('data #')
+            ylabel('Covariance')
+            %title('')
+            ppp(options.axis.width,options.axis.height,options.axis.fontsize,options.axis.w0,options.axis.h0);
+            print_mul(sprintf('%s_id%d_CD',fname,id))
+            
+            %%
+            f_handle=95+id;
+            figure_focus(f_handle);set_paper('landscape');clf;
+            bar(1:N,var(data_res));
+            hold on
+            plot([1 N],[1 1].*data{1}.CD(1),'k:','LineWidth',12)
+            hold off
+            set(gca,'xlim',[0 N+1])
+            xlabel('realization #')
+            ylabel('variance')
+            %title('')
+            ppp(options.axis.width,options.axis.height,options.axis.fontsize,options.axis.w0,options.axis.h0);
+            print_mul(sprintf('%s_id%d_var_check',fname,id))
+            
+            
+            %%
+        end
+        
     catch
+        keyboard
         cd(cwd);
         close(f_handle)
         fprintf('%s : Cannot plot data response. \n',mfilename)
@@ -773,37 +851,5 @@ end
 %%
 cd(cwd);
 
-return
-
-%%
-doSimCD=1;
-if doSimCD==1;
-    if strcmp(data.noise_model,'gaussian')
-        clear L
-        nsim=5000;
-        cd_sim=gaussian_simulation_cholesky(0,data.CD,nsim);
-        for k=1:nsim
-            dd=cd_sim(data.i_use,k);
-            logL(k)=-.5*dd'*data.iCD*dd;
-        end
-        hold on
-        plot([xlim],[1 1].*mean(logL),'r-','LineWidth',2);
-        plot([xlim],[1 1].*mean(logL)-2*std(logL),'r-','LineWidth',1);
-        plot([xlim],[1 1].*mean(logL)+2*std(logL),'r-','LineWidth',1);
-        hold off
-        
-        ylim=get(gca,'ylim');
-        ylim(1)=max([ylim(1) mean(logL)-2*std(logL)]);
-        try
-            ylim(1)=min([ylim(1) 1.5*logL_Ref]);
-        end
-        set(gca,'ylim',ylim);
-        
-    end
-end
-ppp(13,10,12);
-print_mul(sprintf('%s_logl_curve',fname))
-
-cd(cwd);
 
 
