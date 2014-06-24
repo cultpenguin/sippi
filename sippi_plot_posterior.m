@@ -18,9 +18,9 @@ end
 
 
 pl_logL=1;
-pl_base=1;
-pl_2d_marg=1;
-pl_data=1;
+pl_base=0;
+pl_2d_marg=0;
+pl_data=0;
 
 
 % color codes
@@ -35,7 +35,12 @@ col=[
     ];
 
 
+
+
 cwd=pwd;
+
+
+
 
 %% DATA
 if isstr(fname)
@@ -51,6 +56,10 @@ else
     fname='lsq';
 end
 
+
+% SET DFAULT PLOTTING SETTINGS
+options=sippi_plot_defaults(options);
+
 plotdir=pwd;
 try
     fname=options.txt;
@@ -61,94 +70,14 @@ end
 %end
 
 %% PERHAPS SET THE OPTIONS IN A SEPERATE MFILE
-options.axis.null='';
-if ~isfield(options.axis,'fontsize');options.axis.fontsize=20;end
-if ~isfield(options.axis,'width');options.axis.width=8;end
-if ~isfield(options.axis,'height');options.axis.height=8;end
-if ~isfield(options.axis,'w0');options.axis.w0=2;end
-if ~isfield(options.axis,'h0');options.axis.h0=2;end
 
 prior=sippi_prior_init(prior);
 
 %% logL curve
-if pl_logL==1;
-    
-    figure(31);set_paper('landscape');
-    set(gca,'FontSize',options.axis.fontsize);
-    for i=1:length(prior);i_update_step_max(i)=prior{i}.seq_gibbs.i_update_step_max;end
-    i_update_step_max=max(i_update_step_max);
-    try
-        sippi_plot_loglikelihood(mcmc.logL_all);
-        legend(num2str([1:size(mcmc.logL_all,1)]'))
-        y1=max(max(mcmc.logL_all));
-        try
-            y2=min(min(mcmc.logL_all(:,i_update_step_max)))
-        catch
-            y2=min(min(mcmc.logL_all));
-        end
-    catch
-        sippi_plot_loglikelihood(mcmc.logL);
-        y1=max(max(mcmc.logL));
-        try
-            y2=(min(mcmc.logL(:,i_update_step_max:end)));
-        catch
-            y2=(min(mcmc.logL));
-        end
-    end
-    try
-        xlim=get(gca,'xlim');
-        % GET TOTAL NUMBER OF DATA
-        N=0;for l=1:length(data);N=N+length(data{l}.d_obs);end;
-        hold on
-        plot(xlim,[1 1].*(-N/2),'r-')
-        plot(xlim,[1 1].*(-N/2-2*sqrt(N/2)),'r--')
-        plot(xlim,[1 1].*(-N/2+2*sqrt(N/2)),'r--')
-        hold off
-        if y2>(-N/2-4*sqrt(N/2)), y2=(-N/2-4.1*sqrt(N/2));end
-        if y1<(-N/2+4*sqrt(N/2)), y1=(-N/2+4.1*sqrt(N/2));end
-        
-    end
-    try
-        set(gca,'ylim',[y2 y1])
-    end
-     set(gca,'FontSize',options.axis.fontsize)           
-    print_mul(sprintf('%s_logL',fname))
-    xlim=get(gca,'xlim');
-    set(gca,'xlim',[xlim(1) xlim(2)/20]);
-    print_mul(sprintf('%s_logL_start',fname))
-    
-    
-    %% autocorrelation
-    try
-        figure(3);clf;set_paper('landscape');
-        
-        %nite=length(mcmc.logL);
-        i1=1;
-        for i=1:length(prior);
-            i1 = max([prior{i}.seq_gibbs.i_update_step_max i1]);
-        end
-        
-        ii=i1:length(mcmc.logL);
-        c=xcorr(mcmc.logL(ii)-mean(mcmc.logL(ii)));
-        c=c(length(ii):end);
-        c=c./max(c);
-        xc=[0:1:(length(c))-1];
-        plot(xc,c,'-');grid on
-        ic0=find(c<0);ic0=ic0(1);
-        axis([0 xc(ic0)*8 -.5 1])
-        hold on;
-        plot([1 1].*xc(ic0),[-1 1]*.2,'-','linewidth',3);
-        text(xc(ic0)+0.01*diff(get(gca,'xlim')),0.1,sprintf('Nite=%d',xc(ic0)),'FontSize',options.axis.fontsize)
-        hold off
-        
-        xlabel('iteration #')
-        ylabel('autocorrelation of logL')
-        set(gca,'FontSize',options.axis.fontsize)           
-        print_mul(sprintf('%s_logL_autocorr',fname))
-        
-    end
-end
 
+if pl_logL==1;
+    sippi_plot_loglikelihood_posterior(options,prior,data,mcmc);
+end
 
 
 %% REALS
