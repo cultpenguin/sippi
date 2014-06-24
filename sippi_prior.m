@@ -203,7 +203,9 @@ for im=im_array;
         %% SEQ GIBBS
         if nargin>1
             mgstat_verbose(sprintf('%s : Sequential Gibbs',mfilename),2)
-            prior{im}.S=sgems_set_resim_data(prior{im}.S,m_current{im},prior{im}.seq_gibbs.step,prior{im}.seq_gibbs.type);
+            [data,used]=sgems_set_resim_data(prior{im}.S,m_current{im},prior{im}.seq_gibbs.step,prior{im}.seq_gibbs.type);
+            prior{im}.S=data; 
+            prior{im}.seq_gibbs.used=used;
         end
         
         %% SISIM SIM
@@ -257,7 +259,9 @@ for im=im_array;
                 m_current{im}=m;
             end
             mgstat_verbose(sprintf('%s : Sequential Gibbs',mfilename),2)
-            prior{im}.S=sgems_set_resim_data(prior{im}.S,m_current{im},prior{im}.seq_gibbs.step,prior{im}.seq_gibbs.type);
+            [data,used]=sgems_set_resim_data(prior{im}.S,m_current{im},prior{im}.seq_gibbs.step,prior{im}.seq_gibbs.type);
+            prior{im}.S=data; 
+            prior{im}.seq_gibbs.used=used;
         end
         
         prior{im}.S = sgems_grid(prior{im}.S);
@@ -325,6 +329,7 @@ for im=im_array;
             mgstat_verbose(sprintf('%s : Sequential Gibbs',mfilename),2)
             %prior{im}.S=sgems_set_resim_data(prior{im}.S,m_current,prior{im}.seq_gibbs.step,prior{im}.seq_gibbs.type);
             [prior{im}.V, i_resim]=visim_set_resim_data(prior{im}.V,m_current{im},prior{im}.seq_gibbs.step,[],[],prior{im}.seq_gibbs.type);
+            prior{im}.seq_gibbs.used=i_resim;
             if isempty(i_resim)
                 prior{im}.V.cond_sim=0;
             else
