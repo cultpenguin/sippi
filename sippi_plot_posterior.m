@@ -74,10 +74,11 @@ end
 prior=sippi_prior_init(prior);
 
 %% logL curve
-
 if pl_logL==1;
     sippi_plot_loglikelihood_posterior(options,prior,data,mcmc);
 end
+
+
 
 
 %% REALS
