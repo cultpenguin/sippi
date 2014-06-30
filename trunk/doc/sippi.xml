@@ -26,6 +26,7 @@ book SYSTEM "docbook.dtd"
 <!ENTITY chapForward SYSTEM "chapForward.xml"> 
 <!ENTITY chapSIPPI SYSTEM "chapSIPPI.xml"> 
 <!ENTITY chapExamples SYSTEM "chapExamples.xml"> 
+<!ENTITY chapCrossHoleTomography SYSTEM "chapCrossHoleTomography.xml"> 
 <!ENTITY chapBibliography SYSTEM "chapBibliography.xml"> 
 <!ENTITY funcSIPPI SYSTEM "sippi_functions.xml"> 
 <!ENTITY funcTRAVELTIME SYSTEM "sippi_functions_toolboxes_traveltime.xml"> 

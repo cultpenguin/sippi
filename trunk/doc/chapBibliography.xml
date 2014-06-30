@@ -1,6 +1,31 @@
 <?xml version="1.0" encoding="utf8"?>
 <bibliography  xmlns='http://docbook.org/ns/docbook'>
 
+
+  <biblioentry role="article" xml:id="LoomsINF">
+    <abbrev xml:id="LoomsINF.abbrev">LHC10</abbrev>
+    <biblioset role="article">
+  <authorgroup>
+  <author><personname><firstname>M. C.</firstname><surname>Looms</surname></personname></author>
+  <author><personname><firstname>T. M.</firstname><surname>Hansen</surname></personname></author>
+  <author><personname><firstname>K. S.</firstname><surname>Cordua</surname></personname></author>
+  <author><personname><firstname>L.</firstname><surname>Nielsen</surname></personname></author>
+  <author><personname><firstname>K. H.</firstname><surname>Jensen</surname></personname></author>
+  <author><personname><firstname>A.</firstname><surname>Binley</surname></personname></author>
+  </authorgroup>
+      <title>Geostatistical inference using crosshole ground-penetrating radar : Geostatistical inference using GPR</title>
+      <pagenums>J29--J41</pagenums>
+      <bibliosource class="doi">10.1190/1.3496001</bibliosource>
+    </biblioset>
+    <biblioset role="journal">
+      <title>Geophysics</title>
+      <volumenum>75</volumenum>
+      <pubdate>2010</pubdate>
+    </biblioset>
+  </biblioentry>
+
+
+
   <biblioentry role="article" xml:id="CorduaFWI">
     <abbrev xml:id="CorduaFWI.abbrev">CHM12</abbrev>
     <biblioset role="article">
