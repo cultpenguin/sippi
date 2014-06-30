@@ -44,7 +44,6 @@ html:
 	mv *.html htmldoc/.
 
 html_cygwin:
-	make validate
 	mkdir -p htmldoc
 	mkdir -p htmldoc/figures
 	cp -r figures htmldoc/.
