@@ -19,7 +19,7 @@ end
 
 pl_logL=1;
 pl_base=0;
-pl_2d_marg=0;
+pl_2d_marg=1;
 pl_data=0;
 
 
@@ -75,7 +75,7 @@ prior=sippi_prior_init(prior);
 
 %% logL curve
 if pl_logL==1;
-    sippi_plot_loglikelihood_posterior(options,prior,data,mcmc);
+    sippi_plot_posterior_loglikelihood(options,prior,data,mcmc);
 end
 
 
@@ -182,7 +182,7 @@ if pl_base==1;
                 if isfield(prior{im},'min');ylim(1)=prior{im}.min;end
                 if isfield(prior{im},'max');ylim(2)=prior{im}.max;end
                 set(gca,'ylim',ylim);
-                set(gca,'FontSize',options.axis.fontsize)
+                set(gca,'FontSize',options.plot.axis.fontsize)
                 xlabel('Iteration #')
                 ylabel(prior{im}.name)
                 print_mul(sprintf('%s_m%d_posterior_values',fname,im))
@@ -247,8 +247,8 @@ if pl_base==1;
                 plot(p50_post,y0,'r.','MarkerSize',16)
                 hold off
             end
-            xlabel(prior{im}.name,'interpreter','none','FontSize',options.axis.fontsize+2)
-            ylabel('Frequency','interpreter','none','FontSize',options.axis.fontsize+2)
+            xlabel(prior{im}.name,'interpreter','none','FontSize',options.plot.axis.fontsize+2)
+            ylabel('Frequency','interpreter','none','FontSize',options.plot.axis.fontsize+2)
             % BUG/20140619 : It seems Matlab R2014b does not handle legend
             % very well when using ppp.m ..
             legend('prior','posterior')
@@ -266,7 +266,7 @@ if pl_base==1;
                 end
             end
             
-            %ppp(options.axis.width,options.axis.height,options.axis.fontsize,options.axis.w0,options.axis.h0);
+            %ppp(options.plot.axis.width,options.plot.axis.height,options.plot.axis.fontsize,options.plot.axis.w0,options.plot.axis.h0);
             
         elseif ndim==1
             plot(prior{im}.x,reals,'k-');
@@ -333,7 +333,7 @@ if pl_base==1;
             else
                 subplot(1,2,1);
             end
-            set(gca,'FontSize',options.axis.fontsize)
+            set(gca,'FontSize',options.plot.axis.fontsize)
             met{im}=etype_mean;
             sippi_plot_prior(prior,met,im,0,f_id);colorbar off;
             caxis(cax);
@@ -346,7 +346,7 @@ if pl_base==1;
             else
                 subplot(1,2,2);
             end
-            set(gca,'FontSize',options.axis.fontsize)
+            set(gca,'FontSize',options.plot.axis.fontsize)
             %met{im}=etype_var;
             met{im}=sqrt(etype_var);
             sippi_plot_prior(prior,met,im,0,f_id);colorbar off;
@@ -420,7 +420,7 @@ if pl_base==1;
                 %% autocorrelation analysis... to come
                 fn=(im-1)*10+6;
                 figure_focus(fn);set_paper('landscape');clf;
-                set(gca,'FontSize',options.axis.fontsize)
+                set(gca,'FontSize',options.plot.axis.fontsize)
                 
                 c_reals=reals_all;
                 
@@ -439,12 +439,12 @@ if pl_base==1;
                 axis([0 xc(ic0)*8 -.5 1])
                 hold on;
                 plot([1 1].*xc(ic0),[-1 1]*.2,'-','linewidth',3);
-                text(xc(ic0)+0.01*diff(get(gca,'xlim')),0.1,sprintf('Nite=%d',xc(ic0)),'FontSize',options.axis.fontsize)
+                text(xc(ic0)+0.01*diff(get(gca,'xlim')),0.1,sprintf('Nite=%d',xc(ic0)),'FontSize',options.plot.axis.fontsize)
                 hold off
                 
                 xlabel('iteration #')
                 ylabel(sprintf('autocorrelation of %s(m%d)',prior{im}.name,im))
-                set(gca,'FontSize',options.axis.fontsize)           
+                set(gca,'FontSize',options.plot.axis.fontsize)           
         
                 print_mul(sprintf('%s_autocorr_m%d',fname,im))
                 
@@ -453,7 +453,7 @@ if pl_base==1;
             elseif ndim>1
                 fn=(im-1)*10+6;
                 figure_focus(fn);set_paper('landscape');clf;
-                set(gca,'FontSize',options.axis.fontsize)
+                set(gca,'FontSize',options.plot.axis.fontsize)
                 nr=size(reals_all,1);
                 it=[1:1:nr].*mcmc.i_sample;
                 for i=1:nr;
@@ -471,7 +471,7 @@ if pl_base==1;
                 i_threshold=max(find(cc<lev(1)));
                 n_threshold=it(nr)-it(i_threshold);
                 txt=sprintf('About %d iterations between independant realizations',n_threshold);
-                t=text(.1,.9,txt,'units','normalized','FontSize',options.axis.fontsize);
+                t=text(.1,.9,txt,'units','normalized','FontSize',options.plot.axis.fontsize);
                 i_independant=it(nr)-[n_threshold:n_threshold:it(nr)];
                 try;set(gca,'xlim',[1 options.mcmc.nite]);end
                 for i=1:length(i_independant)
@@ -497,7 +497,7 @@ if pl_base==1;
             if nm==1
                 fn=(im-1)*10+9;
                 figure_focus(fn);set_paper('landscape');clf;
-                set(gca,'FontSize',options.axis.fontsize);
+                set(gca,'FontSize',options.plot.axis.fontsize);
                 sippi_plot_loglikelihood(mcmc.logL(1:mcmc.i),mcmc.acc(im,1:mcmc.i));
                 smcmc=sort(mcmc.logL(1:mcmc.i));y_min=smcmc(ceil(mcmc.i/200));
                 ylim=get(gca,'ylim');
@@ -523,133 +523,8 @@ end
 %% 2D POSTERIOR MARGINALS.
 if (length(prior)<2); pl_2d_marg=0;end
 if (pl_2d_marg==1),
-    %try
-        try;cd(plotdir);end
-        im_onedim=[];
-        for j=1:length(im_arr);
-            if max(prior{j}.dim)==1
-                im_onedim=[im_onedim, j];
-            end
-        end
-        n=length(im_onedim);
-        j=0;
-        clear reals*;
-        for k=1:(length(im_onedim)-1)
-            [reals1,etype_mean1,etype_var1,reals_all1]=sippi_get_sample(data,prior,id,im_onedim(k),100000,options);
-            %reals_all(:,k)=reals_all1(:);
-            reals_all(:,k)=reals1(:);
-            for l=(k+1):(length(im_onedim))
-                j=j+1;
-                
-                %% 2d marg scatter
-                [reals2,etype_mean2,etype_var2,reals_all2]=sippi_get_sample(data,prior,id,im_onedim(l),100000,options);
-                %reals_all(:,l)=reals_all2(:);
-                reals_all(:,l)=reals2(:);
-                
-                figure_focus(50+j);clf;set_paper('landscape');
-                plot(reals_all(:,k),reals_all(:,l),'k.')
-                try;xlabel(prior{im_onedim(k)}.name);end
-                try;ylabel(prior{im_onedim(l)}.name);end
-                
-                try;set(gca,'xlim',[prior{im_onedim(k)}.min prior{im_onedim(k)}.max]);end
-                try;set(gca,'ylim',[prior{im_onedim(l)}.min prior{im_onedim(l)}.max]);end
-                % REF MODEL
-                if isfield(options.mcmc,'m_ref');
-                    try
-                        hold on;plot(options.mcmc.m_ref{k},options.mcmc.m_ref{l},'ro','MarkerSize',6,'LineWidth',3);hold off
-                    end
-                end
-                ppp(options.axis.width,options.axis.height,options.axis.fontsize,options.axis.w0,options.axis.h0);
-                print_mul(sprintf('%s_post_marg_m%d_m%d_scatter',fname,im_onedim(k),im_onedim(l)));
-                %% 2d marg image
-                pl_2d_marg_image=0;
-                if pl_2d_marg_image==1;
-                    figure_focus(60+j);clf;set_paper('landscape');
-                    try;
-                        NX=ceil(sqrt(length(reals1)));
-                        %NX=40;
-                        NX=21;
-                        NY=NX;
-                        try
-                            % if prior{im}.min,prior{im}.max exists
-                            [Z,x_arr,y_arr] = hist2(reals_all(:,k),reals_all(:,l),linspace(prior{im_onedim(k)}.min,prior{im_onedim(k)}.max,NX),linspace(prior{im_onedim(l)}.min,prior{im_onedim(l)}.max,NY));
-                        catch
-                            [Z,x_arr,y_arr] = hist2(reals_all(:,k),reals_all(:,l),NX,NY);
-                        end
-                    catch
-                        [Z,x_arr,y_arr] = hist2(reals1',reals2');
-                    end
-                    
-                    imagesc(x_arr,y_arr,Z');
-                    try;xlabel(prior{im_onedim(k)}.name);end
-                    try ylabel(prior{im_onedim(l)}.name);end
-                    % REF MODEL
-                    if isfield(options.mcmc,'m_ref');
-                        try
-                            hold on;plot(options.mcmc.m_ref{k},options.mcmc.m_ref{l},'ro','MarkerSize',6,'LineWidth',3);hold off
-                        end
-                    end
-                    
-                    colormap(1-gray);
-                    set(gca,'ydir','normal');
-                    %colorbar
-                    ppp(options.axis.width,options.axis.height,options.axis.fontsize,options.axis.w0,options.axis.h0);
-                    print_mul(sprintf('%s_post_marg_hist_m%d_m%d_gray',fname,im_onedim(k),im_onedim(l)))
-                end
-            end
-        end
-        
-        %% 2d marginals on one plot
-        fn=figure_focus(70);clf;set_paper('landscape');
-        for j=1:(n-1)
-            for k=((1)+j):n
-                
-                r1=reals_all(:,j);
-                r2=reals_all(:,k);
-                try
-                    NX=25;
-                    NY=NX;
-                    try
-                        % if prior{im}.min,prior{im}.max exists
-                        [Z,x_arr,y_arr] = hist2(r1(:),r2(:),linspace(prior{im_onedim(j)}.min,prior{im_onedim(j)}.max,NX),linspace(prior{im_onedim(k)}.min,prior{im_onedim(k)}.max,NY));
-                    catch
-                        [Z,x_arr,y_arr] = hist2(r1(:),r2(:),NX,NY);
-                    end
-                catch
-                    [Z,x_arr,y_arr] = hist2(r1(:),r2(:));
-                end
-                levels=hpd_2d(Z,[.1,.5,.9]);
-                Zl=Z.*0;
-                for il=1:length(levels);
-                    Zl(Z>levels(il))=il;
-                end
-                %contourf(Z,levels);
-                isp=(j-1)*(n-1)+(k-1);
-                subplot(n-1,n-1,isp);
-                imagesc(x_arr,y_arr,Zl');
-                set(gca,'ydir','normal');
-                %plot(reals_all(:,j),reals_all(:,k),'k.','MarkerSize',.01)
-                xlabel(prior{im_onedim(j)}.name,'interp','none')
-                ylabel(prior{im_onedim(k)}.name,'interp','none')
-                
-                try
-                    if isfield(options.mcmc,'m_ref');
-                        hold on
-                        plot(options.mcmc.m_ref{j},options.mcmc.m_ref{k},'ro','MarkerSize',6,'LineWidth',3);
-                        hold off
-                    end
-                end
-                
-                colormap(1-gray);
-            end
-        end
-        print_mul(sprintf('%s_post_marg_hist',fname))
-    %catch
-%         try;close(fn);end
-%         fprintf('%s : could not plot 2D marginals\n',mfilename);
-%         cd(cwd);
-%         keyboard
-    %end
+    sippi_plot_posterior_2d_marg(options,prior,data);
+    
 end
 
 %% PLOT DATA ASSOCIATED TO REALS
@@ -700,7 +575,7 @@ if pl_data==1,
             hold on;
             wiggle(1:N,1:size(noise_real,1),data_obs,'wiggle',.1);
             hold off
-            set(gca,'FontSize',options.axis.fontsize);
+            set(gca,'FontSize',options.plot.axis.fontsize);
             xlabel('realization #')
             ylabel('data #')
             print_mul(sprintf('%s_id%d_post',fname,id))
@@ -710,7 +585,7 @@ if pl_data==1,
             figure_focus(f_handle);set_paper('landscape');clf;
             subplot(1,1,1);
             wiggle(1:N,1:size(noise_real,1),data_res,'VA',.1);
-            set(gca,'FontSize',options.axis.fontsize);
+            set(gca,'FontSize',options.plot.axis.fontsize);
             xlabel('realization #')
             ylabel('data #')
             title('Data residual')
@@ -720,7 +595,7 @@ if pl_data==1,
             figure_focus(f_handle);set_paper('landscape');clf;
             subplot(1,1,1);
             wiggle(1:N,1:size(noise_real,1),noise_real,'VA',.1);
-            set(gca,'FontSize',options.axis.fontsize);
+            set(gca,'FontSize',options.plot.axis.fontsize);
             xlabel('realization #')
             ylabel('data #')
             title('Noise realization')
@@ -733,7 +608,7 @@ if pl_data==1,
             hold on
             wiggle(1:N,1:size(noise_real,1),data_res,'wiggle',.1);
             hold off
-            set(gca,'FontSize',options.axis.fontsize);
+            set(gca,'FontSize',options.plot.axis.fontsize);
             xlabel('realization #')
             ylabel('data #')
             title('Realizations of noise model (black) and posterior data residuals (red)')
@@ -747,7 +622,7 @@ if pl_data==1,
             xlabel('data #')
             ylabel('Covariance')
             %title('')
-            ppp(options.axis.width,options.axis.height,options.axis.fontsize,options.axis.w0,options.axis.h0);
+            ppp(options.plot.axis.width,options.plot.axis.height,options.plot.axis.fontsize,options.plot.axis.w0,options.plot.axis.h0);
             print_mul(sprintf('%s_id%d_CD',fname,id))
             
             %%
@@ -761,7 +636,7 @@ if pl_data==1,
             xlabel('realization #')
             ylabel('variance')
             %title('')
-            ppp(options.axis.width,options.axis.height,options.axis.fontsize,options.axis.w0,options.axis.h0);
+            ppp(options.plot.axis.width,options.plot.axis.height,options.plot.axis.fontsize,options.plot.axis.w0,options.plot.axis.h0);
             print_mul(sprintf('%s_id%d_var_check',fname,id))
             
             
