@@ -4,7 +4,7 @@
 </para>
 
 <para>
-Unpack ZIPPI.zip somewhere, for example to 'c:\Users\tmh\SIPPI'. Then setup the Matlab path to point to the appropriate SIPPI directories:
+Unpack ZIPPI.zip somewhere, for example to 'c:\Users\tmh\SIPPI'. Then setup the Matlab path to point to the appropriate SIPPI directories by typing:
 </para>
 <screen>
 addpath c:\Users\tmh\SIPPI
@@ -33,10 +33,10 @@ sippi_set_path
 
 <sect2 xml:id="SGEMS"><title>SGeMS (optional)</title>
 <para>
-To make use of the SISIM and SNESIM type priori models SGeMS needs to be available.
+To make use of the SISIM and SNESIM type prior models, SGeMS needs to be available.
 </para>
 <para>
-Currently only SGeMS version 2.1 (<link xlink:href="http://sourceforge.net/projects/sgems/files/sgems/sgems-2.1Beta/sgems_2.1beta_installer.exe/download">download</link>) for Windows is supported. 
+Currently only SGeMS version 2.1 (<link xlink:href="http://sourceforge.net/projects/sgems/files/sgems/sgems-2.1Beta/sgems_2.1beta_installer.exe/download">download</link>) for Windows is supported by SIPPI. 
 </para>
 </sect2>
 
