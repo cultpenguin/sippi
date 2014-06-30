@@ -47,25 +47,34 @@ sippi_plot_prior(prior,m)
 forward.forward_function='sippi_forward_traveltime';
 forward.sources=D.S;
 forward.receivers=D.R;
-forward.type='eikonal';
+%forward.type='eikonal';
 %forward.type='ray';forward.linear=1;
-%forward.type='fat';forward.linear=1;forward.freq=0.1;
+forward.type='fat';forward.linear=1;forward.freq=0.1;
 %forward.type='born';forward.linear=1;forward.freq=0.1;
 
 % Compute the forward response related to the realization of the prior
 % model generated above
 
 [d,forward,prior,data]=sippi_forward(m,forward,prior,data);
+[logL,L,data]=sippi_likelihood(d,data);
+
+%%
+make_synth=1;
+if make_synth==1;
+    d_noise=gaussian_simulation_cholesky(0,data{1}.CD,1);
+    data{1}.d_obs=d{1}+d_noise;
+    [d,forward,prior,data]=sippi_forward(m,forward,prior,data);
+end
+
 % plot the forward response and compare it to the observed data
 sippi_plot_data(d,data); 
 
 [logL,L,data]=sippi_likelihood(d,data);
 
-
 %% SETUP METROPOLIS
 options.mcmc.nite=500000;
 options.mcmc.i_plot=1000;
-options.mcmc.i_sample=500;
+options.mcmc.i_sample=100;
 randn('seed',2);rand('seed',2);
 for i=1:3;
   o{i}=sippi_metropolis(data,prior,forward,options);
