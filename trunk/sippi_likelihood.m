@@ -132,7 +132,11 @@ for id=id_array;
         
         
         if isfield(data{id},'dt');
-            dd=(data{id}.d_obs(data{id}.i_use)-data{id}.dt(data{id}.i_use))-d{id};
+            if length(data{id}.dt)==1
+                dd=(data{id}.d_obs(data{id}.i_use)-data{id}.dt)-d{id};
+            else
+                dd=(data{id}.d_obs(data{id}.i_use)-data{id}.dt(data{id}.i_use))-d{id};
+            end
         else
             dd=data{id}.d_obs(data{id}.i_use)-d{id};
         end
