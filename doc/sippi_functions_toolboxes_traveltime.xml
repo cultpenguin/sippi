@@ -258,6 +258,21 @@
 ]]></programlisting></para>
 </sect2>
 
+<sect2 xml:id="sippi_forward_traveltime"><title>sippi_forward_traveltime</title>
+<para><programlisting><![CDATA[  sippi_forward_traveltime Traveltime computation in SIPPI
+ 
+  Call :
+    [d,forward,prior,data]=sippi_forward_traveltime(m,forward,prior,data,id,im)
+ 
+    forward.type determines the method used to compute travel times
+    forward.type='ray';
+    forward.type='fat';
+    forward.type='eikonal';
+    forward.type='born';
+ 
+]]></programlisting></para>
+</sect2>
+
 <sect2 xml:id="tomography_kernel"><title>tomography_kernel</title>
 <para><programlisting><![CDATA[  tomography_kernel Computes the sensitivity kernel for a wave traveling from S to R.
  

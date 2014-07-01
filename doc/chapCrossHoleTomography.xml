@@ -1,10 +1,18 @@
 <sect1 xml:id="sec_ex_tomography"><title>Cross hole tomography</title>
 <para>
-SIPPI includes the implemenation of multiple methods for computing the travel time delay between a set of sources and receivers. This allow SIPPI to work on for example cross hole tomographic forward and inverse problems.
+SIPPI includes a <link linkend="arrenaes_data">reference cross hole GPR data from Arrenaes</link> set is also avaialble, and will be used here to demonstrate the use of SIPPI to solve cross hole tomographic inversion in a probabilistic framework. 
 </para>
 <para>
-In addition, a reference cross hole GPR data set is also avaialble, and will be used here to demonstrate the use of SIPPI to solve cross hole tomographic inversion in a probabilistic framework.
+SIPPI also includes the implemenation of multiple methods for <link linkend="forward_traveltime">computing the travel time delay between a set of sources and receivers</link>. This allows SIPPI to work on for example cross hole tomographic forward and inverse problems.
 </para>
+
+<para>
+This section contains examples for setting up and runnning an cross hole tomographic inversion using SIPPI using the <link linkend="arrenaes_data">reference data from Arrenæs</link>, different types of a priroi and <link linkend="forward_traveltime">forward models</link>.
+</para>
+<para>
+Example Matlab scripts for the examples below, and more, are located in <link xlink:href="http://svn.code.sf.net/p/sippi/code/trunk/examples/case_tomography/">examples/case_tomography/</link>.
+</para>
+
 <para>
 Please see <citation>HCLM13b</citation> for more details on the example of using SIPPI to sample the posterior for cross hole tomograohic inverse problems. See <citation>LHC10</citation> for more details on the data from Arrenæs.
 </para>
@@ -190,15 +198,12 @@ The Accurate Fast Marching Matlab toolbox : http://www.mathworks.com/matlabcentr
 </sect2>
 
 
-<!-- INVERSION EXAMPLES -->
-<sect2 xml:id="arrenaes_inversion"><title>Inversion of cross hole GPR data from Arrenaes data</title>
-<para>
-This section contains examples for setting up and runnning an cross hole tomographic inversion using SIPPI using the <link linkend="arrenaes_data">reference data from Arrenæs</link>, different types of a priroi and <link linkend="forward_traveltime">forward models</link>.
-</para>
-<para>
-Example Matlab scripts fro the examples below, and more, are located in <link xlink:href="http://svn.code.sf.net/p/sippi/code/trunk/examples/case_tomography/">examples/case_tomography/</link>.
-</para>
+<!-- INVERSION EXAMPLES FROM ARRENAES -->
+<sect2 xml:id="AM13_gaussian"><title>AM13 Gaussian: Inversion of cross hole GPR data from Arrenaes data with a Gaussian type a priori model</title>
 
+<para>
+In the following a simple 2D Gaussian a priori model is defined, and SIPPI is used to sample the corresponding a posteriori distribution. (An example script is avalable at <link xlink:href="http://svn.code.sf.net/p/sippi/code/trunk/examples/case_tomography/sippi_AM13_metropolis_gaussian.m">examples/case_tomography/sippi_AM13_metropolis_gaussian.m</link>).
+</para>
 
 <sect3 xml:id="AM13_data"><title>Setting up the data structure</title>
 <para>
@@ -219,27 +224,9 @@ In the above example we define a Gaussian modelization error, N(dt,Ct). We do th
 </para>
 </sect3>
 
-<sect3 xml:id="AM13_forward"><title>Setting up the forward structure</title>
+<sect3 xml:id="AM13_prior_gaussian"><title>Setting up the prior model</title>
 <para>
-'sippi_forward_traveltime' require that the location of the sources an receivers are provided in 'forward' structure using the 'sources' and 'receivers' fieldnames.
-<screen>
-D=load('AM13_data.mat');
-forward.sources=D.S;
-forward.receivers=D.R;
-forward.type='eikonal';
-</screen>
-Here the eikonal solution is chosen to solve the forward problem. See more detail about solving the forward problem related to cross hole first arrival travel time computation <link linkend="forward_traveltime">here</link>-
-</para>
-</sect3>
-
-
-<!-- INVERSION EXAMPLES -->
-<sect3 xml:id="AM13_gaussian"><title>2D, Gaussian prior</title>
-<para>
-In the following a simple 2D Gaussian a priori model is defined, and SIPPI is used to sample the correspondinng a posteriori distribution. (An example script is avalable at <link xlink:href="http://svn.code.sf.net/p/sippi/code/trunk/examples/case_tomography/sippi_AM13_metropolis_gaussian.m">examples/case_tomography/sippi_AM13_metropolis_gaussian.m</link>).
-</para>
-
-<para>
+The a priori model is defined using the <varname>prior</varname> data structure. Here a 2D Gaussian type a priori model in a 7x13 m grid (grid cell size .25m) using the <link linkend="prior_fftma">FFTMA</link> type a priori model. The a priori mean is 0.145 m/ns, and the covariance function a Spherical type covariance model with a range of 6m, and a sill(variance) of 0.0003 m^2/ns^2.
 <screen>
 %% SETUP PRIOR 
 im=1;
@@ -249,31 +236,145 @@ prior{im}.Va='.0003 Sph(6)';
 prior{im}.x=[-1:.15:6];
 prior{im}.y=[0:.15:13];
 </screen>
+One could make used of the <link linkend="prior_visim">VISIM</link> type priori model simply by substituting 'FFTMA' with 'VISIM' above.
 </para>
+</sect3>
 
+<sect3 xml:id="AM13_forward"><title>Setting up the forward structure</title>
 <para>
-<!--
-  <programlisting><xi:include  href="../examples/prior_tests/prior_reals_snesim.m"  parse="text"/></programlisting>
--->
-</para>
-
-<para>
-This is all the information needed to setup the forward problem. To actually solve the forward problem for a given model 'm', and compute the corresponding data, use e.g.
+<link linkend="forward_traveltime">'sippi_forward_traveltime'</link> require that the location of the sources an receivers are provided in 'forward' structure using the 'sources' and 'receivers' fieldnames.
 <screen>
-% Compute the forward response related to the realization of the prior
-% model generated above
-[d,forward,prior,data]=sippi_forward(m,forward,prior,data);
+D=load('AM13_data.mat');
+forward.forward_function='sippi_forward_traveltime';
+forward.sources=D.S;
+forward.receivers=D.R;
+forward.type='eikonal';
+</screen>
+Here the eikonal solution is chosen to solve the forward problem. See more detail about solving the forward problem related to cross hole first arrival travel time computation <link linkend="forward_traveltime">here</link>.
+</para>
+</sect3>
+
+<sect3 xml:id="AM13_forward"><title>Testing the setup</title>
+<para>
+As the 
+<varname>prior</varname>,
+<varname>data</varname>, and 
+<varname>forward</varname> have been defined, one can in principle initiate an inversion. However, it is advised to perform a few test before applying the inversion.
+</para>
+<para>
+
+First, one should check that independant realization of the prior model resemble the a priori knowledge. A sample from the prior model can be generated and visualized calling <link linkend="sippi_plot_prior_sample">sippi_plot_prior_sample</link>:
+<screen>
+sippi_plot_prior_sample(prior);
+</screen>
+which provides the folliwing figure
+<figure><title>AM13: One sample (15 realizations) of the prior (Gaussian) model.</title>
+<mediaobject>
+  <imageobject condition="web">
+    <imagedata fileref="figures/AM13_prior_sample.png" width="50%" scalefit="1"/>
+  </imageobject>
+  <textobject><phrase></phrase></textobject>
+</mediaobject>
+</figure>
+
+The one can check that the forward solver, and the computation of the likelihood wors as expected using
+<screen>
+% generate a realization from the prior
+m=sippi_prior(prior);
+% Compute the forward response related to the realization of the prior model generated above
+[d]=sippi_forward(m,forward,prior,data);
+% Compute the likelihood 
+[logL,L,data]=sippi_likelihood(d,data);
 % plot the forward response and compare it to the observed data
 sippi_plot_data(d,data);
 </screen>
-As the both the 'data', 'prior', and 'forward' structure have been setup, we are ready to use SIPPI for inversion.
+which produce a figure similar to 
+<figure><title>AM13: Data response from one realization of the prior.</title>
+<mediaobject>
+  <imageobject condition="web">
+    <imagedata fileref="figures/AM13_data.png" width="50%" scalefit="1"/>
+  </imageobject>
+  <textobject><phrase></phrase></textobject>
+</mediaobject>
+</figure>
+</para>
+
+<!--
+<para>
+  <programlisting><xi:include  href="../examples/case_tomography/sippi_AM13_metropolis_gaussian.m"  parse="text"/></programlisting>
+</para>
+-->
+
+</sect3>
+
+<sect3 id="AM13_metropolis"><title>Sampling the a posterior distribution using the extended Metropolis algorithm</title>
+<para>
+The <link linkend="sec_extendedmetropolis">extended Metropolis sampler</link> can now be run using <link linkend="sippi_metropolis">sippi_metropolis</link>.
+<screen>
+options=sippi_metropolis(data,prior,forward);
+</screen>
+In practice the user will have to set a few options, controlling the behaviour of the algorithm. In the following example the number of iterations is set to 500000; the current model is saved to disc for every 500 iterations; the log-likelihood and current model is shown for every 1000 iterations:
+<screen>
+options.mcmc.nite=500000; % optional, default:nite=30000
+options.mcmc.i_sample=500; % optional, default:i_sample=500;
+options.mcmc.i_plot=1000; % optional, default:i_plot=50;
+options=sippi_metropolis(data,prior,forward,options);
+</screen>
+By default no <link linkend="sec_metropolis_annealing">annealing schedule</link> is used. By default the <link linkend="sec_controling_step_length">'step'-length</link> for sequential Gibbs sampling is adjusted (to obtain an averahe acceptance ratio of 30%) for every 50 iterations until iteration number 1000.
+</para>
+<para>
+An output folder will be generated with a filename formatted using 'YYYYMMDD-HHMM', followed by a automatic description. In the above case the output folder could be name '20140701_1450_sippi_metropolis_eikonal'.
+The actual folder name is return in <varname>options.txt</varname>.
+</para>
+<para>
+One can define a description for the folder name by setting <varname>options.txt</varname> before running sippi_metropolis.
+</para>
+<para>
+The folder contains one mat file, with the same name as the folder name, and N ascii files (where N=length(prior); one for each a priori type) which contains the models saved to disc. They also have the same name as the folder name, appended with '_m1.asc', '_m2.asc', and so forth.
 </para>
 
 
+<sect4 id="AM13_plot_posterior"><title>Posterior statistics</title>
+<para>
+The function <link linkend="sippi_plot_posterior">sippi_plot_posterior</link> can be called when <link linkend="sippi_metropolis">sippi_metropolis</link> (or  <link linkend="sippi_rejection">sippi_rejection</link>) and will plot the progress of the log-likelihood curve, a sample of the posterior, data response from a sample of the posterior, and (if applicable) 1D and 2D marginal posterior distributions.
+</para>
+<para>
+Located in the output folder of the inversion use
+<screen>
+sippi_plot_posterior;
+</screen>
+</para>
+<para>
+If the location of the folder with the output is known (such as options.txt) one can call
+<screen>
+sippi_plot_posterior(options.txt)
+</screen>
+</para>
+</sect4>
 
 </sect3>
 
 
+
+</sect2>
+
+<!-- INVERSION EXAMPLES FROM ARRENAES -->
+<sect2 xml:id="AM13_bimodal"><title>AM13 Gaussian with bimodal velocity distribtion</title>
+<para>
+</para>
+</sect2>
+
+<!-- INVERSION EXAMPLES FROM ARRENAES -->
+<sect2 xml:id="AM13_gaussian_model_par"><title>AM13 Gaussian with unknown Gaussian model parameters</title>
+<para>
+</para>
+</sect2>
+
+
+<!-- INVERSION EXAMPLES FROM ARRENAES -->
+<sect2 xml:id="AM13_gaussian_modeling_error"><title>AM13 Gaussian accounting for modeling errors</title>
+<para>
+</para>
 </sect2>
 
 
