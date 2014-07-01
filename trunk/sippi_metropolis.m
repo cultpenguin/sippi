@@ -124,14 +124,8 @@ m_current=m_init;
 
 
 %% INITIAL LIKELIHOODS
-%if isfield(forward,'forward_function');
-%    [d_init,forward,prior,data]=feval(forward.forward_function,m_init,forward,prior,data);
-%else
-    [d_init,forward,prior,data]=sippi_forward(m_init,forward,prior,data);
-%end
-
-
-
+[d_init,forward,prior,data]=sippi_forward(m_init,forward,prior,data);
+    
 %% Initialize
 data_init=data;
 if isfield(mcmc,'anneal');
