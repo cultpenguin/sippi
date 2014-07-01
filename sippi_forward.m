@@ -13,6 +13,13 @@ if nargin<4;    data{1}.null='';end
 %if nargin<5;    id=1;end
 %if nargin<6;    im=1;end
 
+% make sure to initilize the prior if it has not allready been done
+% TMH: can this be ignored?
+for ip=1:length(prior)
+    if ~isfield(prior{ip},'init');
+        prior=sippi_prior_init(prior);
+    end
+end
 
 if isfield(forward,'forward_function');
     
