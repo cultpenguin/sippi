@@ -31,9 +31,6 @@ pdf:fo
 rtf:fo
 	fop -rtf sippi.rtf -fo sippi.fo
 
-cygwin:	
-	xsltproc --xinclude --stringparam html.stylesheet style.css -o htmldoc sippi.xsl sippi.xml
-
 html:
 	make validate
 	mkdir -p htmldoc

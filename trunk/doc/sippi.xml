@@ -29,6 +29,7 @@ book SYSTEM "docbook.dtd"
 <!ENTITY chapCrossHoleTomography SYSTEM "chapCrossHoleTomography.xml"> 
 <!ENTITY chapBibliography SYSTEM "chapBibliography.xml"> 
 <!ENTITY funcSIPPI SYSTEM "sippi_functions.xml"> 
+<!ENTITY funcSIPPIplotting SYSTEM "sippi_functions_plotting.xml"> 
 <!ENTITY funcTRAVELTIME SYSTEM "sippi_functions_toolboxes_traveltime.xml"> 
 <!ENTITY % xinclude SYSTEM "xinclude.mod">
 %xinclude;
@@ -126,6 +127,7 @@ book SYSTEM "docbook.dtd"
   <sect1><title>SIPPI</title>
   <para></para>
   &funcSIPPI;
+  &funcSIPPIplotting;
   </sect1>
   <sect1><title>SIPPI toolbox: Traveltime tomography</title>
   <para></para>

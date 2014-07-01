@@ -183,26 +183,11 @@
 ]]></programlisting></para>
 </sect2>
 
-<sect2 xml:id="sippi_forward_traveltime"><title>sippi_forward_traveltime</title>
-<para><programlisting><![CDATA[  sippi_forward_traveltime Traveltime computation in SIPPI
- 
-  Call :
-    [d,forward,prior,data]=sippi_forward_traveltime(m,forward,prior,data,id,im)
- 
-    forward.type determines the method used to compute travel times
-    forward.type='ray';
-    forward.type='fat';
-    forward.type='eikonal';
-    forward.type='born';
- 
-]]></programlisting></para>
-</sect2>
-
 <sect2 xml:id="sippi_get_sample"><title>sippi_get_sample</title>
-<para><programlisting><![CDATA[  sippi_get_sample Get a posterior sample 
+<para><programlisting><![CDATA[  sippi_get_sample: Get a posterior sample
  
   Call :
-   [reals,etype_mean,etype_var]=sippi_get_sample(data,prior,id,im,n_reals,options);
+   [reals,etype_mean,etype_var,reals_all,reals_ite]=sippi_get_sample(data,prior,id,im,n_reals,options);
  
 ]]></programlisting></para>
 </sect2>
@@ -336,26 +321,7 @@
 </sect2>
 
 <sect2 xml:id="sippi_plot_model"><title>sippi_plot_model</title>
-<para><programlisting><![CDATA[  sippi_plot_model Plot a 'model', i.e. a realization of the prior model
- 
- 
-  Call :
-    sippi_plot_model(prior,m,im_array);
- 
-    prior : Matlab structure for SIPPI prior model
-    m : Matlab structure for SIPPI realization
-    im_array : integer array of type of models to plot (typically 1)
- 
- 
-  Example
-    m=sippi_prior(prior);
-    sippi_plot_model(prior,m);
- 
-    m=sippi_prior(prior);
-    sippi_plot_model(prior,m,2);
- 
-  See also sippi_plot_prior
-]]></programlisting></para>
+<para><programlisting><![CDATA[]]></programlisting></para>
 </sect2>
 
 <sect2 xml:id="sippi_plot_movie"><title>sippi_plot_movie</title>
@@ -391,12 +357,35 @@
 </sect2>
 
 <sect2 xml:id="sippi_plot_prior"><title>sippi_plot_prior</title>
+<para><programlisting><![CDATA[  sippi_plot_prior Plot a 'model', i.e. a realization of the prior model
+ 
+ 
+  Call :
+    sippi_plot_prior(prior,m,im_array);
+ 
+    prior : Matlab structure for SIPPI prior model
+    m : Matlab structure for SIPPI realization
+    im_array : integer array of type of models to plot (typically 1)
+ 
+ 
+  Example
+    m=sippi_prior(prior);
+    sippi_plot_prior(prior,m);
+ 
+    m=sippi_prior(prior);
+    sippi_plot_prior(prior,m,2);
+ 
+  See also sippi_plot_prior
+]]></programlisting></para>
+</sect2>
+
+<sect2 xml:id="sippi_plot_prior_sample"><title>sippi_plot_prior_sample</title>
 <para><programlisting><![CDATA[  sippi_plot_prior Plot a sample of the prior in SIPPI
  
   Call :
      sippi_plot_prior(prior,ip,n_reals,cax,supt);
  
-   See also sippi_plot_posterior, sippi_plot_model
+   See also sippi_plot_posterior, sippi_plot_prior
  
 ]]></programlisting></para>
 </sect2>
@@ -445,24 +434,30 @@
     prior{im}.m0=100;
     prior{im}.std=50;
     prior{im}.norm=100;
-    im=2;
+    im=im+1;
     prior{im}.type='FFTMA';
     prior{im}.x=[0:1:100];
     prior{im}.y=[0:1:100];
     prior{im}.m0=10;
     prior{im}.Cm='1 Sph(10)';
-    im=3;
+    im=im+1;
+    prior{im}.type='VISIM';
+    prior{im}.x=[0:1:100];
+    prior{im}.y=[0:1:100];
+    prior{im}.m0=10;
+    prior{im}.Cm='1 Sph(10)';
+    im=im+1;
     prior{im}.type='SISIM';
     prior{im}.x=[0:1:100];
     prior{im}.y=[0:1:100];
     prior{im}.m0=10;
     prior{im}.Cm='1 Sph(10)';
-    im=4;
+    im=im+1;
     prior{im}.type='SNESIM';
     prior{im}.x=[0:1:100];
     prior{im}.y=[0:1:100];
  
-    sippi_plot_model(prior);
+    sippi_plot_prior(prior);
  
  %% Sequential Gibbs sampling
  
@@ -483,10 +478,10 @@
     prior{1}.seq_gibbs.step=.1; % Smaller step--> Dependant realizations
     for i=1:30;
        [m,prior]=sippi_prior(prior,m); % One iteration of Sequential Gibbs
-       sippi_plot_model(prior,m);
+       sippi_plot_prior(prior,m);
     end
  
-  See also: sippi_prior_init, sippi_plot_prior, sippi_prior_set_steplength.m
+  See also: sippi_prior_init, sippi_plot_prior, sippi_plot_prior_sample, sippi_prior_set_steplength.m
  
   TMH/2012
  
