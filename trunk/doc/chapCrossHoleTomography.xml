@@ -360,7 +360,7 @@ sippi_plot_posterior(options.txt)
 <!-- INVERSION EXAMPLES FROM ARRENAES -->
 <sect2 xml:id="AM13_gaussian_modeling_error"><title>AM13 Gaussian, accounting for modeling errors</title>
 <para>
-[A Matlab script for the following example is avalable at <link xlink:href="http://svn.code.sf.net/p/sippi/code/trunk/examples/case_tomography/sippi_AM13_metropolis_modeling_error.m">examples/case_tomography/sippi_AM13_metropolis_modeling_error.m</link>).]
+[A Matlab script for the following example is avalable at <link xlink:href="http://svn.code.sf.net/p/sippi/code/trunk/examples/case_tomography/sippi_AM13_metropolis_modeling_error.m">examples/case_tomography/sippi_AM13_metropolis_modeling_error.m</link>.]
 </para>
 <para>
 The use of any of the <link linkend="forward_traveltime">forward models</link> defined above, will be approximation to solving the perfect forward problem. 
@@ -441,7 +441,7 @@ sippi_plot_posterior(options.txt);
 <!-- INVERSION EXAMPLES FROM ARRENAES -->
 <sect2 xml:id="AM13_bimodal"><title>AM13 Gaussian with bimodal velocity distribution</title>
 <para>
-[A Matlab script for the following example is avalable at <link xlink:href="http://svn.code.sf.net/p/sippi/code/trunk/examples/case_tomography/sippi_AM13_metropolis_bimodal.m">examples/case_tomography/sippi_AM13_metropolis_bimodal.m</link>).]
+[A Matlab script for the following example is avalable at <link xlink:href="http://svn.code.sf.net/p/sippi/code/trunk/examples/case_tomography/sippi_AM13_metropolis_bimodal.m">examples/case_tomography/sippi_AM13_metropolis_bimodal.m</link>.]
 </para>
 <para>
 The <link linkend="prior_gaussian">GAUSSIAN</link> and  <link linkend="prior_fftma">FFTMA</link>a prior types implicitly assume a normal distribution of the model parameter. 
@@ -538,7 +538,7 @@ sippi_plot_posterior(options.txt);
 <!-- INVERSION EXAMPLES FROM ARRENAES -->
 <sect2 xml:id="AM13_gaussian_covariance_infer"><title>AM13 Gaussian with unknown Gaussian model parameters</title>
 <para>
-[A Matlab script for the following example is avalable at <link xlink:href="http://svn.code.sf.net/p/sippi/code/trunk/examples/case_tomography/sippi_AM13_metropolis_gaussian_covariance_inference.m">examples/case_tomography/sippi_AM13_metropolis_gaussian_covariance_inference.m</link>).]
+[A Matlab script for the following example is avalable at <link xlink:href="http://svn.code.sf.net/p/sippi/code/trunk/examples/case_tomography/sippi_AM13_metropolis_gaussian_covariance_inference.m">examples/case_tomography/sippi_AM13_metropolis_gaussian_covariance_inference.m</link>.]
 </para>
 <para>
 One of the most intriguing benefits (in addition to the computational efficiency) of using the <link linkend="prior_fftma">FFTMA</link> type a priori model, is that it allows separation of the random component and the covariance model parameters. See <citation>HCLM13a</citation>.
