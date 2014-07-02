@@ -1,20 +1,20 @@
 <sect1 xml:id="sec_ex_tomography"><title>Cross hole tomography</title>
 <para>
-SIPPI includes a <link linkend="arrenaes_data">reference cross hole GPR data from Arrenaes</link> set is also avaialble, and will be used here to demonstrate the use of SIPPI to solve cross hole tomographic inversion in a probabilistic framework. 
+SIPPI includes a <link linkend="arrenaes_data">reference cross hole GPR data from Arrenaes</link> set is also available, and will be used here to demonstrate the use of SIPPI to solve cross hole tomographic inversion in a probabilistic framework. 
 </para>
 <para>
-SIPPI also includes the implemenation of multiple methods for <link linkend="forward_traveltime">computing the travel time delay between a set of sources and receivers</link>. This allows SIPPI to work on for example cross hole tomographic forward and inverse problems.
+SIPPI also includes the implementation of multiple methods for <link linkend="forward_traveltime">computing the travel time delay between a set of sources and receivers</link>. This allows SIPPI to work on for example cross hole tomographic forward and inverse problems.
 </para>
 
 <para>
-This section contains examples for setting up and runnning an cross hole tomographic inversion using SIPPI using the <link linkend="arrenaes_data">reference data from Arrenæs</link>, different types of a priroi and <link linkend="forward_traveltime">forward models</link>.
+This section contains examples for setting up and running an cross hole tomographic inversion using SIPPI using the <link linkend="arrenaes_data">reference data from Arrenæs</link>, different types of a priori and <link linkend="forward_traveltime">forward models</link>.
 </para>
 <para>
 Example Matlab scripts for the examples below, and more, are located in <link xlink:href="http://svn.code.sf.net/p/sippi/code/trunk/examples/case_tomography/">examples/case_tomography/</link>.
 </para>
 
 <para>
-Please see <citation>HCLM13b</citation> for more details on the example of using SIPPI to sample the posterior for cross hole tomograohic inverse problems. See <citation>LHC10</citation> for more details on the data from Arrenæs.
+Please see <citation>HCLM13b</citation> for more details on the example of using SIPPI to sample the posterior for cross hole tomographic inverse problems. See <citation>LHC10</citation> for more details on the data from Arrenæs.
 </para>
 
 <!-- ARRENÆS DATA -->
@@ -35,15 +35,15 @@ A 2D/3D data set of recorded travel time data from a cross hole Georadar experim
 </figure>
 
 <para>
-Traveltime data were collected between boreholes AM1 and AM3, and AM2 and AM4 respecitvely, in a depth interval betwee 1m and 12m. The traveltimes for each of the two 2D data sets are available in the AM13_data.mat and AM24_data.mat files. All the data have been combined in the 3D data set available in AM1234_data.mat.
+Travel time data were collected between boreholes AM1 and AM3, and AM2 and AM4 respectively, in a depth interval between 1m and 12m. The travel times for each of the two 2D data sets are available in the AM13_data.mat and AM24_data.mat files. All the data have been combined in the 3D data set available in AM1234_data.mat.
 </para>
 <para>
 All mat-files contains the following variable
 <screen>
 S --> [ndata,ndim] each row contains the position of the source
 R --> [ndata,ndim] each row contains the position of the receiver
-d_obs --> [ndata,1] each row contains the observed traveltime in milliseconds 
-d_std --> [ndata,1] each row contains the standard deaviation of the uncertainty of the observed traveltime in milliseconds
+d_obs --> [ndata,1] each row contains the observed travel time in milliseconds 
+d_std --> [ndata,1] each row contains the standard deviation of the uncertainty of the observed travel time in milliseconds
 </screen>
 All data are also available as ASCII formatted EAS files in <filename>AM13_data.eas</filename>, <filename>AM24_data.eas</filename>, and <filename>AM1234_data.eas</filename>. 
 </para>
@@ -52,7 +52,7 @@ All data are also available as ASCII formatted EAS files in <filename>AM13_data.
 The following 3 Figures show the ray coverage (using straight rays) for each of the AM13, AM24, and AM1234 data sets. The color of each ray indicates the average velocity along the ray computed using v_av = raylength/d_obs.
 AM13 ray coverageAM24 ray coverageAM1234 ray coverage.
 </para>
-<figure><title>Ray coverage beetween wells left) AM1-AM3, middle) AM2-AM4, right) AM1-4.</title>
+<figure><title>Ray coverage between wells left) AM1-AM3, middle) AM2-AM4, right) AM1-4.</title>
 <mediaobject>
   <imageobject condition="web">
     <imagedata fileref="figures/arrenaes_raycoverage.png" width="75%" scalefit="1"/>
@@ -71,7 +71,7 @@ A number of different methods for solving the problem of computing the first arr
 <screen>
 [d,forward,prior,data]=sippi_forward_traveltime(m,forward,prior,data,id,im)
 </screen>
-In order to use this m-file to descrie the forward problem sepcify the 'forward_function' field in the <varname>forward</varname> structure using 
+In order to use this m-file to describe the forward problem specify the 'forward_function' field in the <varname>forward</varname> structure using 
 <screen>
 forward.forward_function='sippi_forward_traveltime';
 </screen>
@@ -183,10 +183,10 @@ Buursink, M. L., Johnson, T. C., Routh, P. S., and Knoll, M. D. (2008). Crosshol
 The eikonal solution to the wave-equation is a high frequency approximation, such as the one given above.
 </para>
 <para>
-However, it is computationally more eficcient to solve the eikonal eqation directly, that to used the 'forward.type='ray';' type forward model.
+However, it is computationally more efficient to solve the eikonal equation directly, that to used the 'forward.type='ray';' type forward model.
 </para>
 <para> 
-To coose the eikonal solver to compute travel times use
+To choose the eikonal solver to compute travel times use
 <screen>
 forward.type='eikonal';
 </screen>
@@ -242,7 +242,7 @@ One could make used of the <link linkend="prior_visim">VISIM</link> type priori 
 
 <sect3 xml:id="AM13_forward"><title>Setting up the forward structure</title>
 <para>
-<link linkend="forward_traveltime">'sippi_forward_traveltime'</link> require that the location of the sources an receivers are provided in 'forward' structure using the 'sources' and 'receivers' fieldnames.
+<link linkend="forward_traveltime">'sippi_forward_traveltime'</link> require that the location of the sources an receivers are provided in 'forward' structure using the 'sources' and 'receivers' field names.
 <screen>
 D=load('AM13_data.mat');
 forward.forward_function='sippi_forward_traveltime';
@@ -263,11 +263,11 @@ As the
 </para>
 <para>
 
-First, one should check that independant realization of the prior model resemble the a priori knowledge. A sample from the prior model can be generated and visualized calling <link linkend="sippi_plot_prior_sample">sippi_plot_prior_sample</link>:
+First, one should check that independent realization of the prior model resemble the a priori knowledge. A sample from the prior model can be generated and visualized calling <link linkend="sippi_plot_prior_sample">sippi_plot_prior_sample</link>:
 <screen>
 sippi_plot_prior_sample(prior);
 </screen>
-which provides the folliwing figure
+which provides the following figure
 <figure><title>AM13: One sample (15 realizations) of the prior (Gaussian) model.</title>
 <mediaobject>
   <imageobject condition="web">
@@ -313,14 +313,14 @@ The <link linkend="sec_extendedmetropolis">extended Metropolis sampler</link> ca
 <screen>
 options=sippi_metropolis(data,prior,forward);
 </screen>
-In practice the user will have to set a few options, controlling the behaviour of the algorithm. In the following example the number of iterations is set to 500000; the current model is saved to disc for every 500 iterations; the log-likelihood and current model is shown for every 1000 iterations:
+In practice the user will have to set a few options, controlling the behavior of the algorithm. In the following example the number of iterations is set to 500000; the current model is saved to disc for every 500 iterations; the log-likelihood and current model is shown for every 1000 iterations:
 <screen>
 options.mcmc.nite=500000; % optional, default:nite=30000
 options.mcmc.i_sample=500; % optional, default:i_sample=500;
 options.mcmc.i_plot=1000; % optional, default:i_plot=50;
 options=sippi_metropolis(data,prior,forward,options);
 </screen>
-By default no <link linkend="sec_metropolis_annealing">annealing schedule</link> is used. By default the <link linkend="sec_controling_step_length">'step'-length</link> for sequential Gibbs sampling is adjusted (to obtain an averahe acceptance ratio of 30%) for every 50 iterations until iteration number 1000.
+By default no <link linkend="sec_metropolis_annealing">annealing schedule</link> is used. By default the <link linkend="sec_controling_step_length">'step'-length</link> for sequential Gibbs sampling is adjusted (to obtain an average acceptance ratio of 30%) for every 50 iterations until iteration number 1000.
 </para>
 <para>
 An output folder will be generated with a filename formatted using 'YYYYMMDD-HHMM', followed by a automatic description. In the above case the output folder could be name '20140701_1450_sippi_metropolis_eikonal'.
@@ -330,7 +330,7 @@ The actual folder name is return in <varname>options.txt</varname>.
 One can define a description for the folder name by setting <varname>options.txt</varname> before running sippi_metropolis.
 </para>
 <para>
-The folder contains one mat file, with the same name as the folder name, and N ascii files (where N=length(prior); one for each a priori type) which contains the models saved to disc. They also have the same name as the folder name, appended with '_m1.asc', '_m2.asc', and so forth.
+The folder contains one mat file, with the same name as the folder name, and N ASCII files (where N=length(prior); one for each a priori type) which contains the models saved to disc. They also have the same name as the folder name, appended with '_m1.asc', '_m2.asc', and so forth.
 </para>
 
 
@@ -358,13 +358,13 @@ sippi_plot_posterior(options.txt)
 
 
 <!-- INVERSION EXAMPLES FROM ARRENAES -->
-<sect2 xml:id="AM13_gaussian_modeling_error"><title>AM13 Gaussian, acounting for modeling errors</title>
+<sect2 xml:id="AM13_gaussian_modeling_error"><title>AM13 Gaussian, accounting for modeling errors</title>
 <para>
-[A Matlab script for the following example is avalable at <link xlink:href="http://svn.code.sf.net/p/sippi/code/trunk/examples/case_tomography/sippi_AM13_metropolis_modeling_error.m">examples/case_tomography/sippi_AM13_metropolis_modeling_erro.m</link>).]
+[A Matlab script for the following example is avalable at <link xlink:href="http://svn.code.sf.net/p/sippi/code/trunk/examples/case_tomography/sippi_AM13_metropolis_modeling_error.m">examples/case_tomography/sippi_AM13_metropolis_modeling_error.m</link>).]
 </para>
 <para>
-The use of any of the <link linkend="forward_traveltime">forward models</link> defined above, will be anapproximation to solvoing the perfect forwrad problem. 
-This leads to a 'modeling' error as demonstrated.<citation>HCM14</citation>. If one has access to an optimal (but perhaps computational inefficient) forward model, and a faster (less accurate) forward model, then a Gaussian model of the modeling error caused by using the approximate, as opposed to the optima, forward model can be estimated using 
+The use of any of the <link linkend="forward_traveltime">forward models</link> defined above, will be approximation to solving the perfect forward problem. 
+This leads to a 'modeling' error as demonstrated by <citation>HCM14</citation>. If one has access to an optimal (but perhaps computational inefficient) forward model, and a faster (less accurate) forward model, then a Gaussian model of the modeling error caused by using the approximate, as opposed to the optima, forward model can be estimated using 
 <link linkend="sippi_compute_modelization_forward_error">sippi_compute_modelization_forward_error</link>.
 sippi_compute_modelization_forward_error.
 </para>
@@ -383,7 +383,7 @@ options.txt='AM13';
 id=1;
 data{id}.d_obs=D.d_obs;
 data{id}.d_std=D.d_std;
-data{id}.Ct=D.Ct+1; % Covaiance describing modelization error
+data{id}.Ct=D.Ct+1; % Covariance describing modeling error
 
 %% SETUP PRIOR
 im=1;
@@ -404,7 +404,7 @@ forward.type='fat';forward.linear=1;forward.freq=0.1;
 </screen>
 </para>
 <para>
-In order to compute the modeling with respect to using the <link linkend="forward_traveltime_born">'Born'</link> type forward model, one can define a new forward struture, here <varname>forward_full</varname>, and estimate a Gaussian model for the modeling error using
+In order to compute the modeling with respect to using the <link linkend="forward_traveltime_born">'Born'</link> type forward model, one can define a new forward structure, here <varname>forward_full</varname>, and estimate a Gaussian model for the modeling error using
 <screen>
 % SETUP THE 'OPTIMAL' FORWARD MODEL
 forward_full.forward_function='sippi_forward_traveltime';
@@ -439,15 +439,245 @@ sippi_plot_posterior(options.txt);
 
 
 <!-- INVERSION EXAMPLES FROM ARRENAES -->
-<sect2 xml:id="AM13_bimodal"><title>AM13 Gaussian with bimodal velocity distribtion</title>
+<sect2 xml:id="AM13_bimodal"><title>AM13 Gaussian with bimodal velocity distribution</title>
 <para>
+[A Matlab script for the following example is avalable at <link xlink:href="http://svn.code.sf.net/p/sippi/code/trunk/examples/case_tomography/sippi_AM13_metropolis_bimodal.m">examples/case_tomography/sippi_AM13_metropolis_bimodal.m</link>).]
 </para>
+<para>
+The <link linkend="prior_gaussian">GAUSSIAN</link> and  <link linkend="prior_fftma">FFTMA</link>a prior types implicitly assume a normal distribution of the model parameter. 
+</para>
+<para>It is however possible to change the Gaussian distribution to any shaped distribution, using a normal score transform. Note that when this is done the given semivariogram model for the <link linkend="prior_fftma">FFTMA</link> a priori model will not be reproduced. If this is a concern, then the <link linkend="prior_visim">VISIM</link> type a priori model should be used.
+</para>
+<para>
+The data and forward structures is identical to the one described in the <link linkend="AM13_gaussian">previous</link> example.
+<screen>
+%% Load the travel time data set from ARRENAES
+clear all;close all
+D=load('AM13_data.mat');
+options.txt='AM13';
+
+%% SETUP DATA
+id=1;
+data{id}.d_obs=D.d_obs;
+data{id}.d_std=D.d_std;
+data{id}.Ct=D.Ct+1; % Covariance describing modeling error
+
+% SETUP THE FORWARD MODEL USED IN INVERSION
+forward.forward_function='sippi_forward_traveltime';
+forward.sources=D.S;
+forward.receivers=D.R;
+forward.type='fat';forward.linear=1;forward.freq=0.1;
+</screen>
+</para>
+
+<para>
+The desired distribution (the 'target' distribution) must be provided as a sample of the target distribution, in the <varname>data{id}.d_target</varname> distribution.
+<screen>
+%% SETUP PRIOR
+im=1;
+prior{im}.type='FFTMA';
+prior{im}.name='Velocity (m/ns)';
+prior{im}.m0=0.145;
+prior{im}.Va='.0003 Sph(6)';
+dx=0.15;
+prior{im}.x=[-1:dx:6];
+prior{im}.y=[0:dx:13];
+prior{im}.cax=[.1 .18];
+
+% SET TARGET
+N=1000;
+prob_chan=0.5;
+dd=.014*2;
+d1=randn(1,ceil(N*(1-prob_chan)))*.01+0.145-dd;  %0.1125;
+d2=randn(1,ceil(N*(prob_chan)))*.01+0.145+dd; %0.155;
+d_target=[d1(:);d2(:)];
+prior{im}.d_target=d_target;
+</screen>
+5 realizations from the corresponding a priori model looks like
+<figure xml:id="gaussian_bimodal_sample"><title>5 realizations from a FFTMA prior model type with top) Gaussian and b) Bimodal distribution</title>
+<mediaobject>
+  <imageobject condition="web">
+    <imagedata fileref="figures/AM13_gaussian_sample.png" width="75%" scalefit="1"/>
+  </imageobject>
+  <textobject><phrase></phrase></textobject>
+</mediaobject>
+<mediaobject>
+  <imageobject condition="web">
+    <imagedata fileref="figures/AM13_bimodal_sample.png" width="75%" scalefit="1"/>
+  </imageobject>
+  <textobject><phrase></phrase></textobject>
+</mediaobject>
+</figure>
+
+Figure <xref linkend="gaussian_bimodal_dist"/> compares the distribution from one realization of both prior models considered above.
+<figure xml:id="gaussian_bimodal_dist"><title>Distribution of one realization using a Gaussian Bimodal target distribution</title>
+<mediaobject>
+  <imageobject condition="web">
+    <imagedata fileref="figures/AM13_gaussian_bimodal_dist.png" width="45%" scalefit="1"/>
+  </imageobject>
+  <textobject><phrase></phrase></textobject>
+</mediaobject>
+</figure>
+</para>
+
+<para>
+As for the examples above, the a posteriori distribution can be samples using e.g.
+<screen>
+options.mcmc.nite=500000; % optional, default:nite=30000
+options.mcmc.i_sample=500; % optional, default:i_sample=500;
+options.mcmc.i_plot=1000; % optional, default:i_plot=50;
+options=sippi_metropolis(data,prior,forward,options);
+
+% plot posterior statistics
+sippi_plot_posterior(options.txt);
+</screen>
+</para>
+
 </sect2>
 
 <!-- INVERSION EXAMPLES FROM ARRENAES -->
-<sect2 xml:id="AM13_gaussian_model_par"><title>AM13 Gaussian with unknown Gaussian model parameters</title>
+<sect2 xml:id="AM13_gaussian_covariance_infer"><title>AM13 Gaussian with unknown Gaussian model parameters</title>
 <para>
+[A Matlab script for the following example is avalable at <link xlink:href="http://svn.code.sf.net/p/sippi/code/trunk/examples/case_tomography/sippi_AM13_metropolis_gaussian_covariance_inference.m">examples/case_tomography/sippi_AM13_metropolis_gaussian_covariance_inference.m</link>).]
 </para>
+<para>
+One of the most intriguing benefits (in addition to the computational efficiency) of using the <link linkend="prior_fftma">FFTMA</link> type a priori model, is that it allows separation of the random component and the covariance model parameters. See <citation>HCLM13a</citation>.
+</para>
+<para>
+This means that one can in SIPPI define an inverse problem, where the a priori model is Gaussian, but where the properties of the Gaussian model (such as the mean, range, anisotropy) can be treated as unknown model parameters 
+</para>
+<para>
+Each property the Gaussian prior model that should be treated as an unknown model parameter, must be defined as a separate 1D type <link linkend="prior_fftma">GAUSSIAN</link> type prior model, with a specific name (identifying the covariance model property it describes), and it mist point to the prior model type number for which it describes a covariance model property-
+</para>
+<para>
+The example below describes a 2D FFTMA type e a priori model (prior with id 1) with an unknown range (prior with id 2) with an a priori distribution described by a close to uniform distribution between 1.5m and 10.5m:
+<screen>
+im=1;
+prior{im}.type='FFTMA';
+prior{im}.name='Velocity (m/ns)';
+prior{im}.m0=0.145;
+prior{im}.Va='.0003 Sph(6)';
+dx=0.25;
+prior{im}.x=[-1:dx:6];
+prior{im}.y=[0:dx:13];
+prior{im}.cax=[.1 .18];
+
+i_master=im;
+
+% range - horizontal
+im=im+1;
+prior{im}.type='gaussian';
+prior{im}.name='range_1'; % the name covariance model property to define
+prior{im}.m0=6;
+prior{im}.min=1.5;
+prior{im}.max=10.5;
+prior{im}.norm=50;
+prior{im}.prior_master=i_master; % point to the id of the prior it describes
+</screen>
+</para>
+
+<para>
+Any combination of the following parameters can be set:
+<screen>
+prior{im}.name='range_1; % Range, along direction of angle_1
+prior{im}.name='range_2; % Range, along direction of angle_2
+prior{im}.name='range_3; % Range, along direction of angle_3
+prior{im}.name='ang_1;   % Angle 1, degrees from North
+prior{im}.name='ang_2;   % Angle 2
+prior{im}.name='ang_3;   % Angle 3
+prior{im}.name='sill;    % sill,
+prior{im}.name='nu;      % the 'nu' parameter, only applies when using the Matern covariance model type.
+prior{im}.name='m0;      % A priori mean
+</screen>
+</para>
+<para>
+As an example consider case where the two ranges, and the angle of anisotropy fro a 2D Gaussian(FFTMA) a priori type model is treated as model parameters:
+</para>
+
+<para>
+<screen>
+im=0;
+% velocity field
+im=im+1;
+prior{im}.type='FFTMA';
+prior{im}.name='Velocity (m/ns)';
+prior{im}.m0=0.145;
+prior{im}.Va='.0003 Sph(6)';
+dx=0.25;
+prior{im}.x=[-1:dx:6];
+prior{im}.y=[0:dx:13];
+prior{im}.cax=[.1 .18];
+i_master=im;
+
+% range - horizontal
+im=im+1;
+prior{im}.type='gaussian';
+prior{im}.name='range_1';
+prior{im}.min=1.5;
+prior{im}.max=10.5;
+prior{im}.norm=50;
+prior{im}.prior_master=i_master;
+
+% range - horizontal
+im=im+1;
+prior{im}.type='gaussian';
+prior{im}.name='range_2';
+prior{im}.min=1.5;
+prior{im}.max=5.5;
+prior{im}.norm=50;
+prior{im}.prior_master=i_master;
+
+
+% rotation
+im=im+1;
+prior{im}.type='gaussian';
+prior{im}.name='ang_1';
+prior{im}.m0=90;
+prior{im}.std=20;
+prior{im}.norm=2;
+prior{im}.prior_master=i_master;
+</screen>
+</para>
+
+<para>
+A sample from the corresponding a priori model (FFTMA type) is shown below:
+<figure xml:id="gaussian_covariance_sample"><title>A sample from a FFTMA type prior model with varying range_1, range_2, and ang_1.</title>
+<mediaobject>
+  <imageobject condition="web">
+    <imagedata fileref="figures/AM13_covariance_sample.png" width="65%" scalefit="1"/>
+  </imageobject>
+  <textobject><phrase></phrase></textobject>
+</mediaobject>
+</figure>
+</para>
+
+
+<para>
+Samples of the a priori distributions for range_1, range_2, and ang_1 are shown here:
+<figure xml:id="gaussian_covariance_sample_1d"><title>Distribution of one sample of a 1D Gaussian distribution describing range_1, range_2, and ang_1</title>
+<mediaobject>
+  <imageobject condition="web">
+    <imagedata fileref="figures/AM13_covariance_sample_1d.png" width="65%" scalefit="1"/>
+  </imageobject>
+  <textobject><phrase></phrase></textobject>
+</mediaobject>
+</figure>
+</para>
+
+<para>
+As for the examples above, the a posteriori distribution can be samples using e.g.
+<screen>
+options.mcmc.nite=500000; % optional, default:nite=30000
+options.mcmc.i_sample=500; % optional, default:i_sample=500;
+options.mcmc.i_plot=1000; % optional, default:i_plot=50;
+options=sippi_metropolis(data,prior,forward,options);
+
+% plot posterior statistics
+sippi_plot_posterior(options.txt);
+</screen>
+</para>
+
+
 </sect2>
 
 

@@ -141,20 +141,6 @@
 ]]></programlisting></para>
 </sect2>
 
-<sect2 xml:id="sippi_colormap"><title>sippi_colormap</title>
-<para><programlisting><![CDATA[  sippi_colormap Default colormap for sippi
- 
-  Call :
-    sippi_colormap; % the same as sippi_colormap(3);
- 
-  or :
-    sippi_colormap(1) - Red Green Black
-    sippi_colormap(2) - Red Green Blue Black
-    sippi_colormap(3) - Jet
- 
-]]></programlisting></para>
-</sect2>
-
 <sect2 xml:id="sippi_compute_acceptance_rate"><title>sippi_compute_acceptance_rate</title>
 <para><programlisting><![CDATA[  sippi_compute_acceptance_rate Computes acceptance rate for the Metropolis sampler in SIPPI
  
@@ -333,103 +319,6 @@
  
  
   See also sippi_rejection
- 
-]]></programlisting></para>
-</sect2>
-
-<sect2 xml:id="sippi_plot_current_model"><title>sippi_plot_current_model</title>
-<para><programlisting><![CDATA[  sippi_plot_current_model Plots the current model during Metropolis sampling
- 
-  Call :
-    sippi_plot_current_model(mcmc,data,d,m_current,prior);
- 
-]]></programlisting></para>
-</sect2>
-
-<sect2 xml:id="sippi_plot_data"><title>sippi_plot_data</title>
-<para><programlisting><![CDATA[  sippi_plot_data plot data in SIPPI
- 
-  Call.
-     sippi_plot_data(d,data);
- 
-]]></programlisting></para>
-</sect2>
-
-<sect2 xml:id="sippi_plot_loglikelihood"><title>sippi_plot_loglikelihood</title>
-<para><programlisting><![CDATA[  sippi_plot_loglikelihood Plot loglikelihood time series
- 
-  Call : 
-     acc=sippi_plot_loglikelihood(logL,i_acc,N,itext)
- 
-]]></programlisting></para>
-</sect2>
-
-<sect2 xml:id="sippi_plot_model"><title>sippi_plot_model</title>
-<para><programlisting><![CDATA[]]></programlisting></para>
-</sect2>
-
-<sect2 xml:id="sippi_plot_movie"><title>sippi_plot_movie</title>
-<para><programlisting><![CDATA[  sippi_plot_movie plot movie of prior and posterior realizations
- 
-  Call :
-    sippi_plot_movie(fname);
-    sippi_plot_movie(fname,im_array,n_frames,skip_burnin);
-       fname : name of folder with results (e.g. options.txt)
-       im_array : array of indexes of model parameters to make into movies
-       n_frames [200] : number of frames in movie
-       skip_burnin [200] : start movie after burn_in;
- 
-  Ex: 
-  sippi_plot_movie('20130812_Metropolis');
-  sippi_plot_movie(options.txt);
- 
-  %% 1000 realization including burn-in, for prior number 1
-  sippi_plot_movie('20130812_Metropolis',1,1000,0);
- 
-]]></programlisting></para>
-</sect2>
-
-<sect2 xml:id="sippi_plot_posterior"><title>sippi_plot_posterior</title>
-<para><programlisting><![CDATA[  sippi_plot_posterior Plot statistics from posterior sample
- 
-  Call :
-     sippi_plot_posterior(fname,im_arr,prior,options,n_reals);
- 
-  See also sippi_plot_prior
- 
-]]></programlisting></para>
-</sect2>
-
-<sect2 xml:id="sippi_plot_prior"><title>sippi_plot_prior</title>
-<para><programlisting><![CDATA[  sippi_plot_prior Plot a 'model', i.e. a realization of the prior model
- 
- 
-  Call :
-    sippi_plot_prior(prior,m,im_array);
- 
-    prior : Matlab structure for SIPPI prior model
-    m : Matlab structure for SIPPI realization
-    im_array : integer array of type of models to plot (typically 1)
- 
- 
-  Example
-    m=sippi_prior(prior);
-    sippi_plot_prior(prior,m);
- 
-    m=sippi_prior(prior);
-    sippi_plot_prior(prior,m,2);
- 
-  See also sippi_plot_prior
-]]></programlisting></para>
-</sect2>
-
-<sect2 xml:id="sippi_plot_prior_sample"><title>sippi_plot_prior_sample</title>
-<para><programlisting><![CDATA[  sippi_plot_prior Plot a sample of the prior in SIPPI
- 
-  Call :
-     sippi_plot_prior(prior,ip,n_reals,cax,supt);
- 
-   See also sippi_plot_posterior, sippi_plot_prior
  
 ]]></programlisting></para>
 </sect2>
