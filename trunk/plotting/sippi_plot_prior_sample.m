@@ -2,7 +2,7 @@ function sippi_plot_prior_sample(prior,im_arr,n_reals,caxis);
 % sippi_plot_prior Plot a sample of the prior in SIPPI
 %
 % Call :
-%    sippi_plot_prior(prior,ip,n_reals,cax,supt);
+%    sippi_plot_prior_sample(prior,im_array,n_reals,cax);
 %
 %  See also sippi_plot_posterior, sippi_plot_prior
 %
@@ -36,7 +36,12 @@ else
 end
    
 % SET DFAULT PLOTTING SETTINGS
-options=sippi_plot_defaults(options);
+if exist('options','var');
+    options=sippi_plot_defaults(options);
+else
+    options=sippi_plot_defaults;
+end
+    
 
 
 

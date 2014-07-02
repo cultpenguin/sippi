@@ -42,7 +42,7 @@ m=sippi_plot_prior_sample(prior);
 </screen>
 </para>
 <para>
-Each prior type is defined by setting a number field in the <varname>prior</varname> Matlab structure. For example, an decsriptive name (which is can be optionallyt set) decsribing the prior can be set in the <varname>name</varname> field, e.g.
+Each prior type is defined by setting a number field in the <varname>prior</varname> Matlab structure. For example, an descriptive name (which is can be optionally set) describing the prior can be set in the <varname>name</varname> field, e.g.
 <screen>
 prior{1}.name='My Prior';
 </screen>
@@ -65,7 +65,7 @@ The <link linkend="prior_visim">VISIM</link> type prior model specifies 1D-3D Ga
 </para>
 <!--
 <para>
-The <link linkend="prior_sisim">SISIM</link> type prior model specifes a 1D-3D prior model based on Gaussian indicator statistics. This type of prior requires <link linkend="SGEMS">SGEMS</link> to be installed.
+The <link linkend="prior_sisim">SISIM</link> type prior model specifies a 1D-3D prior model based on Gaussian indicator statistics. This type of prior requires <link linkend="SGEMS">SGEMS</link> to be installed.
 </para>
 -->
 <para>
@@ -88,7 +88,7 @@ prior{1}.type='gaussian';
 </screen>
 
 <para>
-A simple 1D Gaussian distribution with mean 10, and standard deviation 2, can be specified using
+A simple  1D Gaussian distribution with mean 10, and standard deviation 2, can be specified using
 </para>
 <screen>
 ip=1;
@@ -98,7 +98,7 @@ prior{ip}.std=2;
 </screen>
 
 <para>
-The norm of a generalized Gaussian can be set using the 'norm' field. A generalized 1D Gaussian with mean 10, standard devation of 2, and a norm of 70, can be specified using 
+The norm of a generalized Gaussian can be set using the 'norm' field. A generalized 1D Gaussian with mean 10, standard deviation of 2, and a norm of 70, can be specified using 
 (The norm is equivalent to the beta factor referenced in <link xlink:href="http://en.wikipedia.org/wiki/Generalized_normal_distribution">Wikipedia:Generalized_normal_distribution</link>)
 </para>
 <screen>
@@ -194,7 +194,7 @@ d_target=[d1(:);d2(:)];
 prior{im}.d_target=d_target;
 </screen>
 <para>
-Alternatively, the normal score transformation can be defined manually such that the tail behaviour can be controlled:
+Alternatively, the normal score transformation can be defined manually such that the tail behavior can be controlled:
 </para>
 <screen>
 N=10000;
@@ -312,7 +312,7 @@ end
 </mediaobject>
 </para>
 <para>
-Note that the training image is always assumed to have the same units as the prior model, so in this case each pixel in the training image is assumed to be seperated by a distance '0.1'.
+Note that the training image is always assumed to have the same units as the prior model, so in this case each pixel in the training image is assumed to be separated by a distance '0.1'.
 </para>
 <para>
 Optionally 'scaling' and 'rotation' of the training image can be set. To scale the training image by 0.7 (i.e., structures will appear 30% smaller) and rotate the training 30 degrees from north use
@@ -416,7 +416,7 @@ Example of sampling the prior using Sequential Gibbs Sampling
 EXAMPLE OF USING SGS TO SAMPLE THE PRIOR
 -->
 
-<sect3 xml:id="sec_seq_gibbs_step"><title>Controlling sequential Gibbs sampling / Conditional Resampling</title>
+<sect3 xml:id="sec_seq_gibbs_step"><title>Controlling sequential Gibbs sampling / Conditional Re-sampling</title>
 <para>
 All properties related to sequential Gibbs sampling can be set in the 'seq_gibbs' structure, for the individual prior models. The following two parameters determine how the a current model is perturbed
 </para>
@@ -541,7 +541,7 @@ In order to make use of SIPPI to sample the posterior distribution of an inverse
 </para> 
 
 <para>
-The <varname>forward</varname> variable is a Matlab structure that can contain any information needed to solve the forward problem. Thus, the parameters for the <varname>forward</varname> structure is problem dependant. One option, <varname>forward.forward_function</varname> is though generic, and point to the m-file that implements the forward problem.
+The <varname>forward</varname> variable is a Matlab structure that can contain any information needed to solve the forward problem. Thus, the parameters for the <varname>forward</varname> structure is problem dependent. One option, <varname>forward.forward_function</varname> is though generic, and point to the m-file that implements the forward problem.
 </para> 
 <para>
 The output variable <varname>d</varname> is a Matlab structure of the same size of <varname>data</varname>.
@@ -600,7 +600,7 @@ The <link linkend="chapExamples">Examples</link> section contains more example o
 </para>
 </sect1>
 
-<!-- CHECKINGF THE SETUP -->
+<!-- CHECKING THE SETUP -->
 <sect1 xml:id="secTestSetup"><title>Validating <varname>prior</varname>, <varname>data</varname>, and <varname>forward</varname></title>
 <para>
 A simple way to test the validity of 

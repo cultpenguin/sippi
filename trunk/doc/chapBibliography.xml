@@ -13,9 +13,9 @@
   <author><personname><firstname>K. H.</firstname><surname>Jensen</surname></personname></author>
   <author><personname><firstname>A.</firstname><surname>Binley</surname></personname></author>
   </authorgroup>
-      <title>Geostatistical inference using crosshole ground-penetrating radar : Geostatistical inference using GPR</title>
+      <title>Geostatistical inference using crosshole ground-penetrating radar : Geostatistical inference using GPR <link xlink:href="https://www.researchgate.net/profile/Thomas_Hansen6/publication/257942511_Geostatistical_inference_using_crosshole_ground-penetrating_radar/file/9c960526681ec170d8.pdf?origin=publication_detail">PDF</link></title>
       <pagenums>J29--J41</pagenums>
-      <bibliosource class="doi">10.1190/1.3496001</bibliosource>
+      <bibliosource class="doi"><link xlink:href="http://dx.doi.org/10.1190/1.3496001">10.1190/1.3496001</link></bibliosource>
     </biblioset>
     <biblioset role="journal">
       <title>Geophysics</title>
@@ -35,9 +35,9 @@
   <author><personname><firstname>K.</firstname><surname>Mosegaard</surname></personname></author>
   </authorgroup>
       <title>Monte Carlo full waveform inversion of crosshole GPR data
-  using multiple-point geostatistical a priori information</title>
+  using multiple-point geostatistical a priori information <link xlink:href="https://www.researchgate.net/profile/Knud_Cordua/publication/258647313_Monte_Carlo_full-waveform_inversion_of_crosshole_GPR_data_using_multiple-point_geostatistical_a_priori_information/file/504635232fe3877a86.pdf?origin=publication_detail">PDF</link></title>
       <pagenums>H19--H31</pagenums>
-      <bibliosource class="doi">10.1190/geo2011-0170.1</bibliosource>
+      <bibliosource class="doi"> <link xlink:href="http://dx.doi.org/10.1190/geo2011-0170.1">10.1190/geo2011-0170.1</link></bibliosource>
     </biblioset>
     <biblioset role="journal">
       <title>Geophysics</title>
@@ -51,9 +51,9 @@
     <biblioset role="article">
   <authorgroup><author><personname><firstname>T.M.</firstname><surname>Hansen</surname></personname></author><author><personname><firstname>K.S.</firstname><surname>Cordua</surname></personname></author><author><personname><firstname>M.C.</firstname><surname>Looms</surname></personname></author><author><personname><firstname>K.</firstname><surname>Mosegaard</surname></personname></author></authorgroup>
       <title> SIPPI: a Matlab toolbox for sampling the solution to inverse
-  problems with complex prior information: Part 1, methodology</title>
+  problems with complex prior information: Part 1, methodology <link xlink:href="https://www.researchgate.net/profile/Knud_Cordua/publication/256505077_SIPPI_A_Matlab_toolbox_for_Sampling_the_solution_to_Inverse_Problems_with_complex_Prior_Information_Part_1__Methodology/file/60b7d52330298eebb1.pdf?origin=publication_detail">PDF</link></title>
       <pagenums>470--480</pagenums>
-      <bibliosource class="doi">10.1016/j.cageo.2012.09.004</bibliosource>
+      <bibliosource class="doi"><link xlink:href="http://dx.doi.org/10.1016/j.cageo.2012.09.004">doi:10.1016/j.cageo.2012.09.004</link></bibliosource>
     </biblioset>
     <biblioset role="journal">
       <title>Computers &amp; Geosciences</title>
@@ -68,10 +68,10 @@
   <authorgroup><author><personname><firstname>T.M.</firstname><surname>Hansen</surname></personname></author><author><personname><firstname>K.S.</firstname><surname>Cordua</surname></personname></author><author><personname><firstname>M.C.</firstname><surname>Looms</surname></personname></author><author><personname><firstname>K.</firstname><surname>Mosegaard</surname></personname></author></authorgroup>
       <title>SIPPI: a Matlab toolbox for sampling the solution to inverse
   problems with complex prior information: Part 2, Application to cross hole
-  GPR tomography</title>
+  GPR tomography <link xlink:href="https://www.researchgate.net/profile/Knud_Cordua/publication/256505491_SIPPI_A_Matlab_toolbox_for_sampling_the_solution_to_inverse_problems_with_complex_prior_information_Part_2Application_to_crosshole_GPR_tomography/file/e0b4952330a440635d.pdf?origin=publication_detail">PDF</link></title>
       <pagenums>481--492</pagenums>
       <bibliosource
-  class="doi">doi:10.1016/j.cageo.2012.10.001</bibliosource>
+  class="doi"><link xlink:href="http://dx.doi.org/10.1016/j.cageo.2012.10.001">doi:10.1016/j.cageo.2012.10.001</link></bibliosource>
     </biblioset>
     <biblioset role="journal">
       <title>Computers &amp; Geosciences</title>
@@ -85,9 +85,9 @@
     <biblioset role="article">
   <authorgroup><author><personname><firstname>T. M.</firstname><surname>Hansen</surname></personname></author><author><personname><firstname>K. C.</firstname><surname>Cordua</surname></personname></author><author><personname><firstname>K.</firstname><surname>Mosegaard</surname></personname></author></authorgroup>
       <title>Inverse problems with non-trivial priors - efficient solution
-  through sequential Gibbs sampling</title>
+  through sequential Gibbs sampling <link xlink:href="https://www.researchgate.net/profile/Knud_Cordua/publication/257550612_Inverse_problems_with_non-trivial_priors_efficient_solution_through_sequential_Gibbs_sampling/file/3deec52330d617d867.pdf?origin=publication_detail">PDF</link></title>
       <pagenums>593--611</pagenums>
-      <bibliosource class="doi">10.1007/s10596-011-9271-1</bibliosource>
+      <bibliosource class="doi"><link xlink:href="http://dx.doi.org/10.1007/s10596-011-9271-1">doi:10.1007/s10596-011-9271-1</link></bibliosource>
     </biblioset>
     <biblioset role="journal">
       <title>Computational Geosciences</title>
@@ -101,12 +101,13 @@
     <biblioset role="article">
   <authorgroup><author><personname><firstname>T. M.</firstname><surname>Hansen</surname></personname></author><author><personname><firstname>K. S.</firstname><surname>Cordua</surname></personname></author><author><personname><firstname>B. H.</firstname><surname>Jacobsen</surname></personname></author><author><personname><firstname>K.</firstname><surname>Mosegaard</surname></personname></author></authorgroup>
       <title>Accounting for imperfect forward modeling in geophysical inverse
-  problems - exemplified for cross hole tomography</title>
-      <pagenums>xx</pagenums>
+  problems - exemplified for cross hole tomography <link xlink:href="https://www.researchgate.net/profile/Knud_Cordua/publication/261135164_Accounting_for_imperfect_forward_modeling_in_geophysical_inverse_problems_-_exemplified_for_cross_hole_tomography/file/9c960533939d3a416e.pdf?origin=publication_detail">PDF</link></title>
+      <pagenums>H1-H21</pagenums>
+      <bibliosource class="doi"><link xlink:href="http://dx.doi.org/10.1190/geo2013-0215.1">doi:10.1190/geo2013-0215.1</link></bibliosource>
     </biblioset>
     <biblioset role="journal">
-      <title>Accepted for publication in Geophysics</title>
-      <volumenum>xx</volumenum><issuenum>xx</issuenum>
+      <title>Geophysics</title>
+      <volumenum>39</volumenum><issuenum>3</issuenum>
       <pubdate>2014</pubdate>
     </biblioset>
   </biblioentry>
