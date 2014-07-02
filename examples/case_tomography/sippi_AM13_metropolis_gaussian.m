@@ -1,8 +1,9 @@
-% sippi_AM13_metropolis_gaussian 2D inversion using the extended Metropolis sampler (Gaussian prior) 
+% sippi_AM13_metropolis_modeling_error 2D inversion using the extended Metropolis sampler (Gaussian prior) 
 %
 % Example of inverting 2D Arrenaes tomographic data (AM13)
 % using the extended Metropolis sampler and a 
 % Gaussian a priori model
+% and an approximation to the modeling error
 %
 % See http://dx.doi.org/10.1016/j.cageo.2012.10.001
 
@@ -19,9 +20,6 @@ options.txt='AM13';
 id=1;
 data{id}.d_obs=D.d_obs;
 data{id}.d_std=D.d_std;
-% optionally use only a subset of data
-%data{id}.i_use=[10:10:length(data{id}.d_obs)];
-%data{id}.Ct=D.Ct; % Covaiance describing modelization error
 data{id}.Ct=D.Ct+1; % Covaiance describing modelization error
 
 %% SETUP PRIOR
@@ -36,14 +34,13 @@ prior{im}.y=[0:dx:13];
 prior{im}.cax=[.1 .18];
 
 
-%% SETUP THE FORWARD MODEL
+%% SETUP THE FORWARD MODEL(S)
+% SETUP THE FORWARD MODEL USED IN INVERSION
 forward.forward_function='sippi_forward_traveltime';
 forward.sources=D.S;
 forward.receivers=D.R;
-%forward.type='eikonal';
-%forward.type='ray';forward.linear=1;
 forward.type='fat';forward.linear=1;forward.freq=0.1;
-%forward.type='born';forward.linear=1;forward.freq=0.1;
+
 
 %% TEST THE SETUP 
 % generate a realization from the prior
@@ -57,7 +54,7 @@ sippi_plot_data(d,data);
 
 [logL,L,data]=sippi_likelihood(d,data);
 %% SETUP METROPOLIS
-options.mcmc.nite=500000;
+options.mcmc.nite=1000000;
 options.mcmc.i_plot=1000;
 options.mcmc.i_sample=500;
 randn('seed',2);rand('seed',2);

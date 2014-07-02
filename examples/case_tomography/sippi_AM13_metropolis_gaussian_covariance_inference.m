@@ -85,8 +85,6 @@ options.mcmc.nite=1000000;% optional
 options.mcmc.i_plot=1000;% optional
 options.mcmc.i_sample=500;% optional
 
-options.mcmc.nite=100000;% optional
-
 %% RUN 1,using every 20th data
 close all
 data{1}.i_use=[20:20:702];
