@@ -1,4 +1,4 @@
-function sippi_plot_prior_sample(prior,im_arr,n_reals,caxis,supt);
+function sippi_plot_prior_sample(prior,im_arr,n_reals,caxis);
 % sippi_plot_prior Plot a sample of the prior in SIPPI
 %
 % Call :
@@ -8,6 +8,11 @@ function sippi_plot_prior_sample(prior,im_arr,n_reals,caxis,supt);
 %
 
 cwd=pwd;
+
+if nargin==0;
+    [p,f]=fileparts(cwd);
+    prior=f;
+end
 
 %% DATA
 if isstr(prior)
@@ -30,9 +35,10 @@ else
     im_arr=1:1:length(prior);
 end
    
-if nargin<5,
-    supt=0;
-end
+% SET DFAULT PLOTTING SETTINGS
+options=sippi_plot_defaults(options);
+
+
 
 if ~exist('n_reals','var');
     for j=1:length(im_arr);
@@ -207,7 +213,7 @@ for im=im_arr;
         
     end
     
-    if supt==1,
+    if options.plot.suptitle==1,
         sp=suptitle(sprintf('m%d : %s',im,prior{im}.name));
         set(sp,'interp','none')
     end

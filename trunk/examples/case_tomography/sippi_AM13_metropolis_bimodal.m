@@ -55,9 +55,9 @@ forward.forward_function='sippi_forward_traveltime';
 
 
 %% SETUP METROPOLIS
-options.mcmc.nite=5000000;
-options.mcmc.i_plot=5000;
-options.mcmc.i_sample=2000;
+options.mcmc.nite=1000000;
+options.mcmc.i_plot=1000;
+options.mcmc.i_sample=500;
 
 options=sippi_metropolis(data,prior,forward,options);
 

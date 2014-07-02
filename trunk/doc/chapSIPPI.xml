@@ -515,7 +515,8 @@ data{1}.Ct=4
 </screen>
 which implies a zero mean modeling error with a covariance model where all model parameters has a covariance of 4. 
 </para>
-<para>See the <link linkend="sec_ex_tomography">tomography example</link>, for an example of accounting for correlated modeling errors.
+<para>
+<link linkend="sippi_compute_modelization_forward_error">sippi_compute_modelization_forward_error</link> can be used to estimate the modeling error related to using an approximate forward model. See the <link linkend="sec_ex_tomography">tomography example</link>, for an <link linkend="AM13_gaussian_modeling_error">example of accounting for correlated modeling errors</link>, following <citation>HCM14</citation>.
 </para>
 </sect2>
 

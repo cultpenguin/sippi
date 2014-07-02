@@ -19,10 +19,6 @@
 %
 function options=sippi_plot_posterior_loglikelihood(options,prior,data,mcmc,fname);
 
-
-
-
-
 cwd=pwd;
 if nargin==0
     % LOAD FROM MAT FILES
@@ -64,7 +60,7 @@ mcmc=options.mcmc;
 options=sippi_plot_defaults(options);
 
 
-figure(91);set_paper('landscape');
+figure(5);clf;set_paper('landscape');
 set(gca,'FontSize',options.plot.axis.fontsize);
 
 
@@ -124,7 +120,7 @@ print_mul(sprintf('%s_logL',fname))
 
 
 %% autocorrelation
-figure(93);set_paper('landscape');
+figure(6);clf;set_paper('landscape');
 set(gca,'FontSize',options.plot.axis.fontsize);
 
 ii=i1:length(mcmc.logL);

@@ -1,4 +1,10 @@
-% sippi_plot_posterior_2d_marg: plots 2D posterior marginal distribusions
+% sippi_plot_posterior_2d_marg: plots 2D posterior marginal distributions
+%
+% Call:
+%    [options,reals_all]=sippi_plot_posterior_2d_marg(options,prior,data,fname);
+%
+% See also: sippi_plot_posterior
+%
 function [options,reals_all]=sippi_plot_posterior_2d_marg(options,prior,data,fname);
 
 
