@@ -83,7 +83,7 @@ for im=1:length(prior)
 end
 options.mcmc.nite=1000000;% optional
 options.mcmc.i_plot=1000;% optional
-options.mcmc.i_sample=500;% optional
+options.mcmc.i_sample=100;% optional
 
 %% RUN 1,using every 20th data
 close all
