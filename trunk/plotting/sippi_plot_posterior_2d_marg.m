@@ -223,7 +223,7 @@ if pl_marg2d_scatter_combined==1;
             isp=(j-1)*(n-1)+(k-1);
             subplot(n-1,n-1,isp);
             set(gca,'ydir','normal');
-            plot(reals_all(:,j),reals_all(:,k),'k.','MarkerSize',.01)
+            plot(reals_all(:,j),reals_all(:,k),'k.','MarkerSize',3)
             xlabel(prior{im_onedim(j)}.name,'interp','none')
             ylabel(prior{im_onedim(k)}.name,'interp','none')
             
