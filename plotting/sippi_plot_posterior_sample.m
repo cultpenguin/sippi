@@ -1,8 +1,8 @@
 % sippi_plot_posterior_sample: plots posterior sample statistics
 %
-% Call 
+% Call
 %    [options]=sippi_plot_posterior_sample(options,prior,data,forward);
-%       
+%
 % See also: sippi_plot_posterior
 %
 function [options]=sippi_plot_posterior_sample(options,prior,data,forward);
@@ -31,8 +31,7 @@ if nargin<5
         fname=mfilename;
     end
 end
-
-if isfield(options,'mcmc')
+if ~exist('mcmc','var')&isfield(options,'mcmc')
     mcmc=options.mcmc;
 end
 
@@ -64,392 +63,408 @@ if length(n_reals)==1;
     n_reals=ones(1,length(prior)).*n_reals;
 end
 %%
+
+for im=im_arr;
     
-    for im=im_arr;
-        
-        if isfield(prior{im},'name');
-            title_txt=sprintf('m%d: %s',im,prior{im}.name);
+    if isfield(prior{im},'name');
+        title_txt=sprintf('m%d: %s',im,prior{im}.name);
+    else
+        title_txt=sprintf('m%d',im);
+    end
+    
+    
+    try;cd(plotdir);end
+    clear cax;
+    % find dimension
+    ndim=sum(prior{im}.dim>1);
+    %if ndim==0;ndim=1;end
+    
+    
+    % FIND SCALE/ORIENTATION
+    ax_lscape=1;
+    try
+        % if 'lim' is set
+        if prior{im}.lim(1)<max(prior{im}.lim(2:3))
+            ax_lscape=0;
+        end
+    end
+    try
+        % if 'daspect' is set
+        r=prior{im}.lim./prior{im}.daspect;
+        if r(1)<max(r(2:3))
+            ax_lscape=0;
+        end
+    end
+    
+    
+    options.null='';
+    id=1;
+    
+    
+    [reals,etype_mean,etype_var,reals_all,ite_reals]=sippi_get_sample(data,prior,id,im,n_reals(im),options);
+    m_post{im}=reals;
+    
+    if ~exist('cax','var');
+        if isfield(prior{im},'cax')
+            cax=prior{im}.cax;
         else
-            title_txt=sprintf('m%d',im);
-        end
-        
-        
-        try;cd(plotdir);end
-        clear cax;
-        % find dimension
-        ndim=sum(prior{im}.dim>1);
-        %if ndim==0;ndim=1;end
-        
-        
-        % FIND SCALE/ORIENTATION
-        ax_lscape=1;
-        try
-            % if 'lim' is set
-            if prior{im}.lim(1)<max(prior{im}.lim(2:3))
-                ax_lscape=0;
+            try
+                cax=[prior{im}.min prior{im}.max];
             end
         end
+    end
+    
+    x=prior{im}.x;
+    y=prior{im}.y;
+    z=prior{im}.z;
+    
+    %% PLOT LAST ACCEPTED MODEL
+    try
+        sippi_plot_prior(prior,m_current);
+        print_mul(sprintf('%s_m%d_last_accepted_model',fname,im))
+    catch
+        try;close(fn);end
+        keyboard
+        disp(sprintf('%s : could not plot last accepted model',mfilename));
+        cd(cwd);
+    end
+    
+    
+    %% PLOT POSTERIOR REALS
+    f_id=(im)*10+1;
+    figure_focus(f_id);
+    set_paper('landscape');clf;
+    
+    i1=ceil(size(reals,1)/n_reals(im));
+    ii=ceil(linspace(i1,size(reals,1),n_reals(im)));
+    if ndim==0
+        
+        %% Plot the value of the 1D prior as a function of iterations number
         try
-            % if 'daspect' is set
-            r=prior{im}.lim./prior{im}.daspect;
-            if r(1)<max(r(2:3))
-                ax_lscape=0;
-            end
+            figure_focus(im*10+3);
+            set_paper('landscape');clf;
+            ii=[1:1:length(reals_all)].*options.mcmc.i_sample;
+            plot(ii(:),reals_all);
+            
+            ylim=get(gca,'ylim');
+            if isfield(prior{im},'cax');ylim=prior{im}.cax;end
+            if isfield(prior{im},'min');ylim(1)=prior{im}.min;end
+            if isfield(prior{im},'max');ylim(2)=prior{im}.max;end
+            set(gca,'ylim',ylim);
+            set(gca,'FontSize',options.plot.axis.fontsize)
+            xlabel('Iteration #')
+            ylabel(prior{im}.name)
+            print_mul(sprintf('%s_m%d_posterior_values',fname,im))
+            
+        catch
+            disp(sprintf('%s : failed to plot 1D posterior values for prior #%d',mfilename,im));
         end
         
-        
-        options.null='';
-        id=1;
-        
-        
-        [reals,etype_mean,etype_var,reals_all,ite_reals]=sippi_get_sample(data,prior,id,im,n_reals(im),options);
-        m_post{im}=reals;
+        figure_focus(f_id);
+        %% continue
+        N=length(reals);
+        %N=n_reals(im);
+        prior_sample=zeros(1,N);
+        clear p;
+        p{1}=prior{im};
+        for i=1:n_reals(im);
+            m=sippi_prior(p);
+            sample_prior(i)=m{1};
+        end
         
         if ~exist('cax','var');
-            if isfield(prior{im},'cax')
-                cax=prior{im}.cax;
-            else
-                try
-                    cax=[prior{im}.min prior{im}.max];
-                end
-            end
+            cax=[min(sample_prior) max(sample_prior)];
         end
         
-        x=prior{im}.x;
-        y=prior{im}.y;
-        z=prior{im}.z;
+        hx=linspace(cax(1),cax(2),31);
+        h_post=hist(reals,hx);
+        h_post=h_post/sum(h_post);
         
-        %% PLOT POSTERIOR REALS
-        f_id=(im)*10+1;
-        figure_focus(f_id);
-        set_paper('landscape');clf;
+        h_prior=hist(sample_prior,hx);
+        h_prior=h_prior/sum(h_prior);
         
-        i1=ceil(size(reals,1)/n_reals(im));
-        ii=ceil(linspace(i1,size(reals,1),n_reals(im)));
-        if ndim==0
+        bar(hx,h_prior,.8,'k');
+        hold on
+        bar(hx,h_post,.6,'r');
+        hold off
+        ylim=get(gca,'ylim');
+        
+        
+        %% GET p10,050,090
+        try
+            % ONLY DO IF QUNTILE EXISTS
+            p50_post=quantile(reals,.5);
+            p_l_post=quantile(reals,.025);
+            p_h_post=quantile(reals,.975);
+            p50_prior=quantile(sample_prior,.5);
+            p_l_prior=quantile(sample_prior,.025);
+            p_h_prior=quantile(sample_prior,.975);
             
-            %% Plot the value of the 1D prior as a function of iterations number
-            try
-                figure_focus(im*10+3);
-                set_paper('landscape');clf;
-                ii=[1:1:length(reals_all)].*options.mcmc.i_sample;
-                plot(ii(:),reals_all);
-                
-                ylim=get(gca,'ylim');
-                if isfield(prior{im},'cax');ylim=prior{im}.cax;end
-                if isfield(prior{im},'min');ylim(1)=prior{im}.min;end
-                if isfield(prior{im},'max');ylim(2)=prior{im}.max;end
-                set(gca,'ylim',ylim);
-                set(gca,'FontSize',options.plot.axis.fontsize)
-                xlabel('Iteration #')
-                ylabel(prior{im}.name)
-                print_mul(sprintf('%s_m%d_posterior_values',fname,im))
-                
-            catch
-                disp(sprintf('%s : failed to plot 1D posterior values for prior #%d',mfilename,im));
-            end
-            
-            figure_focus(f_id);
-            %% continue
-            N=length(reals);
-            %N=n_reals(im);
-            prior_sample=zeros(1,N);
-            clear p;
-            p{1}=prior{im};
-            for i=1:n_reals(im);
-                m=sippi_prior(p);
-                sample_prior(i)=m{1};
-            end
-            
-            if ~exist('cax','var');
-                cax=[min(sample_prior) max(sample_prior)];
-            end
-            
-            hx=linspace(cax(1),cax(2),31);
-            h_post=hist(reals,hx);
-            h_post=h_post/sum(h_post);
-            
-            h_prior=hist(sample_prior,hx);
-            h_prior=h_prior/sum(h_prior);
-            
-            bar(hx,h_prior,.8,'k');
             hold on
-            bar(hx,h_post,.6,'r');
+            y0=diff(ylim)*.80+ylim(1);
+            yl=diff(ylim)*.74+ylim(1);
+            yu=diff(ylim)*.86+ylim(1);
+            
+            plot([p_l_prior p_h_prior],[1 1].*y0,'k-','LineWidth',3)
+            plot([1 1]*p_l_prior,[yl yu],'k-','LineWidth',3)
+            plot([1 1]*p_h_prior,[yl yu],'k-','LineWidth',3)
+            plot(p50_prior,y0,'k.','MarkerSize',22)
+            
+            plot([p_l_post p_h_post],[1 1].*y0,'r-','LineWidth',1)
+            plot([1 1]*p_l_post,[yl yu],'r-','LineWidth',1)
+            plot([1 1]*p_h_post,[yl yu],'r-','LineWidth',1)
+            plot(p50_post,y0,'r.','MarkerSize',16)
             hold off
-            ylim=get(gca,'ylim');
-            
-            
-            %% GET p10,050,090
-            try
-                % ONLY DO IF QUNTILE EXISTS
-                p50_post=quantile(reals,.5);
-                p_l_post=quantile(reals,.025);
-                p_h_post=quantile(reals,.975);
-                p50_prior=quantile(sample_prior,.5);
-                p_l_prior=quantile(sample_prior,.025);
-                p_h_prior=quantile(sample_prior,.975);
-                
+        end
+        xlabel(prior{im}.name,'interpreter','none','FontSize',options.plot.axis.fontsize+2)
+        ylabel('Frequency','interpreter','none','FontSize',options.plot.axis.fontsize+2)
+        % BUG/20140619 : It seems Matlab R2014b does not handle legend
+        % very well when using ppp.m ..
+        legend('prior','posterior')
+        set(gca,'ytick',[]);
+        try
+            set(gca,'xlim',cax);
+        end
+        % PLOT REFERENCE IF IT EXISTS
+        try
+            if isfield(options.mcmc,'m_ref');
                 hold on
-                y0=diff(ylim)*.80+ylim(1);
-                yl=diff(ylim)*.74+ylim(1);
-                yu=diff(ylim)*.86+ylim(1);
-                
-                plot([p_l_prior p_h_prior],[1 1].*y0,'k-','LineWidth',3)
-                plot([1 1]*p_l_prior,[yl yu],'k-','LineWidth',3)
-                plot([1 1]*p_h_prior,[yl yu],'k-','LineWidth',3)
-                plot(p50_prior,y0,'k.','MarkerSize',22)
-                
-                plot([p_l_post p_h_post],[1 1].*y0,'r-','LineWidth',1)
-                plot([1 1]*p_l_post,[yl yu],'r-','LineWidth',1)
-                plot([1 1]*p_h_post,[yl yu],'r-','LineWidth',1)
-                plot(p50_post,y0,'r.','MarkerSize',16)
+                %plot(options.mcmc.m_ref{im},y0,'go','MarkerSize',6,'LineWidth',3);
+                plot(options.mcmc.m_ref{im},0,'go','MarkerSize',6,'LineWidth',3);
                 hold off
             end
-            xlabel(prior{im}.name,'interpreter','none','FontSize',options.plot.axis.fontsize+2)
-            ylabel('Frequency','interpreter','none','FontSize',options.plot.axis.fontsize+2)
-            % BUG/20140619 : It seems Matlab R2014b does not handle legend
-            % very well when using ppp.m ..
-            legend('prior','posterior')
-            set(gca,'ytick',[]);
-            try
-                set(gca,'xlim',cax);
-            end
-            % PLOT REFERENCE IF IT EXISTS
-            try
-                if isfield(options.mcmc,'m_ref');
-                    hold on
-                    %plot(options.mcmc.m_ref{im},y0,'go','MarkerSize',6,'LineWidth',3);
-                    plot(options.mcmc.m_ref{im},0,'go','MarkerSize',6,'LineWidth',3);
-                    hold off
-                end
-            end
-            
-            %ppp(options.plot.axis.width,options.plot.axis.height,options.plot.axis.fontsize,options.plot.axis.w0,options.plot.axis.h0);
-            
-        elseif ndim==1
-            plot(prior{im}.x,reals,'k-');
-            hold on
-            %plot(prior{im}.x,etype_mean,'r-','linewidth',2);
-            plot(prior{im}.x,quantile(reals',.025),'r--','linewidth',2);
-            plot(prior{im}.x,quantile(reals',.5),'r-','linewidth',2);
-            plot(prior{im}.x,quantile(reals',.975),'r--','linewidth',2);
-            hold off
-            xlabel('X')
-            ylabel(prior{im}.name)
-            % optonallt set y axis-limits
-            if isfield(prior{im},'cax');
-                set(gca,'ylim',prior{im}.cax);
-            end
-            
+        end
+        
+        %ppp(options.plot.axis.width,options.plot.axis.height,options.plot.axis.fontsize,options.plot.axis.w0,options.plot.axis.h0);
+        
+    elseif ndim==1
+        plot(prior{im}.x,reals,'k-');
+        hold on
+        %plot(prior{im}.x,etype_mean,'r-','linewidth',2);
+        plot(prior{im}.x,quantile(reals',.025),'r--','linewidth',2);
+        plot(prior{im}.x,quantile(reals',.5),'r-','linewidth',2);
+        plot(prior{im}.x,quantile(reals',.975),'r--','linewidth',2);
+        hold off
+        xlabel('X')
+        ylabel(prior{im}.name)
+        % optonallt set y axis-limits
+        if isfield(prior{im},'cax');
+            set(gca,'ylim',prior{im}.cax);
+        end
+        
+    else
+        if ax_lscape==1;
+            nsp_y=5;
+            nsp_x=ceil(n_reals(im)/nsp_y);
         else
-            if ax_lscape==1;
-                nsp_y=5;
-                nsp_x=ceil(n_reals(im)/nsp_y);
-            else
-                nsp_x=5;
-                nsp_y=ceil(n_reals(im)/nsp_x);
-            end
-            try;clear m;end
-            for i=1:n_reals(im)
-                
-                progress_txt(i,n_reals(im),'computing data response')
-                subplot(nsp_y,nsp_x,i);
-                
-                use_colorbar=0;
-                i_cb=ceil((nsp_y+1)/2)*nsp_x;
-                if i==i_cb; use_colorbar=1;end
-                
-                try
-                    if (length(z)>1)
-                        m{i}{im}=reals(:,:,:,i);
-                    else
-                        m{i}{im}=reals(:,:,i);
-                    end
-                    sippi_plot_prior(prior,m{i},im,use_colorbar,f_id);
-                    %sippi_plot_prior(prior,m{i}{id},im,use_colorbar,f_id);
-                catch
-                    disp(sprintf('%s : failed to plot realization %d',mfilename,i))
-                end
-            end
+            nsp_x=5;
+            nsp_y=ceil(n_reals(im)/nsp_x);
         end
-        if options.plot.suptitle==1,
-            st=suptitle(title_txt);
-            set(st,'interp','none','FontSize',18);
-        else
-            %title(title_txt)
-        end
-        print_mul(sprintf('%s_m%d_posterior_sample',fname,im))
-        
-        %% PLOT ETYPES
-        if ndim>1
-            f_id=(im-1)*10+2;
-            figure_focus(f_id);set_paper('landscape');clf;
+        try;clear m;end
+        for i=1:n_reals(im)
             
-            % ETYPE MEAN
-            if (ax_lscape==1)
-                subplot(2,1,1);
-            else
-                subplot(1,2,1);
-            end
-            set(gca,'FontSize',options.plot.axis.fontsize)
-            met{im}=etype_mean;
-            sippi_plot_prior(prior,met,im,0,f_id);colorbar off;
-            title('Posterior mean')
-            caxis(cax);
-            cb=colorbar_shift;
-            set(get(cb,'Ylabel'),'String','Sample Mean')
+            progress_txt(i,n_reals(im),'computing data response')
+            subplot(nsp_y,nsp_x,i);
             
-            % ETYPE VARIANCE
-            if (ax_lscape==1)
-                subplot(2,1,2);
-            else
-                subplot(1,2,2);
-            end
-            set(gca,'FontSize',options.plot.axis.fontsize)
-            %met{im}=etype_var;
-            met{im}=sqrt(etype_var);
-            sippi_plot_prior(prior,met,im,0,f_id);colorbar off;
-            title('Posterior std')
-            xlabel('X');ylabel('Y');zlabel('Z')
-            cax_var=[0 max(etype_var(:))];
+            use_colorbar=0;
+            i_cb=ceil((nsp_y+1)/2)*nsp_x;
+            if i==i_cb; use_colorbar=1;end
+            
             try
-                Va=deformat_variogram(prior{im}.Va);
-                cax_var(2)=sum(Va.par1);
-                
-            end
-            %try;caxis(cax_var);end
-            try;caxis(sqrt(cax_var));end
-            cb=colorbar_shift;
-            %set(get(cb,'Ylabel'),'String','Sample Variance')
-            set(get(cb,'Ylabel'),'String','Sample std')
-            % SUPTITLE
-            if options.plot.suptitle==1,
-                st=suptitle(sprintf('m%d: %s',im,prior{im}.name));
-                set(st,'interpreter','none');
-            end
-            print_mul(sprintf('%s_m%d_sample_stat',fname,im))
-        end
-        
-        
-        if ~exist('mcmc','var')
-            cd(cwd)
-            return
-        end
-        
-        
-        %% PLOT ACCEPTANCE RATE
-        try
-            
-            fn=(im-1)*10+5;
-            figure_focus(fn);set_paper('landscape');clf;
-            acc=mcmc.acc(im,1:mcmc.i);
-            perturb=mcmc.perturb(im,1:mcmc.i);
-            ip=find(perturb==1); % find indice of iteration when parameter has been perturbed
-            
-            fak=(1/10)*length(acc)./prior{im}.seq_gibbs.n_update_history;; % smoothing factor
-            fak=1; % smoothing factor
-            AccNum=conv_strip(acc(ip),ones(1,fak*prior{im}.seq_gibbs.n_update_history));
-            AccRate_smooth=(1/fak)*AccNum/prior{im}.seq_gibbs.n_update_history;
-            AccRate=AccNum/prior{im}.seq_gibbs.n_update_history;
-            subplot(2,1,1);
-            try;title(sprintf('m%d : %s',im,prior{im}.name));end
-            plot(ip,AccRate_smooth,'-');
-            xlabel('Iteration number');
-            ylabel('Acceptance rate')
-            title(title_txt)
-            ylim=get(gca,'ylim');
-            if ylim(2)>1.1; ylim(2)=1.1;end
-            set(gca,'ylim',ylim);
-            subplot(2,1,2);
-            hist(AccRate,linspace(0,1,21));
-            set(gca,'xlim',[0 1])
-            xlabel('Acceptance Rate')
-            ylabel('pdf')
-            
-            print_mul(sprintf('%s_m%d__rate',fname,im))
-        catch
-            try;close(fn);end
-            keyboard
-            disp(sprintf('%s : could not plot acceptance rate',mfilename));
-            cd(cwd);
-        end
-        %% PLOT CORRELATION COEFFICIENT / FIND NITE PER INDEPENDANT POST REAL
-        try
-            if ndim==0
-                %% autocorrelation analysis... to come
-                fn=(im-1)*10+6;
-                figure_focus(fn);set_paper('landscape');clf;
-                set(gca,'FontSize',options.plot.axis.fontsize)
-                
-                c_reals=reals_all;
-                
-                % ONLY USE REALS AFTER SEQ GIBBS HAS FINISHED...
-                try
-                    c_i1=prior{im}.seq_gibbs.i_update_step_max/options.mcmc.i_sample;
-                    c_reals=reals_all(c_i1:size(reals_all,1),:);
+                if (length(z)>1)
+                    m{i}{im}=reals(:,:,:,i);
+                else
+                    m{i}{im}=reals(:,:,i);
                 end
-                
-                c=xcorr(c_reals-mean(c_reals));
-                c=c(length(c_reals):end);
-                c=c./max(c);
-                xc=[0:1:(length(c))-1].*options.mcmc.i_sample;
-                plot(xc,c,'-','linewidth',2);grid on
-                ic0=find(c<0);ic0=ic0(1);
-                axis([0 xc(ic0)*8 -.5 1])
-                hold on;
-                plot([1 1].*xc(ic0),[-1 1]*.2,'-','linewidth',3);
-                text(xc(ic0)+0.01*diff(get(gca,'xlim')),0.1,sprintf('Nite=%d',xc(ic0)),'FontSize',options.plot.axis.fontsize)
-                hold off
-                
-                xlabel('iteration #')
-                ylabel(sprintf('autocorrelation of %s(m%d)',prior{im}.name,im))
-                set(gca,'FontSize',options.plot.axis.fontsize)           
-        
-                print_mul(sprintf('%s_autocorr_m%d',fname,im))
-                
-                %%
-                
-            elseif ndim>1
-                fn=(im-1)*10+6;
-                figure_focus(fn);set_paper('landscape');clf;
-                set(gca,'FontSize',options.plot.axis.fontsize)
-                nr=size(reals_all,1);
-                it=[1:1:nr].*mcmc.i_sample;
-                for i=1:nr;
-                    c=corrcoef(reals_all(i,:),reals_all(nr,:));
-                    cc(i)=c(2);
-                end
-                plot(it,cc,'k-','linewidth',2);
-                xlabel('iteration')
-                ylabel('Correlation coefficient')
-                ylim=get(gca,'ylim');
-                
-                % FIND N_IT FOR INDEPENDANT REALS
-                [hh,hx]=hist(cc,30);
-                lev=hx(find(hh==max(hh)));
-                i_threshold=max(find(cc<lev(1)));
-                n_threshold=it(nr)-it(i_threshold);
-                txt=sprintf('About %d iterations between independant realizations',n_threshold);
-                t=text(.1,.9,txt,'units','normalized','FontSize',options.plot.axis.fontsize);
-                i_independant=it(nr)-[n_threshold:n_threshold:it(nr)];
-                try;set(gca,'xlim',[1 options.mcmc.nite]);end
-                for i=1:length(i_independant)
-                    hold on
-                    plot([1 1].*i_independant(i),ylim,'r-','LineWidth',1.5)
-                    hold off
-                end
-                
-                try;title(sprintf('m%d : %s',im,prior{im}.name),'interp','none');end
-                print_mul(sprintf('%s_m%d_corrcoeff',fname,im))
-                
+                sippi_plot_prior(prior,m{i},im,use_colorbar,f_id);
+                %sippi_plot_prior(prior,m{i}{id},im,use_colorbar,f_id);
+            catch
+                disp(sprintf('%s : failed to plot realization %d',mfilename,i))
             end
-            
-        catch
-            try;close(fn);end
-            disp(sprintf('%s : could not plot corrcoeff stats',mfilename));
-            cd(cwd);
         end
-        
     end
+    if options.plot.suptitle==1,
+        st=suptitle(title_txt);
+        set(st,'interp','none','FontSize',18);
+    else
+        %title(title_txt)
+    end
+    print_mul(sprintf('%s_m%d_posterior_sample',fname,im))
+    
+    %% PLOT ETYPES
+    if ndim>1
+        f_id=(im-1)*10+2;
+        figure_focus(f_id);set_paper('landscape');clf;
+        
+        % ETYPE MEAN
+        if (ax_lscape==1)
+            subplot(2,1,1);
+        else
+            subplot(1,2,1);
+        end
+        set(gca,'FontSize',options.plot.axis.fontsize)
+        met{im}=etype_mean;
+        sippi_plot_prior(prior,met,im,0,f_id);colorbar off;
+        title('Posterior mean')
+        caxis(cax);
+        cb=colorbar_shift;
+        set(get(cb,'Ylabel'),'String','Sample Mean')
+        
+        % ETYPE VARIANCE
+        if (ax_lscape==1)
+            subplot(2,1,2);
+        else
+            subplot(1,2,2);
+        end
+        set(gca,'FontSize',options.plot.axis.fontsize)
+        %met{im}=etype_var;
+        met{im}=sqrt(etype_var);
+        sippi_plot_prior(prior,met,im,0,f_id);colorbar off;
+        title('Posterior std')
+        xlabel('X');ylabel('Y');zlabel('Z')
+        cax_var=[0 max(etype_var(:))];
+        try
+            Va=deformat_variogram(prior{im}.Va);
+            cax_var(2)=sum(Va.par1);
+            
+        end
+        %try;caxis(cax_var);end
+        try;caxis(sqrt(cax_var));end
+        cb=colorbar_shift;
+        %set(get(cb,'Ylabel'),'String','Sample Variance')
+        set(get(cb,'Ylabel'),'String','Sample std')
+        % SUPTITLE
+        if options.plot.suptitle==1,
+            st=suptitle(sprintf('m%d: %s',im,prior{im}.name));
+            set(st,'interpreter','none');
+        end
+        print_mul(sprintf('%s_m%d_sample_stat',fname,im))
+    end
+    
+    
+    if ~exist('mcmc','var')
+        cd(cwd)
+        return
+    end
+    
+    
+    %% PLOT ACCEPTANCE RATE
+    try
+        
+        fn=(im-1)*10+5;
+        figure_focus(fn);set_paper('landscape');clf;
+        acc=mcmc.acc(im,1:mcmc.i);
+        perturb=mcmc.perturb(im,1:mcmc.i);
+        ip=find(perturb==1); % find indice of iteration when parameter has been perturbed
+        
+        fak=(1/10)*length(acc)./prior{im}.seq_gibbs.n_update_history;; % smoothing factor
+        fak=1; % smoothing factor
+        AccNum=conv_strip(acc(ip),ones(1,fak*prior{im}.seq_gibbs.n_update_history));
+        AccRate_smooth=(1/fak)*AccNum/prior{im}.seq_gibbs.n_update_history;
+        AccRate=AccNum/prior{im}.seq_gibbs.n_update_history;
+        subplot(2,1,1);
+        set(gca,'FontSize',options.plot.axis.fontsize)            
+        try;title(sprintf('m%d : %s',im,prior{im}.name));end
+        plot(ip,AccRate_smooth,'-');
+        xlabel('Iteration number');
+        ylabel('Acceptance rate')
+        title(title_txt)
+        ylim=get(gca,'ylim');
+        if ylim(2)>1.1; ylim(2)=1.1;end
+        set(gca,'ylim',ylim);
+        set(gca,'FontSize',options.plot.axis.fontsize)
+            
+        subplot(2,1,2);
+        set(gca,'FontSize',options.plot.axis.fontsize)
+        hist(AccRate,linspace(0,1,21));
+        set(gca,'xlim',[0 1])
+        xlabel('Acceptance Rate')
+        ylabel('pdf')
+        
+        print_mul(sprintf('%s_m%d_rate',fname,im))
+    catch
+        try;close(fn);end
+        keyboard
+        disp(sprintf('%s : could not plot acceptance rate',mfilename));
+        cd(cwd);
+    end
+    %% PLOT CORRELATION COEFFICIENT / FIND NITE PER INDEPENDANT POST REAL
+    try
+        if ndim==0
+            %% autocorrelation analysis... to come
+            fn=(im-1)*10+6;
+            figure_focus(fn);set_paper('landscape');clf;
+            set(gca,'FontSize',options.plot.axis.fontsize)
+            
+            c_reals=reals_all;
+            
+            % ONLY USE REALS AFTER SEQ GIBBS HAS FINISHED...
+            try
+                c_i1=prior{im}.seq_gibbs.i_update_step_max/options.mcmc.i_sample;
+                c_reals=reals_all(c_i1:size(reals_all,1),:);
+            end
+            
+            c=xcorr(c_reals-mean(c_reals));
+            c=c(length(c_reals):end);
+            c=c./max(c);
+            xc=[0:1:(length(c))-1].*options.mcmc.i_sample;
+            plot(xc,c,'-','linewidth',2);grid on
+            ic0=find(c<0);ic0=ic0(1);
+            axis([0 xc(ic0)*8 -.5 1])
+            hold on;
+            plot([1 1].*xc(ic0),[-1 1]*.2,'-','linewidth',3);
+            text(xc(ic0)+0.01*diff(get(gca,'xlim')),0.1,sprintf('Nite=%d',xc(ic0)),'FontSize',options.plot.axis.fontsize)
+            hold off
+            
+            xlabel('iteration #')
+            ylabel(sprintf('autocorrelation of %s(m%d)',prior{im}.name,im))
+            set(gca,'FontSize',options.plot.axis.fontsize)
+            
+            print_mul(sprintf('%s_autocorr_m%d',fname,im))
+            
+            %%
+            
+        elseif ndim>1
+            fn=(im-1)*10+6;
+            figure_focus(fn);set_paper('landscape');clf;
+            set(gca,'FontSize',options.plot.axis.fontsize)
+            nr=size(reals_all,1);
+            it=[1:1:nr].*mcmc.i_sample;
+            for i=1:nr;
+                c=corrcoef(reals_all(i,:),reals_all(nr,:));
+                cc(i)=c(2);
+            end
+            plot(it,cc,'k-','linewidth',2);
+            xlabel('iteration')
+            ylabel('Correlation coefficient')
+            ylim=get(gca,'ylim');
+            
+            % FIND N_IT FOR INDEPENDANT REALS
+            [hh,hx]=hist(cc,30);
+            lev=hx(find(hh==max(hh)));
+            i_threshold=max(find(cc<lev(1)));
+            n_threshold=it(nr)-it(i_threshold);
+            txt=sprintf('About %d iterations between independant realizations',n_threshold);
+            t=text(.1,.9,txt,'units','normalized','FontSize',options.plot.axis.fontsize);
+            i_independant=it(nr)-[n_threshold:n_threshold:it(nr)];
+            try;set(gca,'xlim',[1 max(it)]);end
+            for i=1:length(i_independant)
+                hold on
+                plot([1 1].*i_independant(i),ylim,'r-','LineWidth',1.5)
+                hold off
+            end
+            
+            try;title(sprintf('m%d : %s',im,prior{im}.name),'interp','none');end
+            print_mul(sprintf('%s_m%d_corrcoeff',fname,im))
+            
+        end
+        
+    catch
+        try;close(fn);end
+        disp(sprintf('%s : could not plot corrcoeff stats',mfilename));
+        cd(cwd);
+    end
+    
+end
 
 
