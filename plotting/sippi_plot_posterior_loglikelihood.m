@@ -132,7 +132,7 @@ if i1<length(mcmc.logL);
     c=c./max(c);
     xc=[0:1:(length(c))-1];
     plot(xc,c,'-');grid on
-    keyboard
+    
     ic0=find(c<0);ic0=ic0(1);
     axis([0 xc(ic0)*8 -.5 1])
     hold on;
