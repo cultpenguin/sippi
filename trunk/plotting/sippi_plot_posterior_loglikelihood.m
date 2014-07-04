@@ -120,27 +120,31 @@ print_mul(sprintf('%s_logL',fname))
 
 
 %% autocorrelation
-figure(6);clf;set_paper('landscape');
-set(gca,'FontSize',options.plot.axis.fontsize);
-
-ii=i1:length(mcmc.logL);
-c=xcorr(mcmc.logL(ii)-mean(mcmc.logL(ii)));
-c=c(length(ii):end);
-c=c./max(c);
-xc=[0:1:(length(c))-1];
-plot(xc,c,'-');grid on
-ic0=find(c<0);ic0=ic0(1);
-axis([0 xc(ic0)*8 -.5 1])
-hold on;
-plot([1 1].*xc(ic0),[-1 1]*.2,'-','linewidth',3);
-text(xc(ic0)+0.01*diff(get(gca,'xlim')),0.1,sprintf('Nite=%d',xc(ic0)),'FontSize',options.plot.axis.fontsize)
-hold off
-
-xlabel('iteration #')
-ylabel('autocorrelation of logL')
-set(gca,'FontSize',options.plot.axis.fontsize)
-print_mul(sprintf('%s_logL_autocorr',fname))
-
+if i1<length(mcmc.logL);
+    % Only make the autocorr analysis, if the posterior has been been
+    % sampled. i1>=length(mcmc.logL) indicated annealing. 
+    figure(6);clf;set_paper('landscape');
+    set(gca,'FontSize',options.plot.axis.fontsize);
+    
+    ii=i1:length(mcmc.logL);
+    c=xcorr(mcmc.logL(ii)-mean(mcmc.logL(ii)));
+    c=c(length(ii):end);
+    c=c./max(c);
+    xc=[0:1:(length(c))-1];
+    plot(xc,c,'-');grid on
+    keyboard
+    ic0=find(c<0);ic0=ic0(1);
+    axis([0 xc(ic0)*8 -.5 1])
+    hold on;
+    plot([1 1].*xc(ic0),[-1 1]*.2,'-','linewidth',3);
+    text(xc(ic0)+0.01*diff(get(gca,'xlim')),0.1,sprintf('Nite=%d',xc(ic0)),'FontSize',options.plot.axis.fontsize)
+    hold off
+    
+    xlabel('iteration #')
+    ylabel('autocorrelation of logL')
+    set(gca,'FontSize',options.plot.axis.fontsize)
+    print_mul(sprintf('%s_logL_autocorr',fname))
+end
 
 
 cd(cwd);
