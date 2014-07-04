@@ -81,7 +81,7 @@ for im=1:length(prior)
     prior{im}.seq_gibbs.i_update_step_max=4000;% optional
     prior{im}.seq_gibbs.i_update_step=100;% optional
 end
-options.mcmc.nite=1000000;% optional
+options.mcmc.nite=500000;% optional
 options.mcmc.i_plot=1000;% optional
 options.mcmc.i_sample=100;% optional
 
