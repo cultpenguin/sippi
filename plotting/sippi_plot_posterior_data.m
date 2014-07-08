@@ -54,7 +54,7 @@ try;cd(plotdir);end
 nd=length(data);
 
 try
-    
+    %%
     for id=1:nd;
         
         clear m_post
@@ -107,6 +107,7 @@ try
             ylabel(sprintf('data #%d',id))
             print_mul(sprintf('%s_id%d_post',fname,id))
         end
+        %%
         if pl_data_res==1;
             f_handle=80+id;
             figure_focus(f_handle);set_paper('landscape');clf;
@@ -172,6 +173,7 @@ try
             ppp(options.plot.axis.width,options.plot.axis.height,options.plot.axis.fontsize,options.plot.axis.w0,options.plot.axis.h0);
             print_mul(sprintf('%s_id%d_var_check',fname,id))
         end
+        %%
         if pl_hist==1;
             f_handle=97+id;
             figure_focus(f_handle);set_paper('landscape');clf;
@@ -192,8 +194,6 @@ try
     end
     
 catch
-    keyboard
-    cd(cwd);
     %close(f_handle)
     fprintf('%s : Cannot plot data response. \n',mfilename)
 end

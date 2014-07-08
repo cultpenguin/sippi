@@ -120,11 +120,14 @@ for im=im_arr;
     
     %% PLOT LAST ACCEPTED MODEL
     try
-        sippi_plot_prior(prior,m_current);
+        try
+            sippi_plot_prior(prior,m_current);
+        catch
+            sippi_plot_prior(prior,options.mcmc.m_current);
+        end
         print_mul(sprintf('%s_m%d_last_accepted_model',fname,im))
     catch
         try;close(fn);end
-        keyboard
         disp(sprintf('%s : could not plot last accepted model',mfilename));
         cd(cwd);
     end
@@ -384,7 +387,6 @@ for im=im_arr;
         print_mul(sprintf('%s_m%d_rate',fname,im))
     catch
         try;close(fn);end
-        keyboard
         disp(sprintf('%s : could not plot acceptance rate',mfilename));
         cd(cwd);
     end
