@@ -100,8 +100,8 @@ for im=im_arr;
     options.null='';
     id=1;
     
-    
     [reals,etype_mean,etype_var,reals_all,ite_reals]=sippi_get_sample(data,prior,id,im,n_reals(im),options);
+
     m_post{im}=reals;
     
     if ~exist('cax','var');
@@ -468,5 +468,6 @@ for im=im_arr;
     end
     
 end
+cd(cwd);
 
 

@@ -53,14 +53,16 @@ end
 %% PERHAPS SET THE OPTIONS IN A SEPERATE MFILE
 prior=sippi_prior_init(prior);
 
-%% logL curve
+%% logL CURVE, XCORR ANALYSIS
 if pl_logL==1;
     sippi_plot_posterior_loglikelihood(options,prior,data,mcmc);
 end
 
+%% PLOT 1D MARGINAL, POSTERIOR SAMPLE, CROSSCORR/XCORR ANALYSIS
 if pl_sample==1;
     sippi_plot_posterior_sample(options,prior,data,forward);
 end
+
 %% 2D POSTERIOR MARGINALS.
 if (length(prior)<2); pl_2d_marg=0;end
 if (pl_2d_marg==1),
