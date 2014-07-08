@@ -89,8 +89,7 @@ if (strcmp(lsq_type,'least_squares')|strcmp(lsq_type,'lsq'));
     [m_est,Cm_est]=least_squares_inversion(forward.G,prior{im}.Cm,data{id}.CD(i_use,i_use),prior{im}.m0,dd_obs);
     %[m_est,Cm_est]=least_squares_inversion(forward.G,prior{im}.Cm,data{id}.CD,prior{im}.m0,data{id}.d_obs-data{id}.d0);
     m_reals=gaussian_simulation_cholesky(m_est,Cm_est,15);
-    %[reals,etype_mean,etype_var]=sippi_get_sample(data,prior,id,im,n_reals);
-
+    
 elseif (strcmp(lsq_type,'visim')); 
     disp(sprintf('%s : solving lsq using ''%s'' type inversion',mfilename,lsq_type))
     %V=visim_init(prior{im}.x,prior{im}.y,prior{im}.z)

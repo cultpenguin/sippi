@@ -52,9 +52,6 @@ pl_marg2d_hpd=options.plot.marg2d.pl_marg2d_hpd;
 NX=options.plot.marg2d.NX;
 NY=options.plot.marg2d.NY;
 
-%% find 1D a prior types
-id=1; % obsolete for sippi_get_sample...
-
 % fine 1D type prior model
 im_onedim=[];
 for i=1:length(prior)
@@ -68,8 +65,9 @@ j=0;
 
 %% GET REALS
 clear reals*;
+skip_seq_gibbs=options.plot.skip_seq_gibbs;
 for k=1:(length(im_onedim))
-    [reals1,etype_mean1,etype_var1,reals_all1]=sippi_get_sample(data,prior,id,im_onedim(k),100000,options);
+    [reals1,etype_mean1,etype_var1,reals_all1]=sippi_get_sample(im_onedim(k),100000,skip_seq_gibbs,data,prior,options);
     reals_all(:,k)=reals1(:);
     
     try

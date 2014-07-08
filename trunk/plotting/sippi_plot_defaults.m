@@ -55,13 +55,18 @@ if ~exist('supt','var');
     supt=0;
 end
 
-% use suptitle?
-if ~isfield(options.plot,'suptitle'),options.plot.suptitle=0;end
-
 if ~isfield(options.plot.marg2d,'NX'),options.plot.marg2d.NX=21;end
 if ~isfield(options.plot.marg2d,'NY'),options.plot.marg2d.NY=21;end
 
 if ~isfield(options.plot.marg2d,'hpd_interval'),options.plot.marg2d.hpd_interval=[.01,.1,.5,.9];end
+
+%% use suptitle?
+if ~isfield(options.plot,'suptitle'),options.plot.suptitle=0;end
+
+
+
+%% SAMPLE TYPE. Skuo or keep realization obatined using seqeuntial Gibbs sample
+if ~isfield(options.plot,'skip_seq_gibbs'),options.plot.skip_seq_gibbs=1;end
 
 
 % color codes
@@ -69,7 +74,8 @@ if ~isfield(options.plot,'color_codes');
     options.plot.color_codes=[
         0 0 0
         1 0 0
-        0 1 0
+        0 1 0%% 2D MARG
+
         0 0 1
         1 1 0
         0 0 1

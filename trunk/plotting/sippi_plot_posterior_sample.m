@@ -42,6 +42,8 @@ end
 options=sippi_plot_defaults(options);
 
 
+
+
 %% REALS
 nm=length(prior);
 
@@ -100,8 +102,10 @@ for im=im_arr;
     options.null='';
     id=1;
     
-    [reals,etype_mean,etype_var,reals_all,ite_reals]=sippi_get_sample(data,prior,id,im,n_reals(im),options);
-
+    
+    skip_seq_gibbs=options.plot.skip_seq_gibbs;
+    [reals,etype_mean,etype_var,reals_all,ite_reals]=sippi_get_sample(im,n_reals,skip_seq_gibbs,data,prior,options);
+    
     m_post{im}=reals;
     
     if ~exist('cax','var');
