@@ -362,25 +362,14 @@ for i=1:mcmc.nite;
         drawnow;
     end
 end
-save(filename_mat)
-disp(sprintf('%s : DONE McMC on %s',mfilename,options.txt))
 
-%% PLOT STATS
-
-try;
-    %sippi_plot_prior(options.txt);
-catch
-    disp('Could not plot figures on prior statistics')
-end
-try;
-    %sippi_plot_posterior(options.txt);
-catch
-    disp('Could not plot figures on posterior statistics')
-end
 
 %% return mcmc options
 mcmc.m_current=m_current;
 options.mcmc=mcmc;
+
+save(filename_mat)
+disp(sprintf('%s : DONE McMC on %s',mfilename,options.txt))
 
 %%
 cd(start_dir);

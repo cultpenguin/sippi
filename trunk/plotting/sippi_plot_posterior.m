@@ -11,11 +11,12 @@ if nargin==0;
     [f1,fname]=fileparts(pwd);
 end
 
-
-pl_logL=1;
-pl_base=1;
-pl_2d_marg=1;
-pl_data=1;
+options.null='';
+pl_logL=0;
+pl_sample=1;
+pl_2d_marg=0;
+pl_data=0;
+pl_movie=0;
 
 cwd=pwd;
 
@@ -41,6 +42,7 @@ end
 
 
 % SET DFAULT PLOTTING SETTINGS
+
 options=sippi_plot_defaults(options);
 
 plotdir=pwd;
@@ -56,10 +58,9 @@ if pl_logL==1;
     sippi_plot_posterior_loglikelihood(options,prior,data,mcmc);
 end
 
-if pl_base==1;
+if pl_sample==1;
     sippi_plot_posterior_sample(options,prior,data,forward);
 end
-
 %% 2D POSTERIOR MARGINALS.
 if (length(prior)<2); pl_2d_marg=0;end
 if (pl_2d_marg==1),
@@ -69,6 +70,11 @@ end
 %% PLOT DATA ASSOCIATED TO REALS
 if pl_data==1,
     sippi_plot_posterior_data(options,prior,data,forward);
+end
+
+%% PLOT PRIOR AND POSTERIOR MOVIE
+if pl_movie==1,
+    sippi_plot_movie(options.txt);
 end
 
 

@@ -72,7 +72,7 @@ sippi_plot_data(d,data);
 
 [logL,L,data]=sippi_likelihood(d,data);
 
-return
+
 %% SETUP METROPOLIS
 options.mcmc.nite=1000000;
 options.mcmc.i_plot=1000;
