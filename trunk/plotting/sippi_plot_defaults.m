@@ -63,13 +63,13 @@ if ~isfield(options.plot.marg2d,'hpd_interval'),options.plot.marg2d.hpd_interval
 %% use suptitle?
 if ~isfield(options.plot,'suptitle'),options.plot.suptitle=0;end
 
-
-
 %% SAMPLE TYPE. Skuo or keep realization obatined using seqeuntial Gibbs sample
-if ~isfield(options.plot,'skip_seq_gibbs'),options.plot.skip_seq_gibbs=1;end
+if ~isfield(options.plot,'skip_seq_gibbs'),
+    options.plot.skip_seq_gibbs=0;
+end
 
 
-% color codes
+%% color codes
 if ~isfield(options.plot,'color_codes');
     options.plot.color_codes=[
         0 0 0
