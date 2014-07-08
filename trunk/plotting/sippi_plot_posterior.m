@@ -12,11 +12,11 @@ if nargin==0;
 end
 
 options.null='';
-pl_logL=0;
+pl_logL=1;
 pl_sample=1;
-pl_2d_marg=0;
-pl_data=0;
-pl_movie=0;
+pl_2d_marg=1;
+pl_data=1;
+pl_movie=1;
 
 cwd=pwd;
 
@@ -76,7 +76,6 @@ end
 if pl_movie==1,
     sippi_plot_movie(options.txt);
 end
-
 
 %%
 cd(cwd);
