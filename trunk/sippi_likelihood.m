@@ -190,8 +190,8 @@ for id=id_array;
             
         else
             if data{id}.recomputeCD==1
-                f3 = -.5*dd'*(data{id}.CD\dd);
-                %disp(sprintf('f3=%g, logdet=%g',f3,data{id}.logdet));
+                f3 = -.5*dd'*(data{id}.CD(data{id}.i_use,data{id}.i_use)\dd);
+                %f3 = -.5*dd'*(data{id}.CD\dd);
             else
                 f3 =  -.5 * dd'*data{id}.iCD*dd;
             end
