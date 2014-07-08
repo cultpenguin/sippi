@@ -83,18 +83,22 @@ try
         
         
         %% PLOT REALIZATOIN OF NOISE
+        if ~isfield(data{id},'CD')
+            m=sippi_prior(prior);
+            [d,forward,prior,data]=sippi_forward(m,forward,prior,data);
+            [logL,L,data]=sippi_likelihood(d,data);            
+        end
         if isfield(data{id},'d0');
-            noise_real=gaussian_simulation_cholesky(data{1}.d0,data{1}.CD,N);
+            noise_real=gaussian_simulation_cholesky(data{1}.d0,data{id}.CD,N);
         else
-            noise_real=gaussian_simulation_cholesky(0,data{1}.CD,N);
+            noise_real=gaussian_simulation_cholesky(0,data{id}.CD,N);
         end
         noise_real=noise_real(data{id}.i_use,:);
-        
         %% GET DATA AND RESIDUAL FOR 5 REALIZATIONS FROM POST
         for i=1:N;
-            data_obs(:,i)=data{id}.d_obs(data{1}.i_use);
+            data_obs(:,i)=data{id}.d_obs(data{id}.i_use);
             data_forward(:,i)=d_real{i}{id};
-            data_res(:,i)=data{id}.d_obs(data{1}.i_use)-d_real{i}{id};
+            data_res(:,i)=data{id}.d_obs(data{id}.i_use)-d_real{i}{id};
         end
         
         %%
@@ -158,10 +162,10 @@ try
             figure_focus(f_handle);set_paper('landscape');clf;
             plot(data{id}.CD(:,1),'k-','LineWidth',2)
             set(gca,'xlim',[0 size(data{id}.CD,1)/4])
+            ppp(options.plot.axis.width,options.plot.axis.height,options.plot.axis.fontsize,options.plot.axis.w0,options.plot.axis.h0);
             xlabel('data #')
             ylabel('Covariance')
             %title('')
-            ppp(options.plot.axis.width,options.plot.axis.height,options.plot.axis.fontsize,options.plot.axis.w0,options.plot.axis.h0);
             print_mul(sprintf('%s_id%d_CD',fname,id))
         end
         %%
@@ -170,13 +174,13 @@ try
             figure_focus(f_handle);set_paper('landscape');clf;
             bar(1:N,var(data_res));
             hold on
-            plot([1 N],[1 1].*data{1}.CD(1),'k:','LineWidth',12)
+            plot([0 N+1],[1 1].*data{id}.Cd(1),'r-','LineWidth',8)
             hold off
             set(gca,'xlim',[0 N+1])
+            ppp(options.plot.axis.width,options.plot.axis.height,options.plot.axis.fontsize,options.plot.axis.w0,options.plot.axis.h0);
             xlabel('realization #')
             ylabel('variance')
             %title('')
-            ppp(options.plot.axis.width,options.plot.axis.height,options.plot.axis.fontsize,options.plot.axis.w0,options.plot.axis.h0);
             print_mul(sprintf('%s_id%d_var_check',fname,id))
         end
         %%
@@ -190,10 +194,10 @@ try
             plot(x_n,res_c,'k-','LineWidth',2)
             hold off
             legend('Noise realization','Data residual')
+            ppp(options.plot.axis.width,options.plot.axis.height,options.plot.axis.fontsize,options.plot.axis.w0,options.plot.axis.h0);
             xlabel(sprintf('Data #%d',id))
             ylabel('residual/noise realization')
             %title('')
-            ppp(options.plot.axis.width,options.plot.axis.height,options.plot.axis.fontsize,options.plot.axis.w0,options.plot.axis.h0);
             print_mul(sprintf('%s_id%d_hist',fname,id))
         end
         
