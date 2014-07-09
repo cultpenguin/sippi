@@ -11,7 +11,7 @@
 %% Load the travel time data set from ARRENAES
 clear all;close all
 D=load('AM13_data.mat');
-options.txt='AM13';
+options.txt='AM13_modeling_error';
 
 
 %% SETUP DATA, PRIOR and FORWARD
@@ -39,20 +39,18 @@ prior{im}.cax=[.1 .18];
 forward.forward_function='sippi_forward_traveltime';
 forward.sources=D.S;
 forward.receivers=D.R;
+forward.type='eikonal'
 forward.type='fat';forward.linear=1;forward.freq=0.1;
 
 % SETUP THE 'OPTIMAL' FORWARD MODEL
 forward_full.forward_function='sippi_forward_traveltime';
 forward_full.sources=D.S;
 forward_full.receivers=D.R;
-%forward_full.type='fat';forward_full.linear=1;forward_full.freq=0.3;
-forward_full.type='eikonal'
+forward_full.type='fat';forward_full.linear=0;forward_full.freq=0.1;
 
 % COMPUTE MODELING ERROR DUE TO USE OF forward AS OPPOSED TO forward_full
-N=100;
-profile on;
+N=600;
 [Ct,dt,dd]=sippi_compute_modelization_forward_error(forward_full,forward,prior,data,N);
-profile report;
 
 % ASSIGN MODELING ERROR TO DATA
 for id=1:length(data);

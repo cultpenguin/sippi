@@ -11,9 +11,16 @@ Please go to [http://sippi.sourceforge.net] for examples and details on how to u
 	
 ### DIRECTORIES :
 
-$SIPPI/data
+$SIPPI/
+  SIPPI core m-files
+  
+$SIPPI/plotting
+  Directory containing m-files for plotting
+
+  $SIPPI/data
   Currently only contains the data from ARRENAES described in the paper
-$SIPPI/toolboxes
+
+  $SIPPI/toolboxes
   'fast_marching_kron' -> Fast marching toolbox by Dirk-Jan Kroon. 
          http://www.mathworks.com/matlabcentral/fileexchange/24531-accurate-fast-marching
   'mGstat' -> geostatistical toolbox for Matlab, by Thomas M Hansen and Knud S Cordua
@@ -48,6 +55,14 @@ $SIPPI/examples/manuscript_examples/tomography
   sippi_AM1234_metropolis_gaussian.m : sippi_AM13_metropolis_gaussian.m but for data set AM1234
   
 ## Releases history
+
+#1.00 (09-07-2014)
+Multiple updates, 
+* new figures
+* Annealing type schedule for monte Carlo Sampling
+* more example
+* many bugfixes
+* quantifying and accounting for modeling errors
 
 #0.96 (12-03-2014)
 Many updates for 

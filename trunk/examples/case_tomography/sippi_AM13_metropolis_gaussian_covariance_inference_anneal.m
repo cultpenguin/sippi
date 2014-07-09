@@ -1,6 +1,6 @@
 % sippi_AM13_metropolis_gaussian_covariance_inference 2D inversion with uncertain covariance model 
 %
-% Example of inverting 2D Arren�s tomographic data (AM13)
+% Example of inverting 2D Arrenaes tomographic data (AM13)
 % with uncertainty covariance properties. 
 %
 % 
@@ -8,7 +8,9 @@
 %
 clear all;close all
 D=load('AM13_data.mat');
-options.txt='AM13_covinf';
+options.txt='AM13_covinf_anneal';
+
+rng('default');rng(1); % set random seed
 
 %% SETUP DATA
 id=1;
@@ -71,30 +73,26 @@ forward.im = i_master; % 'master' prior / the velocity -->
                        % NEEDED WHEN THERE IS MORE THE ONE A PRIORI TYPES
                        % (def, im=1);
 
-rng('default');rng(1);
 
 %% SETUP METROPOLIS
-options.mcmc.nite=5000;% optional
+options.mcmc.nite=20000;% optional
 options.mcmc.i_plot=1000;% optional
 options.mcmc.i_sample=10;% optional
 for im=1:length(prior) 
     prior{im}.seq_gibbs.n_update_history=200;% optional
-    prior{im}.seq_gibbs.i_update_step_max=2000;% optional
+    prior{im}.seq_gibbs.i_update_step_max=ceil(options.mcmc.nite/2);% optional
     prior{im}.seq_gibbs.i_update_step=100;% optional
 end
-
 
 % SETUP ANNEALING PROFILE
 options.mcmc.anneal.i_begin=1; % default, iteration number when annealing begins
 options.mcmc.anneal.i_end=options.mcmc.nite; %  iteration number when annealing stops
-options.mcmc.anneal.fac_begin=20; % default, noise is scaled by fac_begin at iteration i_begin
+options.mcmc.anneal.fac_begin=4; % default, noise is scaled by fac_begin at iteration i_begin
 options.mcmc.anneal.fac_end=.001; % default, noise is scaled by fac_end at iteration i_end
 
-
-
-
-data{1}.i_use=[20:20:702];
-options.txt='covar';try,forward=rmfield(forward.G);end
+%data{1}.i_use=[20:20:702];
+%options.txt='covar';
+try,   forward=rmfield(forward.G);end
 [o1,data,prior,forward,m_current]=sippi_metropolis(data,prior,forward,options);
 sippi_plot_posterior(o1.txt);
 sippi_plot_movie(o1.txt);

@@ -11,7 +11,7 @@
 %% Load the travel time data set from ARRENAES
 clear all;close all
 D=load('AM13_data.mat');
-options.txt='AM13';
+options.txt='AM13_gaussian';
 
 
 %% SETUP DATA, PRIOR and FORWARD
@@ -20,7 +20,8 @@ options.txt='AM13';
 id=1;
 data{id}.d_obs=D.d_obs;
 data{id}.d_std=D.d_std;
-data{id}.Ct=D.Ct+1; % Covaiance describing modelization error
+data{id}.Ct=1; % Covariance describing modelization error
+data{id}.Ct=D.Ct; % Correlated noise model accroding to Cordua et al (2008; 2009)
 
 %% SETUP PRIOR
 im=1;
