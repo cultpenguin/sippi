@@ -1,8 +1,8 @@
-function sippi_plot_prior_sample(prior,im_arr,n_reals,caxis);
+function sippi_plot_prior_sample(prior,im_arr,n_reals,caxis,options);
 % sippi_plot_prior Plot a sample of the prior in SIPPI
 %
 % Call :
-%    sippi_plot_prior_sample(prior,im_array,n_reals,cax);
+%    sippi_plot_prior_sample(prior,im_array,n_reals,cax,options);
 %
 %  See also sippi_plot_posterior, sippi_plot_prior
 %
@@ -13,6 +13,12 @@ if nargin==0;
     [p,f]=fileparts(cwd);
     prior=f;
 end
+
+%%
+% SET DFAULT PLOTTING SETTINGS
+options.null='';
+options=sippi_plot_defaults(options);
+
 
 %% DATA
 if isstr(prior)
@@ -95,7 +101,8 @@ for im=im_arr;
     f_id=90+im;
     figure_focus(f_id);clf;
     set_paper('landscape');
-    
+    set(gca,'FontSize',options.plot.axis.fontsize)
+
     
     % FIND SCALE/ORIENTATION
     ax_lscape=1;
