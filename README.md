@@ -1,6 +1,12 @@
+### DOCUMENTATION
+
+http://sippi.sourceforge.net/
+
+http://sippi.sourceforge.net/sippi.pdf
+
+http://sippi.sourceforge.net/htmldoc/
 
 ### INSTALL
-
 To make us of SIPPI, unpack SIPPI.zip to a fodler $SIPPI. 
 The start Matlab add the appropriate paths using
 	>> addpath $SIPPI
