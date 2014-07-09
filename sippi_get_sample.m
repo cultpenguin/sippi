@@ -12,10 +12,10 @@ function [reals_mat,etype_mean,etype_var,reals_all,ite_num]=sippi_get_sample(im,
 %    prior: SIPPI prior structure
 %    options: options structure when running sippi_metropolis
 %
-%  
+%
 % If located in a SIPPI output folder one can simple use :
 %    [reals,etype_mean,etype_var,reals_all,reals_ite]=sippi_get_sample(im,n_reals);
-% or 
+% or
 %    skip_seq_gibbs=0;
 %    [reals,etype_mean,etype_var,reals_all,reals_ite]=sippi_get_sample(im,n_reals,skip_seq_gibbs);
 %
@@ -37,7 +37,7 @@ end
 if ~exist('id','var');id=1;end
 if ~exist('im','var');im=1;end
 if ~exist('options','var');
-    options.null='';    
+    options.null='';
     options.mcmc.i_sample=1;
 end
 
@@ -47,14 +47,29 @@ if ~exist('skip_seq_gibbs','var');
 end
 
 x=prior{im}.x;y=prior{im}.y;z=prior{im}.z;
-    
+
 
 %% BUG/19062014 : m_est should go in forward structure
-if isfield(data{id},'m_est');
+if exist('m_est','var')|isfield(options,'m_est');
+    if isfield(options,'m_est');
+        m_est=options.m_est;
+        Cm_est=options.Cm_est;
+    end
+        
     % LEAST SQUARES TYPE INVERSION
-    reals=gaussian_simulation_cholesky(data{im}.m_est,data{im}.Cm_est,n_reals)';
-    etype_mean=data{id}.m_est;
-    etype_var=diag(data{id}.Cm_est);
+    reals=gaussian_simulation_cholesky(m_est,Cm_est,n_reals)';
+    reals_all=reals; % dummy output   
+    ite_num=1:1:n_reals;
+    etype_mean=m_est;
+    etype_var=diag(Cm_est);
+
+    if prior{im}.dim(3)>1
+        etype_var=reshape(etype_var,length(y),length(x),length(z));
+    elseif prior{im}.dim(2)>1
+        etype_var=reshape(etype_var,length(y),length(x));
+    end
+
+
 else
     
     if ~isfield(options,'txt');
@@ -121,25 +136,24 @@ else
     ii=ceil(linspace(1,size(reals,1),n_reals));
     ite_num=ii*options.mcmc.i_sample;
     reals=reals(i_use,:);
-        
-    
-    %% GET REQUESTED SAMPLE
-    if n_reals<1
-        reals_mat=[];
-        disp(sprintf('%s : Number of ''realizations'' is less than one!',mfilename));
-    end
-    
-    for i=1:n_reals
-        if prior{im}.dim(3)>1
-            % 3D
-            reals_mat(:,:,:,i)=reshape(reals(i,:),length(y),length(x),length(z));
-        elseif prior{im}.dim(2)>1
-            % 2D
-            reals_mat(:,:,i)=reshape(reals(i,:),length(y),length(x));
-        else
-            % 1D
-            reals_mat(:,i)=reals(i,:);
-        end
-    end
-    
 end
+
+%% GET REQUESTED SAMPLE
+if n_reals<1
+    reals_mat=[];
+    disp(sprintf('%s : Number of ''realizations'' is less than one!',mfilename));
+end
+
+for i=1:n_reals
+    if prior{im}.dim(3)>1
+        % 3D
+        reals_mat(:,:,:,i)=reshape(reals(i,:),length(y),length(x),length(z));
+    elseif prior{im}.dim(2)>1
+        % 2D
+        reals_mat(:,:,i)=reshape(reals(i,:),length(y),length(x));
+    else
+        % 1D
+        reals_mat(:,i)=reals(i,:);
+    end
+end
+

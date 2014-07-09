@@ -18,6 +18,10 @@ pl_2d_marg=1;
 pl_data=1;
 pl_movie=1;
 
+if ~exist('mcmc','var');
+    pl_logL=0;
+    pl_movie=0;
+end
 cwd=pwd;
 
 
@@ -40,6 +44,10 @@ else
     fname='lsq';
 end
 
+
+% JUST IN CASE LSQ WAS PERFORMED
+if exist('m_est','var');options.m_est=m_est;end
+if exist('Cm_est','var');;options.Cm_est=Cm_est;end
 
 % SET DFAULT PLOTTING SETTINGS
 
