@@ -124,10 +124,11 @@ for im=im_arr;
     
     %% PLOT LAST ACCEPTED MODEL
     try
+        key
         try
-            sippi_plot_prior(prior,m_current);
+            sippi_plot_prior(prior,m_current,im);
         catch
-            sippi_plot_prior(prior,options.mcmc.m_current);
+            sippi_plot_prior(prior,options.mcmc.m_current,im);
         end
         print_mul(sprintf('%s_m%d_last_accepted_model',fname,im))
     catch
