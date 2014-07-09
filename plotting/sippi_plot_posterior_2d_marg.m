@@ -183,9 +183,10 @@ if pl_marg2d_image_combined==1;
                 imagesc(x_arr,y_arr,Z);
             end
             set(gca,'ydir','normal');
-            %plot(reals_all(:,j),reals_all(:,k),'k.','MarkerSize',.01)
-            xlabel(prior{im_onedim(j)}.name,'interp','none')
-            ylabel(prior{im_onedim(k)}.name,'interp','none')
+            %xlabel(prior{im_onedim(j)}.name,'interp','none')
+            %ylabel(prior{im_onedim(k)}.name,'interp','none')
+            xlabel(prior{im_onedim(j)}.name)
+            ylabel(prior{im_onedim(k)}.name)
             
             set(gca,'xlim',cax(j,:));
             set(gca,'ylim',cax(k,:));
@@ -222,8 +223,10 @@ if pl_marg2d_scatter_combined==1;
             subplot(n-1,n-1,isp);
             set(gca,'ydir','normal');
             plot(reals_all(:,j),reals_all(:,k),'k.','MarkerSize',3)
-            xlabel(prior{im_onedim(j)}.name,'interp','none')
-            ylabel(prior{im_onedim(k)}.name,'interp','none')
+            %xlabel(prior{im_onedim(j)}.name,'interp','none')
+            %ylabel(prior{im_onedim(k)}.name,'interp','none')
+            xlabel(prior{im_onedim(j)}.name)
+            ylabel(prior{im_onedim(k)}.name)
             
             try
                 if isfield(options.mcmc,'m_ref');

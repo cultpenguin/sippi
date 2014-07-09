@@ -48,11 +48,8 @@ if ~isfield(options.plot.marg2d,'pl_marg2d_image_combined')
 end
 % use HPD for image plots
 if ~isfield(options.plot.marg2d,'pl_marg2d_hpd')
-    options.plot.marg2d.pl_marg2d_hpd=1;
-end
-
-if ~exist('supt','var');
-    supt=0;
+%    options.plot.marg2d.pl_marg2d_hpd=0; % use scatter type instead
+    options.plot.marg2d.pl_marg2d_hpd=1; % use HPD
 end
 
 if ~isfield(options.plot.marg2d,'NX'),options.plot.marg2d.NX=21;end
@@ -63,9 +60,9 @@ if ~isfield(options.plot.marg2d,'hpd_interval'),options.plot.marg2d.hpd_interval
 %% use suptitle?
 if ~isfield(options.plot,'suptitle'),options.plot.suptitle=0;end
 
-%% SAMPLE TYPE. Skuo or keep realization obatined using seqeuntial Gibbs sample
+%% SAMPLE TYPE. Skip or keep realization obatined using seqeuntial Gibbs sample
 if ~isfield(options.plot,'skip_seq_gibbs'),
-    options.plot.skip_seq_gibbs=0;
+    options.plot.skip_seq_gibbs=1;
 end
 
 

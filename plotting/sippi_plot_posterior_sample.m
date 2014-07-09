@@ -104,7 +104,7 @@ for im=im_arr;
     
     
     skip_seq_gibbs=options.plot.skip_seq_gibbs;
-    [reals,etype_mean,etype_var,reals_all,ite_reals]=sippi_get_sample(im,n_reals,skip_seq_gibbs,data,prior,options);
+    [reals,etype_mean,etype_var,reals_all,ite_reals]=sippi_get_sample(im,n_reals(im),skip_seq_gibbs,data,prior,options);
     
     m_post{im}=reals;
     
@@ -135,7 +135,6 @@ for im=im_arr;
         disp(sprintf('%s : could not plot last accepted model',mfilename));
         cd(cwd);
     end
-    
     
     %% PLOT POSTERIOR REALS
     f_id=(im)*10+1;
@@ -168,7 +167,6 @@ for im=im_arr;
         end
         
         figure_focus(f_id);
-        %% continue
         N=length(reals);
         %N=n_reals(im);
         prior_sample=zeros(1,N);
@@ -182,7 +180,6 @@ for im=im_arr;
         if ~exist('cax','var');
             cax=[min(sample_prior) max(sample_prior)];
         end
-        
         hx=linspace(cax(1),cax(2),31);
         h_post=hist(reals,hx);
         h_post=h_post/sum(h_post);
@@ -224,6 +221,7 @@ for im=im_arr;
             hold off
         end
         xlabel(prior{im}.name,'interpreter','none','FontSize',options.plot.axis.fontsize+2)
+        %xlabel(prior{im}.name,'FontSize',options.plot.axis.fontsize+2)
         ylabel('Frequency','interpreter','none','FontSize',options.plot.axis.fontsize+2)
         % BUG/20140619 : It seems Matlab R2014b does not handle legend
         % very well when using ppp.m ..

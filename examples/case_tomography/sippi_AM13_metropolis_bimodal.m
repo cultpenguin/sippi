@@ -1,7 +1,7 @@
-% sippi_AM13_metropolis_bimodal 2D inversion using the extended Metropolis sampler (Bimodal prior) 
+% sippi_AM13_metropolis_bimodal 2D inversion using the extended Metropolis sampler (Bimodal prior)
 %
 % Example of inverting 2D Arren�s tomographic data (AM13)
-% using the extended Metropolis sampler and a 
+% using the extended Metropolis sampler and a
 % Bimodal a priori model
 %
 % See http://dx.doi.org/10.1016/j.cageo.2012.10.001
@@ -47,11 +47,31 @@ prior=sippi_prior_init(prior);
 %% SETUP THE FORWARD MODEL
 forward.sources=D.S;
 forward.receivers=D.R;
-forward.type='eikonal';
-%forward.type='fat';
-%forward.linear=1;
+%forward.type='eikonal';
+forward.type='fat';
+forward.linear=1;
 forward.freq=0.1;
 forward.forward_function='sippi_forward_traveltime';
+
+comp_model_error=1;
+if comp_model_error==1;
+    
+    % SETUP THE 'OPTIMAL' FORWARD MODEL
+    forward_full.forward_function='sippi_forward_traveltime';
+    forward_full.sources=D.S;
+    forward_full.receivers=D.R;
+    forward_full.type='fat';forward_full.linear=0;forward_full.freq=0.1;
+    
+    % COMPUTE MODELING ERROR DUE TO USE OF forward AS OPPOSED TO forward_full
+    N=600;
+    [Ct,dt,dd]=sippi_compute_modelization_forward_error(forward_full,forward,prior,data,N);
+    
+    % ASSIGN MODELING ERROR TO DATA
+    for id=1:length(data);
+        data{id}.dt=dt{id};
+        data{id}.Ct=Ct{id};
+    end
+end
 
 
 %% SETUP METROPOLIS

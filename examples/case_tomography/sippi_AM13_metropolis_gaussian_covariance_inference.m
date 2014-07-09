@@ -1,6 +1,6 @@
 % sippi_AM13_metropolis_gaussian_covariance_inference 2D inversion with uncertain covariance model 
 %
-% Example of inverting 2D Arren�s tomographic data (AM13)
+% Example of inverting 2D Arrenaes tomographic data (AM13)
 % with uncertainty covariance properties. 
 %
 % 
@@ -84,12 +84,6 @@ end
 options.mcmc.nite=500000;% optional
 options.mcmc.i_plot=1000;% optional
 options.mcmc.i_sample=100;% optional
-
-options.mcmc.nite=100000;% optional
-options.mcmc.i_plot=1000;% optional
-options.mcmc.i_sample=20;% optional
-
-
 
 %% RUN 1,using every 20th data
 close all

@@ -160,24 +160,31 @@ try
         if pl_cd==1;
             f_handle=95+id;
             figure_focus(f_handle);set_paper('landscape');clf;
+            subplot(1,2,1);
+            set(gca,'FontSize',options.plot.axis.fontsize);
             plot(data{id}.CD(:,1),'k-','LineWidth',2)
             set(gca,'xlim',[0 size(data{id}.CD,1)/4])
-            ppp(options.plot.axis.width,options.plot.axis.height,options.plot.axis.fontsize,options.plot.axis.w0,options.plot.axis.h0);
             xlabel('data #')
-            ylabel('Covariance')
-            %title('')
+            ylabel('Covariance (data 1 - data #)')
+            subplot(1,2,2);
+            set(gca,'FontSize',options.plot.axis.fontsize);
+            imagesc(data{id}.CD);axis image;colorbar
+            xlabel('data #')
+            ylabel('data #')
+            title(sprintf('data{%d}.CD',id));
             print_mul(sprintf('%s_id%d_CD',fname,id))
         end
         %%
         if pl_cd2==1;
             f_handle=96+id;
             figure_focus(f_handle);set_paper('landscape');clf;
+            set(gca,'FontSize',options.plot.axis.fontsize);
             bar(1:N,var(data_res));
             hold on
             plot([0 N+1],[1 1].*data{id}.Cd(1),'r-','LineWidth',8)
             hold off
             set(gca,'xlim',[0 N+1])
-            ppp(options.plot.axis.width,options.plot.axis.height,options.plot.axis.fontsize,options.plot.axis.w0,options.plot.axis.h0);
+            %ppp(options.plot.axis.width,options.plot.axis.height,options.plot.axis.fontsize,options.plot.axis.w0,options.plot.axis.h0);
             xlabel('realization #')
             ylabel('variance')
             %title('')
@@ -187,6 +194,7 @@ try
         if pl_hist==1;
             f_handle=97+id;
             figure_focus(f_handle);set_paper('landscape');clf;
+            set(gca,'FontSize',options.plot.axis.fontsize);
             [h_c,x_n]=hist(noise_real(:),30);
             [res_c]=hist(data_res(:),30);
             plot(x_n,h_c);
@@ -194,7 +202,7 @@ try
             plot(x_n,res_c,'k-','LineWidth',2)
             hold off
             legend('Noise realization','Data residual')
-            ppp(options.plot.axis.width,options.plot.axis.height,options.plot.axis.fontsize,options.plot.axis.w0,options.plot.axis.h0);
+            %ppp(options.plot.axis.width,options.plot.axis.height,options.plot.axis.fontsize,options.plot.axis.w0,options.plot.axis.h0);
             xlabel(sprintf('Data #%d',id))
             ylabel('residual/noise realization')
             %title('')
