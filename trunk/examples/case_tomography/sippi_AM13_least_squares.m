@@ -20,7 +20,7 @@ id=1;
 data{id}.d_obs=D.d_obs;
 data{id}.d_std=D.d_std;
 data{id}.Ct=0; % modelization error
-data{id}.Ct=D.Ct; % modelization error in style of Cordua et al
+data{id}.Ct=D.Ct; % modelization error in style of Cordua et al (2008; 2009)
 
 %% THE PRIOR
 im=1;

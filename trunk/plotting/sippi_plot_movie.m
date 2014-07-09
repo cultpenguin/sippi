@@ -20,10 +20,10 @@ function sippi_plot_movie(fname,im_array,n_frames,skip_burnin);
 % removes realizations obtained using sequential Gibbs sampling 
 % (equivalent to setting skip_burnin=1)
 %
-
 % See also: sippi_plot_defaults
 %
 
+% DOES NOT WORK WITH SIPPI_LEAST_SQUARES
 
 if nargin==0;
     [f1,fname]=fileparts(pwd);
@@ -91,6 +91,7 @@ for im=im_array
         end
         
         ns=mcmc.nite/mcmc.i_sample;
+            
         n_frames=min([n_frames (ns-i1)]);
         i_frames=ceil(linspace(i1,ns,n_frames));
         

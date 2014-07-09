@@ -7,7 +7,6 @@
 %
 function [options]=sippi_plot_posterior_sample(options,prior,data,forward);
 
-
 %% LOAD THE CORRECT DATA
 cwd=pwd;
 if nargin==0
@@ -23,7 +22,13 @@ elseif nargin==1;
     end
 else
     
+    
 end
+
+% JUST IN CASE LSQ WAS PERFORMED
+if exist('m_est','var');options.m_est=m_est;end
+if exist('Cm_est','var');;options.Cm_est=Cm_est;end
+
 if nargin<5
     try
         fname=options.txt;
@@ -369,7 +374,7 @@ for im=im_arr;
         AccRate_smooth=(1/fak)*AccNum/prior{im}.seq_gibbs.n_update_history;
         AccRate=AccNum/prior{im}.seq_gibbs.n_update_history;
         subplot(2,1,1);
-        set(gca,'FontSize',options.plot.axis.fontsize)            
+        set(gca,'FontSize',options.plot.axis.fontsize)
         try;title(sprintf('m%d : %s',im,prior{im}.name));end
         plot(ip,AccRate_smooth,'-');
         xlabel('Iteration number');
@@ -379,7 +384,7 @@ for im=im_arr;
         if ylim(2)>1.1; ylim(2)=1.1;end
         set(gca,'ylim',ylim);
         set(gca,'FontSize',options.plot.axis.fontsize)
-            
+        
         subplot(2,1,2);
         set(gca,'FontSize',options.plot.axis.fontsize)
         hist(AccRate,linspace(0,1,21));
