@@ -1,3 +1,4 @@
+
 % sippi_prior A priori models for SIPPI 
 %
 % To generate a realization of the prior model defined by the prior structure use: 
@@ -449,10 +450,25 @@ for im=im_array;
         run_fftma=[run_fftma im];
     %% DEESSE (CLOSED SOURCE DIRECT SIMULATION
     elseif (strcmp(upper(prior{im}.type),'DS'))
-        disp(sprintf('%s : ''%s'' type prior not yet implemented',mfilename,prior{im}.type));
-        
+        disp(sprintf('%s : ''%s'' type prior not yet implemented',mfilename,prior{im}.type));        
     else
-        disp(sprintf('%s : ''%s'' type prior model not supported',mfilename,prior{im}.type));
+        
+        % check that a file exist that implements the prior type
+        m_file=sprintf('sippi_prior_%s',lower(prior{im}.type));
+        if exist(m_file,'file')
+            p{1}=prior{im};
+            if nargin==1
+                [m_p,p]=feval(m_file,p);
+            else
+                m_c=m_current{im};
+                [m_p,p]=feval(m_file,p,m_c);
+            end
+            prior{im}=m_p{1};
+            m_propose{im}=m_p{1};
+            
+        else
+            disp(sprintf('%s : ''%s'' type prior model not supported',mfilename,prior{im}.type));
+        end
     end
         
 end
