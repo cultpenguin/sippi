@@ -605,9 +605,12 @@ for im=im_fftma_array;
             gvar=sum([Va_par.par1]);
             m_propose{im}=m_propose{im}./sqrt(gvar);
             m_propose{im}=inscore(m_propose{im},prior{im}.o_nscore);
-        else
-            m_propose{im}=m_propose{im}+prior{im}.m0;
+        %else
         end
+        
+        % add mean model
+        m_propose{im}=m_propose{im}+prior{im}.m0;
+               
         prior{im}.m=m_propose{im};
     end
 end
