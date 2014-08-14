@@ -22,10 +22,20 @@ prior{ip}.m0=10;
 prior{ip}.std=2;
 prior{ip}.norm=60;
 
+
+ip=4;
+prior{ip}.type='GAUSSIAN';
+prior{ip}.name='TARGET';
+d1=randn(100)+8;
+d2=randn(200)+12;
+prior{ip}.d_target=[d1(:);d2(:)];
+prior{ip}.m0=0;
+
+
 %%
-sippi_plot_prior_sample(prior,1:3,10000);
+sippi_plot_prior_sample(prior,1:length(prior),10000);
 for ip=1:length(prior);
-    figure(90+ip);print_mul(['prior_gaussian_1d_',prior{im}.name])
+    figure(90+ip);print_mul(['prior_gaussian_1d_',prior{ip}.name])
 end
 return
 %%
