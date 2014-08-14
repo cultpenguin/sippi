@@ -1,20 +1,20 @@
-% prior_reals_fftma Sampling an FFT-MA type prior model
+% prior_reals_cholesky Sampling an CHOLESKY type Gausisan prior model
 clear all,
 
-%% Define an FFTMA type a priori model
+%% Define a CHOLESKY type Gaussian a priori model
 im=1;
-prior{im}.type='FFTMA';
-prior{im}.x=[0:.1:10]; % X array
-prior{im}.y=[0:.1:20]; % Y array
+prior{im}.type='CHOLESKY';
+dx=0.5;
+prior{im}.x=[0:.5:10]; % X array
+prior{im}.y=[0:.5:20]; % Y array
 prior{im}.m0=10;
-prior{im}.Va='1 Sph(10,90,.25)';
-prior{im}.fftma_options.constant_C=0;
+prior{im}.Cm='1 Sph(10,90,.25)';
 
 randn('seed',1);
 %%
 figure(10);clf
 for i=1:5;
-    m=sippi_prior(prior);
+    [m,prior]=sippi_prior(prior);
     subplot(1,5,i);
     imagesc(prior{1}.x,prior{1}.y,m{1});
     caxis([8 12])
@@ -24,9 +24,12 @@ for i=1:5;
 end
 colormap(sippi_colormap(1));
 colorbar_shift;
-print_mul('prior_reals_fftma')
-suptitle(sprintf('FFT-MA, Cm=%s',prior{im}.Va))
-
+print_mul('prior_reals_cholesky')
+try
+    suptitle(sprintf('Cholesky, Cm=%s',format_variogram(prior{im}.Va)))
+catch
+    suptitle(sprintf('Cholesky, Cm=%s',(prior{im}.Va)))
+end
 %% SETUP TARGET DISTRIBUTION
 N=10000;
 prob_chan=0.5;
@@ -53,9 +56,9 @@ for i=1:5;
     %ylabel('Y')
 end
 colormap(sippi_colormap(1));
-suptitle(sprintf('FFT-MA using target histogram, Cm=%s',format_variogram(prior{im}.Va)))
+suptitle(sprintf('Cholesky using target histogram, Cm=%s',format_variogram(prior{im}.Va)))
 colorbar_shift;
-print_mul('prior_reals_fftma_nscore')
+print_mul('prior_reals_cholesky_nscore')
 
 %% MOVIE
 for j=1:2
