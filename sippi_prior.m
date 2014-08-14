@@ -9,11 +9,14 @@
 %   [m_propose,prior]=sippi_prior(prior,m_current);
 %
 % The following types of a priori models can be used
-%   SNESIM  [1D-3D] : based on a multiple point statistical model inferref from a training images. Relies in the SNESIM algorithm
-%   SISIM   [1D-3D] : based on Sequential indicator SIMULATION
-%   VISIM   [1D-3D] : based on Sequential Gaussian and Direct Sequential simulation
-%   FFTMA   [1D-3D] : based on the FFT-MA method (Multivariate Gaussian) 
+%   % two point statistics bases
 %   GAUSSIAN   [1D] : 1D generalized gaussian model
+%   CHOLESKY[1D-3D] : based on Cholesky decomposition
+%   FFTMA   [1D-3D] : based on the FFT-MA method (Multivariate Gaussian) 
+%   VISIM   [1D-3D] : based on Sequential Gaussian and Direct Sequential simulation
+%   SISIM   [1D-3D] : based on Sequential indicator SIMULATION
+%   % multiple point based statistics
+%   SNESIM  [1D-3D] : based on a multiple point statistical model inferref from a training images. Relies in the SNESIM algorithm
 %
 %
 %%%% SIMPLE EXAMPLE %%%
