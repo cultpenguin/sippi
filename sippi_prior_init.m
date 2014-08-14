@@ -14,6 +14,7 @@ for im=1:length(prior);
     
     prior{im}.init=0;
     
+    %% GAUSSIAN PROPERTIES
     if isfield(prior{im},'Cm');
         if ~isfield(prior{im},'Va');
             prior{im}.Va=prior{im}.Cm;
