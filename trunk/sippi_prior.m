@@ -463,8 +463,8 @@ for im=im_array;
                 m_c=m_current{im};
                 [m_p,p]=feval(m_file,p,m_c);
             end
-            prior{im}=m_p{1};
             m_propose{im}=m_p{1};
+            prior{im}=p{1};
             
         else
             disp(sprintf('%s : ''%s'' type prior model not supported',mfilename,prior{im}.type));

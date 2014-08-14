@@ -40,6 +40,14 @@ if ~isfield(prior{ip},'init')
     prior=sippi_prior_init(prior);
 end
 
+if (isfield(prior{ip},'d_target'))&(~isfield(prior{ip},'o_nscore'))
+    % UPDATE PRIOR STRUCTURE TO USE TARGET DISTRIBUTION
+    d_min=min(prior{ip}.d_target);
+    d_max=max(prior{ip}.d_target);
+    [d_nscore,o_nscore]=nscore(prior{ip}.d_target,1,1,d_min,d_max,0);
+    prior{ip}.o_nscore=o_nscore;
+end
+
 %% Remove Rand Number if they are not needed
 if (nargin==1)&isfield(prior{ip},'z_rand');
     prior{ip}=rmfield(prior{ip},'z_rand');
@@ -56,7 +64,7 @@ if nargin>1
         n_all=prod(size(z_cur));
         if prior{ip}.seq_gibbs.step<=1
             % use n_resim as a proportion of all random deviates
-            n_resim=prior{1}.seq_gibbs.step.*n_all;
+            n_resim=prior{ip}.seq_gibbs.step.*n_all;
         else
             n_resim=prior{ip}.seq_gibbs.step;
         end
@@ -94,9 +102,9 @@ else
     
     is_chol=0;
     if isfield(prior{ip},'z_rand')
-        [z,D,prior{ip}.L,prior{ip}.z_rand]=gaussian_simulation_cholesky(prior{ip}.m0,prior{ip}.Cmat,nsim,is_chol,prior{ip}.z_rand);
+        [z,D,prior{ip}.L,prior{ip}.z_rand]=gaussian_simulation_cholesky(0,prior{ip}.Cmat,nsim,is_chol,prior{ip}.z_rand);
     else
-        [z,D,prior{ip}.L,prior{ip}.z_rand]=gaussian_simulation_cholesky(prior{ip}.m0,prior{ip}.Cmat,nsim,is_chol);
+        [z,D,prior{ip}.L,prior{ip}.z_rand]=gaussian_simulation_cholesky(0,prior{ip}.Cmat,nsim,is_chol);
     end
     
     
@@ -109,6 +117,14 @@ elseif prior{ip}.ndim==2;
 elseif prior{ip}.ndim==3;
     D=reshape(z,prior{ip}.dim(2),prior{ip}.dim(1),prior{ip}.dim(3));
 end
-m_propose{1}=D;
+m_propose{ip}=D;
+
+keyboard
+if isfield(prior{ip},'o_nscore')
+    m_propose{ip}=inscore(D,prior{ip}.o_nscore)+prior{ip}.m0;
+else
+    m_propose{ip}=D+prior{ip}.m0;
+end
+        
 
 
