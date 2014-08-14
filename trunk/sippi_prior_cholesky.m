@@ -84,9 +84,9 @@ nsim=1;
 if isfield(prior{ip},'L')
     is_chol=1;
     if isfield(prior{ip},'z_rand')
-        [z,D,prior{ip}.L,prior{ip}.z_rand]=gaussian_simulation_cholesky(prior{ip}.m0,prior{ip}.L,nsim,is_chol,prior{ip}.z_rand);
+        [z,D,prior{ip}.L,prior{ip}.z_rand]=gaussian_simulation_cholesky(0,prior{ip}.L,nsim,is_chol,prior{ip}.z_rand);
     else
-        [z,D,prior{ip}.L,prior{ip}.z_rand]=gaussian_simulation_cholesky(prior{ip}.m0,prior{ip}.L,nsim,is_chol);
+        [z,D,prior{ip}.L,prior{ip}.z_rand]=gaussian_simulation_cholesky(0,prior{ip}.L,nsim,is_chol);
     end
 else
     % Compute Cov matrix
@@ -118,9 +118,15 @@ elseif prior{ip}.ndim==3;
     D=reshape(z,prior{ip}.dim(2),prior{ip}.dim(1),prior{ip}.dim(3));
 end
 m_propose{ip}=D;
-
-keyboard
 if isfield(prior{ip},'o_nscore')
+    
+    if ~isstruct(prior{ip}.Va);
+        prior{ip}.Va=deformat_variogram(prior{ip}.Va);
+    end
+    Va_par=prior{ip}.Va;
+    gvar=sum([Va_par.par1]);
+    D=D./sqrt(gvar);
+    
     m_propose{ip}=inscore(D,prior{ip}.o_nscore)+prior{ip}.m0;
 else
     m_propose{ip}=D+prior{ip}.m0;
