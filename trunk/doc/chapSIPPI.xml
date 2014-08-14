@@ -58,7 +58,10 @@ prior{1}.name='My Prior';
 The <link linkend="prior_gaussian">GAUSSIAN</link> type prior specifies a 1D generalized Gaussian model.
 </para>
 <para>
-The <link linkend="prior_fftma">FFTMA</link> specifies 1D-3D Gaussian models using efficient unconditional sampling,
+The <link linkend="prior_fftma">FFTMA</link> type prior specifies a 1D-3D Gaussian type a prori model based on the FFT Moving Average method, whish is bery efficient for unconditional sampling,
+</para>
+<para>
+The <link linkend="prior_cholesky">CHOLESKY</link> type prior specifies a 1D-3D Gaussian tyype a priori model based on Cholesky decomposition of the covariance model,
 </para>
 <para>
 The <link linkend="prior_visim">VISIM</link> type prior model specifies 1D-3D Gaussian models, utilizing both sequential Gaussian simulation (SGSIM) and direct sequential simulation (DSSIM) that can be conditioned to data of both point- and volume support and linear average data. 
@@ -182,7 +185,6 @@ im=1;
 prior{im}.type='FFTMA';
 prior{im}.x=[0:1:100];
 prior{im}.y=[0:1:100];
-prior{im}.m0=10;
 prior{im}.Cm='1 Sph(10)';
 
 % Create target distribution
@@ -192,6 +194,7 @@ d1=randn(1,ceil(N*(1-prob_chan)))*.5+8.5;
 d2=randn(1,ceil(N*(prob_chan)))*.5+11.5;
 d_target=[d1(:);d2(:)];
 prior{im}.d_target=d_target;
+prior{im}.m0=0; % to make sure no trend model is assumed.
 </screen>
 <para>
 Alternatively, the normal score transformation can be defined manually such that the tail behavior can be controlled:
@@ -278,6 +281,52 @@ prior{im}.Cm='1 Sph(10)';
 -->
 
 </sect3>
+
+
+
+<sect3 xml:id="prior_cholesky"><title>CHOLESKY - 3D Gaussian model</title>
+<para>
+The CHOLESKY type prior utilizes Cholesky decompostion of the covariance in order to generate realizations of a Gaussian random field. The CHOLESKY type prior needs a full description of the covariance odel, which will be of size [nxyz*nxyz*nxyz],  unlike using the <link linkend="prior_fftma">FFTMA</link> type prior model that only needs a specification of an isotropic covariance models of size [1,nxyz]. Hence, the CHOLEKSY type prior is much more demanding on memory, and CPU. However, the CHOLESKY type prior can be used to sample from any covariance model, also non-stationary covariance model.
+</para>
+<para>
+The CHOLESKY model is can be defined almost identically to the <link linkend="prior_fftma">FFTMA</link> type prior model. As an example: 
+</para>
+<screen>
+im=1;
+prior{im}.type='FFTMA';
+prior{im}.x=[0:1:100];
+prior{im}.y=[0:1:100];
+prior{im}.m0=10;
+prior{im}.Cm='1 Sph(10)';
+</screen>
+   <mediaobject>
+      <imageobject condition="web">
+        <imagedata fileref="figures/prior_fftma_2d_gaussian.png" width="100%" scalefit="1"/>
+      </imageobject>
+      <textobject><phrase></phrase></textobject>
+    </mediaobject>
+<para>
+the use of <varname>d_target</varname> to specify target distributions is also possible, using the same style as for the <link linkend="prior_fftma">FFTMA</link> type prior.
+</para>
+
+</sect3>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 <!--
 <sect3 xml:id="prior_sisim"><title>SISIM</title>
