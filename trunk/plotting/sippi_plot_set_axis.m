@@ -12,7 +12,7 @@ end
             
 set(gca,'FontSize',options.plot.axis.fontsize)
 
-set(get(gca,'Xlabel'),'FontSize',options.plot.axis.fontsize-2)
-set(get(gca,'Ylabel'),'FontSize',options.plot.axis.fontsize-2)
-set(get(gca,'Zlabel'),'FontSize',options.plot.axis.fontsize-2)
+set(get(gca,'Xlabel'),'FontSize',options.plot.axis.fontsize+2)
+set(get(gca,'Ylabel'),'FontSize',options.plot.axis.fontsize+2)
+set(get(gca,'Zlabel'),'FontSize',options.plot.axis.fontsize+2)
 
