@@ -302,8 +302,15 @@ options=sippi_rejection(data,prior,forward,options);
 </sect1>
 -->
 
-<!-- Chapeter on cros hole tomography -->
+<!-- Chapter on cross hole tomography -->
 &chapCrossHoleTomography;
+
+
+
+<!-- Chapter on probabilistic covariance/semivariogram inference -->
+&chapCovarianceInference;
+
+
 
 <!--
 <sect1 xml:id="sec_ex_reflection"><title>Reflection seismic inversion</title>

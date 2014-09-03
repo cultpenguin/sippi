@@ -27,6 +27,7 @@ book SYSTEM "docbook.dtd"
 <!ENTITY chapSIPPI SYSTEM "chapSIPPI.xml"> 
 <!ENTITY chapExamples SYSTEM "chapExamples.xml"> 
 <!ENTITY chapCrossHoleTomography SYSTEM "chapCrossHoleTomography.xml"> 
+<!ENTITY chapCovarianceInference SYSTEM "chapCovarianceInference.xml"> 
 <!ENTITY chapBibliography SYSTEM "chapBibliography.xml"> 
 <!ENTITY funcSIPPI SYSTEM "sippi_functions.xml"> 
 <!ENTITY funcSIPPIplotting SYSTEM "sippi_functions_plotting.xml"> 
