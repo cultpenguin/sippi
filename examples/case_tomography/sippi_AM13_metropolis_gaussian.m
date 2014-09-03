@@ -58,6 +58,9 @@ sippi_plot_data(d,data);
 options.mcmc.nite=1000000;
 options.mcmc.i_plot=1000;
 options.mcmc.i_sample=500;
+options.mcmc.nite=500000;
+options.mcmc.i_plot=10000;
+options.mcmc.i_sample=100;
 randn('seed',2);rand('seed',2);
 options=sippi_metropolis(data,prior,forward,options);
 
@@ -67,4 +70,5 @@ sippi_plot_prior_sample(options.txt);
 %% PLOT SAMPLE AND STATS FROM POSTERIOR
 sippi_plot_posterior(options.txt);
 
-
+%% PLOT PRIOR AND POSTERIO MOVIE 
+sippi_plot_movie(options.txt)
