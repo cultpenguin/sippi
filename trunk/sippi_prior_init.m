@@ -1,7 +1,7 @@
 function prior=sippi_prior_init(prior);
 % sippi_prior_init Initialize PRIOR structure for SIPPI
 %
-% Call 
+% Call
 %   prior=sippi_prior_init(prior);
 %
 % See also sippi_prior
@@ -28,7 +28,7 @@ for im=1:length(prior);
     
     
     
-    if ~isfield(prior{im},'type'); 
+    if ~isfield(prior{im},'type');
         disp(sprintf('%s : FATAL ERROR : no ''type'' set for prior %03',mfilename,im));
         return
     end
@@ -56,9 +56,9 @@ for im=1:length(prior);
     prior{im}.ndim=length(find(prior{im}.dim>1));
     
     if ~isfield(prior{im},'cax');
-    if isfield(prior{im},'min')&isfield(prior{im},'max');
-        prior{im}.cax=[prior{im}.min prior{im}.max];
-    end
+        if isfield(prior{im},'min')&isfield(prior{im},'max');
+            prior{im}.cax=[prior{im}.min prior{im}.max];
+        end
         
     end
     
@@ -77,7 +77,7 @@ for im=1:length(prior);
         if ~isfield(prior{im}.seq_gibbs,'step_min');prior{im}.seq_gibbs.step_min=0;end
         if ~isfield(prior{im}.seq_gibbs,'step_max');prior{im}.seq_gibbs.step_max=1;end
         if ~isfield(prior{im}.seq_gibbs,'step');prior{im}.seq_gibbs.step=1;end
-       
+        
         % m0
         if ~isfield(prior{im},'m0');
             if isfield(prior{im},'min')&isfield(prior{im},'max');
@@ -85,8 +85,9 @@ for im=1:length(prior);
             else
                 prior{im}.m0=0;
             end
+            prior{im}.norm=100; % assume close to uniform distribution 
         end
-   
+        
         % std
         if ~isfield(prior{im},'std');
             if isfield(prior{im},'min')&isfield(prior{im},'max');
@@ -97,9 +98,9 @@ for im=1:length(prior);
         end
         
         
-    end        
+    end
     
-    %% 
+    %%
     if ~isfield(prior{im}.seq_gibbs,'type');
         %prior{im}.seq_gibbs.type=1;% BOX RESIM
         prior{im}.seq_gibbs.type=2;% RANDOM POINTS
@@ -151,7 +152,7 @@ for im=1:length(prior);
         end
     end
     
-    %% VISIM OPTIONS    
+    %% VISIM OPTIONS
     if (strcmp(upper(prior{im}.type),'VISIM'))
         visim_clean;
         if ~isfield(prior{im},'V');
@@ -162,20 +163,20 @@ for im=1:length(prior);
         %        prior{im}.V.Va=prior{im}.Va;
         %    else
         %        prior{im}.V.Va=deformat_variogram(prior{im}.Va);
-        %    end               
+        %    end
         %end
         if isfield(prior{im},'m0');
-           prior{im}.V.gmean=prior{im}.m0;
-        end        
+            prior{im}.V.gmean=prior{im}.m0;
+        end
     end
     
-    %% SNESIM OPTIONS    
+    %% SNESIM OPTIONS
     if (strcmp(upper(prior{im}.type),'SNESIM'))
         if ~isfield(prior{im},'S');
             prior{im}.S=sgems_get_par('snesim_std');
-%            prior{im}.S.dim.x=prior{im}.x;            
-%            prior{im}.S.dim.y=prior{im}.y;
-%            prior{im}.S.dim.z=prior{im}.z;
+            %            prior{im}.S.dim.x=prior{im}.x;
+            %            prior{im}.S.dim.y=prior{im}.y;
+            %            prior{im}.S.dim.z=prior{im}.z;
         end
         prior{im}.S.dim.x=prior{im}.x;
         prior{im}.S.dim.y=prior{im}.y;
@@ -183,7 +184,7 @@ for im=1:length(prior);
         
         if isfield(prior{im},'ti');
             if isnumeric(prior{im}.ti);
-                 prior{im}.S.ti=prior{im}.ti;
+                prior{im}.S.ti=prior{im}.ti;
             else
                 prior{im}.S.ti_file=prior{im}.ti;
             end
@@ -193,14 +194,14 @@ for im=1:length(prior);
         end
     end
     
-    %% SISIM OPTIONS    
+    %% SISIM OPTIONS
     if (strcmp(upper(prior{im}.type),'SISIM'))
         if ~isfield(prior{im},'S');
             prior{im}.S=sgems_get_par('sisim');
-            prior{im}.S.dim.x=prior{im}.x;            
+            prior{im}.S.dim.x=prior{im}.x;
             prior{im}.S.dim.y=prior{im}.y;
             prior{im}.S.dim.z=prior{im}.z;
-        end        
+        end
     end
     
     %% TARGET DIST
@@ -209,10 +210,9 @@ for im=1:length(prior);
             [d_nscore,prior{im}.o_nscore]=nscore(prior{im}.d_target,1,1);
         end
     end
-  
+    
     % confirmation of initialization;
     prior{im}.init=1;
     
 end
 
-  
