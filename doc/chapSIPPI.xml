@@ -50,9 +50,14 @@ prior{1}.name='My Prior';
 
 <sect2 xml:id="prior_types"><title>Types of a priori models</title>
 <para>
-5 types of a priori models are available, and can be selected by setting the <varname>type</varname> in the <varname>prior</varname> structure using e.q. <varname>prior{1}.type='gaussian'</varname>.  
+Six types of a priori models are available, and can be selected by setting the <varname>type
+</varname> in the <varname>prior</varname> structure using e.q. <varname>
+prior{1}.type='gaussian'</varname>.  
 </para>
 <para>
+</para>
+<para>
+The <link linkend="prior_uniform">UNIFORM</link> type prior specifies an uncorrelated ND uniform model.
 </para>
 <para>
 The <link linkend="prior_gaussian">GAUSSIAN</link> type prior specifies a 1D generalized Gaussian model.
@@ -80,6 +85,37 @@ The following section documents the properties of each type of prior model.
 <para>
 Examples of using different types of prior models or combining prior models can be found in the <link linkend="sec_ex_prior">examples section</link>. 
 </para>
+
+<!-- GAUSSIAN -->
+<sect3 xml:id="prior_uniform"><title>Uniform distribtion</title>
+<para>
+A uniform prior model can be specified using the 'uniform' type prior model
+</para>
+<screen>
+prior{1}.type='uniform';
+</screen>
+<para>
+The only parameters needed are the minimum (<varname>min</varname>) and maximum (<varname>max</varname>) values. A 1D uniform distribution between -1 and 1 can be specified as 
+</para>
+<screen>
+prior{1}.type='uniform';
+prior{1}.min=-1;
+prior{1}.max=1;
+</screen>
+<para>
+By setting the <varname>x</varname>, <varname>y</varname>, and <varname>z</varname> parameter, a higher order prior (uncorrelated) can be set. For example 3 independent model parameters with a uniform prior distribution between 20 and 50, can be defined as
+</para>
+<screen>
+prior{1}.type='uniform';
+prior{1}.x=[1 2 3];
+prior{1}.min=20;
+prior{1}.max=50;
+</screen>
+
+<para>
+Note that using the 'uniform' type priori model, is slightly more computational efficient than using a '<link linkend="prior_gaussian">gaussian</link>' type prior model with a high norm.
+</para>
+</sect3>
 
 <!-- GAUSSIAN -->
 <sect3 xml:id="prior_gaussian"><title>1D Generalized Gaussian</title>
