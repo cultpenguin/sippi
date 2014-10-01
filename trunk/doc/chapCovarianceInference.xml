@@ -1,0 +1,70 @@
+<sect1 xml:id="sec_ex_covarianceinference"><title>Probilistic covariance/semivariogram indeference</title>
+<para>
+This chapter documnets how to use SIPPI to infer properties of a covariance/semivariogram model from noisy data (both data of point support and linear average data can be considered)
+</para>
+
+<para>
+To apply covariance indeference one must 1) define the data and associated uncertainty (if any), 2) define a prior model describing covariance model parameters, and 3) define the linear forward operate (only applicable if data are not of point support).
+</para>
+
+<sect2><title>Inferring a 2D covariance model from the Jura data set</title>
+<para>
+<screen>
+% jura_covariance_inference
+%
+% Example of inferring properties of a Gaussian model from point data
+%
+
+%% LOAD THE JURA DATA
+clear all;close all
+[d_prediction,d_transect,d_validation,h_prediction,h_transect,h_validation,x,y,pos_est]=jura;
+ix=1;
+iy=2;
+id=6;
+
+% get the position of the data
+pos_known=[d_prediction(:,[ix iy])];  
+
+% perform normal score transformation of tha original data
+[d,o_nscore]=nscore(d_prediction(:,id));
+h_tit=h_prediction{id};
+
+%% SETUP A PRIORI MODEL / ONLY RANGE --> ISTROPIC COVARIANCE MODEL
+im=0;
+% A close to uniform distribution of the range, U[0;3].
+im=im+1;
+prior{im}.type='gaussian';
+prior{im}.name='range_1';
+prior{im}.min=0.01;
+prior{im}.max=3;
+prior{im}.norm=100;
+
+
+%% DATA
+data{1}.d_obs=d; % observed data
+data{1}.d_std=0;.5; % uncertainty of observed data (in form of standard deviation of the noise)
+%data{1}.i_use=1:1:30;
+
+%% FORWARD
+forward.forward_function='sippi_forward_covariance_inference';
+forward.point_support=1;
+forward.pos_known=pos_known;
+forward.stabilize=0;
+% initial choice of N(m0,Cm), mean and sill are 0, and 1, due
+% due to normal score
+forward.m0=0;
+forward.Cm='1 Sph(2)';
+
+
+%% METROPOLIS SAMPLING
+options.mcmc.nite=5000;
+options.mcmc.i_plot=100;
+options.mcmc.i_sample=10;
+[options,data,prior,forward,m_current]=sippi_metropolis(data,prior,forward,options)
+
+sippi_plot_posterior(options.txt);
+</screen>
+</para>
+</sect2>
+
+</sect1>
