@@ -12,7 +12,7 @@ book SYSTEM "docbook.dtd"
 <!ENTITY gstat "GSTAT"> 
 <!ENTITY visim "VISIM"> 
 <!ENTITY snesim "SNESIM"> 
-<!ENTITY sippi-version "1.00">
+<!ENTITY sippi-version "1.10">
 <!ENTITY pubdate SYSTEM "pubdate.xml"> 
 <!ENTITY yearnow SYSTEM "yearnow.xml"> 
 <!ENTITY chapIntroduction SYSTEM "chapIntroduction.xml"> 

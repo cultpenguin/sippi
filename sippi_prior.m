@@ -11,6 +11,7 @@
 % The following types of a priori models can be used
 %   % two point statistics bases
 %   GAUSSIAN   [1D] : 1D generalized gaussian model
+%   UNIFORM [1D-3D] : 1D-3D uncorrelated uniform distribution
 %   CHOLESKY[1D-3D] : based on Cholesky decomposition
 %   FFTMA   [1D-3D] : based on the FFT-MA method (Multivariate Gaussian) 
 %   VISIM   [1D-3D] : based on Sequential Gaussian and Direct Sequential simulation

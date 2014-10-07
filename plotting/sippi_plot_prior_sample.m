@@ -4,7 +4,7 @@ function sippi_plot_prior_sample(prior,im_arr,n_reals,caxis,options);
 % Call :
 %    sippi_plot_prior_sample(prior,im_array,n_reals,cax,options);
 %
-%  See also sippi_plot_posterior, sippi_plot_prior
+%  See also sippi_plot_posterior, sippi_plot_prior, sippi_prior
 %
 
 cwd=pwd;
