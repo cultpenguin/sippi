@@ -561,15 +561,24 @@ Each time 'm=sippi_prior(prior)' is called, a new independent realization of the
 
 <sect2 xml:id="sec_seq_gibbs"><title>Sequential Gibbs sampling / Conditional Re-sampling</title>
 <para>
-All the available types of prior models allow perturbing one realization of a prior into a new realization of prior, where the degree of perturbation can be controlled (from a new independent realization to a very small change). To do this, we make use of sequential Gibbs sampling <citation>HCM12</citation>. Sequential Gibbs is in essence a type of conditional re-simulation. From a current realization of a prior model, a number of model parameters are discarded and treated as unknown. The unknown model parameters are then re-simulated conditional to the known model parameters.  
+All the available types of prior models allow perturbing one realization of a prior into a new realization of the prior, where the degree of perturbation can be controlled (from a new independent realization to a very small change).
+</para>
+<para>
+This means that a random walk, with an arbitrary 'step-length' can be performed for any of the a priori types available in &sippi;
+</para>
+<para>
+ For the a priori types 'FFTMA', 'VISIM', 'CHOLESKY', 'SISIM', 'SNESIM', sequential Gibbs sampling <citation>HCM12</citation> is applied. Sequential Gibbs is in essence a type of conditional re-simulation. From a current realization of a prior model, a number of model parameters are discarded and treated as unknown. The unknown model parameters are then re-simulated conditional to the known model parameters.  
 </para>
 <para>
 In order to generate a new realization 'm2' in the vicinity of the realization 'm1' use
 <screen>
-m1=sippi_prior(prior);
+[m1,prior]=sippi_prior(prior);
 [m2,prior]=sippi_prior(prior,m1);
 </screen>
 If this process is iterated, then a random walk in the space of a priori acceptable models will be perform. Moreover, the collection of realization obtained in this way will represent a sample from prior distribution.  
+</para>
+<para>
+Note that in order to use sequential Gibbs sampling <varname>prior</varname> must be given both as an input variable, and as an (possibly update) output variable.
 </para>
 
 <!-- 
@@ -579,12 +588,35 @@ EXAMPLE OF USING SGS TO SAMPLE THE PRIOR
 
 <sect3 xml:id="sec_seq_gibbs_step"><title>Controlling sequential Gibbs sampling / Conditional Re-sampling</title>
 <para>
-All properties related to sequential Gibbs sampling can be set in the 'seq_gibbs' structure, for the individual prior models. The following two parameters determine how the a current model is perturbed
+All properties related to sequential Gibbs sampling can be set in the 'seq_gibbs' structure (which will be avaiable the first time <link linkend="sippi_prior">sippi_prior</link> is called, or if <link linkend="sippi_prior_init">sippi_prior_init</link> is called), for the individual prior models. 
 </para>
+<para>
+The step-length (i.e. the degree of perturbation) is determined by the <varname>prior{m}.seq_gibbs.step</varname> parameter.
+</para>
+
+<para>
+For the 'uniform' and 'gaussian' type a priori models a step-length closer to 0 zeros imples a 'shorter' step, while a step-length close to 1, implies a 'longer' step-length. A step length of 1, wil generate a new independent realization of the prior, while a step length of 0, will return the same realization of the prior
+<screen>
+prior{m}.seq_gibbs.step=.1;
+[m2,prior]=sippi_prior(prior,m1);
+</screen>
+</para>
+
+<para>
+For the 'FFTMA', 'VISIM', 'CHOLESKY', 'SISIM', and 'SNESIM' type a priori models two types (defined in the <varname>prior{m}.seq_gibbs.type</varname> variable).
+</para>
+<para>
+The default 'type' is 2, defined as
 <screen>
 prior{m}.seq_gibbs.step=1;
 prior{m}.seq_gibbs.type=2;
 </screen>
+where the step length defines the percentage of the of model parameters (selected at random) defined in <varname>prior{im}</varname> is conditionally resampled. Thus, a step-length closer to 0 zeros imples a 'shorter' step, while a step-length close to 1, implies a 'longer' step-length.
+</para>
+<para>
+If <varname>prior{m}.seq_gibbs.step=1</varname>, then <varname>prior{m}.seq_gibbs.step</varname> defines the size of a square rectangle/cube which is to be conditionally resimulated using sequential Gibbbs ssampling.
+</para>
+
 </sect3>
 </sect2>
 
