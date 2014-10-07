@@ -16,7 +16,7 @@
 %       [m,prior]=sippi_prior_cholesky(prior,m);
 %       sippi_plot_prior(prior,m);
 %       caxis([8 12]);drawnow;
-%   end'.001 Nug(0) + 1 Gau(10)'
+%   end
 %
 %% Prior covariance model
 % The prior covarince model can be setup using

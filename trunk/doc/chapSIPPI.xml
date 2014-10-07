@@ -1,4 +1,4 @@
-<para>
+<para><link linkend="sec_ex_tomography">tomography example</link>
 This section contains information about how to use and control SIPPI, which requires one to   
 <itemizedlist mark='bullet'>
       <listitem>
@@ -27,13 +27,12 @@ This section contains information about how to use and control SIPPI, which requ
 A priori information is defined by the <varname>prior</varname> Matlab structure. Any number of different types of a priori models can be defined. For example a 1D uniform prior can be defined in <varname>prior{1}</varname>, and 2D Gaussian prior can be defined in <varname>prior{2}</varname>.   
 </para>
 <para>
-Once a prior data structure has been defined, a realization from the prior model can be generated using 
+Once a prior data structure has been defined (see examples below), a realization from the prior model can be generated using 
 <screen>
 m=sippi_prior(prior);
 </screen>
 The realization from the prior can be visualized using 
 <screen>
-sippi_plot_prior(prior);
 sippi_plot_prior(prior,m);
 </screen>
 A sample (many realizations) from the prior can be visualized using
@@ -42,12 +41,24 @@ m=sippi_plot_prior_sample(prior);
 </screen>
 </para>
 <para>
+All a priori model types in &sippi; allow to generate a new model in the vicinity of a current model using
+<screen>
+[m_new,prior]=sippi_prior(prior,m);
+</screen>
+in such a way that the prior model will be sampled if the process is repeated (see <link linkend="sec_seq_gibbs">Sequential Gibbs Sampling</link>).
+</para>
+
+
+
+
+<!--
+<para>
 Each prior type is defined by setting a number field in the <varname>prior</varname> Matlab structure. For example, an descriptive name (which is can be optionally set) describing the prior can be set in the <varname>name</varname> field, e.g.
 <screen>
 prior{1}.name='My Prior';
 </screen>
 </para>
-
+-->
 <sect2 xml:id="prior_types"><title>Types of a priori models</title>
 <para>
 Six types of a priori models are available, and can be selected by setting the <varname>type
@@ -63,7 +74,7 @@ The <link linkend="prior_uniform">UNIFORM</link> type prior specifies an uncorre
 The <link linkend="prior_gaussian">GAUSSIAN</link> type prior specifies a 1D generalized Gaussian model.
 </para>
 <para>
-The <link linkend="prior_fftma">FFTMA</link> type prior specifies a 1D-3D Gaussian type a prori model based on the FFT Moving Average method, whish is bery efficient for unconditional sampling,
+The <link linkend="prior_fftma">FFTMA</link> type prior specifies a 1D-3D Gaussian type a prori model based on the FFT Moving Average method, whish is bery efficient for unconditional sampling, and for defining a prior Gaussian model with variable/uncertain mean, variance,  ranges, and rotation.
 </para>
 <para>
 The <link linkend="prior_cholesky">CHOLESKY</link> type prior specifies a 1D-3D Gaussian tyype a priori model based on Cholesky decomposition of the covariance model,
@@ -188,6 +199,8 @@ sippi_plot_prior_sample(prior,1:ip,8000);
 </sect3>
 
 
+<!-- FFTMA -->
+
 <sect3 xml:id="prior_fftma"><title>FFTMA - 3D Gaussian model</title>
 <para>
 The FFT moving average method provides an efficient approach for computing unconditional realizations of a Gaussian random field.
@@ -252,6 +265,66 @@ prior{im}.o_nscore=o_nscore;
     </mediaobject>
 	
 </sect3>
+
+<!-- FFTMA - with variable gaussian model parameters-->
+
+<sect3 xml:id="prior_fftma_variable_par"><title>FFTMA - 3D Gaussian model wuth variable model properties</title>
+<para>
+The FFTMA method also allows treating the parameters defining the Gaussian model, such as the mean, variance, ranges and angles of rotation as a priori model parameters (that can be inferred as part of inversion, see e.g. <link linkend="sec_ex_prior_multi_fft_ma_cov">an example</link>).
+</para>
+<para>
+First a prior type defining the Gaussian model must be defined (exactly as listed <link linkend="prior_fftma">above</link>):
+<screen>
+im=im+1; 
+prior{im}.type='FFTMA';
+prior{im}.x=[0:.1:10]; % X array 
+prior{im}.y=[0:.1:20]; % Y array 
+prior{im}.m0=10;
+prior{im}.Cm='1 Sph(10,90,.25)';
+</screen>
+</para>
+<para>
+Now, all parameter such as the mean, variance, ranges and angles of rotations, can be randomized by defining a 1D a priori model type ('uniform' or 'gaussian'), and with a specific 'name' indicating the parameter (see <link linkend="sec_ex_prior_multi_fft_ma_cov">this example</link> for a complete list of names), and by assigning the <varname>prior_master</varname> field that points the prior model id for which the parameters should randomized.
+</para>
+<para> 
+For example the range along the direction of maximum continuty can be randomized by defining a prior entry named 'range_1', and settting the <varname>prior_master</varname> to point to the prior with id 1:
+<screen>
+im=2;
+prior{im}.type='uniform';
+prior{im}.name='range_1';
+prior{im}.min=2;
+prior{im}.max=14;
+prior{im}.prior_master=1;
+I this case the range is randomized following a uniform distribution U[2,14].
+</screen>
+</para>
+<para>
+Likewise, the first angle of rotation can be randomized using for example
+<screen>
+im=3;
+prior{im}.type='gaussian';
+prior{im}.name='ang_1';
+prior{im}.m0=90;
+prior{im}.std=10;
+prior{im}.prior_master=1;
+</screen>
+A sample from such a prior type model will thus show variability also in the range and angle of rotation, as seen here 
+<mediaobject>
+      <imageobject condition="web">
+        <imagedata fileref="figures/prior_reals_fftma_cov.png" width="100%" scalefit="1"/>
+      </imageobject>
+      <textobject><phrase></phrase></textobject>
+</mediaobject>
+
+
+</para>
+
+
+
+
+</sect3>
+
+<!-- VISIM -->
 
 <sect3 xml:id="prior_visim"><title>VISIM</title>
 <para>
@@ -329,20 +402,23 @@ The CHOLESKY model is can be defined almost identically to the <link linkend="pr
 </para>
 <screen>
 im=1;
-prior{im}.type='FFTMA';
-prior{im}.x=[0:1:100];
-prior{im}.y=[0:1:100];
+prior{im}.type='CHOLESKY';
+prior{im}.x=[0:2:100];
+prior{im}.y=[0:2:100];
 prior{im}.m0=10;
 prior{im}.Cm='1 Sph(10)';
 </screen>
    <mediaobject>
       <imageobject condition="web">
-        <imagedata fileref="figures/prior_fftma_2d_gaussian.png" width="100%" scalefit="1"/>
+        <imagedata fileref="figures/prior_cholesky_2d.png" width="100%" scalefit="1"/>
       </imageobject>
       <textobject><phrase></phrase></textobject>
     </mediaobject>
 <para>
 the use of <varname>d_target</varname> to specify target distributions is also possible, using the same style as for the <link linkend="prior_fftma">FFTMA</link> type prior.
+</para>
+<para>
+Be warned that the 'cholesky' type prior model is much more memory demanding than the 'fftma' and 'visim' type prior models, as a full nxyz*nxyz covariance model needs to setup (and inverted). Thus, the 'cholesky' type prior is mostly applicable when the number of model parameters (nx*ny*nx) is small.
 </para>
 
 </sect3>

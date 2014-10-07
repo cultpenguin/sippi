@@ -58,7 +58,7 @@ sippi_plot_data(d,data);
 options.mcmc.nite=1000000;
 options.mcmc.i_plot=1000;
 options.mcmc.i_sample=500;
-options.mcmc.nite=500000;
+options.mcmc.nite=100000;
 options.mcmc.i_plot=10000;
 options.mcmc.i_sample=100;
 randn('seed',2);rand('seed',2);

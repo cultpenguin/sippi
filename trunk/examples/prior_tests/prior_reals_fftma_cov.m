@@ -4,31 +4,30 @@
 clear all;
 try;close(12);end
 try;close(13);end
-im=1;
-prior{im}.type='gaussian';
-prior{im}.name='range_1';
-prior{im}.m0=10;
-prior{im}.std=4;
-prior{im}.norm=80;
-prior{im}.prior_master=3;
 
-im=2;
-prior{im}.type='gaussian';
-prior{im}.name='ang_1';
-prior{im}.m0=90;
-prior{im}.std=50;
-prior{im}.norm=80;
-prior{im}.prior_master=3;
+im=0;
 
-im=3; 
+im=im+1; 
 prior{im}.type='FFTMA';
 prior{im}.x=[0:.1:10]; % X array 
 prior{im}.y=[0:.1:20]; % Y array 
 prior{im}.m0=10;
-prior{im}.Va='1 Sph(10,90,.25)';
-prior{im}.fftma_options.constant_C=0;
+prior{im}.Cm='1 Sph(10,90,.25)';
 
-prior=sippi_prior_init(prior);
+im=im+1;
+prior{im}.type='uniform';
+prior{im}.name='range_1';
+prior{im}.min=2;
+prior{im}.max=14;
+prior{im}.prior_master=1;
+
+im=im+1;
+prior{im}.type='gaussian';
+prior{im}.name='ang_1';
+prior{im}.m0=90;
+prior{im}.std=10;
+prior{im}.prior_master=1;
+
 
 %%
 randn('seed',4);
@@ -36,8 +35,8 @@ figure(12);clf
 for i=1:5;
     m=sippi_prior(prior);
     subplot(1,5,i);
-    imagesc(prior{3}.x,prior{3}.y,m{3});
-    caxis([8 12])
+    imagesc(prior{1}.x,prior{1}.y,m{1});
+    %caxis([8 12])
     axis image
     %xlabel('X')
     %ylabel('Y')
