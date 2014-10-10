@@ -464,7 +464,7 @@ for im=im_array;
             if nargin==1
                 [m_p,p]=feval(m_file,p);
             else
-                m_c=m_current{im};
+                m_c{1}=m_current{im};
                 [m_p,p]=feval(m_file,p,m_c);
             end
             m_propose{im}=m_p{1};
