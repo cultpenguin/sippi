@@ -51,11 +51,11 @@ suptitle(sprintf('FFT-MA with varying covariance properties'))
 % 
 randn('seed',4);rand('seed',4);
 figure(13);clf
-prior{2}.seq_gibbs.step=.5;
-prior{3}.seq_gibbs.step=.25;
+prior{2}.seq_gibbs.step=0;.5;
+prior{3}.seq_gibbs.step=0;.25;
 
 prior{1}.seq_gibbs.type=1;;
-prior{1}.seq_gibbs.step=10;;
+prior{1}.seq_gibbs.step=5;;
 prior{1}.perturb=1;
 [m,prior]=sippi_prior(prior);
 for i=1:5;
