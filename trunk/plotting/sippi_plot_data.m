@@ -5,9 +5,14 @@
 %
 function sippi_plot_data(d,data);
 
+
 for id=1:length(d);
     
     figure_focus(20+id);
+    
+    if ~isfield(data{id},'i_use')
+        data{id}.i_use=1:1:length(data{id}.d_obs);
+    end
     
     plot(d{id},'k-');
     %wiggle(d{id});
