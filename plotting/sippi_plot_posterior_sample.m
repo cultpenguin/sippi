@@ -317,7 +317,7 @@ for im=im_arr;
         met{im}=etype_mean;
         sippi_plot_prior(prior,met,im,0,f_id);colorbar off;
         title('Posterior mean')
-        caxis(cax);
+        try;caxis(cax);end
         cb=colorbar_shift;
         set(get(cb,'Ylabel'),'String','Sample Mean')
         
