@@ -62,7 +62,7 @@ $SIPPI/examples/manuscript_examples/tomography
   
 ## Releases history
 
-#1.02 (07-10-2014)
+#1.02 (07-10-2014) [rev 235]
 Bug fix (sippi_plot_posterior,  prior{ip}.cax need not be set)
 
 #1.01 (09-07-2014)
