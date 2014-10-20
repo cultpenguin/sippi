@@ -62,6 +62,14 @@ $SIPPI/examples/manuscript_examples/tomography
   
 ## Releases history
 
+#1.02 (07-10-2014)
+Bug fix (sippi_plot_posterior,  prior{ip}.cax need not be set)
+
+#1.01 (09-07-2014)
+LUSIM type a priori model
+UNIFORM type a priori model
+bug fixes
+
 #1.00 (09-07-2014)
 Multiple updates, 
 * new figures
