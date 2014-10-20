@@ -16,9 +16,9 @@ function [options,data,prior,forward,m_current]=sippi_metropolis(data,prior,forw
 % options : 
 %    options.txt [string] : string to be used as part of all output files
 %
-%    options.mcmc.nite [1]  : Number if iterations
-%    options.mcmc.i_plot [1]: Number of iterations between updating plots
-%    options.mcmc.i_sample=: Number of iterations between saving model to disk
+%    options.mcmc.nite=1000;   % [1] : Number if iterations
+%    options.mcmc.i_plot=10;  % [1]: Number of iterations between updating plots
+%    options.mcmc.i_sample500; % : Number of iterations between saving model to disk
 %
 %    options.mcmc.m_init : Manually chosen starting model
 %    options.mcmc.m_ref  : Reference known target model
