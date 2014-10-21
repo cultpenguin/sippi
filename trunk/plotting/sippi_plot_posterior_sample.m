@@ -414,7 +414,11 @@ for im=im_arr;
                 c_reals=reals_all(c_i1:size(reals_all,1),:);
             end
             
-            c=xcorr(c_reals-mean(c_reals));
+            
+            % compute cross correlation
+            r=c_reals-mean(c_reals);
+            c=conv(r,flip(r));
+            
             c=c(length(c_reals):end);
             c=c./max(c);
             xc=[0:1:(length(c))-1].*options.mcmc.i_sample;
