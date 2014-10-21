@@ -127,7 +127,10 @@ if i1<length(mcmc.logL);
     set(gca,'FontSize',options.plot.axis.fontsize);
     
     ii=i1:length(mcmc.logL);
-    c=xcorr(mcmc.logL(ii)-mean(mcmc.logL(ii)));
+    % compute cross correlation 
+    larr=mcmc.logL(ii)-mean(mcmc.logL(ii));
+    c=conv(larr,flip(larr));
+    
     c=c(length(ii):end);
     c=c./max(c);
     xc=[0:1:(length(c))-1];
