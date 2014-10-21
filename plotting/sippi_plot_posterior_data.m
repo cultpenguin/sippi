@@ -56,16 +56,15 @@ nd=length(data);
 try
     %%
     for id=1:nd;
-        
         clear m_post
         N=15;
         skip_seq_gibbs=options.plot.skip_seq_gibbs;
         for im=1:length(prior);
-
             %[reals,etype_mean,etype_var,reals_all,ite_reals]=sippi_get_sample(im,n_reals,skip_seq_gibbs,data,prior,options);
     
             
             [reals]=sippi_get_sample(im,N+1,skip_seq_gibbs,data,prior,options);
+            
             %[reals]=sippi_get_sample(data,prior,id,im,N+1,options);
             for j=1:N;
                 if ndims(reals)==2;
@@ -88,11 +87,20 @@ try
             [d,forward,prior,data]=sippi_forward(m,forward,prior,data);
             [logL,L,data]=sippi_likelihood(d,data);            
         end
-        if isfield(data{id},'d0');
-            noise_real=gaussian_simulation_cholesky(data{1}.d0,data{id}.CD,N);
-        else
-            noise_real=gaussian_simulation_cholesky(0,data{id}.CD,N);
+        if ~isfield(data{id},'CD')
+            % ONLY WORKS WHEN d_std OT d_var IS SET AS AN ARRAY OF SIZE
+            % d_obs
+            if isfield(data{id},'d_var')
+                data{id}.CD=diag(data{id}.d_var);
+            else isfield(data{id},'d_std')
+                data{id}.CD=diag(data{id}.d_std.^2);
+            end
+                
         end
+        if ~isfield(data{id},'d0');
+            data{id}.d0=0;
+        end
+        noise_real=gaussian_simulation_cholesky(data{1}.d0,data{id}.CD,N);
         noise_real=noise_real(data{id}.i_use,:);
         %% GET DATA AND RESIDUAL FOR 5 REALIZATIONS FROM POST
         for i=1:N;

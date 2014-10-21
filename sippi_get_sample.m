@@ -38,8 +38,14 @@ if ~exist('id','var');id=1;end
 if ~exist('im','var');im=1;end
 if ~exist('options','var');
     options.null='';
+end
+if ~isfield(options,'mcmc');
+    options.mcmc.null='';
+end
+if ~isfield(options.mcmc,'i_sample');
     options.mcmc.i_sample=1;
 end
+
 
 if ~exist('skip_seq_gibbs','var');
     skip_seq_gibbs=1; % only consider posterior realization AFTER seq gibbs has finished
