@@ -60,12 +60,9 @@ try
         N=15;
         skip_seq_gibbs=options.plot.skip_seq_gibbs;
         for im=1:length(prior);
-            %[reals,etype_mean,etype_var,reals_all,ite_reals]=sippi_get_sample(im,n_reals,skip_seq_gibbs,data,prior,options);
-    
             
             [reals]=sippi_get_sample(im,N+1,skip_seq_gibbs,data,prior,options);
             
-            %[reals]=sippi_get_sample(data,prior,id,im,N+1,options);
             for j=1:N;
                 if ndims(reals)==2;
                     m_post{j}{im}=reals(:,j+1);
