@@ -43,6 +43,7 @@ if ~isfield(options,'mcmc');
     options.mcmc.null='';
 end
 if ~isfield(options.mcmc,'i_sample');
+    skip_seq_gibbs=0;
     options.mcmc.i_sample=1;
 end
 
