@@ -24,7 +24,11 @@ prior{im}.std=4;
 prior{im}.norm=80;
 prior{im}.m_true=m_ref{2};
 
-
+%% TEST SETUP
+m=sippi_prior(prior);
+[d,forward,prior,data]=sippi_forward(m,forward,prior,data)
+[logL]=sippi_likelihood(d,data);
+return
 %% Perform extended Metropolis sampling 
 % set some MCMC options.
 options.mcmc.nite=40000;

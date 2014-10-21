@@ -129,7 +129,6 @@ for im=im_arr;
     
     %% PLOT LAST ACCEPTED MODEL
     try
-        key
         try
             sippi_plot_prior(prior,m_current,im);
         catch

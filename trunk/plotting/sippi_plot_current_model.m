@@ -5,6 +5,7 @@
 %
 function sippi_plot_current_model(mcmc,data,d,m_current,prior);
 
+
 col=[
     0 0 0
     1 0 0
@@ -68,7 +69,11 @@ subplot(1,3,3);
 
 for id=1:length(data);
     %try
-    [h,hx]=hist(data{id}.d_obs(data{id}.i_use)-d{id}(:),30);
+    try
+        [h,hx]=hist(data{id}.d_obs(data{id}.i_use)-d{id}(:),30);
+    catch
+        [h,hx]=hist(data{id}.d_obs(data{id}.i_use)-d{id}(:)',30);
+    end
     bar(hx,[h],'EdgeColor',col(id+1,:),'FaceColor','none','BarWidth',1)
 
     if isfield(data{id},'Cd')
