@@ -62,6 +62,10 @@ $SIPPI/examples/manuscript_examples/tomography
   
 ## Releases history
 
+#1.03 (22-10-2014) [240]
+Removed the use of xcorr from signal processing toolbox
+Update sippi_get_sample, and most sippi_plot_posterior_* routines
+
 #1.02 (07-10-2014) [rev 235]
 Bug fix (sippi_plot_posterior,  prior{ip}.cax need not be set)
 
