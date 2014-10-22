@@ -153,7 +153,7 @@ for k=1:(length(im_onedim)-1)
 end
 
 %% 2d marginals (image) on one plot
-if pl_marg2d_image_combined==1;
+if (pl_marg2d_image_combined==1)&(length(im_onedim)>0);
     fn=figure_focus(71);clf;set_paper('landscape');
     for j=1:(n-1)
         for k=((1)+j):n
@@ -212,7 +212,7 @@ if pl_marg2d_image_combined==1;
 end
 
 %% 2d marginals (scatter) on one plot
-if pl_marg2d_scatter_combined==1;
+if (pl_marg2d_scatter_combined==1)&(length(im_onedim)>0);
     fn=figure_focus(72);clf;set_paper('landscape');
     for j=1:(n-1)
         for k=((1)+j):n
