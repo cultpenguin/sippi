@@ -109,7 +109,7 @@ for im=im_arr;
     
     
     skip_seq_gibbs=options.plot.skip_seq_gibbs;
-    [reals,etype_mean,etype_var,reals_all,ite_reals]=sippi_get_sample(im,n_reals(im),skip_seq_gibbs,data,prior,options);
+    [reals,etype_mean,etype_var,reals_all,ite_reals]=sippi_get_sample('.',im,n_reals(im),skip_seq_gibbs);
     
     m_post{im}=reals;
     

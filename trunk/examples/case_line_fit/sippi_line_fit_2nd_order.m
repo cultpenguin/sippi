@@ -42,5 +42,5 @@ options.mcmc.i_plot=2500;
 options.txt='case_line_fit_2nd_order';
 
 [options]=sippi_metropolis(data,prior,forward,options);
-sippi_plot_prior_sample(options.txt);
+sippi_plot_prior(options.txt);
 sippi_plot_posterior(options.txt);
