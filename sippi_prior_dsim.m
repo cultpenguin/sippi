@@ -31,6 +31,14 @@ end
 
 
 prior{ip}.options.null='';
+if ~isfield(prior{ip}.options,'precalc_dist_full');
+    prior{ip}.options.precalc_dist_full=0;
+    try 
+        if prod(prior{1}.dim)<=(80*80)
+            prior{ip}.options.precalc_dist_full=1;
+        end
+    end
+end
 
 if nargin == 1
     if prior{ip}.ndim==1;

@@ -1,8 +1,8 @@
-function [reals_mat,etype_mean,etype_var,reals_all,ite_num]=sippi_get_sample(im,n_reals,skip_seq_gibbs,data,prior,options);
+function [reals_mat,etype_mean,etype_var,reals_all,ite_num]=sippi_get_sample(wd,im,n_reals,skip_seq_gibbs);
 % sippi_get_sample: Get a posterior sample
 %
 % Call :
-%  [reals,etype_mean,etype_var,reals_all,reals_ite]=sippi_get_sample(im,n_reals,skip_seq_gibbs,data,prior,options);
+%  [reals,etype_mean,etype_var,reals_all,reals_ite]=sippi_get_sample(wordking_directory,im,n_reals,skip_seq_gibbs);
 %
 %    im: A priori model type
 %    n_reals: Number of realizations to return
@@ -21,13 +21,25 @@ function [reals_mat,etype_mean,etype_var,reals_all,ite_num]=sippi_get_sample(im,
 %
 %
 
+start_dir=pwd;
 
-if nargin<4;
-    im_chosen=im;
+if nargin<1
+    wd=pwd;
+end
+if nargin<2
+    im=1;
+end
+
+if nargin<5;
+    old.im=im;
+    old.start_dir=start_dir;
     % LOAD FROM MAT FILES
+    cd(wd);
     [p,matfile]=fileparts(pwd);
     load(matfile);
-    im=im_chosen;
+    im=old.im;
+    start_dir=old.start_dir;   
+    cd(start_dir);
 end
 
 
@@ -42,9 +54,11 @@ end
 if ~isfield(options,'mcmc');
     options.mcmc.null='';
 end
+
 if ~isfield(options.mcmc,'i_sample');
-    skip_seq_gibbs=0;
+    % when using sippi_rejections
     options.mcmc.i_sample=1;
+    skip_seq_gibbs=0;
 end
 
 
@@ -163,4 +177,3 @@ for i=1:n_reals
         reals_mat(:,i)=reals(i,:);
     end
 end
-

@@ -52,7 +52,6 @@ try;cd(plotdir);end
 
 %%
 nd=length(data);
-
 try
     %%
     for id=1:nd;
@@ -61,7 +60,7 @@ try
         skip_seq_gibbs=options.plot.skip_seq_gibbs;
         for im=1:length(prior);
             
-            [reals]=sippi_get_sample(im,N+1,skip_seq_gibbs,data,prior,options);
+            [reals]=sippi_get_sample('.',im,N+1,skip_seq_gibbs);
             
             for j=1:N;
                 if ndims(reals)==2;
@@ -76,23 +75,30 @@ try
         for j=1:N
             [d_real{j}]=sippi_forward(m_post{j},forward,prior,data);
         end
-        
-        
         %% PLOT REALIZATOIN OF NOISE
-        if ~isfield(data{id},'CD')
+        if ~isfield(data{id},'CD');
             m=sippi_prior(prior);
             [d,forward,prior,data]=sippi_forward(m,forward,prior,data);
             [logL,L,data]=sippi_likelihood(d,data);            
         end
+        
         if ~isfield(data{id},'CD')
             % ONLY WORKS WHEN d_std OT d_var IS SET AS AN ARRAY OF SIZE
             % d_obs
-            if isfield(data{id},'d_var')
-                data{id}.CD=diag(data{id}.d_var);
-            else isfield(data{id},'d_std')
-                data{id}.CD=diag(data{id}.d_std.^2);
-            end
-                
+            nd=length(data{id}.d_obs);
+            if isfield(data{id},'d_var');
+                if length(data{id}.d_var)==1;
+                    data{id}.CD=diag(ones(1,nd)).*data{id}.d_var;
+                else
+                    data{id}.CD=diag(data{id}.d_var);
+                end
+            else isfield(data{id},'d_std');
+                if length(data{id}.d_std)==1;
+                    data{id}.CD=diag(ones(1,nd)).*data{id}.d_std.^2;
+                else
+                    data{id}.CD=diag(data{id}.d_std.^2);
+                end
+            end         
         end
         if ~isfield(data{id},'d0');
             data{id}.d0=0;
