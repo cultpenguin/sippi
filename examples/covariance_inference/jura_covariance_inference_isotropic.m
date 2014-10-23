@@ -8,29 +8,52 @@ clear all;close all
 [d_prediction,d_transect,d_validation,h_prediction,h_transect,h_validation,x,y,pos_est]=jura;
 ix=1;
 iy=2;
-id=6;
-
+id=5;
+name=h_prediction{id};
 % get the position of the data
 pos_known=[d_prediction(:,[ix iy])];  
 
-% perform normal score transformation of tha original data
-[d,o_nscore]=nscore(d_prediction(:,id));
-h_tit=h_prediction{id};
-
+use_nscore=1;
+if use_nscore==0;
+    d=d_prediction(:,id);
+else
+    % perform normal score transformation of tha original data
+    [d,o_nscore]=nscore(d_prediction(:,id));
+    h_tit=h_prediction{id};
+    name=[name,'_nscore'];
+end
 %% SETUP A PRIORI MODEL / ONLY RANGE --> ISTROPIC COVARIANCE MODEL
 im=0;
 % A close to uniform distribution of the range, U[0;3].
 im=im+1;
-prior{im}.type='gaussian';
+prior{im}.type='uniform';
 prior{im}.name='range_1';
 prior{im}.min=0.01;
 prior{im}.max=3;
 prior{im}.norm=100;
 
+im=im+1;
+prior{im}.type='uniform';
+prior{im}.name='range_2';
+prior{im}.min=0.01;
+prior{im}.max=3;
+
+im=im+1;
+prior{im}.type='uniform';
+prior{im}.name='ang_1';
+prior{im}.min=0;
+prior{im}.max=90;
+
+im=im+1;
+prior{im}.type='uniform';
+prior{im}.name='nugget_fraction';
+prior{im}.min=0;
+prior{im}.max=1;
+
 
 %% DATA
 data{1}.d_obs=d; % observed data
-data{1}.d_std=0;.5; % uncertainty of observed data (in form of standard deviation of the noise)
+data{1}.d_std=0.1*std(d);.4; % uncertainty of observed data (in form of standard deviation of the noise)
 %data{1}.i_use=1:1:30;
 
 %% FORWARD
@@ -40,16 +63,21 @@ forward.pos_known=pos_known;
 forward.stabilize=0;
 % initial choice of N(m0,Cm), mean and sill are 0, and 1, due
 % due to normal score
-forward.m0=0;
-forward.Cm='1 Sph(2)';
+forward.m0=mean(d);
+forward.Cm=sprintf('%3.1f Sph(2)',var(d));
 
 
 %% METROPOLIS SAMPLING
-options.mcmc.nite=5000;
-options.mcmc.i_plot=100;
+for ip=1:length(prior);
+    prior{ip}.seq_gibbs.i_update_step_max=3000;
+end
+options.mcmc.nite=100000;
+options.mcmc.i_plot=1000;
 options.mcmc.i_sample=10;
+options.txt=name;
 [options,data,prior,forward,m_current]=sippi_metropolis(data,prior,forward,options)
 
+sippi_plot_prior(options.txt);
 sippi_plot_posterior(options.txt);
 
 return

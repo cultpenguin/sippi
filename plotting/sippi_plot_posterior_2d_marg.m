@@ -61,6 +61,15 @@ for i=1:length(prior)
 end
 
 n=length(im_onedim);
+
+if n==0
+    pl_marg2d_scatter=0;
+    pl_marg2d_image=0;
+    pl_marg2d_scatter_combined=0;
+    pl_marg2d_image_combined=0;
+    pl_marg2d_hpd=0;
+end
+
 j=0;
 
 %% GET REALS
