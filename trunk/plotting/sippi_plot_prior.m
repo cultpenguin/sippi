@@ -155,7 +155,7 @@ for im=im_array;
                 disp(sprintf('%s could not plot model #%d',mfilename,im))
             end
         end
-        caxis(cax)
+        try;caxis(cax);end
         
         if isfield(prior{im},'name');
             title(prior{im}.name,'interpreter','none')
