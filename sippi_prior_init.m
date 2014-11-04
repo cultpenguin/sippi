@@ -194,6 +194,12 @@ for im=1:length(prior);
         end
     end
     
+    %% UNIFORM OPTIONS
+    if (strcmp(upper(prior{im}.type),'UNIFORM'))
+        if ~isfield(prior{im},'min'); prior{im}.min=0;end
+        if ~isfield(prior{im},'max'); prior{im}.max=1;end
+    end
+    
     %% SISIM OPTIONS
     if (strcmp(upper(prior{im}.type),'SISIM'))
         if ~isfield(prior{im},'S');

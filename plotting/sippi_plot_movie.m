@@ -80,7 +80,7 @@ Quality=90;
 for im=im_array
     
     ndim=length(find(prior{im}.dim>1));
-    if ndim>1 % ONLY PLOT MOVIE FOR 2D and 3D PARAMETERS
+    if ndim>0 % ONLY PLOT MOVIE FOR 1D, 2D and 3D PARAMETERS
         
         N=prod(prior{im}.dim);
         
@@ -137,7 +137,7 @@ for im=im_array
                     sippi_plot_prior(prior,m,im);
                     text(.02,.02,sprintf('#%05d, posterior',i),'units','normalized')
                     drawnow;
-                    frame = getframe;
+                    frame = getframe(gcf);
                     writeVideo(writerObj,frame);
                 end
             end
@@ -171,7 +171,7 @@ for im=im_array
             sippi_plot_prior(prior,m,im);
             text(.02,.02,sprintf('#%05d, prior',i),'units','normalized')
             drawnow;
-            frame = getframe;
+            frame = getframe(gcf);
             writeVideo(writerObj,frame);
         end
         close(writerObj);
