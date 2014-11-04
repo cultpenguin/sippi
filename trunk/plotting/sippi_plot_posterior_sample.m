@@ -248,12 +248,15 @@ for im=im_arr;
         %ppp(options.plot.axis.width,options.plot.axis.height,options.plot.axis.fontsize,options.plot.axis.w0,options.plot.axis.h0);
         
     elseif ndim==1
+       
         plot(prior{im}.x,reals,'k-');
         hold on
         %plot(prior{im}.x,etype_mean,'r-','linewidth',2);
-        plot(prior{im}.x,quantile(reals',.025),'r--','linewidth',2);
-        plot(prior{im}.x,quantile(reals',.5),'r-','linewidth',2);
-        plot(prior{im}.x,quantile(reals',.975),'r--','linewidth',2);
+        if exist('quantile','file')
+            plot(prior{im}.x,quantile(reals',.025),'r--','linewidth',2);
+            plot(prior{im}.x,quantile(reals',.5),'r-','linewidth',2);
+            plot(prior{im}.x,quantile(reals',.975),'r--','linewidth',2);
+        end
         hold off
         xlabel('X')
         ylabel(prior{im}.name)
@@ -261,6 +264,14 @@ for im=im_arr;
         if isfield(prior{im},'cax');
             set(gca,'ylim',prior{im}.cax);
         end
+        
+        % PLOT REFERENCE IF IT EXISTS
+        if isfield(options.mcmc,'m_ref');
+            hold on
+            plot(prior{im}.x,options.mcmc.m_ref{im},'g.','MarkerSize',11,'LineWidth',3);
+            hold off
+        end
+        
         
     else
         if ax_lscape==1;
