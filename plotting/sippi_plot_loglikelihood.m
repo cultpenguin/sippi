@@ -52,11 +52,15 @@ if nargin>2
     hold off
 end
 
+% SCALE Y_AXIS
+n_int=100;
+i1=(max([1,length(logL)-n_int]));
+y_min=min(logL(i1:end));
+try
+    y_min=y_min-sqrt(N/2);
+end
+ylim=get(gca,'ylim');ylim(1)=y_min*2;set(gca,'ylim',ylim);
 
-smcmc=sort(logL);y_min=smcmc(ceil(length(logL)/100));
-ylim=get(gca,'ylim');
-%ylim(1)=y_min;
-set(gca,'ylim',ylim);
 grid on
      
 

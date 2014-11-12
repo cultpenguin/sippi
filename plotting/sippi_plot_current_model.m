@@ -50,6 +50,8 @@ try
     end
     
     sippi_plot_loglikelihood(mcmc.logL(1:mcmc.i),mcmc.acc(1:mcmc.i),N);
+   
+
 end
 
 subplot(1,3,2);

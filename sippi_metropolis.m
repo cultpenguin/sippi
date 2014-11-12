@@ -91,6 +91,8 @@ for im=1:nm
 end
 filename_mat=[options.txt,'.mat'];
 
+% SET DFAULT PLOTTING SETTINGS
+options=sippi_plot_defaults(options);
 
 
 %% INITIALIZE MCMC OPTIONS
@@ -240,10 +242,6 @@ for i=1:mcmc.nite;
     % SAMPLE PRIOR
     [m_propose,prior_propose] = sippi_prior(prior,m_current);
     
-    % optionaly plot all model proposals ?
-    % if mcmc.plot_all_proposed_models==1;
-    % sippi_plot_prior -->figure(12);imagesc(m_propose{2});axis image;drawnow;
-    % end 
     
     %% FORWARD PROBLEM
     [d,forward,prior_propose,data]=sippi_forward(m_propose,forward,prior_propose,data);
@@ -348,7 +346,7 @@ for i=1:mcmc.nite;
         catch
             disp(sprintf('%s : Could not plot current model info',mfilename))
         end
-        try;figure_focus(3);print('-dpng','current_status');end
+        try;figure_focus(3);print_muk('current_status',options.plot.hardcopy_types);end
         drawnow;
     end
 end
