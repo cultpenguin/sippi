@@ -80,3 +80,9 @@ if ~isfield(options.plot,'color_codes');
         ];
 end
 
+%% HARDCOPY types using print_mul, see print_mul for examples
+if ~isfield(options.plot,'hardcopy_types');
+    options.plot.hardcopy_types=0; % no hardcopy
+    %options.plot.hardcopy_types=1; % PNG hardcopy
+    options.plot.hardcopy_types=2; % PDF hardcopy
+end
