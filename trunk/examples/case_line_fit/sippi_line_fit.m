@@ -31,9 +31,9 @@ m=sippi_prior(prior);
 return
 %% Perform extended Metropolis sampling 
 % set some MCMC options.
-options.mcmc.nite=40000;
+options.mcmc.nite=2000;40000
 options.mcmc.i_sample=50;
-options.mcmc.i_plot=2500;
+options.mcmc.i_plot=200;2500
 options.txt='case_line_fit_1st_order';
 
 [options]=sippi_metropolis(data,prior,forward,options);

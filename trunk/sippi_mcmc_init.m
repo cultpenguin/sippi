@@ -7,7 +7,8 @@ function options=sippi_mcmc_init(options,prior);
 
 options.mcmc.null='';
 if ~isfield(options.mcmc,'nite');options.mcmc.nite=30000;end
-if ~isfield(options.mcmc,'i_sample');options.mcmc.i_sample=500;end
+if ~isfield(options.mcmc,'i_sample');options.mcmc.i_sample=100;end
+if ~isfield(options.mcmc,'i_save_workspace');options.mcmc.i_save_workspace=100*options.mcmc.i_sample;end
 if ~isfield(options.mcmc,'i_plot');options.mcmc.i_plot=50;end
 
 if ~isfield(options.mcmc,'accept_only_improvements');options.mcmc.accept_only_improvements=0;end

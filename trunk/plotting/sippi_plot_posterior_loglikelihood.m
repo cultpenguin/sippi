@@ -23,7 +23,7 @@ cwd=pwd;
 if nargin==0
     % LOAD FROM MAT FILES
     [p,matfile]=fileparts(pwd);
-    load(matfile);
+    load(matfile,'prior','data','mcmc');
     options.mcmc=mcmc;
 elseif nargin==1;
     if isstruct(options),
@@ -112,10 +112,10 @@ set(gca,'FontSize',options.plot.axis.fontsize)
 %xlim=get(gca,'xlim');
 
 set(gca,'xlim',[xlim(1) xlim(2)/20]);
-print_mul(sprintf('%s_logL_start',fname))
+print_mul(sprintf('%s_logL_start',fname),options.plot.hardcopy_types);
 
 set(gca,'xlim',[xlim(1) xlim(2)]);
-print_mul(sprintf('%s_logL',fname))
+print_mul(sprintf('%s_logL',fname),options.plot.hardcopy_types);
 
 
 
@@ -146,7 +146,7 @@ if i1<length(mcmc.logL);
     xlabel('iteration #')
     ylabel('autocorrelation of logL')
     set(gca,'FontSize',options.plot.axis.fontsize)
-    print_mul(sprintf('%s_logL_autocorr',fname))
+    print_mul(sprintf('%s_logL_autocorr',fname),options.plot.hardcopy_types)
 end
 
 

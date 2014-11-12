@@ -16,9 +16,12 @@ function [options,data,prior,forward,m_current]=sippi_metropolis(data,prior,forw
 % options : 
 %    options.txt [string] : string to be used as part of all output files
 %
-%    options.mcmc.nite=1000;   % [1] : Number if iterations
-%    options.mcmc.i_plot=10;  % [1]: Number of iterations between updating plots
-%    options.mcmc.i_sample500; % : Number of iterations between saving model to disk
+%    options.mcmc.nite=30000;   % [1] : Number if iterations
+%    options.mcmc.i_sample=100; % : Number of iterations between saving model to disk
+%    options.mcmc.i_plot=50;  % [1]: Number of iterations between updating plots
+%    options.mcmc.i_save_workspace=10000;  % [1]: Number of iterations between
+%                                            saving the complete workspace
+%    options.mcmc.i_sample=100; % : Number of iterations between saving model to disk
 %
 %    options.mcmc.m_init : Manually chosen starting model
 %    options.mcmc.m_ref  : Reference known target model
@@ -125,7 +128,7 @@ m_current=m_init;
 
 %% INITIAL LIKELIHOODS
 
-[d_init,forward,prior,data,options]=sippi_forward(m_init,forward,prior,data,options);
+[d_init,forward,prior,data]=sippi_forward(m_init,forward,prior,data);
     
 %% Initialize
 data_init=data;
@@ -147,12 +150,7 @@ t_prior=toc;
 clear m_tmp prior_tmp;
 
 % COMPUTE THE TIME OF ONE CALL TO SIPPI_FORWARD
-tic
-if isfield(forward,'forward_function');
-    [d_init,forward,prior,data]=feval(forward.forward_function,m_init,forward,prior,data,options);
-else
-    [d_init,forward,prior,data,options]=sippi_forward(m_init,forward,prior,data,options);
-end
+[d_init,forward,prior,data]=sippi_forward(m_init,forward,prior,data);
 d_current=d_init;
 t_data=toc;
 
@@ -248,12 +246,7 @@ for i=1:mcmc.nite;
     % end 
     
     %% FORWARD PROBLEM
-    % solve forward problem, and compute likelihood
-    %if isfield(forward,'forward_function');
-    %    [d,forward,prior_propose,data]=feval(forward.forward_function,m_propose,forward,prior_propose,data);
-    %else
-    [d,forward,prior_propose,data,options]=sippi_forward(m_propose,forward,prior_propose,data,options);
-    %end
+    [d,forward,prior_propose,data]=sippi_forward(m_propose,forward,prior_propose,data);
     do_anneal=0;
     if isfield(mcmc,'anneal');
         if (i>=mcmc.anneal.i_begin)&(i<=mcmc.anneal.i_end)
@@ -285,18 +278,14 @@ for i=1:mcmc.nite;
         Pacc=(Pacc>=1); %% Pacc = 1 if Pacc>=1, else Pacc=0;
     end
     
-    %%m_propose
-    %%prior_propose{2}.Va
-    %%prior_propose{2}.range_1
-    %%
-    %%figure_focus(17);imagesc(m_propose{2});axis image;drawnow;
-    %%oard
-  
     % Optionally accept all proposed models
     if (mcmc.accept_all==1), Pacc=1; end
     
+    forward.last_proposed_model_accept=0; % 
     if Pacc>rand(1)
         % ACCEPT MODEL
+        forward.last_proposed_model_accept=1;
+        
         if ((i/i_update_txt)==round(i/i_update_txt))
             [t_end_txt,t_left_seconds]=time_loop_end(t0,i,mcmc.nite);
             disp(sprintf('%06d/%06d (%10s): acc %5g %5g ',mcmc.i,mcmc.nite,t_end_txt,logL_current,logL_propose))
@@ -344,7 +333,7 @@ for i=1:mcmc.nite;
         end
     end
     % SAVE WORKSPACE
-    if ((mcmc.i/(100*mcmc.i_sample))==round( mcmc.i/(100*mcmc.i_sample) ))
+    if ((mcmc.i/(mcmc.i_save_workspace))==round( mcmc.i/(mcmc.i_save_workspace) ))
         try
             save(filename_mat)
         catch
