@@ -1,8 +1,9 @@
 % sippi_forward_linefit Line fit forward solver for SIPPI 
 %
-% [d,forward,prior,data]=sippi_forward_linefit(m,forward,prior,data);
+% [d,forward,prior,data]=sippi_forward_linefit(m,forward,prior,data,options);
+% [d,forward,prior,data]=sippi_forward_linefit(m,forward);
 %
-function [d,forward,prior,data]=sippi_forward_linefit(m,forward,prior,data);
+function [d,forward,prior,data,options]=sippi_forward_linefit(m,forward,prior,data,options);
 
 if length(m)==1;
     d{1}=m{1};
