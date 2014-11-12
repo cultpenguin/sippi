@@ -4,14 +4,16 @@
 % forward.forward_function
 %
 % Call:
-%   [d,forward,prior,data]=sippi_forward(m,forward,prior,data,id,im)
+%   [d,forward,prior,data]=sippi_forward(m,forward)
 %
-function [d,forward,prior,data]=sippi_forward(m,forward,prior,data,id,im)
+% Optional: 
+%   [d,forward,prior,data]=sippi_forward(m,forward,prior)
+%   [d,forward,prior,data]=sippi_forward(m,forward,prior,data)
+%   [d,forward,prior,data]=sippi_forward(m,forward,prior,data,options)
+%
+function [d,forward,prior,data,options]=sippi_forward(m,forward,prior,data,options)
 
-%if nargin<4;    forward.null='';end
 if nargin<4;    data{1}.null='';end
-%if nargin<5;    id=1;end
-%if nargin<6;    im=1;end
 
 % make sure to initilize the prior if it has not allready been done
 % TMH: can this be ignored?
@@ -30,9 +32,7 @@ if isfield(forward,'forward_function');
     elseif nargin==4
         [d,forward,prior,data]=feval(forward.forward_function,m,forward,prior,data);
     elseif nargin==5
-        [d,forward,prior,data]=feval(forward.forward_function,m,forward,prior,data,id);
-    else
-        [d,forward,prior,data]=feval(forward.forward_function,m,forward,prior,data,id,im);
+        [d,forward,prior,data,options]=feval(forward.forward_function,m,forward,prior,data,options);
     end
 else
     disp(sprintf('%s : No forward_function specified in ''forward'' structure',mfilename))

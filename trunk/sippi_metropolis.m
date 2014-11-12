@@ -124,7 +124,8 @@ m_current=m_init;
 
 
 %% INITIAL LIKELIHOODS
-[d_init,forward,prior,data]=sippi_forward(m_init,forward,prior,data);
+
+[d_init,forward,prior,data,options]=sippi_forward(m_init,forward,prior,data,options);
     
 %% Initialize
 data_init=data;
@@ -148,9 +149,9 @@ clear m_tmp prior_tmp;
 % COMPUTE THE TIME OF ONE CALL TO SIPPI_FORWARD
 tic
 if isfield(forward,'forward_function');
-    [d_init,forward,prior,data]=feval(forward.forward_function,m_init,forward,prior,data);
+    [d_init,forward,prior,data]=feval(forward.forward_function,m_init,forward,prior,data,options);
 else
-    [d_init,forward,prior,data]=sippi_forward(m_init,forward,prior,data);
+    [d_init,forward,prior,data,options]=sippi_forward(m_init,forward,prior,data,options);
 end
 d_current=d_init;
 t_data=toc;
@@ -251,7 +252,7 @@ for i=1:mcmc.nite;
     %if isfield(forward,'forward_function');
     %    [d,forward,prior_propose,data]=feval(forward.forward_function,m_propose,forward,prior_propose,data);
     %else
-    [d,forward,prior_propose,data]=sippi_forward(m_propose,forward,prior_propose,data);
+    [d,forward,prior_propose,data,options]=sippi_forward(m_propose,forward,prior_propose,data,options);
     %end
     do_anneal=0;
     if isfield(mcmc,'anneal');
@@ -343,7 +344,7 @@ for i=1:mcmc.nite;
         end
     end
     % SAVE WORKSPACE
-    if ((mcmc.i/(10*mcmc.i_sample))==round( mcmc.i/(10*mcmc.i_sample) ))
+    if ((mcmc.i/(100*mcmc.i_sample))==round( mcmc.i/(100*mcmc.i_sample) ))
         try
             save(filename_mat)
         catch

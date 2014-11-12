@@ -18,10 +18,6 @@ pl_2d_marg=1;
 pl_data=1;
 pl_movie=1;
 
-if ~exist('mcmc','var');
-    pl_logL=0;
-    pl_movie=0;
-end
 cwd=pwd;
 
 
@@ -50,7 +46,6 @@ if exist('m_est','var');options.m_est=m_est;end
 if exist('Cm_est','var');;options.Cm_est=Cm_est;end
 
 % SET DFAULT PLOTTING SETTINGS
-
 options=sippi_plot_defaults(options);
 
 plotdir=pwd;
@@ -60,6 +55,12 @@ end
 
 %% PERHAPS SET THE OPTIONS IN A SEPERATE MFILE
 prior=sippi_prior_init(prior);
+
+if ~exist('mcmc','var');
+    pl_logL=0;
+    pl_movie=0;
+end
+
 
 %% logL CURVE, XCORR ANALYSIS
 if pl_logL==1;
