@@ -35,10 +35,12 @@ prior{im}.m_true=m_ref{3};
 
 
 %% Perform extended Metropolis sampling 
+options.plot.hardcopy_types=0; % NO HARDCOPY 
 % set some MCMC options.
 options.mcmc.nite=40000;
 options.mcmc.i_sample=50;
-options.mcmc.i_plot=2500;
+options.mcmc.i_plot=100;
+options.mcmc.m_ref=m_ref;
 options.txt='case_line_fit_2nd_order';
 
 [options]=sippi_metropolis(data,prior,forward,options);
