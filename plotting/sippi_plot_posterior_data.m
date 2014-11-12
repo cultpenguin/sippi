@@ -126,7 +126,7 @@ try
             set(gca,'FontSize',options.plot.axis.fontsize);
             xlabel('#')
             ylabel(sprintf('data #%d',id))
-            print_mul(sprintf('%s_id%d_post',fname,id))
+            print_mul(sprintf('%s_id%d_post',fname,id),options.plot.hardcopy_types)
         end
         %%
         if pl_data_res==1;
@@ -138,7 +138,7 @@ try
             xlabel('realization #')
             ylabel('data #')
             title('Data residual')
-            print_mul(sprintf('%s_id%d_res',fname,id))
+            print_mul(sprintf('%s_id%d_res',fname,id),options.plot.hardcopy_types)
         end
         %%
         if pl_noise_real==1;
@@ -150,7 +150,7 @@ try
             xlabel('realization #')
             ylabel('data #')
             title('Noise realization')
-            print_mul(sprintf('%s_id%d_noise',fname,id))
+            print_mul(sprintf('%s_id%d_noise',fname,id),options.plot.hardcopy_types)
         end
         %%
         if pl_noise_data_real==1;
@@ -165,7 +165,7 @@ try
             xlabel('realization #')
             ylabel('data #')
             title('Realizations of noise model (black) and posterior data residuals (red)')
-            print_mul(sprintf('%s_id%d_res_noise',fname,id))
+            print_mul(sprintf('%s_id%d_res_noise',fname,id),options.plot.hardcopy_types)
         end
         %%
         if pl_cd==1;
@@ -183,7 +183,7 @@ try
             xlabel('data #')
             ylabel('data #')
             title(sprintf('data{%d}.CD',id));
-            print_mul(sprintf('%s_id%d_CD',fname,id))
+            print_mul(sprintf('%s_id%d_CD',fname,id),options.plot.hardcopy_types)
         end
         %%
         if pl_cd2==1;
@@ -192,14 +192,16 @@ try
             set(gca,'FontSize',options.plot.axis.fontsize);
             bar(1:N,var(data_res));
             hold on
-            plot([0 N+1],[1 1].*data{id}.Cd(1),'r-','LineWidth',8)
+            try
+            plot([0 N+1],[1 1].*data{id}.CD(1),'r-','LineWidth',8)
+            end
             hold off
             set(gca,'xlim',[0 N+1])
             %ppp(options.plot.axis.width,options.plot.axis.height,options.plot.axis.fontsize,options.plot.axis.w0,options.plot.axis.h0);
             xlabel('realization #')
             ylabel('variance')
             %title('')
-            print_mul(sprintf('%s_id%d_var_check',fname,id))
+            print_mul(sprintf('%s_id%d_var_check',fname,id),options.plot.hardcopy_types)
         end
         %%
         if pl_hist==1;
@@ -217,12 +219,13 @@ try
             xlabel(sprintf('Data #%d',id))
             ylabel('residual/noise realization')
             %title('')
-            print_mul(sprintf('%s_id%d_hist',fname,id))
+            print_mul(sprintf('%s_id%d_hist',fname,id),options.plot.hardcopy_types)
         end
         
     end
     
 catch
+    keyboard
     %close(f_handle)
     fprintf('%s : Cannot plot data response. \n',mfilename)
 end

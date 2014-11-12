@@ -24,6 +24,8 @@ prior{im}.std=4;
 prior{im}.norm=80;
 prior{im}.m_true=m_ref{2};
 
+
+
 %% TEST SETUP
 m=sippi_prior(prior);
 [d,forward,prior,data]=sippi_forward(m,forward,prior,data);
@@ -31,9 +33,10 @@ m=sippi_prior(prior);
 return
 %% Perform extended Metropolis sampling 
 % set some MCMC options.
-options.mcmc.nite=2000;40000
-options.mcmc.i_sample=50;
+options.mcmc.nite=3000;40000
+options.mcmc.i_sample=10;
 options.mcmc.i_plot=200;2500
+options.mcmc.m_ref=m_ref;
 options.txt='case_line_fit_1st_order';
 
 [options]=sippi_metropolis(data,prior,forward,options);

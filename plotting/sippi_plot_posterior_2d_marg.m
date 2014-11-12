@@ -106,7 +106,7 @@ for k=1:(length(im_onedim)-1)
             ppp(options.plot.axis.width,options.plot.axis.height,options.plot.axis.fontsize,options.plot.axis.w0,options.plot.axis.h0);
             set(gca,'xlim',cax(k,:));
             set(gca,'ylim',cax(l,:));
-            print_mul(sprintf('%s_post_marg2d_m%d_m%d_scatter',fname,im_onedim(k),im_onedim(l)))
+            print_mul(sprintf('%s_post_marg2d_m%d_m%d_scatter',fname,im_onedim(k),im_onedim(l)),options.plot.hardcopy_types)
             
         end
         
@@ -155,7 +155,7 @@ for k=1:(length(im_onedim)-1)
             else
                 figure_name=sprintf('%s_post_marg2d_m%d_m%d_image',fname,im_onedim(k),im_onedim(l));
             end
-            print_mul(sprintf(figure_name,fname))
+            print_mul(sprintf(figure_name,fname),options.plot.hardcopy_types)
             
         end
     end
@@ -217,7 +217,7 @@ if (pl_marg2d_image_combined==1)&(length(im_onedim)>0);
     else
         figure_name=sprintf('%s_post_marg2d_image_combined',fname);
     end
-    print_mul(sprintf(figure_name,fname))
+    print_mul(sprintf(figure_name,fname),options.plot.hardcopy_types)
 end
 
 %% 2d marginals (scatter) on one plot
@@ -250,7 +250,7 @@ if (pl_marg2d_scatter_combined==1)&(length(im_onedim)>0);
             colormap(1-gray);
         end
     end
-    print_mul(sprintf('%s_post_marg2d_scatter_combined',fname))
+    print_mul(sprintf('%s_post_marg2d_scatter_combined',fname),options.plot.hardcopy_types)
 end
 
 %% GO BACK TO STARTING DIRECTORY
