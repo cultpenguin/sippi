@@ -230,9 +230,9 @@ for im=im_arr;
         set(sp,'interp','none')
     end
     try
-        print_mul(sprintf('%s_m%d_prior_sample',fname,im))
+        print_mul(sprintf('%s_m%d_prior_sample',fname,im),options.plot.hardcopy_types)
     catch
-        print_mul(sprintf('m%d_prior_sample',im))
+        print_mul(sprintf('m%d_prior_sample',im),options.plot.hardcopy_types)
     end
 
     
@@ -288,7 +288,7 @@ pos2(2)=pos(2);
 pos2(4)=pos(4);
 set(ax2,'position',pos2);
 %end
-print_mul(sprintf('%s_noisemodel',fname))
+print_mul(sprintf('%s_noisemodel',fname),options.plot.hardcopy_types)
 
 return
 %% PLOT REALS
@@ -308,5 +308,5 @@ for i=1:n_reals
 end
 colormap(1-gray)
 try
-    print_mul(sprintf('%s_prior_sample',fname))
+    print_mul(sprintf('%s_prior_sample',fname),options.plot.hardcopy_types)
 end

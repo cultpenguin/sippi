@@ -131,10 +131,11 @@ for im=im_arr;
     try
         try
             sippi_plot_prior(prior,m_current,im);
+            print_mul(sprintf('%s_m%d_last_accepted_model',fname,im),options.plot.hardcopy_types)
         catch
             sippi_plot_prior(prior,options.mcmc.m_current,im);
+            print_mul(sprintf('%s_m%d_last_accepted_model',fname,im),options.plot.hardcopy_types)
         end
-        print_mul(sprintf('%s_m%d_last_accepted_model',fname,im))
     catch
         try;close(fn);end
         disp(sprintf('%s : could not plot last accepted model',mfilename));
@@ -165,7 +166,7 @@ for im=im_arr;
             set(gca,'FontSize',options.plot.axis.fontsize)
             xlabel('Iteration #')
             ylabel(prior{im}.name)
-            print_mul(sprintf('%s_m%d_posterior_values',fname,im))
+            print_mul(sprintf('%s_m%d_posterior_values',fname,im),options.plot.hardcopy_types)
             
         catch
             disp(sprintf('%s : failed to plot 1D posterior values for prior #%d',mfilename,im));
@@ -310,7 +311,7 @@ for im=im_arr;
     else
         %title(title_txt)
     end
-    print_mul(sprintf('%s_m%d_posterior_sample',fname,im))
+    print_mul(sprintf('%s_m%d_posterior_sample',fname,im),options.plot.hardcopy_types)
     
     %% PLOT ETYPES
     if ndim>1
@@ -359,7 +360,7 @@ for im=im_arr;
             st=suptitle(sprintf('m%d: %s',im,prior{im}.name));
             set(st,'interpreter','none');
         end
-        print_mul(sprintf('%s_m%d_sample_stat',fname,im))
+        print_mul(sprintf('%s_m%d_sample_stat',fname,im),options.plot.hardcopy_types)
     end
     
     
@@ -402,7 +403,7 @@ for im=im_arr;
         xlabel('Acceptance Rate')
         ylabel('pdf')
         
-        print_mul(sprintf('%s_m%d_rate',fname,im))
+        print_mul(sprintf('%s_m%d_rate',fname,im),options.plot.hardcopy_types)
     catch
         try;close(fn);end
         disp(sprintf('%s : could not plot acceptance rate',mfilename));
@@ -444,7 +445,7 @@ for im=im_arr;
             ylabel(sprintf('autocorrelation of %s(m%d)',prior{im}.name,im))
             set(gca,'FontSize',options.plot.axis.fontsize)
             
-            print_mul(sprintf('%s_autocorr_m%d',fname,im))
+            print_mul(sprintf('%s_autocorr_m%d',fname,im),options.plot.hardcopy_types)
             
             %%
             
@@ -479,7 +480,7 @@ for im=im_arr;
             end
             
             try;title(sprintf('m%d : %s',im,prior{im}.name),'interp','none');end
-            print_mul(sprintf('%s_m%d_corrcoeff',fname,im))
+            print_mul(sprintf('%s_m%d_corrcoeff',fname,im),options.plot.hardcopy_types)
             
         end
         
