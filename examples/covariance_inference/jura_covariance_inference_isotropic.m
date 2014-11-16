@@ -8,12 +8,13 @@ clear all;close all
 [d_prediction,d_transect,d_validation,h_prediction,h_transect,h_validation,x,y,pos_est]=jura;
 ix=1;
 iy=2;
-id=5;
+id=6;         % select the id of the property from the Jura data to use
+use_nscore=0; % Use normal score=
+
 name=h_prediction{id};
 % get the position of the data
 pos_known=[d_prediction(:,[ix iy])];  
 
-use_nscore=1;
 if use_nscore==0;
     d=d_prediction(:,id);
 else
@@ -73,7 +74,7 @@ for ip=1:length(prior);
 end
 options.mcmc.nite=100000;
 options.mcmc.i_plot=1000;
-options.mcmc.i_sample=10;
+options.mcmc.i_sample=25;
 options.txt=name;
 [options,data,prior,forward,m_current]=sippi_metropolis(data,prior,forward,options)
 
