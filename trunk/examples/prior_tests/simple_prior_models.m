@@ -1,4 +1,4 @@
-%% simple_prior_models
+%% simple_prior_models: examples
 
 clear all;close all
 
