@@ -70,7 +70,7 @@ print_mul('prior_example_4_2d_sisim')
 
 %% 2D SNESIM
 im=im+1;
-prior{im}.name='Sequential Indicatot Simulation (SISIM)'; % [optional] specifies name to prior
+prior{im}.name='Tranining image base prior (SNESIM)'; % [optional] specifies name to prior
 prior{im}.type='SNESIM';                % the type of a priori model
 prior{im}.x=[0:1:100];                 % specifies the scales of the 1st (X) dimension
 prior{im}.y=[10:1:90];                 % specifies the scales of the 2nd (Y) dimension
@@ -83,49 +83,3 @@ sippi_plot_prior(prior,m,im)      % visualize the realization from the prior
 print_mul('prior_example_5_2d_snesim')
 
 
-return
-
-%% 1D GAUSSIAN
-
-
-% Gaussian wil normal score transformation / target distributino
-im=im+1;
-prior{im}.name='Gaussian w. target distribution';
-prior{im}=p{im-1};
-
-N=10000;prob_chan=0.5;
-d1=randn(1,ceil(N*(1-prob_chan)))*5+1900;
-d2=randn(1,ceil(N*(prob_chan)))*5+2100;
-d3=randn(1,ceil(N*(prob_chan)))*5+2300;
-d_target=[d1(:);d2(:)];
-d_target=[d1(:);d2(:);d3(:)];
-[d_nscore,o_nscore]=nscore(d_target,1,1,min(d_target),max(d_target),0);
-prior{im}.o_nscore=o_nscore;
-
-% SISIM
-im=im+1;
-prior{im}.type='SISIM';
-prior{im}.name='Sequential Indicator Simulation';
-prior{im}.x=x; % X array
-prior{im}.y=y_flat; % Y array
-prior{im}.m0=2000;
-prior{im}.Va='200 Gau(100,90,.01)';
-prior{im}.Va='200 Gau(30,90,.05)';
-prior{im}.marginal_prob=[0.4 0.2 .4];
-
-
-% SNESIM
-im=im+1;
-prior{im}.type='SNESIM';
-prior{im}.x=x; % X array
-prior{im}.y=y_flat; % Y array
-prior{im}.S=sgems_get_par('snesim_std');
-prior{im}.scaling=0.5;
-prior{im}.rotation=00;
-
-
-
-% generate a realization
-p=sippi_prior_init(p);
-m=sippi_prior(p);
-sippi_plot_prior(p,m)
