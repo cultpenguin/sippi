@@ -6,7 +6,7 @@ function prior=sippi_prior_init(prior);
 %
 % See also sippi_prior
 %
-disp(sprintf('%s : Initializing prior options',mfilename))
+sippi_verbose(sprintf('%s : Initializing prior options',mfilename))
 
 
 for im=1:length(prior);
@@ -14,7 +14,8 @@ for im=1:length(prior);
     
     prior{im}.init=0;
     
-    %% GAUSSIAN PROPERTIES
+    %% AUTOMATICALLY CHECK FOR CM VERSIS VA FIELD
+    %% TMH: CM should be deafult..
     if isfield(prior{im},'Cm');
         if ~isfield(prior{im},'Va');
             prior{im}.Va=prior{im}.Cm;
@@ -26,17 +27,22 @@ for im=1:length(prior);
         end
     end
     
-    
-    
+    %% %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+    % CHECK FOR TYPE    
     if ~isfield(prior{im},'type');
-        disp(sprintf('%s : FATAL ERROR : no ''type'' set for prior %03',mfilename,im));
-        return
+        sippi_verbose(sprintf('%s : FATAL ERROR : no ''type'' set for prior %03',mfilename,im));
+        break
     end
     prior{im}.type=upper(prior{im}.type);
     
-    
+    %% %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+    % SET OPTIONAL NAME FIELD IF NOT SET
     if ~isfield(prior{im},'name'); prior{im}.name=sprintf('%s : m%02d',prior{im}.type,im);end
+    sippi_verbose(sprintf('%s : setting name for prior{%d} as ''%s''',mfilename,im,prior{im}.name),2);
     
+    
+    %% %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%    
+    % SET DIMENSIONS OF PRIOR OF NOT ALLREADY SET
     if ~isfield(prior{im},'x'); prior{im}.x=0;end
     if ~isfield(prior{im},'y'); prior{im}.y=0;end
     if ~isfield(prior{im},'z'); prior{im}.z=0;end
@@ -46,12 +52,11 @@ for im=1:length(prior);
         prior{im}.dim(3)=length(prior{im}.z);
     end
     [prior{im}.xx,prior{im}.yy,prior{im}.zz]=meshgrid(prior{im}.x,prior{im}.y,prior{im}.z);
-    % RANGE FOR EACH DIM
+
+    % NDATA FOR EACH DIM
     try,prior{im}.lim(1)=max(prior{im}.x)-min(prior{im}.x);end
     try,prior{im}.lim(2)=max(prior{im}.y)-min(prior{im}.y);end
     try,prior{im}.lim(3)=max(prior{im}.z)-min(prior{im}.z);end
-    
-    
     
     prior{im}.ndim=length(find(prior{im}.dim>1));
     
@@ -62,45 +67,27 @@ for im=1:length(prior);
         
     end
     
-    %% WRITE TI IF APPLICABLE
+        %% WRITE TI IF APPLICABLE
     if isfield(prior{im},'TI')
         sgems_write(prior{im}.S.ti_file,prior{im}.TI);
     end
     
     
+    %%
+    % SEQUENTIAL GIBBS OPTIONS
+    % 
+    %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
     
-    %% SEQUENTIAL GIBBS OPTIONS
     if ~isfield(prior{im},'seq_gibbs');prior{im}.seq_gibbs.null='';end
-    
-    %% CHECK FOR GAUSSIAN TYPE PRIOR
+   
     if (strcmp(lower(prior{im}.type),'gaussian'));
         if ~isfield(prior{im}.seq_gibbs,'step_min');prior{im}.seq_gibbs.step_min=0;end
         if ~isfield(prior{im}.seq_gibbs,'step_max');prior{im}.seq_gibbs.step_max=1;end
         if ~isfield(prior{im}.seq_gibbs,'step');prior{im}.seq_gibbs.step=1;end
-        
-        % m0
-        if ~isfield(prior{im},'m0');
-            if isfield(prior{im},'min')&isfield(prior{im},'max');
-                prior{im}.m0=(prior{im}.max+prior{im}.min)/2;
-            else
-                prior{im}.m0=0;
-            end
-            prior{im}.norm=100; % assume close to uniform distribution 
-        end
-        
-        % std
-        if ~isfield(prior{im},'std');
-            if isfield(prior{im},'min')&isfield(prior{im},'max');
-                prior{im}.std=(prior{im}.max-prior{im}.min)/2.300;
-            else
-                prior{im}.std=1;
-            end
-        end
-        
-        
     end
+
     
-    %%
+    %
     if ~isfield(prior{im}.seq_gibbs,'type');
         %prior{im}.seq_gibbs.type=1;% BOX RESIM
         prior{im}.seq_gibbs.type=2;% RANDOM POINTS
@@ -151,6 +138,48 @@ for im=1:length(prior);
             end
         end
     end
+
+    %%
+    % BELOW HERE COMES VARIOUS SANITY CHECKS DIFFERENT PRIOR TYPES
+    % 
+    %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+    
+    %% UNIFORM TYPE PRIOR SANITY CHECK
+    if (strcmp(upper(prior{im}.type),'UNIFORM'))
+        if ~isfield(prior{im},'min'); 
+            prior{im}.min=0;
+            sippi_verbose(sprintf('%s : setting prior{%d}.min=%g (uniform minimal value)',mfilename,im,prior{im}.min ));
+        end
+        if ~isfield(prior{im},'max'); 
+            prior{im}.max=prior{im}.min+1;
+            sippi_verbose(sprintf('%s : setting prior{%d}.max=%g (uniform maximum value)',mfilename,im,prior{im}.max ));
+        end
+    end
+    
+    %% GAUSSIAN TYPE PRIOR SANITY CHECK
+    if (strcmp(lower(prior{im}.type),'gaussian'));
+        % m0
+        if ~isfield(prior{im},'m0');
+            if isfield(prior{im},'min')&isfield(prior{im},'max');
+                prior{im}.m0=(prior{im}.max+prior{im}.min)/2;
+            else
+                prior{im}.m0=0;
+            end
+            sippi_verbose(sprintf('%s : setting prior{%d}.m0=%g (prior mean)',mfilename,im,prior{im}.m0 ));
+        end
+        
+        % std
+        if ~isfield(prior{im},'std');
+            if isfield(prior{im},'min')&isfield(prior{im},'max');
+                prior{im}.std=(prior{im}.max-prior{im}.min)/2.300;
+            else
+                prior{im}.std=1;
+            end
+            sippi_verbose(sprintf('%s : setting prior{%d}.std=%g (prior standard deviation)',mfilename,im,prior{im}.std ));
+        end
+    end
+    
     
     %% VISIM OPTIONS
     if (strcmp(upper(prior{im}.type),'VISIM'))
@@ -158,17 +187,72 @@ for im=1:length(prior);
         if ~isfield(prior{im},'V');
             prior{im}.V=visim_init(prior{im}.x,prior{im}.y,prior{im}.z);
         end
-        %if isfield(prior{im},'Va');
-        %    if isstruct(prior{im}.Va)
-        %        prior{im}.V.Va=prior{im}.Va;
-        %    else
-        %        prior{im}.V.Va=deformat_variogram(prior{im}.Va);
-        %    end
-        %end
+        if ~isfield(prior{im},'m0');
+            prior{im}.m0=0;
+            sippi_verbose(sprintf('%s : setting prior{%d}.m0=%g (prior mean)',mfilename,im,prior{im}.m0 ));
+        end
         if isfield(prior{im},'m0');
+            if length(prior{im}.m0)>1
+                prior{im}.V.gmean=prior{im}.m0(1);
+                txt=sprintf('%s : VISIM only supprt a constant mean\n',mfilename);
+                txt=sprintf('%s :   setting prior{%d}.m0=',im,prior{im}.m0);
+                sippi_verbose(txt);
+            end
             prior{im}.V.gmean=prior{im}.m0;
         end
     end
+    
+    %% CHOLESKY
+    if (strcmp(upper(prior{im}.type),'CHOLESKY'))
+        if ~isfield(prior{im},'Cm')&~isfield(prior{im},'Va')&~isfield(prior{im},'Cmat')
+            prior{im}.Cm='1 Sph(1)';
+            txt=sprintf('%s : No covariance model set, using prior{%d}.Cm=''%s''',mfilename,im,prior{im}.Cm);
+            sippi_verbose(txt);
+        end
+    end
+    
+    % check for correct size of Cmat
+    if isfield(prior{im},'Cmat');
+        if (prod(prior{im}.dim)~=size(prior{im}.Cmat,1))|(prod(prior{im}.dim)~=size(prior{im}.Cmat,2))
+            txt=sprintf('%s : FATAL ERROR: prior{%d}.Cmat is of size [%d,%d],\n',mfilename,im,size(prior{im}.Cmat,2),size(prior{im}.Cmat,1));
+            txt=sprintf('%s%s   but should be of size  [%d,%d]',txt,char(32*ones(1,length(mfilename))),prod(prior{im}.dim),prod(prior{im}.dim));
+            sippi_verbose(txt);
+            
+        end
+    end
+    
+    %% FFTMA
+    if (strcmp(upper(prior{im}.type),'FFTMA'))
+        if ~isfield(prior{im},'Cm')&~isfield(prior{im},'Va');
+            prior{im}.Cm='1 Sph(1)';
+            txt=sprintf('%s : No covariance model set, using prior{%d}.Cm=''%s''',mfilename,im,prior{im}.Cm);
+            sippi_verbose(txt);
+        end       
+    end
+    
+    %% FFTMA
+    if (strcmp(upper(prior{im}.type),'FFTMA'))|(strcmp(upper(prior{im}.type),'CHOLESKY'))
+        % THE CHECKS BELOW ARE SIMILAT FOR FFTMA AND CHOLESKY TYPE PRIORS
+        % PERHAPS CHECK BOTH AT THE SAME TIME
+        if ~isfield(prior{im},'m0')
+            prior{im}.m0=0;
+            txt=sprintf('%s : No mean set, using prior{%d}.m0=%g',mfilename,im,prior{im}.m0);
+            sippi_verbose(txt);
+        end
+        % Check for correct size of m0
+        if isfield(prior{im},'m0');
+            if prod(size(prior{im}.m0))~=1
+                if (size(prior{im}.m0,2)~=prior{im}.dim(1))|(size(prior{im}.m0,1)~=prior{im}.dim(2))|(size(prior{im}.m0,3)~=prior{im}.dim(3))
+                    txt=sprintf('%s : FATAL ERROR: prior{%d}.m0, should be either a scalar\n',mfilename,im);
+                    txt=sprintf('%s%s   or of size=[%g,%g,%g]',txt,char(32*ones(1,length(mfilename))),prior{im}.dim(2),prior{im}.dim(1),prior{im}.dim(3));
+                    sippi_verbose(txt);
+                end
+            end
+            
+        end
+    end
+    
+    %% FFTMA and CHOLESKY
     
     %% SNESIM OPTIONS
     if (strcmp(upper(prior{im}.type),'SNESIM'))
@@ -194,11 +278,6 @@ for im=1:length(prior);
         end
     end
     
-    %% UNIFORM OPTIONS
-    if (strcmp(upper(prior{im}.type),'UNIFORM'))
-        if ~isfield(prior{im},'min'); prior{im}.min=0;end
-        if ~isfield(prior{im},'max'); prior{im}.max=1;end
-    end
     
     %% SISIM OPTIONS
     if (strcmp(upper(prior{im}.type),'SISIM'))

@@ -13,7 +13,6 @@ prior{im}.type='gaussian';
 prior{im}.name='intercept';
 prior{im}.m0=0;
 prior{im}.std=30;
-prior{im}.m_true=m_ref{1};
 
 % 1st order, the gradient
 im=2;
@@ -22,7 +21,6 @@ prior{im}.name='gradient';
 prior{im}.m0=0;
 prior{im}.std=4;
 prior{im}.norm=80;
-prior{im}.m_true=m_ref{2};
 
 % 2nd order
 im=3;
@@ -31,7 +29,6 @@ prior{im}.name='2nd';
 prior{im}.m0=0;
 prior{im}.std=1;
 prior{im}.norm=80;
-prior{im}.m_true=m_ref{3};
 
 
 %% Perform extended Metropolis sampling 

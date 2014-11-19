@@ -289,7 +289,6 @@ for im=im_array;
                 Va=prior{im}.Va;
             end
             [prior{im}.V]=visim_set_variogram(prior{im}.V,prior{im}.Va);
-            
         end
         
         if isfield(prior{im},'m0')
