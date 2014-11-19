@@ -112,6 +112,7 @@ end
 
 % return data to m_propose
 if prior{ip}.ndim==1;
+    D=D';
 elseif prior{ip}.ndim==2;
     D=reshape(z,prior{ip}.dim(2),prior{ip}.dim(1));
 elseif prior{ip}.ndim==3;
