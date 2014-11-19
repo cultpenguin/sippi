@@ -23,11 +23,14 @@ function [reals_mat,etype_mean,etype_var,reals_all,ite_num]=sippi_get_sample(wd,
 
 start_dir=pwd;
 
-if nargin<1
-    wd=pwd;
-end
-if nargin<2
-    im=1;
+if nargin>0;
+    if (isscalar(wd))
+        % FIRST INPUT IS 'IM' / WE ARE IN AN 'OUTPUT'
+        if nargin>2,skip_seq_gibbs=n_reals;end
+        if nargin>1,n_reals=im;end
+        im=wd;
+        wd=pwd;        
+    end
 end
 
 if nargin<5;

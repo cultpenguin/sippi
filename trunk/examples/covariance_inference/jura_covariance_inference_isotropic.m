@@ -67,11 +67,16 @@ forward.stabilize=0;
 forward.m0=mean(d);
 forward.Cm=sprintf('%3.1f Sph(2)',var(d));
 
+%%
+%[m,prior]=sippi_prior(prior);
+%d=sippi_forward(m,forward,prior);
+%L=sippi_likelihood(d,data);
 
 %% METROPOLIS SAMPLING
 for ip=1:length(prior);
     prior{ip}.seq_gibbs.i_update_step_max=3000;
 end
+options.plot.hardcopy_types=0; % no hardcopy
 options.mcmc.nite=100000;
 options.mcmc.i_plot=1000;
 options.mcmc.i_sample=25;
@@ -111,7 +116,7 @@ end
 %ll=ll-max(ll);
 figure(2);clf;
 plot(r1,exp(ll));xlabel('range_1');ylabel('logL(range_1)');
-title(h_prediction(idata))
+title(h_prediction(id))
 
 %
 iop=find(ll==max(ll));iop=iop(1);

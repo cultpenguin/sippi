@@ -43,6 +43,15 @@ if  nargin<3
 end
 for id=id_array;
     
+    %if size(data{id}.d_obs,2)~=1
+    %    sippi_verbose(sprintf('%s : data{%d}.d_obs MUST be a column vector',mfilename,id))
+    %    if size(data{id}.d_obs,1)==1
+    %        % try to transpose
+    %        data{id}.d_obs=data{1}.d_obs';
+    %        sippi_verbose(sprintf('%s : tried to TRANSPOSE data{%d}.d_obs',mfilename,ud))
+    %    end
+    %end
+    
     if ~isfield(data{id},'noise_model');
         data{id}.noise_model='gaussian';
         %data{id}.noise_model='generalized_gaussian';
