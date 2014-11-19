@@ -67,10 +67,6 @@ for im=1:length(prior);
         
     end
     
-        %% WRITE TI IF APPLICABLE
-    if isfield(prior{im},'TI')
-        sgems_write(prior{im}.S.ti_file,prior{im}.TI);
-    end
     
     
     %%
@@ -282,21 +278,48 @@ for im=1:length(prior);
     if (strcmp(upper(prior{im}.type),'SISIM'))
         if ~isfield(prior{im},'S');
             prior{im}.S=sgems_get_par('sisim');
-            prior{im}.S.dim.x=prior{im}.x;
-            prior{im}.S.dim.y=prior{im}.y;
-            prior{im}.S.dim.z=prior{im}.z;
+            sippi_verbose(sprintf('%s : Setting default SISIM structure in prior{%d}.S',mfilename,im));
+        end
+        prior{im}.S.dim.x=prior{im}.x;
+        prior{im}.S.dim.y=prior{im}.y;
+        prior{im}.S.dim.z=prior{im}.z;
+            
+        if ~isfield(prior{im},'Cm')&~isfield(prior{im},'Va');
+            prior{im}.Cm='1 Sph(1)';
+            txt=sprintf('%s : No covariance model set, using prior{%d}.Cm=''%s''',mfilename,im,prior{im}.Cm);
+            sippi_verbose(txt);
+        end       
+        
+        if ~isfield(prior{im},'marginal_prob')
+            prior{im}.marginal_prob=prior{im}.S.XML.parameters.Marginal_Probabilities.value;
+            txt_marginal_prob=sprintf('%g ',prior{im}.marginal_prob);
+            txt=sprintf('%s : marginal probability not set. using prior{%d}.marginal_prob=[%s]',mfilename,im,txt_marginal_prob);
+            sippi_verbose(txt);
         end
     end
     
-    %% TARGET DIST
+    %% TARGET DIST - CHECK THAT NORMAL SCORE HASE BEEN PERFORMED
     if isfield(prior{im},'d_target')
         if ~isfield(prior{im},'o_nscore');
             [d_nscore,prior{im}.o_nscore]=nscore(prior{im}.d_target,1,1);
+            sippi_verbose(sprintf('%s : performed normal score transformation of prior{%d}.d_target to prior{%d}.o_nscore',mfilename,im,im));
         end
     end
+   
     
-    % confirmation of initialization;
+    %%
+    % OBSOLETE
+    % 
+    %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+    
+    %% WRITE TI IF APPLICABLE
+    %if isfield(prior{im},'TI')
+    %    sgems_write(prior{im}.S.ti_file,prior{im}.TI);
+    %end
+    
+    %% confirmation of initialization;
     prior{im}.init=1;
+    
     
 end
 

@@ -1,4 +1,4 @@
-% sippi_prior_cholesky : SNESIM type Gaussian prior for SIPPI
+% sippi_prior_snesim : SNESIM type Gaussian prior for SIPPI
 %
 %% Example:
 %    ip=1;
