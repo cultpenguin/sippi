@@ -205,7 +205,7 @@ for im=im_array;
         prior{im}.S.XML.parameters.Hard_Data_Grid.value='';
         prior{im}.S.XML.parameters.Hard_Data_Property.value='';
         
-        %% SEQ GIBBS
+        % SEQ GIBBS
         if nargin>1
             mgstat_verbose(sprintf('%s : Sequential Gibbs',mfilename),2)
             [data,used]=sgems_set_resim_data(prior{im}.S,m_current{im},prior{im}.seq_gibbs.step,prior{im}.seq_gibbs.type);
@@ -213,71 +213,71 @@ for im=im_array;
             prior{im}.seq_gibbs.used=used;
         end
         
-        %% SISIM SIM
+        % SISIM SIM
         prior{im}.S = sgems_grid(prior{im}.S);
         m_propose{im} = prior{im}.S.D';
         
-    elseif  (strcmp(upper(prior{im}.type),'SNESIM')|isfield(prior{im},'S'))
-        % SGEMS / SNESIM
-        
-        % REMOVE CONDITIONAL DATA.
-        % FIX : NEED TO CHANGE TO HANDLE CONDITIONAL DATA
-        if isfield(prior{im}.S,'f_obs')
-            prior{im}.S=rmfield(prior{im}.S,'f_obs');
-        end
-        prior{im}.S.XML.parameters.Hard_Data.grid='';
-        prior{im}.S.XML.parameters.Hard_Data.property='';
-        
-        %
-        prior{im}.S.XML.parameters.Nb_Realizations.value=1;
-        
-        if isfield(prior{im},'seed');
-            prior{im}.S.XML.parameters.Seed.value=prior{im}.seed;
-        else
-            prior{im}.S.XML.parameters.Seed.value=ceil(rand(1).*1e+6);
-        end
-        %disp(prior{im}.S.XML.parameters.Seed.value)
-        % CHECK FOR SCALING AND ROTATION
-          
-        if isfield(prior{im},'rotation')
-            prior{im}.S.XML.parameters.Use_Rotation.value=1;
-            prior{im}.S.XML.parameters.Use_Global_Rotation.value=1;
-            prior{im}.S.XML.parameters.Global_Angle.value=-1*prior{im}.rotation;
-        end
-        if isfield(prior{im},'scaling')
-            if length(prior{im}.scaling)==1; aff=prior{im}.scaling.*[1 1 1]; end
-            if length(prior{im}.scaling)==2; aff(3)=1; end
-            prior{im}.S.XML.parameters.Use_Affinity.value=1;
-            prior{im}.S.XML.parameters.Use_Global_Affinity.value=1;
-            prior{im}.S.XML.parameters.Global_Affinity.value=aff;
-        end
-        
-        if nargin>1
-            % SEQUENTIAL GIBBS
-            if isfield(prior{im},'index_values');
-                m = zeros(size(m_current{im}))-1;
-                for i=1:length(prior{im}.index_values)
-                    try
-                        m(find(m_current{im}==prior{im}.m_values(i)))=prior{im}.index_values(i);
-                    end
-                end
-                m_current{im}=m;
-            end
-            mgstat_verbose(sprintf('%s : Sequential Gibbs',mfilename),2)
-            [data,used]=sgems_set_resim_data(prior{im}.S,m_current{im},prior{im}.seq_gibbs.step,prior{im}.seq_gibbs.type);
-            prior{im}.S=data; 
-            prior{im}.seq_gibbs.used=used;
-        end
-        
-        prior{im}.S = sgems_grid(prior{im}.S);
-        m_propose{im} = prior{im}.S.D';
-        
-        if isfield(prior{im},'index_values');
-            for i=1:length(prior{im}.index_values)
-                m_propose{im}(find(m_propose{im}==prior{im}.index_values(i)))=prior{im}.m_values(i);
-            end
-        end
-        
+%    elseif  (strcmp(upper(prior{im}.type),'SNESIM')|isfield(prior{im},'S'))
+%         % SGEMS / SNESIM
+%         
+%         % REMOVE CONDITIONAL DATA.
+%         % FIX : NEED TO CHANGE TO HANDLE CONDITIONAL DATA
+%         if isfield(prior{im}.S,'f_obs')
+%             prior{im}.S=rmfield(prior{im}.S,'f_obs');
+%         end
+%         prior{im}.S.XML.parameters.Hard_Data.grid='';
+%         prior{im}.S.XML.parameters.Hard_Data.property='';
+%         
+%         %
+%         prior{im}.S.XML.parameters.Nb_Realizations.value=1;
+%         
+%         if isfield(prior{im},'seed');
+%             prior{im}.S.XML.parameters.Seed.value=prior{im}.seed;
+%         else
+%             prior{im}.S.XML.parameters.Seed.value=ceil(rand(1).*1e+6);
+%         end
+%         %disp(prior{im}.S.XML.parameters.Seed.value)
+%         % CHECK FOR SCALING AND ROTATION
+%           
+%         if isfield(prior{im},'rotation')
+%             prior{im}.S.XML.parameters.Use_Rotation.value=1;
+%             prior{im}.S.XML.parameters.Use_Global_Rotation.value=1;
+%             prior{im}.S.XML.parameters.Global_Angle.value=-1*prior{im}.rotation;
+%         end
+%         if isfield(prior{im},'scaling')
+%             if length(prior{im}.scaling)==1; aff=prior{im}.scaling.*[1 1 1]; end
+%             if length(prior{im}.scaling)==2; aff(3)=1; end
+%             prior{im}.S.XML.parameters.Use_Affinity.value=1;
+%             prior{im}.S.XML.parameters.Use_Global_Affinity.value=1;
+%             prior{im}.S.XML.parameters.Global_Affinity.value=aff;
+%         end
+%         
+%         if nargin>1
+%             % SEQUENTIAL GIBBS
+%             if isfield(prior{im},'index_values');
+%                 m = zeros(size(m_current{im}))-1;
+%                 for i=1:length(prior{im}.index_values)
+%                     try
+%                         m(find(m_current{im}==prior{im}.m_values(i)))=prior{im}.index_values(i);
+%                     end
+%                 end
+%                 m_current{im}=m;
+%             end
+%             mgstat_verbose(sprintf('%s : Sequential Gibbs',mfilename),2)
+%             [data,used]=sgems_set_resim_data(prior{im}.S,m_current{im},prior{im}.seq_gibbs.step,prior{im}.seq_gibbs.type);
+%             prior{im}.S=data; 
+%             prior{im}.seq_gibbs.used=used;
+%         end
+%         
+%         prior{im}.S = sgems_grid(prior{im}.S);
+%         m_propose{im} = prior{im}.S.D';
+%         
+%         if isfield(prior{im},'index_values');
+%             for i=1:length(prior{im}.index_values)
+%                 m_propose{im}(find(m_propose{im}==prior{im}.index_values(i)))=prior{im}.m_values(i);
+%             end
+%         end
+%         
         
     elseif (strcmp(upper(prior{im}.type),'VISIM')|isfield(prior{im},'V'))
         % VISIM PRIOR

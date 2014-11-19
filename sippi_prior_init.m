@@ -42,7 +42,7 @@ for im=1:length(prior);
     
     
     %% %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%    
-    % SET DIMENSIONS OF PRIOR OF NOT ALLREADY SET
+    % SET DIMENSIONS OF PRIOR IF NOT ALLREADY SET
     if ~isfield(prior{im},'x'); prior{im}.x=0;end
     if ~isfield(prior{im},'y'); prior{im}.y=0;end
     if ~isfield(prior{im},'z'); prior{im}.z=0;end
@@ -209,17 +209,19 @@ for im=1:length(prior);
             txt=sprintf('%s : No covariance model set, using prior{%d}.Cm=''%s''',mfilename,im,prior{im}.Cm);
             sippi_verbose(txt);
         end
+        
+        % check for correct size of Cmat
+        if isfield(prior{im},'Cmat');
+            if (prod(prior{im}.dim)~=size(prior{im}.Cmat,1))|(prod(prior{im}.dim)~=size(prior{im}.Cmat,2))
+                txt=sprintf('%s : FATAL ERROR: prior{%d}.Cmat is of size [%d,%d],\n',mfilename,im,size(prior{im}.Cmat,2),size(prior{im}.Cmat,1));
+                txt=sprintf('%s%s   but should be of size  [%d,%d]',txt,char(32*ones(1,length(mfilename))),prod(prior{im}.dim),prod(prior{im}.dim));
+                sippi_verbose(txt);
+            end
+        end
+        
     end
     
-    % check for correct size of Cmat
-    if isfield(prior{im},'Cmat');
-        if (prod(prior{im}.dim)~=size(prior{im}.Cmat,1))|(prod(prior{im}.dim)~=size(prior{im}.Cmat,2))
-            txt=sprintf('%s : FATAL ERROR: prior{%d}.Cmat is of size [%d,%d],\n',mfilename,im,size(prior{im}.Cmat,2),size(prior{im}.Cmat,1));
-            txt=sprintf('%s%s   but should be of size  [%d,%d]',txt,char(32*ones(1,length(mfilename))),prod(prior{im}.dim),prod(prior{im}.dim));
-            sippi_verbose(txt);
-            
-        end
-    end
+
     
     %% FFTMA
     if (strcmp(upper(prior{im}.type),'FFTMA'))
@@ -229,8 +231,8 @@ for im=1:length(prior);
             sippi_verbose(txt);
         end       
     end
-    
-    %% FFTMA
+        
+    %% FFTMA and CHOLESKY
     if (strcmp(upper(prior{im}.type),'FFTMA'))|(strcmp(upper(prior{im}.type),'CHOLESKY'))
         % THE CHECKS BELOW ARE SIMILAT FOR FFTMA AND CHOLESKY TYPE PRIORS
         % PERHAPS CHECK BOTH AT THE SAME TIME
@@ -252,15 +254,11 @@ for im=1:length(prior);
         end
     end
     
-    %% FFTMA and CHOLESKY
-    
     %% SNESIM OPTIONS
     if (strcmp(upper(prior{im}.type),'SNESIM'))
         if ~isfield(prior{im},'S');
             prior{im}.S=sgems_get_par('snesim_std');
-            %            prior{im}.S.dim.x=prior{im}.x;
-            %            prior{im}.S.dim.y=prior{im}.y;
-            %            prior{im}.S.dim.z=prior{im}.z;
+            sippi_verbose(sprintf('%s : Setting default SNESIM structure in prior{%d}.S',mfilename,im));
         end
         prior{im}.S.dim.x=prior{im}.x;
         prior{im}.S.dim.y=prior{im}.y;
@@ -275,6 +273,7 @@ for im=1:length(prior);
             
         else
             prior{im}.ti=prior{im}.S.ti_file;
+            sippi_verbose(sprintf('%s : Setting default training image as prior{%d}.ti=%s',mfilename,im,prior{im}.ti));
         end
     end
     

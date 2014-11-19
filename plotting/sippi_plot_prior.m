@@ -128,7 +128,7 @@ for im=im_array;
         
         elseif ndim==2
             imagesc(x,y,m{im});
-            shading interp;
+            %shading interp;
             axis image
             
             if isfield(prior{im},'daspect');
@@ -151,11 +151,11 @@ for im=im_array;
                 plot(x,m{im},'k-*')
                 xlabel('X');
                 ylabel(prior{im}.name)
+                %try;set(gca,'ylim',cax);end
             catch
                 disp(sprintf('%s could not plot model #%d',mfilename,im))
             end
         end
-        try;set(gca,'ylim',cax);end
         
         if isfield(prior{im},'name');
             title(prior{im}.name,'interpreter','none')
