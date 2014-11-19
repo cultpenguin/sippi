@@ -173,13 +173,9 @@ for im=im_array;
     end
       
     %% PRIOR TYPES
-    
-    %if  (strcmp(upper(prior{im}.type),'SISIM'))
-    %    %% SISIM TYPE PRIOR
-    
        
     if (strcmp(lower(prior{im}.type),'gaussian'))
-        %% 1D GENERALIZED GAUSSIN
+        %% 1D GENERALIZED GAUSSIAN
         
         if (isfield(prior{im},'d_target'))&(~isfield(prior{im},'o_nscore'))
             % UPDATE PRIOR STRUCTURE TO USE TARGET DISTRIBUTION
