@@ -91,17 +91,24 @@ suptitle(sprintf('FFT-MA with varying Matern type covariance properties\n Sequen
 
 %% SEQ GIBBS MOVIE
 % 
+save_movie=1;
+
 fclose all;
 close all
 randn('seed',4);rand('seed',4);
 fig=figure(13);clf
 prior{2}.seq_gibbs.step=.05;
 prior{3}.seq_gibbs.step=.05;
-prior{4}.seq_gibbs.step=.15;
-prior{1}.seq_gibbs.step=0.01;;
+prior{4}.seq_gibbs.step=.1;.025;
+prior{1}.seq_gibbs.step=.01;0.01;;
 prior{1}.perturb=1;
 [m,prior]=sippi_prior(prior);
-aviobj = avifile('prior_reals_fftma_matern_seqgibbs.avi')
+if (save_movie==1);
+  fname=[mfilename,'.mp4'];
+  vidObj = VideoWriter(fname);
+  open(vidObj);
+end
+
 for i=1:250;
     [m,prior]=sippi_prior(prior,m);
     subplot(1,1,1);
@@ -111,14 +118,10 @@ for i=1:250;
     %colorbar_shift;
     colormap(sippi_colormap(1));
     drawnow;
-    F = getframe(fig);
-    aviobj = addframe(aviobj,F);
-     %xlabel('X')
-    %ylabel('Y')
+    if save_movie==1
+        % Write each frame to the file.
+        currFrame = getframe;
+        writeVideo(vidObj,currFrame);
+    end
 end
-aviobj = close(aviobj);
- 
-%print_mul('prior_reals_fftma_cov_seqgibbs')
-%suptitle(sprintf('FFT-MA with varying covariance properties\n Sequential Gibbs sampling'))
-
-
+if save_movie==1;close(vidObj);end

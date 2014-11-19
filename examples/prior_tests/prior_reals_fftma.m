@@ -1,5 +1,5 @@
 % prior_reals_fftma Sampling an FFT-MA type prior model
-clear all,
+clear all,close all;
 
 %% Define an FFTMA type a priori model
 im=1;
@@ -58,23 +58,29 @@ colorbar_shift;
 print_mul('prior_reals_fftma_nscore')
 
 %% MOVIE
+save_movie=0;
 for j=1:2
     randn('seed',1);
     figure(11+j);clf
-    set(gcf,'units','normalized','outerposition',[0 0 1 1])
+    if save_movie==1;set(gcf,'units','normalized','outerposition',[0 0 1 1]);end
     prior{1}.seq_gibbs.step=0.02;
     
-    if j==1;
-        fname=[mfilename,'_target','.mp4'];
-        vidObj = VideoWriter(fname);
+    if (j==1);
+        if (save_movie==1)
+            fname=[mfilename,'_target','.mp4'];
+            vidObj = VideoWriter(fname);
+        end
     else
+        prior{1}=rmfield(prior{1},'d_target');
         prior{1}=rmfield(prior{1},'o_nscore');
         prior{1}.m0=10;
-        fname=[mfilename,'.mp4'];
-        vidObj = VideoWriter(fname);
+        if save_movie==1
+            fname=[mfilename,'.mp4'];
+            vidObj = VideoWriter(fname);
+        end
     end
-    open(vidObj)
-    for i=1:1000;
+    if save_movie==1;open(vidObj);end
+    for i=1:200;
         [m,prior]=sippi_prior(prior,m);
         imagesc(prior{1}.x,prior{1}.y,m{1});
         colormap(sippi_colormap(1));
@@ -82,11 +88,12 @@ for j=1:2
         axis image
         axis tight
         set(gca,'nextplot','replacechildren');
-        %xlabel('X')
-        %ylabel('Y')
-        % Write each frame to the file.
-        currFrame = getframe;
-        writeVideo(vidObj,currFrame);
+        drawnow;
+        if save_movie==1
+            % Write each frame to the file.
+            currFrame = getframe;
+            writeVideo(vidObj,currFrame);
+        end
     end
-    close(vidObj);
+    if save_movie==1;close(vidObj);end
 end
