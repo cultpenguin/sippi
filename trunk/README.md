@@ -62,7 +62,11 @@ $SIPPI/examples/manuscript_examples/tomography
   
 ## Releases history
 
-#1.03 (22-10-2014) [240]
+#1.04 (20-11-2014) [rev]
+Added consistency checks to sippi_prior_init
+Seperated visim, sisim prior types into seperate m-files, sippi_prior_visim, sippi_prior_sisim
+
+#1.03 (22-10-2014) [rev 240]
 Removed the use of xcorr from signal processing toolbox
 Update sippi_get_sample, and most sippi_plot_posterior_* routines
 

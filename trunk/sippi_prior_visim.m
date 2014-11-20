@@ -70,7 +70,7 @@ end
 
 %% SET TARGET DISTRIBUTION
 if isfield(prior{ip},'d_target')
-    f_cond=sprintf('d_target_%02d.eas',im);
+    f_cond=sprintf('d_target_%02d.eas',ip);
     if ~exist(f_cond,'file');
         write_eas(f_cond,prior{ip}.d_target(:));
         sippi_verbose(sprintf('%s : writing target distribution to %s',mfilename,f_cond));
