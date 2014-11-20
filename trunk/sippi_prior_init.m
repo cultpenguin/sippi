@@ -196,6 +196,11 @@ for im=1:length(prior);
             end
             prior{im}.V.gmean=prior{im}.m0;
         end
+        
+        if isfield(prior{im},'d_target');
+            sippi_verbose(sprintf('%s : Due to a bug in VISIM currently DSSIM mode (d_target) cannot be used for prior{%d}',mfilename,im))
+        end
+    
     end
     
     %% CHOLESKY
