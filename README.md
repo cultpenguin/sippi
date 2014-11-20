@@ -62,7 +62,7 @@ $SIPPI/examples/manuscript_examples/tomography
   
 ## Releases history
 
-#1.04 (20-11-2014) [rev]
+#1.1 (20-11-2014) [rev 265]
 Added consistency checks to sippi_prior_init
 Seperated visim, sisim prior types into seperate m-files, sippi_prior_visim, sippi_prior_sisim
 
