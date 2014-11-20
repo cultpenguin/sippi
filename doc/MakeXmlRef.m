@@ -34,9 +34,9 @@ for ff=1:length(f)
       
     end
 
-
-    fclose(fid);
-
+    try
+        fclose(fid);
+    end
     
 end
   
