@@ -125,7 +125,7 @@ end
 % type
 for im=1:length(prior)
     if strcmp(prior{im}.name,'type');
-        itype=ceil(m{im});
+        itype=Speh(m{im});
         itype=max([itype 1]);
         itype=min([itype 3]);
         m{im}=itype;

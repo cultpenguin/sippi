@@ -80,6 +80,8 @@
   removes realizations obtained using sequential Gibbs sampling 
   (equivalent to setting skip_burnin=1)
  
+  See also: sippi_plot_defaults
+ 
 ]]></programlisting></para>
 </sect2>
 
@@ -169,7 +171,7 @@
     m=sippi_prior(prior);
     sippi_plot_prior(prior,m,2);
  
-  See also sippi_plot_prior
+  See also sippi_plot_prior, sippi_prior
 ]]></programlisting></para>
 </sect2>
 
@@ -177,10 +179,16 @@
 <para><programlisting><![CDATA[  sippi_plot_prior Plot a sample of the prior in SIPPI
  
   Call :
-     sippi_plot_prior_sample(prior,im_array,n_reals,cax);
+     sippi_plot_prior_sample(prior,im_array,n_reals,cax,options);
  
-   See also sippi_plot_posterior, sippi_plot_prior
+   See also sippi_plot_posterior, sippi_plot_prior, sippi_prior
  
+]]></programlisting></para>
+</sect2>
+
+<sect2 xml:id="sippi_plot_set_axis"><title>sippi_plot_set_axis</title>
+<para><programlisting><![CDATA[  sippi_plot_set_axis
+  see also sippi_plot_defaults
 ]]></programlisting></para>
 </sect2>
 

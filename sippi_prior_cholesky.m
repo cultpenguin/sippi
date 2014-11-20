@@ -24,7 +24,7 @@
 %   prior{ip}.Cm='.001 Nug(0) + 1 Gau(10)';
 % or
 %   prior{ip}.m0=10;
-%  and the 'Cmat' variabæe 'prior{ip}.Cmat' which much the contain a full
+%  and the 'Cmat' variable 'prior{ip}.Cmat' which much the contain a full
 %  nd X nd size covariance matrix. 
 %  (it is computed the first the sippi_prior_cholesky is called) 
 %
