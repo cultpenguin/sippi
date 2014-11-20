@@ -1,13 +1,104 @@
 <sect1 xml:id="sec_ex_covarianceinference"><title>Probilistic covariance/semivariogram indeference</title>
 <para>
-This chapter documnets how to use SIPPI to infer properties of a covariance/semivariogram model from noisy data (both data of point support and linear average data can be considered)
+This chapter documents how to use SIPPI to infer properties of a covariance/semivariogram model from noisy data (both data of point support and linear average data can be considered)
 </para>
 
 <para>
-To apply covariance indeference one must 1) define the data and associated uncertainty (if any), 2) define a prior model describing covariance model parameters, and 3) define the linear forward operate (only applicable if data are not of point support).
+To perform probabilistic inference of covariance model parameters one must 
+<orderedlist>
+<listitem><para>
+define the data and associated uncertainty (if any), 
+</para></listitem>
+<listitem><para>
+define a prior model of the covariance model parameters that one wish to infer information about, and 
+</para></listitem>
+<listitem><para>
+define the linear forward operator (only applicable if data are not of point support).
+</para></listitem>
+</orderedlist>
+
+</para>
+<para>
+The methodology is published in <citation>HCM15</citation>.
 </para>
 
-<sect2><title>Inferring a 2D covariance model from the Jura data set</title>
+<sect2><title>Specification of covariance model parameters</title>
+<para>
+The following covariance model properties can be defined, that allow defining an isotropic or an-isotropic covariance model in 1D, 2D, or 3D: 
+<screen>
+type                % covariance model type (1->Sph, 2->Exp, 3->Gau)
+sill                % the variance
+nugget_fraction     % percentage of the variance assigned to a Nugget
+range_1             % range in primary direction
+range_2             % range in secondary direction
+range_3             % range in tertiary direction
+ang_1               % first angle of rotation 
+ang_2               % second angle of rotation 
+ang_3               % third angle of rotation 
+</screen>
+</para>
+
+<para>
+Inference of a full 1D covariance model requires defining [type,sill,nugget_fraction,range_1].
+</para>
+<para>
+Inference of a full 2D covariance model requires defining [type,sill,nugget_fraction,range_1,range_2,ang_1].
+</para>
+<para>
+Inference of a full 3D covariance model requires defining [type,sill,nugget_fraction,range_1,range_2,range_3,ang_1,ang_2,ang_3].
+</para>
+
+<para>
+In order to define which of the covariance model parameters to infer information about, simply define a  prior structure for any of these parameters, as 1D type SIPPI prior model. 
+</para>
+<para>
+For example, to simple infer information about the range in the primary direction, with a priori distribution of the range as U[0,3] use
+<screen>
+forward.Cm='1 Sph(10)';
+
+im=1;
+prior{im}.type='uniform';
+prior{im}.name='range_1'; % the 'name' field is used to identify the covariance model parameter!
+prior{im}.min=0;
+prior{im}.max=3;
+</screen>
+In this case an <varname>range_1</varname> refers to the isotropic range in the covariance model defined in the <varname>forward.Cm</varname> field
+</para>
+<para>
+If, instead 
+<screen>
+forward.Cm='1 Sph(10,90,.25)';
+</screen>
+then <varname>range_1</varname> would refer to the range in the direction of maximum continuity (90 degrees from North). <varname>range_2</varname> will in this case be fixed.
+</para>
+<para>
+As described above, the covariance model type can be considered as a unknown parameter, that can be inferred during inversion. This may pose some problems as discussed in <citation>HCM15</citation>. 
+</para>
+<para>
+To infer the covariance model type, a prior 1D structure should be defined as e.g.
+<screen>
+im=1;
+prior{im}.type='uniform';
+prior{im}.name='type'; % 
+prior{im}.min=0;
+prior{im}.max=3;
+</screen>
+Any value between 0 and 1 defines a spherical type covariance.
+Any value between 1 and 2 defines an exponential type covariance.
+Any value between 3 and 3 defines a Gaussian type covariance.
+</para>
+<para>
+Thus no prior should be defined for the 'type' prior that can provide values below 0, and above 3. In the case above, all three covariance model types has the sane a priori probability.
+</para>
+<para>
+A detailed description of how to parameterize the inverse covariance model parameter problem, can be found in <link linkend="sippi_forward_covariance_inference">sippi_forward_covariance_inference</link>. 
+</para>
+</sect2>
+
+<sect2><title>Inferring a 2D covariance model from the Jura data set - Example of point support</title>
+<para>
+Here 
+</para>
 <para>
 <screen>
 % jura_covariance_inference

@@ -112,4 +112,21 @@
     </biblioset>
   </biblioentry>
 
+
+  <biblioentry role="article" xml:id="HansenetalCovariance2015">
+    <abbrev xml:id="HansenetalCovariance2015.abbrev">HCM15</abbrev>
+    <biblioset role="article">
+  <authorgroup><author><personname><firstname>T. M.</firstname><surname>Hansen</surname></personname></author><author><personname><firstname>K. C.</firstname><surname>Cordua</surname></personname></author><author><personname><firstname>K.</firstname><surname>Mosegaard</surname></personname></author></authorgroup>
+      <title>A general probabilistic approach for inference of Gaussian model parameters from noise data of point and volume support<link xlink:href="">PDF</link></title>
+      <pagenums>xxx-xxx</pagenums>
+      <bibliosource class="doi"><link xlink:href="http://dx.doi.org/10.1007/s11004-014-9567-5">doi:10.1007/s11004-014-9567-5</link></bibliosource>
+    </biblioset>
+    <biblioset role="journal">
+      <title>Computational Geosciences</title>
+      <volumenum>xx</volumenum><issuenum>x</issuenum>
+      <pubdate>2015</pubdate>
+    </biblioset>
+  </biblioentry>
+
+
 </bibliography>

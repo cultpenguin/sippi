@@ -31,7 +31,6 @@ prior{im}.type='uniform';
 prior{im}.name='range_1';
 prior{im}.min=0.01;
 prior{im}.max=3;
-prior{im}.norm=100;
 
 im=im+1;
 prior{im}.type='uniform';
