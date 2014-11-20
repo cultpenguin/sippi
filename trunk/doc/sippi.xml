@@ -129,6 +129,9 @@ book SYSTEM "docbook.dtd"
   <sect1><title>SIPPI</title>
   <para></para>
   &funcSIPPI;
+  </sect1>
+  <sect1><title>SIPPI plotting commands</title>
+  <para></para>
   &funcSIPPIplotting;
   </sect1>
   <sect1><title>SIPPI toolbox: Traveltime tomography</title>

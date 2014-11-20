@@ -29,13 +29,13 @@ im=0;
 im=im+1;
 prior{im}.type='uniform';
 prior{im}.name='range_1';
-prior{im}.min=0.01;
+prior{im}.min=0;
 prior{im}.max=3;
 
 im=im+1;
 prior{im}.type='uniform';
 prior{im}.name='range_2';
-prior{im}.min=0.01;
+prior{im}.min=0;
 prior{im}.max=3;
 
 im=im+1;

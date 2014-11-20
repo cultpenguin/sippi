@@ -10,6 +10,11 @@
 %   [Ct,dt,dd]=sippi_compute_modelization_forward_error(forward_full,forward_app,prior,data,N);
 %
 %
+% For details see:
+%  Hansen, T.M., Cordua, K. S., Jacobsen, B. J., and Mosegaard, K. (2014)
+%  Accounting for imperfect forward modeling in geophysical inverse problems - exemplified for cross hole tomography.
+%  Geophsyics, 79(3) H1-H21, 2014. doi:10.1190/geo2013-0215.1
+%
 function [Ct,dt,dd]=sippi_compute_modelization_forward_error(forward_full,forward_app,prior,data,N);
 
 if nargin<5,

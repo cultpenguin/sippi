@@ -1,21 +1,3 @@
-<sect2 xml:id="quantile"><title>quantile</title>
-<para><programlisting><![CDATA[ QUANTILE Empirical (sample) quantiles.
- 
-    For vectors Q = QUANTILE(X, P) is the empirical quantiles of X for the
-    probabilities in P.  The smallest observation corresponds to P = 0 and
-    the largest to P = 1.  The length of Q is LENGTH(P).
- 
-    For matrices, QUANTILE(X, P) is the empirical quantiles of each column.
- 
-    In general, QUANTILE(X, P) is the empirical quantiles along the first
-    non-singleton dimension.
- 
-    QUANTILE(X, P, DIM) returnes the quantiles along dimension DIM.
- 
-    This is a MATLAB version of the R `quantile' function.
-]]></programlisting></para>
-</sect2>
-
 <sect2 xml:id="sippi_adjust_step_size"><title>sippi_adjust_step_size</title>
 <para><programlisting><![CDATA[  sippi_adjust_step_size Adjust step length length for Metropolis sampler in SIPPI
    
@@ -73,6 +55,11 @@
     [Ct,dt,dd]=sippi_compute_modelization_forward_error(forward_full,forward_app,prior,data,N);
  
  
+  For details see:
+   Hansen, T.M., Cordua, K. S., Jacobsen, B. J., and Mosegaard, K. (2014)
+   Accounting for imperfect forward modeling in geophysical inverse problems - exemplified for cross hole tomography.
+   Geophsyics, 79(3) H1-H21, 2014. doi:10.1190/geo2013-0215.1
+ 
 ]]></programlisting></para>
 </sect2>
 
@@ -98,31 +85,6 @@
  
   Call :
    [reals,etype_mean,etype_var,reals_all,reals_ite]=sippi_get_sample(wordking_directory,im,n_reals,skip_seq_gibbs);
- 
-     im: A priori model type
-     n_reals: Number of realizations to return
-     skip_seq_gibbs [1] Skip all realization where sequential gibbs is enabled
-                    [0] Use all realization
-     data: SIPPI data structure
-     prior: SIPPI prior structure
-     options: options structure when running sippi_metropolis
- 
- 
-  If located in a SIPPI output folder one can simple use :
-     [reals,etype_mean,etype_var,reals_all,reals_ite]=sippi_get_sample(im,n_reals);
-  or
-     skip_seq_gibbs=0;
-     [reals,etype_mean,etype_var,reals_all,reals_ite]=sippi_get_sample(im,n_reals,skip_seq_gibbs);
- 
- 
-]]></programlisting></para>
-</sect2>
-
-<sect2 xml:id="sippi_get_sample_old"><title>sippi_get_sample_old</title>
-<para><programlisting><![CDATA[  sippi_get_sample: Get a posterior sample
- 
-  Call :
-   [reals,etype_mean,etype_var,reals_all,reals_ite]=sippi_get_sample(im,n_reals,skip_seq_gibbs,data,prior,options);
  
      im: A priori model type
      n_reals: Number of realizations to return
