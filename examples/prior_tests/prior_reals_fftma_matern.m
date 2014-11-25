@@ -5,6 +5,8 @@
 clear all;
 try;close(12);end
 try;close(13);end
+
+%% Setup FFT-MA type a priori model with uncertainty covariance model parameters and Matern type covariance model
 im=0;
 
 im=im+1; 
@@ -35,17 +37,15 @@ prior{im}.prior_master=1;
 
 im=im+1;
 prior{im}.type='gaussian';
-prior{im}.name='nu';
+prior{im}.name='nu'; % parameter controling Matern type covariance model
 prior{im}.m0=1;
 prior{im}.std=.9;
 prior{im}.norm=80;
 prior{im}.prior_master=1;
 
-
-
 prior=sippi_prior_init(prior);
 
-%%
+%% Plot sample of the prior model
 randn('seed',4);
 figure(12);clf
 for i=1:5;
@@ -54,18 +54,14 @@ for i=1:5;
     imagesc(prior{1}.x,prior{1}.y,m{1});
     caxis([8 12])
     axis image
-    %xlabel('X')
-    %ylabel('Y')
 end
 colorbar_shift;
 colormap(sippi_colormap(1));
-%%
 print_mul('prior_reals_fftma_matern')
 suptitle(sprintf('FFT-MA with varying Matern covariance properties'))
 
 
-%% SEQ GIBBS
-% 
+%% Plot 5 models generated using seqential Gibbs sampling
 randn('seed',4);rand('seed',4);
 figure(13);clf
 prior{1}.seq_gibbs.step=0;
@@ -89,8 +85,7 @@ print_mul('prior_reals_fftma_matern_seqgibbs')
 suptitle(sprintf('FFT-MA with varying Matern type covariance properties\n Sequential Gibbs sampling'))
 
 
-%% SEQ GIBBS MOVIE
-% 
+%% Show movie of a random walk in the prior (using sequential Gibbs sampling)
 save_movie=1;
 
 fclose all;
@@ -105,7 +100,7 @@ prior{1}.perturb=1;
 [m,prior]=sippi_prior(prior);
 if (save_movie==1);
   fname=[mfilename,'.mp4'];
-  vidObj = VideoWriter(fname);
+  vidObj = VideoWriter(fname,'MPEG-4');
   open(vidObj);
 end
 

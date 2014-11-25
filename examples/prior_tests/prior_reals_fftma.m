@@ -68,7 +68,7 @@ for j=1:2
     if (j==1);
         if (save_movie==1)
             fname=[mfilename,'_target','.mp4'];
-            vidObj = VideoWriter(fname);
+            vidObj = VideoWriter(fname,'MPEG-4');
         end
     else
         prior{1}=rmfield(prior{1},'d_target');

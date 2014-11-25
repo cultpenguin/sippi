@@ -220,7 +220,7 @@ Sampling the posterior provides the following 2D marginal distributions
 </imageobject>
 <textobject><phrase></phrase></textobject>
 </mediaobject>
-Note how several areas of high density scatter points (i.e. i.e. area with high posterior probability) can be found.
+Note how several areas of high density scatter points (i.e. areas with high posterior probability) can be found.
 </para>
 
 </sect3>
