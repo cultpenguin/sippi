@@ -69,17 +69,19 @@ if (save_movie==1);
     open(vidObj)
 end
 
-nsim=100;
+nsim=800;
 for isim=1:nsim;
-    
+
     % setting aniso
-    aniso=max([1 400-(isim/(nsim*4))*400]);
+    aniso=max([40 400-(isim/(nsim/4))*400]);
     prior{1}.Va(end).par2(3)=aniso;
     prior{2}.Va(1).par2(3)=aniso;
     % setting variance
     scale=min([1 isim/(nsim/4)]);
     %prior{2}.Va(1).par1=scale*.99;
     
+    disp(sprintf('isim=%03d/%03d, aniso=%g, scale=%g',isim,nsim,aniso,scale));
+
     [m,prior]=sippi_prior(prior,m);
     mm=m{1}+scale*m{2}.*pad;
     
