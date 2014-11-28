@@ -60,7 +60,7 @@ prior{1}.fftma_options.constant_C=0;
 prior{2}.fftma_options.constant_C=0;
 
 save_movie=0;
-save_png=0;
+save_png=1;
 
 if (save_movie==1);
     vidObj = VideoWriter('unknown_pleasures','MPEG-4');
@@ -73,7 +73,7 @@ nsim=100;
 for isim=1:nsim;
     
     % setting aniso
-    aniso=max([1 400-(isim/nsim)*400]);
+    aniso=max([1 400-(isim/(nsim*4))*400]);
     prior{1}.Va(end).par2(3)=aniso;
     prior{2}.Va(1).par2(3)=aniso;
     % setting variance
