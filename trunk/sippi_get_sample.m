@@ -2,7 +2,7 @@ function [reals_mat,etype_mean,etype_var,reals_all,ite_num]=sippi_get_sample(wd,
 % sippi_get_sample: Get a posterior sample
 %
 % Call :
-%  [reals,etype_mean,etype_var,reals_all,reals_ite]=sippi_get_sample(wordking_directory,im,n_reals,skip_seq_gibbs);
+%  [reals,etype_mean,etype_var,reals_all,reals_ite]=sippi_get_sample(working_directory,im,n_reals,skip_seq_gibbs);
 %
 %    im: A priori model type
 %    n_reals: Number of realizations to return
@@ -24,27 +24,40 @@ function [reals_mat,etype_mean,etype_var,reals_all,ite_num]=sippi_get_sample(wd,
 start_dir=pwd;
 
 if nargin>0;
-    if (isscalar(wd))
+    if isstr(wd)
+        old.start_dir=start_dir;
+        if nargin>1, old.im=im;; end
+        cd(wd);
+        [p,matfile]=fileparts(pwd);
+        load(matfile);
+        if nargin>1, im=old.im;; end
+        
+        start_dir=old.start_dir;
+        cd(start_dir);
+    else
         % FIRST INPUT IS 'IM' / WE ARE IN AN 'OUTPUT'
-        if nargin>2,skip_seq_gibbs=n_reals;end
-        if nargin>1,n_reals=im;end
-        im=wd;
-        wd=pwd;        
+        if isnumeric(wd)
+            if nargin>2,skip_seq_gibbs=n_reals;end
+            if nargin>1,n_reals=im;end
+            im=wd;
+            wd=pwd;
+        else
+            sippi_verbose(sprintf('%s : first input should in integer value or a string',mfilename))
+        end
     end
 end
 
-if nargin<5;
-    old.im=im;
-    old.start_dir=start_dir;
-    % LOAD FROM MAT FILES
-    cd(wd);
-    [p,matfile]=fileparts(pwd);
-    load(matfile);
-    im=old.im;
-    start_dir=old.start_dir;   
-    cd(start_dir);
-end
-
+%if nargin<5;
+%    old.im=im;
+%    old.start_dir=start_dir;
+%    % LOAD FROM MAT FILES
+%    cd(wd);
+%    [p,matfile]=fileparts(pwd);
+%    load(matfile);
+%    im=old.im;
+%    start_dir=old.start_dir;
+%    cd(start_dir);
+%end
 
 if ~exist('n_reals','var');
     n_reals=15;
@@ -65,6 +78,7 @@ if ~isfield(options.mcmc,'i_sample');
 end
 
 
+
 if ~exist('skip_seq_gibbs','var');
     skip_seq_gibbs=1; % only consider posterior realization AFTER seq gibbs has finished
     %skip_seq_gibbs=0; % coniser posterior realization from iteration number 1
@@ -79,21 +93,21 @@ if exist('m_est','var')|isfield(options,'m_est');
         m_est=options.m_est;
         Cm_est=options.Cm_est;
     end
-        
+    
     % LEAST SQUARES TYPE INVERSION
     reals=gaussian_simulation_cholesky(m_est,Cm_est,n_reals)';
-    reals_all=reals; % dummy output   
+    reals_all=reals; % dummy output
     ite_num=1:1:n_reals;
     etype_mean=m_est;
     etype_var=diag(Cm_est);
-
+    
     if prior{im}.dim(3)>1
         etype_var=reshape(etype_var,length(y),length(x),length(z));
     elseif prior{im}.dim(2)>1
         etype_var=reshape(etype_var,length(y),length(x));
     end
-
-
+    
+    
 else
     
     if ~isfield(options,'txt');
