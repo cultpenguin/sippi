@@ -62,6 +62,10 @@ $SIPPI/examples/manuscript_examples/tomography
   
 ## Releases history
 
+
+#1.1.1 (01-12-2014)
+Fixed bugh in sippi_get_sample that prevented most sippi_plot_posterior_* algorithms to wokr properly
+
 #1.1 (20-11-2014) [rev 265]
 Added consistency checks to sippi_prior_init
 Seperated visim, sisim prior types into seperate m-files, sippi_prior_visim, sippi_prior_sisim
