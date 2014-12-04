@@ -18,14 +18,6 @@ if ~isfield(prior{ip},'cells_N');
     prior{ip}.cells_N=10;
 end
 
-%if nargin<2
-%    if isfield(prior{ip},'cells_center');
-%        prior{ip}=rmfield(prior{ip},'cells_center');
-%    end
-%    if isfield(prior{ip},'cells_value');
-%        prior{ip}=rmfield(prior{ip},'cells_value');
-%    end
-%end
 
 % centers
 if ~isfield(prior{ip},'cells_center');
@@ -51,10 +43,11 @@ end
 
 
 %% compute nn map
+i_use=1:prior{ip}.cells_N;
 if prior{ip}.ndim==1;
     
 elseif prior{ip}.ndim==2;
-    m_propose{ip} = griddata(prior{ip}.cells_center(:,1),prior{ip}.cells_center(:,2),prior{ip}.cells_value,prior{ip}.xx,prior{ip}.yy,'nearest');
+    m_propose{ip} = griddata(prior{ip}.cells_center(i_use,1),prior{ip}.cells_center(i_use,2),prior{ip}.cells_value(i_use),prior{ip}.xx,prior{ip}.yy,'nearest');
 elseif prior{ip}.ndim==3;
     
 end
