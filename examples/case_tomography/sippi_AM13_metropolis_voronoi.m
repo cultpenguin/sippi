@@ -17,7 +17,7 @@ D=load('AM13_data.mat');
 options.txt='AM13_voronoi';
 
 rng('default')
-rng(2);
+rng(3);
 %% SETUP DATA, PRIOR and FORWARD
 
 %% SETUP DATA
@@ -29,46 +29,53 @@ data{id}.Ct=D.Ct; % Correlated noise model accroding to Cordua et al (2008; 2009
 
 %% SETUP PRIOR
 ip=0;
-cells_N=40;
+cells_N_min=3;
+cells_N_max=100;
 
 ip=ip+1;
 prior{ip}.type='voronoi';
-dx=0.05;0.15;
+dx=0.25;0.15;
 prior{ip}.x=[-1:dx:6];
 prior{ip}.y=[0:dx:13];
-prior{ip}.cells_N=cells_N;
+prior{ip}.cells_N=cells_N_max;
 prior{ip}.cax=[.1 .18];
 prior{ip}.m0=0.145;
-
 
 ip=ip+1;
 prior{ip}.type='uniform';
 prior{ip}.name='cells_x';
-prior{ip}.x=[1:cells_N];
+prior{ip}.x=[1:cells_N_max];
 prior{ip}.min=min(prior{1}.x);
 prior{ip}.max=max(prior{1}.x);
 prior{ip}.cax=[prior{ip}.min prior{ip}.max];
 prior{ip}.prior_master=1;
 
-
 ip=ip+1;
 prior{ip}.type='uniform';
 prior{ip}.name='cells_y';
-prior{ip}.x=[1:cells_N];
+prior{ip}.x=[1:cells_N_max];
 prior{ip}.min=min(prior{1}.y);
 prior{ip}.max=max(prior{1}.y);
 prior{ip}.cax=[prior{ip}.min prior{ip}.max];
 prior{ip}.prior_master=1;
 
-
 ip=ip+1;
 prior{ip}.type='fftma';
 prior{ip}.name='cells_value';
-prior{ip}.x=[1:cells_N];
+prior{ip}.x=[1:cells_N_max];
 prior{ip}.m0=prior{1}.m0;
 prior{ip}.Va='.0003 Sph(.01)';
 prior{ip}.cax=[0.1 0.18];
 prior{ip}.prior_master=1;
+
+
+ip=ip+1;
+prior{ip}.type='uniform';
+prior{ip}.name='cells_N';
+prior{ip}.min=cells_N_min;
+prior{ip}.max=cells_N_max;
+prior{ip}.prior_master=1;
+
 
 
 %% SETUP THE FORWARD MODEL(S)
@@ -81,7 +88,9 @@ forward.type='fat';forward.linear=1;forward.freq=0.1;
 
 %% TEST THE SETUP 
 % generate a realization from the prior
-m=sippi_prior(prior);
+[m,prior]=sippi_prior(prior);
+sippi_plot_prior(prior,m);figure(100);
+
 % Compute the forward response related to the realization of the prior model generated above
 [d]=sippi_forward(m,forward,prior,data);
 % Compute the likelihood 
@@ -91,30 +100,33 @@ sippi_plot_data(d,data);
 
 [logL,L,data]=sippi_likelihood(d,data);
 
-
 %% SETUP METROPOLIS
 options.mcmc.nite=1000000;
 options.mcmc.i_plot=5000;
 options.mcmc.i_sample=500;
 
-options.mcmc.nite=10000;
-options.mcmc.i_plot=500;
-options.mcmc.i_sample=500;
+options.mcmc.nite=100000;
+options.mcmc.i_plot=1000;
+options.mcmc.i_sample=100;
 
 %options.mcmc.pert_strategy.perturb_all=1;
 
-options.mcmc.pert_strategy.i_pert=[2 3 4];
-options.mcmc.pert_strategy.i_pert_freq=[.3 .3 .4]; %????
+np=length(prior);
+options.mcmc.pert_strategy.i_pert=[2:np];
+options.mcmc.pert_strategy.i_pert_freq=[ones(1,np-1)./(np-1)];
 %
-
-options.mcmc.anneal.i_begin=1; % default, iteration number when annealing begins
-options.mcmc.anneal.i_end=10000; %  iteration number when annealing stops
-options.mcmc.anneal.fac_begin=20; % default, noise is scaled by fac_begin at iteration i_begin
-options.mcmc.anneal.fac_end=1; % default, noise is scaled by fac_end at iteration i_end
-for ip=1:length(prior);
-    prior{ip}.seq_gibbs.i_update_step_max=20000;
+doAnneal=0;
+if doAnneal==1
+    options.mcmc.anneal.i_begin=1; % default, iteration number when annealing begins
+    options.mcmc.anneal.i_end=1000; %  iteration number when annealing stops
+    options.mcmc.anneal.fac_begin=20; % default, noise is scaled by fac_begin at iteration i_begin
+    options.mcmc.anneal.fac_end=1; % default, noise is scaled by fac_end at iteration i_end
 end
-return
+
+for ip=1:length(prior);
+    prior{ip}.seq_gibbs.i_update_step_max=5000;
+    prior{ip}.seq_gibbs.i_update_step=200;
+end
 options=sippi_metropolis(data,prior,forward,options);
 return
 %% PLOT SAMPLE FROM PRIOR
@@ -127,7 +139,10 @@ sippi_plot_posterior(options.txt);
 prior{2}.seq_gibbs.step=0.05;
 prior{3}.seq_gibbs.step=0.05;
 prior{4}.seq_gibbs.step=0.001;
-prior{4}.perturb=0;
+prior{5}.seq_gibbs.step=0.1;
+
+for i=1:length(prior);prior{i}.perturb=0;end
+prior{5}.perturb=1;
 [m,prior]=sippi_prior(prior);
 for i=1:1000;
     [m,prior]=sippi_prior(prior,m);

@@ -47,8 +47,6 @@ end
 options=sippi_plot_defaults(options);
 
 
-
-
 %% REALS
 nm=length(prior);
 
@@ -406,10 +404,11 @@ for im=im_arr;
         print_mul(sprintf('%s_m%d_rate',fname,im),options.plot.hardcopy_types)
     catch
         try;close(fn);end
-        disp(sprintf('%s : could not plot acceptance rate',mfilename));
+        disp(sprintf('%s : could not plot acceptance rate for prior{%d}',mfilename,im));
         cd(cwd);
     end
     %% PLOT CORRELATION COEFFICIENT / FIND NITE PER INDEPENDANT POST REAL
+    
     try
         if ndim==0
             %% autocorrelation analysis... to come
@@ -449,7 +448,8 @@ for im=im_arr;
             
             %%
             
-        elseif ndim>1
+        elseif ndim>=1
+        
             fn=(im-1)*10+6;
             figure_focus(fn);set_paper('landscape');clf;
             set(gca,'FontSize',options.plot.axis.fontsize)
@@ -486,9 +486,10 @@ for im=im_arr;
         
     catch
         try;close(fn);end
-        disp(sprintf('%s : could not plot corrcoeff stats',mfilename));
+        disp(sprintf('%s : could not plot corrcoeff stats for prior{%d}',mfilename,im));
+        keyboard      
         cd(cwd);
-    end
+    end % end plot correlection coefficient
     
 end
 cd(cwd);
