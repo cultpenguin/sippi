@@ -63,7 +63,7 @@ $SIPPI/examples/manuscript_examples/tomography
 ## Releases history
 
 
-#1.1.1 (01-12-2014)
+#1.1.1 (01-12-2014) [rev 272]
 Fixed bugh in sippi_get_sample that prevented most sippi_plot_posterior_* algorithms to wokr properly
 
 #1.1 (20-11-2014) [rev 265]

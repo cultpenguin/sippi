@@ -39,8 +39,11 @@ if nargin>0;
         if isnumeric(wd)
             if nargin>2,skip_seq_gibbs=n_reals;end
             if nargin>1,n_reals=im;end
+            [p,matfile]=fileparts(pwd);
+            load(matfile);
             im=wd;
             wd=pwd;
+            
         else
             sippi_verbose(sprintf('%s : first input should in integer value or a string',mfilename))
         end
