@@ -116,6 +116,8 @@ for im=im_array;
                 daspect(prior{im}.daspect);
             end
             
+            try;caxis(cax);end
+            
             colormap(sippi_colormap);
             if use_colorbar==1
                 colorbar_shift;
@@ -134,6 +136,8 @@ for im=im_array;
             if isfield(prior{im},'daspect');
                 daspect(prior{im}.daspect);
             end
+            
+            try;caxis(cax);end
             
             colormap(sippi_colormap);
             if use_colorbar==1
