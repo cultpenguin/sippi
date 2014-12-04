@@ -81,13 +81,13 @@ end
 
 nm=length(prior);
 j=0;
-for im=im_arr
-    j=j+1;
-    try
-        prior{im}.fftma_options=rmfield(prior{im}.fftma_options,'z_rand');
-    end
-    prior{im}.ndim=sum(find(prior{im}.dim>1));
-end
+%for im=im_arr
+%    j=j+1;
+%    try
+%        prior{im}.fftma_options=rmfield(prior{im}.fftma_options,'z_rand');
+%    end
+%    prior{im}.ndim=sum(find(prior{im}.dim>1));
+%end
 
 prior_master=zeros(1,length(prior));
 for im=1:length(prior);

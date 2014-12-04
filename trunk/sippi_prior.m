@@ -1,11 +1,11 @@
 
-% sippi_prior A priori models for SIPPI 
+% sippi_prior A priori models for SIPPI
 %
-% To generate a realization of the prior model defined by the prior structure use: 
+% To generate a realization of the prior model defined by the prior structure use:
 %   [m_propose,prior]=sippi_prior(prior);
 %
 % To generate a realization of the prior model defined by the prior structure,
-% in the vicinity of a current model (using sequential Gibbs sampling) use: 
+% in the vicinity of a current model (using sequential Gibbs sampling) use:
 %   [m_propose,prior]=sippi_prior(prior,m_current);
 %
 % The following types of a priori models can be used
@@ -13,7 +13,7 @@
 %   GAUSSIAN   [1D] : 1D generalized gaussian model
 %   UNIFORM [1D-3D] : 1D-3D uncorrelated uniform distribution
 %   CHOLESKY[1D-3D] : based on Cholesky decomposition
-%   FFTMA   [1D-3D] : based on the FFT-MA method (Multivariate Gaussian) 
+%   FFTMA   [1D-3D] : based on the FFT-MA method (Multivariate Gaussian)
 %   VISIM   [1D-3D] : based on Sequential Gaussian and Direct Sequential simulation
 %   SISIM   [1D-3D] : based on Sequential indicator SIMULATION
 %   % multiple point based statistics
@@ -22,8 +22,8 @@
 %
 %%%% SIMPLE EXAMPLE %%%
 %
-%% A simple 2D multivariate Gaissian based prior model based on the 
-%% FFT-MA method, can be defined using 
+%% A simple 2D multivariate Gaissian based prior model based on the
+%% FFT-MA method, can be defined using
 %   im=1;
 %   prior{im}.type='FFTMA';
 %   prior{im}.name='A SIMPLE PRIOR';
@@ -73,8 +73,8 @@
 %
 %%% Sequential Gibbs sampling
 %
-%   All a priori model types can be perturbed, such that a new realization 
-%   is generated in the vicinity of a current model. 
+%   All a priori model types can be perturbed, such that a new realization
+%   is generated in the vicinity of a current model.
 %   To do this Sequential Gibbs Sampling is used.
 %   For more information, see <a href="matlab:web('http://dx.doi.org/10.1007/s10596-011-9271-1')">Hansen, T. M., Cordua, K. S., and Mosegaard, K., 2012. Inverse problems with non-trivial priors - Efficient solution through Sequential Gibbs Sampling. Computational Geosciences</a>.
 %   The type of sequential Gibbs sampling can be controlled in the
@@ -101,29 +101,29 @@
 function [m_propose,prior]=sippi_prior(prior,m_current);
 
 
+% 
+% % Check for obsolete coding
+% for im=1:length(prior);
+%     if isfield(prior{im},'prior')
+%         if isfield(prior{im}.prior,'x');
+%             disp(sprintf('Using ''prior{im}.prior.x'' is now obsolete and should be ''prior{im}.x'' '))
+%             prior{im}.x=prior{im}.prior.x;
+%         end
+%         if isfield(prior{im}.prior,'y');
+%             disp(sprintf('Using ''prior{im}.prior.y'' is now obsolete and should be ''prior{im}.y'' '))
+%             prior{im}.x=prior{im}.prior.x;
+%         end
+%         if isfield(prior{im}.prior,'z');
+%             disp(sprintf('Using ''prior{im}.prior.z'' is now obsolete and should be ''prior{im}.z'' '))
+%             prior{im}.x=prior{im}.prior.x;
+%         end
+%         try
+%             disp(sprintf('Removing ''prior{im}.prior'''))
+%             prior{im}=rmfield(prior{im},'prior');
+%         end
+%     end
+% end
 
-% Check for obsolete coding
-for im=1:length(prior);
-    if isfield(prior{im},'prior')
-        if isfield(prior{im}.prior,'x');
-            disp(sprintf('Using ''prior{im}.prior.x'' is now obsolete and should be ''prior{im}.x'' '))
-            prior{im}.x=prior{im}.prior.x;
-        end
-        if isfield(prior{im}.prior,'y');
-            disp(sprintf('Using ''prior{im}.prior.y'' is now obsolete and should be ''prior{im}.y'' '))
-            prior{im}.x=prior{im}.prior.x;
-        end
-        if isfield(prior{im}.prior,'z');
-            disp(sprintf('Using ''prior{im}.prior.z'' is now obsolete and should be ''prior{im}.z'' '))
-            prior{im}.x=prior{im}.prior.x;
-        end
-        try
-            disp(sprintf('Removing ''prior{im}.prior'''))
-            prior{im}=rmfield(prior{im},'prior');
-        end
-    end
-end
-      
 
 % Check for initialization
 for im=1:length(prior);
@@ -161,7 +161,10 @@ if isempty(im_array)
     disp(sprintf('%s : no model parameters perturbed...',mfilename))
 end
 
+% allow for 'master' (prior models whose properties can change) prior models
 run_fftma=[];
+run_voronoi=[];
+
 % FIRST CHECK FOR ALL PRIOR TYPES, EXCEPT MASTER TYPES
 for im=im_array;
     
@@ -171,9 +174,9 @@ for im=im_array;
             prior{im}.Va=prior{im}.Cm;
         end
     end
-      
+    
     %% PRIOR TYPES
-       
+    
     if (strcmp(lower(prior{im}.type),'gaussian'))
         %% 1D GENERALIZED GAUSSIAN
         
@@ -183,12 +186,12 @@ for im=im_array;
             d_max=max(prior{im}.d_target);
             [d_nscore,o_nscore]=nscore(prior{im}.d_target,1,1,d_min,d_max,0);
             prior{im}.o_nscore=o_nscore;
-        end        
+        end
         
         if ~isfield(prior{im},'norm');
             prior{im}.norm=2;
         end
-       
+        
         if ~isfield(prior{im},'std');
             if isfield(prior{im},'min')&isfield(prior{im},'max');
                 prior{im}.std=(prior{im}.max-prior{im}.min)/2;
@@ -267,19 +270,26 @@ for im=im_array;
             m_propose{im}=prior{im}.m0+prior{im}.std*ggauss_real;
             
         end
-       
+        
         if ~isfield(prior{im},'round_ceil');
             prior{im}.round_ceil=0;
         end
         if prior{im}.round_ceil==1;
             m_propose{im}=ceil(m_propose{im});
         end
-        
-    elseif (strcmp(upper(prior{im}.type),'FFTMA'))        
-        % THE FFTMA PRIOR IS HANDLED BELOW
+
+    
+    elseif (strcmp(upper(prior{im}.type),'FFTMA'))
+        %% THE FFTMA PRIOR (Handled later)
         run_fftma=[run_fftma im];
 
+    elseif (strcmp(upper(prior{im}.type),'VORONOI'))
+        %% THE FFTMA PRIOR (Handled later)
+        run_voronoi=[run_voronoi im];
+        
     else
+        %% OTHER TYPES OF PRIORS ('GAUSSAIN', 'CHOLESKY', 'VISIM'
+        % available as sippi_prior_TYPE
         
         % check that a file exist that implements the prior type
         m_file=sprintf('sippi_prior_%s',lower(prior{im}.type));
@@ -298,34 +308,59 @@ for im=im_array;
             disp(sprintf('%s : ''%s'' type prior model not supported',mfilename,prior{im}.type));
         end
     end
-        
+    
 end
 
-%% CHECK IF WE NEED TO RUN FFTMA TYPE PRIOR BACUSE IT IS A MASTER 
+%% CHECK IF ANY MASTER TYPES HAS BEEN SET
+
+% check if any 'children has been perturbed 
+% makes all other prior types a bit slower... Perhaps rethink
 run_fftma_as_master=[];
-prior_master=[];
-
 for im=im_array;
-    
-    if isfield(prior{im},'prior_master');
-        try
-        if (strcmp(upper(prior{prior{im}.prior_master}.type),'FFTMA'))
+    if isfield(prior{im},'prior_master')
+        if strcmp(lower(prior{prior{im}.prior_master}.type),'voronoi');
+            % we have found a child of VORONOI type prior
+            run_voronoi=[run_voronoi prior{im}.prior_master];
+        end
+        if strcmp(lower(prior{prior{im}.prior_master}.type),'fftma');
+            % we have found a child of FFTMA type prior
             run_fftma_as_master=[run_fftma_as_master prior{im}.prior_master];
-        end
-        prior_master=[prior_master prior{im}.prior_master];
-        catch
-            % perhaps prioir number prior{im}.prior_master does not exist
-        end
+        end    
+        run_voronoi=unique(run_voronoi);
+        run_fftma_as_master=unique(run_fftma_as_master);
     end
-    prior_master=unique(prior_master);
-    
 end
-run_fftma_as_master=unique(run_fftma_as_master);
+
+
+
+%% FFTMA (POSSIBLE MASTER 
+%% CHECK IF WE NEED TO RUN FFTMA TYPE PRIOR BACUSE IT IS A MASTER
+% run_fftma_as_master=[];
+% prior_master=[];
+% 
+% for im=im_array;
+%     
+%     if isfield(prior{im},'prior_master');
+%         try
+%             if (strcmp(upper(prior{prior{im}.prior_master}.type),'FFTMA'))
+%                 run_fftma_as_master=[run_fftma_as_master prior{im}.prior_master];
+%             end
+%             prior_master=[prior_master prior{im}.prior_master];
+%         catch
+%             % perhaps prioir number prior{im}.prior_master does not exist
+%         end
+%     end
+%     prior_master=unique(prior_master);
+%     
+% end
+% run_fftma_as_master=unique(run_fftma_as_master);
+% 
+
 
 %%
 % WE NEED TO CHECK FOR FFTMA TYPE PRIOR SEPERATELY, AS IT CAN BE AFFECTED
 % BY OTHER TYPES OF GAUSSIAN 1D TYPE PRIORS
-im_fftma_array=unique([run_fftma_as_master,run_fftma]);
+im_fftma_array=unique([run_fftma run_fftma_as_master]);
 for im=im_fftma_array;
     if isempty(im); break;end % Needed as of Matlab R2013a
     if (strcmp(upper(prior{im}.type),'FFTMA'))
@@ -334,7 +369,7 @@ for im=im_fftma_array;
         if ~isstruct(prior{im}.Va); prior{im}.Va=deformat_variogram(prior{im}.Va);end
         
         % UPDATE COVARIANCE PARAMETERS IF THE HAVE BEEN DEFINED
-        %[range,rot,sill,Va]=Va2RangeRot(prior{im}.Va);        
+        %[range,rot,sill,Va]=Va2RangeRot(prior{im}.Va);
         %prior{im}.fftma_options.constant_C=1;
         
         % run thorugh the priors that have been updated
@@ -356,7 +391,7 @@ for im=im_fftma_array;
             if update_master==1
                 
                 % THIS IM IS A MASTER SO WE CAN UPDATE THE COVARIANCE MODEL
-                % IF CHOSEN 
+                % IF CHOSEN
                 if strcmp(prior{j}.name,'m0');
                     prior{im}.m0=m_propose{j};
                     prior{im}.fftma_options.constant_C=0;
@@ -403,28 +438,20 @@ for im=im_fftma_array;
             % (ONLY COVARIANCE PROPERTIES ARE PERTURBED)
             prior{im}.fftma_options.lim=0;
         end
-            
         
-        %if (length(prior{im}.z)==1)&(length(prior{im}.y)==1)
-        %    [m_propose{im},prior{im}.fftma_options.z_rand,o]=fft_ma(prior{im}.x,prior{im}.Va,fftma_options);
-        %elseif (length(prior{im}.z)==1)
-        %    [m_propose{im},prior{im}.fftma_options.z_rand,o]=fft_ma(prior{im}.x,prior{im}.y,prior{im}.Va,fftma_options);
-        %else
-        %    [m_propose{im},prior{im}.fftma_options.z_rand,o]=fft_ma(prior{im}.x,prior{im}.y,prior{im}.z,fftma_options);
-        %end
         [m_propose{im},z_rand,prior{im}.fftma_options]=fft_ma(prior{im}.x,prior{im}.y,prior{im}.z,prior{im}.Va,prior{im}.fftma_options);
         prior{im}.fftma_options.z_rand=z_rand;
         
-         if (isfield(prior{im},'d_target'))&(~isfield(prior{im},'o_nscore'))
-              % UPDATE PRIOR STRUCTURE TO USE TARGET DISTRIBUTION
-             d_min=min(prior{im}.d_target);
-             d_max=max(prior{im}.d_target);
-             [d_nscore,o_nscore]=nscore(prior{im}.d_target,1,1,d_min,d_max,0);
-             prior{im}.o_nscore=o_nscore;
-         end
+        if (isfield(prior{im},'d_target'))&(~isfield(prior{im},'o_nscore'))
+            % UPDATE PRIOR STRUCTURE TO USE TARGET DISTRIBUTION
+            d_min=min(prior{im}.d_target);
+            d_max=max(prior{im}.d_target);
+            [d_nscore,o_nscore]=nscore(prior{im}.d_target,1,1,d_min,d_max,0);
+            prior{im}.o_nscore=o_nscore;
+        end
         
         
-        % PERFORM NORMAL SCORE OF NEEDED        
+        % PERFORM NORMAL SCORE OF NEEDED
         if isfield(prior{im},'o_nscore');
             if ~isstruct(prior{im}.Va);
                 prior{im}.Va=deformat_variogram(prior{im}.Va);
@@ -433,23 +460,65 @@ for im=im_fftma_array;
             gvar=sum([Va_par.par1]);
             m_propose{im}=m_propose{im}./sqrt(gvar);
             m_propose{im}=inscore(m_propose{im},prior{im}.o_nscore);
-        %else
+            %else
         end
         
         % add mean model
         m_propose{im}=m_propose{im}+prior{im}.m0;
-               
+        
         prior{im}.m=m_propose{im};
     end
 end
 
 
+%% VORONOI (POSSIBLE MASTER
+
+if ~isempty(run_voronoi);
+     for i_master=run_voronoi;
+         % update parameters if master is set for any priors...
+         for im=setxor(1:nm,i_master); % loop over priors
+             if isfield(prior{im},'prior_master');
+                 if prior{im}.prior_master==i_master
+                     % we have a 'child' of the current 'master'
+                     if strcmp(lower(prior{im}.name),'cells_x')
+                         prior{i_master}.cells_center(:,1)=m_propose{im};
+                     end
+                     if strcmp(lower(prior{im}.name),'cells_y')
+                         prior{i_master}.cells_center(:,2)=m_propose{im};
+                     end
+                     if strcmp(lower(prior{im}.name),'cells_z')
+                         prior{i_master}.cells_center(:,3)=m_propose{im};
+                     end
+                     if strcmp(lower(prior{im}.name),'cells_value')
+                         prior{i_master}.cells_value(:,1)=m_propose{im};
+                     end
+                 end
+             end
+         end
+         % Sample from VORONOI prior
+         p{1}=prior{i_master};
+         if nargin==1
+             [m_p,p]=sippi_prior_voronoi(p);
+         else
+             m_c{1}=m_current{i_master};
+             [m_p,p]=sippi_prior_voronoi(p,m_c);
+         end
+         m_propose{i_master}=m_p{1};
+         prior{i_master}=p{1};
+         
+         
+     end
     
-%% FIX EXTREME VALUES
+     
+end
+
+
+
+%% TRIM EXTREME VALUES
 for im=im_array;
     if isfield(prior{im},'min');
         try
-        ii=find(m_propose{im}<prior{im}.min);
+            ii=find(m_propose{im}<prior{im}.min);
         catch
             keyboard
         end
@@ -465,5 +534,5 @@ for im=im_array;
             m_propose{im}(ii)=m_current{im}(ii);
         end
     end
-end    
+end
 
