@@ -120,7 +120,7 @@ for im=im_array;
             
             colormap(sippi_colormap);
             if use_colorbar==1
-                colorbar_shift;
+                %colorbar_shift;
             end
             
             
@@ -146,7 +146,6 @@ for im=im_array;
             end
             xlabel('X');
             ylabel('Y');
-            
             if isfield(prior{im},'ydir');
                 set(gca,'ydir',prior{im}.ydir);
             end            
