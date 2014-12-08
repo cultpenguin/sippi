@@ -34,7 +34,7 @@ cells_N_max=100;
 
 ip=ip+1;
 prior{ip}.type='voronoi';
-dx=0.25;0.15;
+dx=0.15;0.15;
 prior{ip}.x=[-1:dx:6];
 prior{ip}.y=[0:dx:13];
 prior{ip}.cells_N=cells_N_max;
@@ -83,7 +83,8 @@ prior{ip}.prior_master=1;
 forward.forward_function='sippi_forward_traveltime';
 forward.sources=D.S;
 forward.receivers=D.R;
-forward.type='fat';forward.linear=1;forward.freq=0.1;
+%forward.type='fat';forward.linear=1;forward.freq=0.1;
+forward.type='eikonal';
 
 
 %% TEST THE SETUP 
@@ -105,7 +106,7 @@ options.mcmc.nite=1000000;
 options.mcmc.i_plot=5000;
 options.mcmc.i_sample=500;
 
-options.mcmc.nite=100000;
+options.mcmc.nite=150000;
 options.mcmc.i_plot=1000;
 options.mcmc.i_sample=100;
 
@@ -124,17 +125,18 @@ if doAnneal==1
 end
 
 for ip=1:length(prior);
-    prior{ip}.seq_gibbs.i_update_step_max=5000;
+    prior{ip}.seq_gibbs.i_update_step_max=10000;
     prior{ip}.seq_gibbs.i_update_step=200;
 end
 options=sippi_metropolis(data,prior,forward,options);
-return
+
 %% PLOT SAMPLE FROM PRIOR
 sippi_plot_prior_sample(options.txt);
 
 %% PLOT SAMPLE AND STATS FROM POSTERIOR
 sippi_plot_posterior(options.txt);
 
+return
 %% SAMPLE PRIOR
 prior{2}.seq_gibbs.step=0.05;
 prior{3}.seq_gibbs.step=0.05;
