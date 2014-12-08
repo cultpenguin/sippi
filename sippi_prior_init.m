@@ -1,4 +1,4 @@
-function prior=sippi_prior_init(prior);
+function prior=sippi_prior_init(prior,ip_array);
 % sippi_prior_init Initialize PRIOR structure for SIPPI
 %
 % Call
@@ -8,8 +8,10 @@ function prior=sippi_prior_init(prior);
 %
 sippi_verbose(sprintf('%s : Initializing prior options',mfilename))
 
-
-for im=1:length(prior);
+if nargin<2
+    ip_array=1:length(prior);
+end
+for im=ip_array
     
     
     prior{im}.init=0;
