@@ -7,6 +7,20 @@
 %    prior{ip}.y=1:1:80;
 %    prior{ip}.ti=channels;
 %    % prior{ip}.ti=maze;
+%
+%    m=sippi_prior(prior);
+%    sippi_plot_prior(prior,m)
+%    figure(1);imagesc(prior{ip}.ti);axis image
+%
+%% Example: scaling and rotation
+%    ip=1;
+%    prior{ip}.type='snesim';
+%    prior{ip}.x=1:1:80;
+%    prior{ip}.y=1:1:80;
+%    prior{ip}.ti=channels;
+%    prior{ip}.scaling=[.1];
+%    prior{ip}.rotation=[10];
+%
 %    m=sippi_prior(prior);
 %    sippi_plot_prior(prior,m)
 %    figure(1);imagesc(prior{ip}.ti);axis image
@@ -71,6 +85,7 @@ if isfield(prior{ip},'rotation')
     prior{ip}.S.XML.parameters.Global_Angle.value=-1*prior{ip}.rotation;
 end
 if isfield(prior{ip},'scaling')
+    aff=prior{ip}.scaling;
     if length(prior{ip}.scaling)==1; aff=prior{ip}.scaling.*[1 1 1]; end
     if length(prior{ip}.scaling)==2; aff(3)=1; end
     prior{ip}.S.XML.parameters.Use_Affinity.value=1;

@@ -21,7 +21,6 @@ end
 
 options.plot.null='';
 
-
 options.plot.axis.null='';
 
 %% AXES

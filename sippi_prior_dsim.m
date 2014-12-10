@@ -44,7 +44,7 @@ if nargin == 1
     if prior{ip}.ndim==1;
         SIM_data=NaN.*ones(1,length(prior{ip}.x));
     elseif prior{ip}.ndim==2;
-        SIM_data=NaN.*ones(length(prior{ip}.x),length(prior{ip}.x));
+        SIM_data=NaN.*ones(length(prior{ip}.y),length(prior{ip}.x));
     else
         SIM_data=NaN;
         disp(sprintf('%s: 3D not supported for DSIM yet',mfilename))
@@ -53,8 +53,8 @@ else
     % PERTURB
     SIM_data=m_current{ip};
     N=prod(size(SIM_data));
-    i_resample=randomsample(N,prior{1}.seq_gibbs.step*N);
-   SIM_data(i_resample)=NaN;
+    i_resample=randomsample(N,ceil(prior{1}.seq_gibbs.step*N));
+    SIM_data(i_resample)=NaN;
 end
 [m_propose{ip},prior{ip}.options]=dsim(prior{ip}.ti,SIM_data,prior{ip}.options);
 
