@@ -11,12 +11,17 @@
 function cmap=sippi_colormap(ic);
 
 if nargin==0
+    ic=5;
     ic=3;
 end
 if ic==1
     cmap=(cmap_linear([1 0 0; 0 1 0 ;0 0 0]));
 elseif ic==2
     cmap=(cmap_linear([1 0 0; 0 1 0 ; 0 0 1 ;0 0 0]));
+elseif ic==3
+    cmap=flipud(gray);
+elseif ic==4
+    cmap=parula;
 else
     cmap=jet;
 end

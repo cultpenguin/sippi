@@ -110,8 +110,9 @@ elseif strcmp(forward.type,'born');
     end
     if ~isfield(forward,'linear'),forward.linear=1;end
     if ~isfield(forward,'freq');
+        forward.freq=0.1;
         disp(sprintf('''forward.freq'' field is not set !!',mfilename))
-        pause(1);return
+        disp(sprintf('''Using forward.freq''=%g field is not set !!',mfilename,forward.freq))
     end
     if forward.linear==1
         m_use=forward.linear_m;

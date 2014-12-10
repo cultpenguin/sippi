@@ -75,11 +75,13 @@ try;
     addpath(['..',filesep])
     
     for im=1:length(prior);
-        try
-            if isunix
-                system(sprintf('cp ..%s%s . ',filesep,prior{im}.ti));
-            else
-                system(sprintf('copy ..%s%s ',filesep,prior{im}.ti));
+        if isstr(prior{im}.ti)
+            try
+                if isunix
+                    system(sprintf('cp ..%s%s . ',filesep,prior{im}.ti));
+                else
+                    system(sprintf('copy ..%s%s ',filesep,prior{im}.ti));
+                end
             end
         end
     end
