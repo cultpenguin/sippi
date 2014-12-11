@@ -1,5 +1,5 @@
 function sippi_plot_prior_sample(prior,im_arr,n_reals,caxis,options);
-% sippi_plot_prior Plot a sample of the prior in SIPPI
+% sippi_plot_prior_sample Plot a sample of the prior in SIPPI
 %
 % Call :
 %    sippi_plot_prior_sample(prior,im_array,n_reals,cax,options);
