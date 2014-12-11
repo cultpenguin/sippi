@@ -131,9 +131,8 @@ m_current=m_init;
 
 
 %% INITIAL LIKELIHOODS
-
 [d_init,forward,prior,data]=sippi_forward(m_init,forward,prior,data);
-    
+
 %% Initialize
 data_init=data;
 if isfield(mcmc,'anneal');
@@ -243,7 +242,6 @@ for i=1:mcmc.nite;
  
     % SAMPLE PRIOR
     [m_propose,prior_propose] = sippi_prior(prior,m_current);
-    
     
     %% FORWARD PROBLEM
     [d,forward,prior_propose,data]=sippi_forward(m_propose,forward,prior_propose,data);
