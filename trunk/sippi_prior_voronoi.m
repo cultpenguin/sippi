@@ -18,7 +18,6 @@ if ~isfield(prior{ip},'cells_N');
     prior{ip}.cells_N=10;
 end
 
-
 % centers
 if ~isfield(prior{ip},'cells_center');
     if prior{ip}.ndim>=1;
@@ -44,7 +43,7 @@ end
 %% compute nn map
 i_use=1:prior{ip}.cells_N;
 if prior{ip}.ndim==1;
-    
+      
 elseif prior{ip}.ndim==2;
     m_propose{ip} = griddata(prior{ip}.cells_center(i_use,1),prior{ip}.cells_center(i_use,2),prior{ip}.cells_value(i_use),prior{ip}.xx,prior{ip}.yy,'nearest');
 elseif prior{ip}.ndim==3;
