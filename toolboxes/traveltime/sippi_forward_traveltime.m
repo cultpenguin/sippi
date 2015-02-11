@@ -72,7 +72,14 @@ elseif (strcmp(forward.type,'ray')|strcmp(forward.type,'fat'));
         T=1./ forward.freq;
         
         if ~isfield(forward,'linear_m'),
-            forward.linear_m = m{im}.*0+prior{im}.m0;
+            if ~isfield(forward,'m0'),
+                if isfield(prior{im},'m0')
+                    forward.m0=prior{im}.m0;
+                else
+                    forward.m0=mean(m{im}(:));
+                end
+            end
+            forward.linear_m = m{im}.*0+forward.m0;
         end
         if forward.linear==1
             m_use=forward.linear_m;
