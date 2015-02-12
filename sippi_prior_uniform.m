@@ -43,12 +43,28 @@ if ~isfield(prior{ip},'init')
 end
 
 if nargin == 1
-    prior{ip}.randn=randn(prior{ip}.dim);
+    if (prior{1}.ndim)==1
+        prior{ip}.randn=randn(prior{ip}.dim);
+    elseif (prior{1}.ndim)==2
+        prior{ip}.randn=randn([prior{ip}.dim(2) prior{ip}.dim(1)]);
+    elseif (prior{1}.ndim)==3
+        prior{ip}.randn=randn([prior{ip}.dim(2) prior{ip}.dim(1) prior{ip}.dim(3)]);
+    end
+
+        
 %    m_propose{ip}=normcdf(prior{ip}.randn,0,1)*(prior{ip}.max-prior{ip}.min)+prior{ip}.min;
 else
     % PERTURB
+    if (prior{1}.ndim)==1
+        new_randn=randn(prior{ip}.dim);
+    elseif (prior{1}.ndim)==2
+        new_randn=randn([prior{ip}.dim(2) prior{ip}.dim(1)]);
+    elseif (prior{1}.ndim)==3
+        new_randn=randn([prior{ip}.dim(2) prior{ip}.dim(1) prior{ip}.dim(3)]);
+    end
+
     theta=90*(prior{ip}.seq_gibbs.step)*pi/180;
-    prior{ip}.randn = prior{ip}.randn*cos(theta) + randn(prior{ip}.dim)*sin(theta) ;
+    prior{ip}.randn = prior{ip}.randn*cos(theta) + new_randn*sin(theta) ;
 end
 m_propose{ip}=normcdf(prior{ip}.randn,0,1)*(prior{ip}.max-prior{ip}.min)+prior{ip}.min;
     
