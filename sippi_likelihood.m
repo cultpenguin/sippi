@@ -17,9 +17,6 @@
 %  data{1}.Ct [1,1] : Constant Covariance of modelization error
 %                     imples data{1}.Ct=ones(N_data.N_data)*data{1}.Ct;
 %
-%
-%
-%
 % data{id}.recomputeCD [default=0], if '1' then data{1}.iCD is recomputed
 % each time sippi_likelihood is called. This should be used if the noise model
 % changes between each call to sippi_likelihood.
@@ -29,6 +26,17 @@
 %  civariance is constant, but if it changes, then use
 %  data{id}.full_likelihood=1;
 %
+%
+%  A new type of noise model can be used as long as it is available in a 
+%  m file staring with 'sippi_likelihood_'. Further, it should provide the
+%  inputs and outputs as sippi_likelihood.m
+%  If a noise model has been implemented in the m-files
+%  sippi_likelihood_other.m
+%  then this can be used to evaluate the likelhood in sippi using 
+%  data{1}.noise_model='sippi_likelihood_other',
+%
+%
+
 
 
 %% MAKE SURE Cd CT Ct is robust to simple noise models
@@ -51,6 +59,16 @@ for id=id_array;
     %        sippi_verbose(sprintf('%s : tried to TRANSPOSE data{%d}.d_obs',mfilename,ud))
     %    end
     %end
+    
+    % Check whether tp use user supplied noise model.
+    if isfield(data{id},'noise_model')        
+        % next line may be slow...
+        if strfind(data{id}.noise_model,'sippi_likelihood_');
+            [logL,logL_all,data]=feval(data{id}.noise_model,d,data,id);
+            break;
+        end
+    end
+    
     
     if ~isfield(data{id},'noise_model');
         data{id}.noise_model='gaussian';
