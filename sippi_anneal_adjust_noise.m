@@ -11,6 +11,8 @@ data=data_org;
 %% GET NOISE SCALING FACTOR
 if nargin==4;
     [fac,mcmc]=sippi_anneal_factor(mcmc,i,prior);
+elseif nargin==2
+    fac=i;
 else
     [fac,mcmc]=sippi_anneal_factor(mcmc,i);
 end
