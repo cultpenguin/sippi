@@ -302,8 +302,7 @@ for i=1:mcmc.nite;
         % REJECT MODEL
         %% Next section only for keeping track of FFT-MA options / Seg Gibbs
         %  reser z_rand values
-        for im=1:length(prior);
-            
+        for im=1:length(prior);            
             if isfield(prior{im},'fftma_options');prior{im}.fftma_options=fftma_options{im};end
         end
         
