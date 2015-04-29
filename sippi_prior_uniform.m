@@ -52,17 +52,42 @@ if nargin == 1
     end
 else
     % PERTURB
-    if (prior{1}.ndim)<=1
-        new_randn=randn(prior{ip}.dim);
-    elseif (prior{1}.ndim)==2
-        new_randn=randn([prior{ip}.dim(2) prior{ip}.dim(1)]);
-    elseif (prior{1}.ndim)==3
-        new_randn=randn([prior{ip}.dim(2) prior{ip}.dim(1) prior{ip}.dim(3)]);
+    
+    if prior{ip}.seq_gibbs.type==1       
+        % BOX TYPE RESIM
+        new_randn=prior{ip}.randn;
+        
+        if (prior{1}.ndim)<=1
+            step=prior{ip}.seq_gibbs.step;
+            i_rand=randsample(size(new_randn,1),max([1 ceil(step)]));
+            new_randn(i_rand)=randn(size(i_rand));            
+        else
+            disp(sprintf('%s: not yet implemeted seq gibbs type',mfilename))
+        end
+        
+        %keyboard
+        
+        theta=.1*pi/2;
+        prior{ip}.randn(i_rand) = prior{ip}.randn(i_rand)*cos(theta) + new_randn(i_rand)*sin(theta) ;
+        %prior{ip}.randn=new_randn;
+        
+    elseif prior{ip}.seq_gibbs.type==2
+        %
+        
+        if (prior{1}.ndim)<=1
+            new_randn=randn(prior{ip}.dim);
+        elseif (prior{1}.ndim)==2
+            new_randn=randn([prior{ip}.dim(2) prior{ip}.dim(1)]);
+        elseif (prior{1}.ndim)==3
+            new_randn=randn([prior{ip}.dim(2) prior{ip}.dim(1) prior{ip}.dim(3)]);
+        end
+        
+        
+        theta=90*(prior{ip}.seq_gibbs.step)*pi/180;
+        prior{ip}.randn = prior{ip}.randn*cos(theta) + new_randn*sin(theta) ;
+        
     end
-
-    theta=90*(prior{ip}.seq_gibbs.step)*pi/180;
-    prior{ip}.randn = prior{ip}.randn*cos(theta) + new_randn*sin(theta) ;
 end
 
 m_propose{ip}=normcdf(prior{ip}.randn,0,1)*(prior{ip}.max-prior{ip}.min)+prior{ip}.min;
-    
+
