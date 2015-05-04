@@ -34,11 +34,14 @@ if ~isfield(prior{ip},'cells_use');
     prior{ip}.cells_use=randomsample(prior{ip}.cells_N_max,prior{ip}.cells_N);
 end
 
+%disp(sprintf('cells_N=%g',prior{ip}.cells_N));
 
-if nargin>1
-    % perturb cells_N
+if (nargin>1)&(prior{ip}.seq_gibbs.step>0)
+    % perturb cells_N, only if STEP length > 0   
+    step=prior{ip}.seq_gibbs.step;
+    
     try
-        step=prior{ip}.seq_gibbs.step;
+        step=max([1 ceil(prior{ip}.seq_gibbs.step)]);
     catch
         step=5;
     end
@@ -83,10 +86,24 @@ if nargin>1
 end
 
 
-
 if ~(length(prior{ip}.cells_use)==prior{ip}.cells_N)
-    % disp(sprintf('ncells_use=%d, N=%d',length(prior{ip}.cells_use),prior{ip}.cells_N));
-    keyboard
+    % this means prior{ip}.cells_N must have been set by another 'prior'
+    % variable, and then we mush adjust the number of used cells..
+%    disp(sprintf('ncells_use=%d, N=%d',length(prior{ip}.cells_use),prior{ip}.cells_N));
+    
+    if length(prior{ip}.cells_use)>prior{ip}.cells_N
+        if prior{ip}.cells_N==1,
+            prior{ip}.cells_use=prior{ip}.cells_use.ceil(rand(1)*length(prior{ip}.cells_use));
+        else
+            prior{ip}.cells_use=randomsample(prior{ip}.cells_use,prior{ip}.cells_N);
+        end
+    else
+        i_possible=setxor(1:prior{ip}.cells_N_max,prior{ip}.cells_use);
+        N=prior{ip}.cells_N-length(prior{ip}.cells_use);
+        cells_use_extra=randomsample(i_possible,N);
+        prior{ip}.cells_use=[prior{ip}.cells_use,cells_use_extra];
+    end
+%   disp(sprintf('ncells_use=%d, N=%d',length(prior{ip}.cells_use),prior{ip}.cells_N));
 end
 
 % centers
@@ -129,7 +146,7 @@ end
 if nargin==1
     prior{ip}=rmfield(prior{ip},'cells_center');
     prior{ip}=rmfield(prior{ip},'cells_value');
-    prior{ip}=rmfield(prior{ip},'cells_use');
+    %prior{ip}=rmfield(prior{ip},'cells_use');
 end
 
 
