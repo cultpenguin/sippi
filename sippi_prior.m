@@ -486,10 +486,11 @@ if ~isempty(run_voronoi);
                  end
              end
          end
-         cells_N=prior{i_master}.cells_N;
          for im=setxor(1:nm,i_master); % loop over priors
              if isfield(prior{im},'prior_master');
                  if prior{im}.prior_master==i_master
+                     %cells_N=prior{i_master}.cells_N;
+                     
                      % we have a 'child' of the current 'master'
                      if strcmp(lower(prior{im}.name),'cells_x')
                          prior{i_master}.cells_center(:,1)=m_propose{im};
