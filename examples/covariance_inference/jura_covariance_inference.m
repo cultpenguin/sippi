@@ -76,10 +76,11 @@ for ip=1:length(prior);
     prior{ip}.seq_gibbs.i_update_step_max=3000;
 end
 options.plot.hardcopy_types=0; % no hardcopy
-options.mcmc.nite=100000;
+options.mcmc.nite=10000;
 options.mcmc.i_plot=1000;
 options.mcmc.i_sample=25;
 options.txt=name;
+
 [options,data,prior,forward,m_current]=sippi_metropolis(data,prior,forward,options)
 
 sippi_plot_prior(options.txt);
