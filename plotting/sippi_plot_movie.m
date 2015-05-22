@@ -1,13 +1,14 @@
-function sippi_plot_movie(fname,im_array,n_frames,skip_burnin);
+function sippi_plot_movie(fname,im_array,n_frames,skip_burnin,i_chain);
 % sippi_plot_movie plot movie of prior and posterior realizations
 %
 % Call :
 %   sippi_plot_movie(fname);
-%   sippi_plot_movie(fname,im_array,n_frames,skip_burnin);
+%   sippi_plot_movie(fname,im_array,n_frames,skip_burnin,i_chain);
 %      fname : name of folder with results (e.g. options.txt)
 %      im_array : array of indexes of model parameters to make into movies
 %      n_frames [200] : number of frames in movie
 %      skip_burnin [200] : start movie after burn_in;
+%      i_chain[1]: make movie of chain number 'i_chain' (new 22/05/2014)
 %
 % Ex:
 % sippi_plot_movie('20130812_Metropolis');
@@ -36,6 +37,9 @@ if nargin<4,
     skip_burnin=options.plot.skip_seq_gibbs;
 end
 
+if nargin<5,
+    i_chain=1; % make movie of chain 1 realizations
+end
 n_frames_org=n_frames;
 
 cwd=pwd;
@@ -93,13 +97,12 @@ for im=im_array
             
         n_frames=min([n_frames (ns-i1)]);
         i_frames=ceil(linspace(i1,ns,n_frames));
-        
         if n_frames>0;
             
             try;disp(sprintf('Prior #%d : %s, plotting %d of %d posterior realizations',im,prior{im}.name,n_frames,ns));end
                         
             %% POSTERIOR
-            vname=sprintf('%s_m%d_posterior',options.txt,im);
+            vname=sprintf('%s_m%d_posterior_C%d',options.txt,im,i_chain);
             try
                 if exist(vname,'file');
                     delete(vname);
@@ -112,7 +115,12 @@ for im=im_array
             writerObj.Quality=Quality;
             open(writerObj);
             
-            fname=sprintf('%s_m%d.asc',options.txt,im);
+            
+            fname=sprintf('%s_m%d_C%d.asc',options.txt,im,i_chain);
+            if ~exist(fname,'file')
+                % non-chains formatted output
+                fname=sprintf('%s_m%d.asc',options.txt,im);
+            end
             fid=fopen(fname,'r');
             
             i=0;
@@ -152,7 +160,7 @@ for im=im_array
         %% PRIOR
         prior{im}.seq_gibbs.step=prior{im}.seq_gibbs.step_max;
         prior{im}.perturb=1;
-        vname=sprintf('%s_m%d_prior',options.txt,im);
+        vname=sprintf('%s_m%d_prior_C%d',options.txt,im,i_chain);
         try
             if exist(vname,'file');
                 delete(vname);

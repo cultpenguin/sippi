@@ -59,30 +59,36 @@ options.mcmc.nite=1000000;
 options.mcmc.i_plot=1000;
 options.mcmc.i_sample=500;
 
-options.mcmc.nite=5000;
-options.mcmc.i_plot=100;
+options.mcmc.nite=10000;
+options.mcmc.i_plot=500;
 options.mcmc.i_sample=50;
 randn('seed',2);rand('seed',2);
 
-prior{1}.seq_gibbs.i_update_step_max=2000;
+prior{1}.seq_gibbs.i_update_step_max=1000;
+prior{1}.seq_gibbs.i_update_step=50;
 prior{1}.seq_gibbs.step=1;
 
 % ANNEAL
-options.mcmc.anneal.i_begin=1; % default, iteration number when annealing begins
-options.mcmc.anneal.i_end=1000; %  iteration number when annealing stops
-options.mcmc.anneal.fac_begin=10; % default, noise is scaled by fac_begin at iteration i_begin
-options.mcmc.anneal.fac_end=1; % default, noise is scaled by fac_end at iteration i_end
-
+doAnneal=0;
+if doAnneal==1;
+    options.mcmc.anneal.i_begin=1; % default, iteration number when annealing begins
+    options.mcmc.anneal.i_end=1000; %  iteration number when annealing stops
+    options.mcmc.anneal.fac_begin=10; % default, noise is scaled by fac_begin at iteration i_begin
+    options.mcmc.anneal.fac_end=1; % default, noise is scaled by fac_end at iteration i_end
+end
+    
 % TEMPERING
-options.mcmc.n_chains=3; % set number of chains (def=1)
-%options.mcmc.T=[1 2 3]; % set number of chains (def=1)
+doTempering=1;
+if doTempering==1;
+    options.mcmc.n_chains=2; % set number of chains (def=1)
+    options.mcmc.T=[1 1.5]; % set number of chains (def=1)
+end
 
 
-
+options=sippi_metropolis_chains(data,prior,forward,options);
+options.mcmc.time_elapsed_in_seconds
+%options_org=sippi_metropolis(data,prior,forward,options);
 return
-options_chains=sippi_metropolis_chains(data,prior,forward,options);
-options_org=sippi_metropolis(data,prior,forward,options);
-
 %% PLOT SAMPLE FROM PRIOR
 sippi_plot_prior_sample(options.txt);
 

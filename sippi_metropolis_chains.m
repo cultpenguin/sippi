@@ -150,9 +150,9 @@ end
 %% CHECK FOR ANNEALING
 if isfield(mcmc,'anneal');
     do_anneal=1;
-else 
+else
     do_anneal=0;
-    T_fac=1;       
+    T_fac=1;
 end
 
 %% STARTING  MODEL
@@ -398,10 +398,10 @@ for i=1:mcmc.nite;
                 C{ic_j}.logL_current=C_i.logL_current;
                 C{ic_j}.m_current=C_i.m_current;
                 
-                % set step legth / NEXT LINES: NECESSARY?
-                %for k=1:NC;for im=1:length(C{k}.prior_current);
-                %        C{k}.prior_current{im}.seq_gibbs.step=C{k}.mcmc.step(im,i);                       
-                %end;end
+                % Keep step length constant within chains
+                for k=1:NC;for im=1:length(C{k}.prior_current);
+                        C{k}.prior_current{im}.seq_gibbs.step=C{k}.mcmc.step(im,i);
+                end;end
                 disp(sprintf('%s: at i=%05d SWAP chains [%d<->%d]',mfilename,i,ic_i,ic_j));
             end
         end
@@ -434,38 +434,30 @@ for i=1:mcmc.nite;
             disp(sprintf('%s : Could not plot current model info',mfilename))
         end
         %%
-        try
-            if NC>1
-                figure_focus(35);clf;
-                ylim=[min(C{1}.mcmc.logL(ceil(i*.1):i)),max(C{1}.mcmc.logL(ceil(i*.1):i))];
-                for ic=1:NC;
-                    L{ic}=sprintf('T=%3.1f',C{ic}.T);
-                    
-                    lmin=min(C{ic}.mcmc.logL(ceil(i*.1):i));
-                    lmax=max(C{ic}.mcmc.logL(ceil(i*.1):i));
-                    if lmin<ylim(1),ylim(1)=lmin;end
-                    if lmax>ylim(2),ylim(2)=lmax;end
-                    
-                    plot(1:i,C{ic}.mcmc.logL(1:i),'-');
-                    hold on
-                end
-                hold off
-            
-                set(gca,'ylim',ylim)
-                legend(L,'location','northeastoutside')
-                xlabel('Iteration number')
-                ylabel('log(L)')
-                grid on
-            
+        if NC>1
+            figure_focus(35);clf;
+            ylim=[min(C{1}.mcmc.logL(ceil(i*.1):i)),max(C{1}.mcmc.logL(ceil(i*.1):i))];
+            for ic=1:NC;
+                L{ic}=sprintf('T=%3.1f',C{ic}.T);
+                
+                lmin=min(C{ic}.mcmc.logL(ceil(i*.1):i));
+                lmax=max(C{ic}.mcmc.logL(ceil(i*.1):i));
+                if lmin<ylim(1),ylim(1)=lmin;end
+                if lmax>ylim(2),ylim(2)=lmax;end
+                
+                plot(1:i,C{ic}.mcmc.logL(1:i),'-');
+                hold on
             end
+            hold off
             
+            set(gca,'ylim',ylim)
+            legend(L,'location','northeastoutside')
+            xlabel('Iteration number')
+            ylabel('log(L)')
+            grid on
             
-        catch
-            disp(sprintf('%s: could not plot logL for all chains',mfilename))
         end
-        %%
-        %         try;figure_focus(3);print_mul('current_status',options.plot.hardcopy_types);end
-        drawnow;
+        drawnow
     end
 end
 
@@ -481,7 +473,7 @@ options.mcmc=mcmc;
 mcmc.m_current=C{1}.m_current;
 
 save(filename_mat,'-v7.3')
-disp(sprintf('%s : DONE McMC on %s (runtime:%5.2f hours)',mfilename,options.txt,mcmc.time_elapsed_in_seconds/3600));
+disp(sprintf('%s : DONE McMC in %5.2f hours, %s',mfilename,mcmc.time_elapsed_in_seconds/3600,options.txt));
 
 %%
 cd(start_dir);
