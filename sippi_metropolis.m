@@ -306,17 +306,21 @@ for i=1:mcmc.nite;
         % Accept probability
         
         
-        % set tempetature
+        % set temperature
         if do_anneal==1;
             [T_fac,mcmc]=sippi_anneal_factor(mcmc,i,C{ic}.prior_current);
         end
         T=T_fac.*C{ic}.T;
         
-        
         C{ic}.Pacc = exp((1./T).*(C{ic}.logL_propose-C{ic}.logL_current));
+        
         if (mcmc.accept_only_improvements==1)
             % Optimization only?
-            C{ic}.Pacc=(C{ic}.Pacc>=1); %% Pacc = 1 if Pacc>=1, else Pacc=0;
+            if C{ic}.logL_propose>C{ic}.logL_current
+                C{ic}.Pacc=1;
+            else
+                C{ic}.Pacc=0;
+            end
         end
         % Optionally accept all proposed models
         if (mcmc.accept_all==1), C{ic}.Pacc=1; end
@@ -330,7 +334,7 @@ for i=1:mcmc.nite;
             % move to current model
             C{ic}.prior_current=C{ic}.prior_propose; % NEEDED FOR GAUSSIAN TYPE PRIOR
             C{ic}.m_current=C{ic}.m_propose;
-            %C{ic}.d_current=C{ic}.d;
+            C{ic}.d_current=C{ic}.d;
             C{ic}.logL_current=C{ic}.logL_propose;
             C{ic}.L_current=C{ic}.L_propose;
             C{ic}.iacc=C{ic}.iacc+1;
@@ -429,7 +433,7 @@ for i=1:mcmc.nite;
     if ((mcmc.i/mcmc.i_plot)==round( mcmc.i/mcmc.i_plot ))
         try
             %C{1}.mcmc.i=mcmc.i;
-            sippi_plot_current_model(C{1}.mcmc,C{1}.data,C{1}.d,C{1}.m_current,C{1}.prior_current);
+            sippi_plot_current_model(C{1}.mcmc,C{1}.data,C{1}.d_current,C{1}.m_current,C{1}.prior_current);
         catch
             disp(sprintf('%s : Could not plot current model info',mfilename))
         end

@@ -95,7 +95,7 @@ for im=im_array
         
         ns=mcmc.nite/mcmc.i_sample;
             
-        n_frames=min([n_frames (ns-i1)]);
+        n_frames=min([n_frames (ns-i1+1)]);
         i_frames=ceil(linspace(i1,ns,n_frames));
         if n_frames>0;
             
