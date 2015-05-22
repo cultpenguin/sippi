@@ -128,7 +128,7 @@ end
 % set Temperature
 if ~isfield(mcmc,'T');
     if ~isfield(mcmc,'T_min');mcmc.T_min=1;end
-    if ~isfield(mcmc,'T_max');mcmc.T_max=40;end
+    if ~isfield(mcmc,'T_max');mcmc.T_max=NC;end
     
     if NC==1;
         mcmc.T=mcmc.T_min;
@@ -151,7 +151,8 @@ end
 if isfield(mcmc,'anneal');
     do_anneal=1;
 else 
-    do_anneal=0;    
+    do_anneal=0;
+    T_fac=1;       
 end
 
 %% STARTING  MODEL
@@ -246,8 +247,8 @@ options=sippi_plot_defaults(options);
 
 %% START THE METROPOLOS ALGORITHM
 disp(sprintf('%s : starting extended Metropolis sampler in %s',mfilename,options.txt))
-t0=now;
 
+mcmc.t_start=now;
 for i=1:mcmc.nite;
     mcmc.i=i;
     mcmc.time(i)=now;
@@ -255,7 +256,7 @@ for i=1:mcmc.nite;
     
     for ic=1:NC
         
-        %% set seed
+        %% set seed / necessary?
         for im=1:length(C{ic}.prior_current)
             C{ic}.prior_current{im}.seed=i;
         end
@@ -266,7 +267,7 @@ for i=1:mcmc.nite;
                 % UPDATE STEP LENGTH
                 C{ic}.prior_current=sippi_prior_set_steplength(C{ic}.prior_current,C{ic}.mcmc,im);
             end
-            %C{ic}.mcmc.step(ic,im,i)=C{ic}.prior_current{im}.seq_gibbs.step(1);
+            C{ic}.mcmc.step(im,i)=C{ic}.prior_current{im}.seq_gibbs.step(1);
         end
         
         %% Sample prior
@@ -300,21 +301,16 @@ for i=1:mcmc.nite;
         
         %% LIKELIHOOD
         [C{ic}.logL_propose,C{ic}.L_propose,C{ic}.data]=sippi_likelihood(C{ic}.d,C{ic}.data);
-        %[logL_propose,L_propose,data]=sippi_likelihood(C{ic}.d,C{ic}.data);
-        %C{ic}.logL_propose=(1./C{ic}.T).*logL_propose;
-        %C{ic}.L_propose=(1./C{ic}.T).*L_propose;
-        %
-        %
+        
         %%  MOVE?
         % Accept probability
         
         
         % set tempetature
-        T=C{ic}.T;
         if do_anneal==1;
-            [fac,mcmc]=sippi_anneal_factor(mcmc,i,C{ic}.prior_current);
-            keyboard
+            [T_fac,mcmc]=sippi_anneal_factor(mcmc,i,C{ic}.prior_current);
         end
+        T=T_fac.*C{ic}.T;
         
         
         C{ic}.Pacc = exp((1./T).*(C{ic}.logL_propose-C{ic}.logL_current));
@@ -342,21 +338,7 @@ for i=1:mcmc.nite;
             C{ic}.mcmc.acc(im_perturb,mcmc.i)=1;
             
         else
-            % REJECT MODEL
-            %%% Next section only for keeping track of FFT-MA options / Seg Gibbs
-            %%  reser z_rand values
-            %for im=1:length(C{ic}.prior_current);
-            %
-            %    if isfield(C{ic}.prior_current{im},'fftma_options');
-            %        C{ic}.prior_current{im}.fftma_options=C{ic}.fftma_options{im};
-            %    end
-            %end
-            
-            %%
-            %if ((i/i_update_txt)==round(i/i_update_txt))
-            %    [t_end_txt,t_left_seconds]=time_loop_end(t0,i,mcmc.nite);
-            %    disp(sprintf('%06d/%06d (%10s):     %5g %5g %s',mcmc.i,mcmc.nite,t_end_txt,logL_current,logL_propose))
-            %end
+            % REJECT MOVE MODEL
         end
         C{ic}.mcmc.logL(mcmc.i)=C{ic}.logL_current;
         
@@ -401,11 +383,6 @@ for i=1:mcmc.nite;
                 mcmc.i_swap(1,n_swap)=ic_i;
                 mcmc.i_swap(2,n_swap)=ic_j;
                 
-                % get step legth
-                for k=1:NC;for im=1:length(C{k}.prior_current);
-                        step(k,im)=C{k}.prior_current{im}.seq_gibbs.step;
-                    end;end
-                
                 % perform the swap
                 C_i=C{ic_i};
                 
@@ -421,10 +398,10 @@ for i=1:mcmc.nite;
                 C{ic_j}.logL_current=C_i.logL_current;
                 C{ic_j}.m_current=C_i.m_current;
                 
-                % set step legth
-                for k=1:NC;for im=1:length(C{k}.prior_current);
-                        C{k}.prior_current{im}.seq_gibbs.step=step(k,im);
-                    end;end
+                % set step legth / NEXT LINES: NECESSARY?
+                %for k=1:NC;for im=1:length(C{k}.prior_current);
+                %        C{k}.prior_current{im}.seq_gibbs.step=C{k}.mcmc.step(im,i);                       
+                %end;end
                 disp(sprintf('%s: at i=%05d SWAP chains [%d<->%d]',mfilename,i,ic_i,ic_j));
             end
         end
@@ -441,9 +418,11 @@ for i=1:mcmc.nite;
     
     %% DISPLAY PROGRES AND TIME TO FINISH
     if ((i/i_update_txt)==round(i/i_update_txt))
-        [t_end_txt,t_left_seconds]=time_loop_end(t0,i,mcmc.nite);
-        ic=1;
-        disp(sprintf('%06d/%06d (%10s): acc %5g %5g ',mcmc.i,mcmc.nite,t_end_txt,C{ic}.logL_current,C{ic}.logL_propose))
+        [t_end_txt,t_left_seconds]=time_loop_end(mcmc.t_start,i,mcmc.nite);
+        %ic=1;
+        for ic=1:NC
+            disp(sprintf('%06d/%06d (%10s): C%02d acc %5g %5g  T=%5.2f',mcmc.i,mcmc.nite,t_end_txt,ic,C{ic}.logL_current,C{ic}.logL_propose,C{ic}.T*T_fac))
+        end
     end
     
     %% PLOT CURRENT MODEL AND STATUS
@@ -471,13 +450,15 @@ for i=1:mcmc.nite;
                     hold on
                 end
                 hold off
+            
+                set(gca,'ylim',ylim)
+                legend(L,'location','northeastoutside')
+                xlabel('Iteration number')
+                ylabel('log(L)')
+                grid on
+            
             end
             
-            set(gca,'ylim',ylim)
-            legend(L,'location','northeastoutside')
-            xlabel('Iteration number')
-            ylabel('log(L)')
-            grid on
             
         catch
             disp(sprintf('%s: could not plot logL for all chains',mfilename))
@@ -492,12 +473,15 @@ if NC>1
     mcmc.i_swap = mcmc.i_swap(:,1:n_swap);
 end
 
+mcmc.t_end=now;
+mcmc.time_elapsed_in_seconds=3600*24*(mcmc.t_end-mcmc.t_start);
+
 options.C=C;
 options.mcmc=mcmc;
 mcmc.m_current=C{1}.m_current;
 
 save(filename_mat,'-v7.3')
-disp(sprintf('%s : DONE McMC on %s',mfilename,options.txt))
+disp(sprintf('%s : DONE McMC on %s (runtime:%5.2f hours)',mfilename,options.txt,mcmc.time_elapsed_in_seconds/3600));
 
 %%
 cd(start_dir);

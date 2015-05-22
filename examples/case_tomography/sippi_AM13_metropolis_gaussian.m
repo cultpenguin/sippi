@@ -45,7 +45,7 @@ forward.type='fat';forward.linear=1;forward.freq=0.1;
 
 %% TEST THE SETUP 
 % generate a realization from the prior
-m=sippi_prior(prior);
+[m,prior]=sippi_prior(prior);
 % Compute the forward response related to the realization of the prior model generated above
 [d]=sippi_forward(m,forward,prior,data);
 % Compute the likelihood 
@@ -59,11 +59,29 @@ options.mcmc.nite=1000000;
 options.mcmc.i_plot=1000;
 options.mcmc.i_sample=500;
 
-options.mcmc.nite=100000;
-options.mcmc.i_plot=10000;
-options.mcmc.i_sample=100;
+options.mcmc.nite=5000;
+options.mcmc.i_plot=100;
+options.mcmc.i_sample=50;
 randn('seed',2);rand('seed',2);
-options=sippi_metropolis(data,prior,forward,options);
+
+prior{1}.seq_gibbs.i_update_step_max=2000;
+prior{1}.seq_gibbs.step=1;
+
+% ANNEAL
+options.mcmc.anneal.i_begin=1; % default, iteration number when annealing begins
+options.mcmc.anneal.i_end=1000; %  iteration number when annealing stops
+options.mcmc.anneal.fac_begin=10; % default, noise is scaled by fac_begin at iteration i_begin
+options.mcmc.anneal.fac_end=1; % default, noise is scaled by fac_end at iteration i_end
+
+% TEMPERING
+options.mcmc.n_chains=3; % set number of chains (def=1)
+%options.mcmc.T=[1 2 3]; % set number of chains (def=1)
+
+
+
+return
+options_chains=sippi_metropolis_chains(data,prior,forward,options);
+options_org=sippi_metropolis(data,prior,forward,options);
 
 %% PLOT SAMPLE FROM PRIOR
 sippi_plot_prior_sample(options.txt);

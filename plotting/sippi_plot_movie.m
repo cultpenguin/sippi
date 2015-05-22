@@ -83,7 +83,6 @@ for im=im_array
     if ndim>0 % ONLY PLOT MOVIE FOR 1D, 2D and 3D PARAMETERS
         
         N=prod(prior{im}.dim);
-        
         if skip_burnin
             i1=ceil(prior{im}.seq_gibbs.i_update_step_max/mcmc.i_sample);
         else
