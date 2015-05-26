@@ -54,6 +54,8 @@ if strcmp(mcmc.anneal.type,'linear');
         fac(i2)=mcmc.anneal.fac_begin;
     end
     
+elseif strcmp(mcmc.anneal.type,'');
+    (cos(0:.001:pi)+1)*(mcmc.anneal.fac_end-mcmc.anneal.fac_begin)+mcmc.anneal.fac_begin;
 elseif strcmp(mcmc.anneal.type,'exp');
     %%
     x1=mcmc.anneal.i_begin;
