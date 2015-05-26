@@ -30,13 +30,13 @@ im=im+1;
 prior{im}.type='uniform';
 prior{im}.name='range_1';
 prior{im}.min=0;
-prior{im}.max=3;
+prior{im}.max=4;
 
 im=im+1;
 prior{im}.type='uniform';
 prior{im}.name='range_2';
 prior{im}.min=0;
-prior{im}.max=3;
+prior{im}.max=4;
 
 im=im+1;
 prior{im}.type='uniform';
@@ -76,7 +76,7 @@ for ip=1:length(prior);
     prior{ip}.seq_gibbs.i_update_step_max=3000;
 end
 options.plot.hardcopy_types=0; % no hardcopy
-options.mcmc.nite=100000;
+options.mcmc.nite=200000;
 options.mcmc.i_plot=1000;
 options.mcmc.i_sample=25;
 options.txt=name;
