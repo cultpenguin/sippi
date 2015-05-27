@@ -31,11 +31,12 @@ prior{im}.x=[-1:dx:6];
 prior{im}.y=[0:dx:13];
 
 prior{im}.cax=[.1 .18];
+prior{im}.cax=[.12 .17];
 
 % bimodal distribution
 N=10000;
 prob_chan=0.5;
-dd=.01;
+dd=.015;
 d1=randn(1,ceil(N*(1-prob_chan)))*.0025+0.145-dd;  %0.1125;
 d2=randn(1,ceil(N*(prob_chan)))*.0025+0.145+dd; %0.155;
 d=[d1(:);d2(:)];
@@ -55,7 +56,7 @@ forward.linear=1;
 forward.freq=0.1;
 forward.forward_function='sippi_forward_traveltime';
 
-comp_model_error=0;
+comp_model_error=1;
 if comp_model_error==1;
     
     % SETUP THE 'OPTIMAL' FORWARD MODEL
@@ -79,7 +80,7 @@ end
 
     
 % TEMPERING
-doTempering=1;
+doTempering=0;
 if doTempering==1;
     options.mcmc.n_chains=4; % set number of chains (def=1)
     options.mcmc.T=[1 1.5 2 3]; % set number of chains (def=1)
@@ -88,8 +89,7 @@ end
 
 
 %% SETUP METROPOLIS
-options.mcmc.nite=1000000;
-options.mcmc.nite=30000;
+options.mcmc.nite=400000;
 options.mcmc.i_plot=1000;
 options.mcmc.i_sample=500;
 
@@ -97,7 +97,6 @@ options=sippi_metropolis(data,prior,forward,options);
 
 %% PLOT SAMPLE FROM PRIOR
 sippi_plot_prior(options.txt);
-%sippi_plot_prior(prior);
 
 %% PLOT SAMPLE FROM POSTERIOR
 sippi_plot_posterior(options.txt);
