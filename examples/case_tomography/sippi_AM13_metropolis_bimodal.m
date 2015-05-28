@@ -25,35 +25,37 @@ data{id}.Ct=1+D.Ct; % modelization and static error
 im=1;
 prior{im}.type='FFTMA';
 prior{im}.name='Velocity (m/ns)';
-prior{im}.m0=0.145;
 prior{im}.Va='.0003 Sph(6)';
-prior{im}.x=[-1:.2:6];
-prior{im}.y=[0:.2:13];
+dx=0.15;
+prior{im}.x=[-1:dx:6];
+prior{im}.y=[0:dx:13];
 
 prior{im}.cax=[.1 .18];
 
 % bimodal distribution
 N=10000;
 prob_chan=0.5;
-dd=.014*2;
-d1=randn(1,ceil(N*(1-prob_chan)))*.01+0.145-dd;  %0.1125;
-d2=randn(1,ceil(N*(prob_chan)))*.01+0.145+dd; %0.155;
+dd=.01;
+d1=randn(1,ceil(N*(1-prob_chan)))*.0025+0.145-dd;  %0.1125;
+d2=randn(1,ceil(N*(prob_chan)))*.0025+0.145+dd; %0.155;
 d=[d1(:);d2(:)];
 [d_nscore,o_nscore]=nscore(d,1,1,min(d),max(d),0);
 prior{im}.o_nscore=o_nscore;
 
 prior=sippi_prior_init(prior);
+m=sippi_prior(prior);
+forward.linear_m=m{1}.*0+0.14; % Needed when m0 is set to 0 as def...
 
 %% SETUP THE FORWARD MODEL
 forward.sources=D.S;
 forward.receivers=D.R;
-%forward.type='eikonal';
+forward.type='eikonal';
 forward.type='fat';
 forward.linear=1;
 forward.freq=0.1;
 forward.forward_function='sippi_forward_traveltime';
 
-comp_model_error=1;
+comp_model_error=0;
 if comp_model_error==1;
     
     % SETUP THE 'OPTIMAL' FORWARD MODEL
@@ -74,8 +76,20 @@ if comp_model_error==1;
 end
 
 
+
+    
+% TEMPERING
+doTempering=1;
+if doTempering==1;
+    options.mcmc.n_chains=4; % set number of chains (def=1)
+    options.mcmc.T=[1 1.5 2 3]; % set number of chains (def=1)
+end
+
+
+
 %% SETUP METROPOLIS
 options.mcmc.nite=1000000;
+options.mcmc.nite=30000;
 options.mcmc.i_plot=1000;
 options.mcmc.i_sample=500;
 
@@ -87,4 +101,7 @@ sippi_plot_prior(options.txt);
 
 %% PLOT SAMPLE FROM POSTERIOR
 sippi_plot_posterior(options.txt);
+
+%% PLOT PRIOR and POSTERIOR MOVIES
+sippi_plot_movie(options.txt);
 

@@ -85,7 +85,7 @@ if doTempering==1;
 end
 
 
-options=sippi_metropolis_chains(data,prior,forward,options);
+options=sippi_metropolis(data,prior,forward,options);
 options.mcmc.time_elapsed_in_seconds
 %options_org=sippi_metropolis(data,prior,forward,options);
 return
