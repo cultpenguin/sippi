@@ -113,7 +113,7 @@ book SYSTEM "docbook.dtd"
   </chapter>
 
   <!-- THE POSTERIOR -->
-  <chapter xml:id="chapPosterior"><title>The a posteriori distribution</title>
+  <chapter xml:id="chapPosterior"><title>Sampling the a posteriori distribution</title>
     &chapPosterior;
   </chapter>
 

@@ -20,7 +20,7 @@ In order to make use of SIPPI one has to
         <para>Define the <link linkend="chapdata">data and noise model</link>, in form of the prior data structure</para>
       </listitem>
       <listitem>
-        <para>Choose a method for <link linkend="chapposterior">sampling the a posteriori probability density (i.e., solution) of the inverse problem</link>.</para>
+        <para>Choose a method for <link linkend="chapPosterior">sampling the a posteriori probability density (i.e., solution) of the inverse problem</link>.</para>
       </listitem>
     </itemizedlist>
 </para>
