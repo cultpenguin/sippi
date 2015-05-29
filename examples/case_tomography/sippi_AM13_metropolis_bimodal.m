@@ -44,17 +44,21 @@ prior{im}.o_nscore=o_nscore;
 
 prior=sippi_prior_init(prior);
 m=sippi_prior(prior);
-forward.linear_m=m{1}.*0+0.14; % Needed when m0 is set to 0 as def...
+forward.linear_m=0.14; % Needed when m0 is set to 0 (using target distribution, and forward.linear=1;)´
 
 %% SETUP THE FORWARD MODEL
 forward.sources=D.S;
 forward.receivers=D.R;
-forward.type='eikonal';
+%forward.type='eikonal';
 forward.type='fat';
 forward.linear=1;
 forward.freq=0.1;
 forward.forward_function='sippi_forward_traveltime';
 
+m=sippi_prior(prior);
+d=sippi_forward(m,forward,prior,data)
+
+%% COMPUTE MODELIZATION ERROR
 comp_model_error=0;
 if comp_model_error==1;
     
@@ -74,22 +78,16 @@ if comp_model_error==1;
         data{id}.Ct=Ct{id};
     end
 end
-
-
-
-    
-% TEMPERING
+   
+%% TEMPERING
 doTempering=1;
 if doTempering==1;
     options.mcmc.n_chains=4; % set number of chains (def=1)
     options.mcmc.T=[1 1.5 2 3]; % set number of chains (def=1)
 end
 
-
-
 %% SETUP METROPOLIS
-options.mcmc.nite=1000000;
-options.mcmc.nite=30000;
+options.mcmc.nite=100000;
 options.mcmc.i_plot=1000;
 options.mcmc.i_sample=500;
 
