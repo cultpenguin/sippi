@@ -15,6 +15,7 @@ options.txt='AM13';
 id=1;
 data{id}.d_obs=D.d_obs;
 data{id}.d_std=D.d_std;
+% next line: use only every 10th data
 data{id}.i_use=[10:10:length(data{id}.d_obs)];
 data{id}.Ct=1; % modelization error
 data{id}.Ct=1+D.Ct; % modelization and static error
@@ -40,6 +41,8 @@ forward.forward_function='sippi_forward_traveltime';
 
 %% SETUP METROPOLIS
 options.mcmc.nite=500000;
+options.mcmc.nite=10000;
+
 options.mcmc.i_plot=200;
 options.mcmc.i_sample=250;
 options.mcmc.adaptive_rejection=1;
