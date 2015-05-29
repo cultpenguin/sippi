@@ -5,12 +5,6 @@ Once the
 <varname>forward</varname> data structures have been defined, the associated a posteriori probability can be sampled using the rejection sampler and the extended Metropolis sampler.
 </para>
 
-<!--
-<sect1 xml:id="chapposterior"><title>Sampling the a posteriori probability density</title>
-<para>
-</para>
-</sect1>
--->
 
 <sect1 xml:id="sec_rejection"><title>The rejection sampler</title>
 <para>
