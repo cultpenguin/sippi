@@ -487,7 +487,6 @@ for im=im_arr;
     catch
         try;close(fn);end
         disp(sprintf('%s : could not plot corrcoeff stats for prior{%d}',mfilename,im));
-        keyboard      
         cd(cwd);
     end % end plot correlection coefficient
     

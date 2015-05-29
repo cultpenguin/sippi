@@ -1,24 +1,26 @@
 function options=sippi_rejection(data,prior,forward,options)
 % sippi_rejection Rejection sampling
 %
-% Call : 
+% Call :
 %     options=sippi_rejection(data,prior,forward,options)
 %
 % input arguments
 %
 %   options.mcmc.i_plot
 %   options.mcmc.nite     % maximum number of iterations
-%   options.mcmc.logLmax
+%   options.mcmc.logLmax [def=1]; % Maximum possible log-likelihood value
 %
 %   options.mcmc.rejection_normalize_log = log(options.mcmc.Lmax)
 %
 %   options.mcmc.adaptive_rejection=1, adaptive setting of maxiumum likelihood
 %                  (def=[0])
-%                  At each iteration Lmax will be set if log(L(m_cur)=>options.mcmc.logLmax
+%                  At each iteration logLmax will be set if log(L(m_cur)=>options.mcmc.logLmax
 %
 %
 %   options.mcmc.max_run_time_hours = 1; % maximum runtime in hours
 %                                        % (overrides options.mcmc.nite if needed)
+%
+%   options.mcmc.T = 1; % Tempering temperature. T=1, implies no tempering
 %
 % See also sippi_metropolis
 %
@@ -34,7 +36,7 @@ function options=sippi_rejection(data,prior,forward,options)
 %% NAME
 options.null='';
 if ~isfield(options,'txt');options.txt='';end
-if length(options.txt)>0    
+if length(options.txt)>0
     options.txt=sprintf('%s_sippi_rejection_%s',datestr(now,'YYYYmmdd_HHMM'),options.txt);
 else
     options.txt=sprintf('%s_sippi_rejection',datestr(now,'YYYYmmdd_HHMM'));
@@ -68,6 +70,8 @@ filename_mat=[options.txt,'.mat'];
 
 mcmc.null='';
 if isfield(options,'mcmc');mcmc=options.mcmc;end
+
+if ~isfield(mcmc,'T');mcmc.T=1;end
 
 
 if ~isfield(mcmc,'i_plot');mcmc.i_plot=500;end
@@ -110,7 +114,9 @@ for i=1:mcmc.nite
     end
     [logL,L,data]=sippi_likelihood(d,data);
     
-    logLPacc = logL-mcmc.rejection_normalize_log;
+    
+    %logLPacc = logL-mcmc.rejection_normalize_log;
+    logLPacc = (1./mcmc.T).*(logL-mcmc.rejection_normalize_log);
     
     if log(rand(1))<logLPacc
         iacc=iacc+1;
