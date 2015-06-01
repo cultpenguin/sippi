@@ -64,7 +64,9 @@ end
 
 %% logL CURVE, XCORR ANALYSIS
 if pl_logL==1;
-    sippi_plot_posterior_loglikelihood(options,prior,data,mcmc);
+    try
+        sippi_plot_posterior_loglikelihood(options,prior,data,mcmc);
+    end
 end
 
 %% PLOT 1D MARGINAL, POSTERIOR SAMPLE, CROSSCORR/XCORR ANALYSIS

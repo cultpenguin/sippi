@@ -225,8 +225,6 @@ try
     end
     
 catch
-    keyboard
-    %close(f_handle)
     fprintf('%s : Cannot plot data response. \n',mfilename)
 end
 

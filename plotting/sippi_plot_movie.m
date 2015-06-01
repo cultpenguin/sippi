@@ -25,6 +25,7 @@ function sippi_plot_movie(fname,im_array,n_frames,skip_burnin,i_chain);
 %
 
 % DOES NOT WORK WITH SIPPI_LEAST_SQUARES
+% TEST THAT IT WORKS WITH sippi_rejection
 
 if nargin==0;
     [f1,fname]=fileparts(pwd);
@@ -85,6 +86,10 @@ for im=im_array
     
     ndim=length(find(prior{im}.dim>1));
     if ndim>0 % ONLY PLOT MOVIE FOR 1D, 2D and 3D PARAMETERS
+        
+        if ~isfield(mcmc,'i_sample');
+            mcmc.i_sample=1;
+        end
         
         N=prod(prior{im}.dim);
         if skip_burnin

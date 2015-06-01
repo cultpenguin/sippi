@@ -472,10 +472,11 @@ end
 mcmc.t_end=now;
 mcmc.time_elapsed_in_seconds=3600*24*(mcmc.t_end-mcmc.t_start);
 
-options.C=C;
-options.mcmc=mcmc;
-mcmc.m_current=C{1}.m_current;
+m_current=C{1}.m_current;
+mcmc.m_current=m_current;
 
+options.C=C; % PERHAPS TOO MEMORY INTENSIVE
+options.mcmc=mcmc; % PERHAPS TOO MEMORY INTENSIVE
 save(filename_mat,'-v7.3')
 disp(sprintf('%s : DONE McMC in %5.2f hours, %s',mfilename,mcmc.time_elapsed_in_seconds/3600,options.txt));
 
