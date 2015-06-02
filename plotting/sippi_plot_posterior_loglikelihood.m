@@ -23,7 +23,8 @@ cwd=pwd;
 if nargin==0
     % LOAD FROM MAT FILES
     [p,matfile]=fileparts(pwd);
-    load(matfile,'prior','data','mcmc');
+    [data,prior,options,mcmc]=sippi_get_posterior_data;
+    %load(matfile,'prior','data','mcmc');
     options.mcmc=mcmc;
 elseif nargin==1;
     if isstruct(options),
@@ -31,6 +32,7 @@ elseif nargin==1;
         fname=options;
         cd(fname);
         load(fname);
+        [data,prior,options,mcmc]=sippi_get_posterior_data;
         options.mcmc=mcmc;
     end
 else

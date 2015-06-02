@@ -1,4 +1,4 @@
-function [reals_mat,etype_mean,etype_var,reals_all,ite_num]=sippi_get_sample(wd,im,n_reals,skip_seq_gibbs);
+function [reals_mat,etype_mean,etype_var,reals_all,ite_num]=sippi_get_sample(wd,im,n_reals,skip_seq_gibbs,ichain);
 % sippi_get_sample: Get a posterior sample
 %
 % Call :
@@ -21,7 +21,11 @@ function [reals_mat,etype_mean,etype_var,reals_all,ite_num]=sippi_get_sample(wd,
 %
 %
 
+if nargin<5
+    ichain=1;
+end
 start_dir=pwd;
+
 
 if nargin>0;
     if isstr(wd)
@@ -29,18 +33,19 @@ if nargin>0;
         if nargin>1, old.im=im;; end
         cd(wd);
         [p,matfile]=fileparts(pwd);
-        load(matfile);
+        load(matfile,'options','prior');
         if nargin>1, im=old.im;; end
         
         start_dir=old.start_dir;
         cd(start_dir);
     else
-        % FIRST INPUT IS 'IM' / WE ARE IN AN 'OUTPUT'
+        % FIRST INPUT IS 'IM' / WE ARE IN AN 'OUTPUT' DIRECTORY
         if isnumeric(wd)
+            if nargin>3,ichain=skip_seq_gibbs;end
             if nargin>2,skip_seq_gibbs=n_reals;end
             if nargin>1,n_reals=im;end
             [p,matfile]=fileparts(pwd);
-            load(matfile);
+            load(matfile,'options','prior');
             im=wd;
             wd=pwd;
             
@@ -49,18 +54,6 @@ if nargin>0;
         end
     end
 end
-
-%if nargin<5;
-%    old.im=im;
-%    old.start_dir=start_dir;
-%    % LOAD FROM MAT FILES
-%    cd(wd);
-%    [p,matfile]=fileparts(pwd);
-%    load(matfile);
-%    im=old.im;
-%    start_dir=old.start_dir;
-%    cd(start_dir);
-%end
 
 if ~exist('n_reals','var');
     n_reals=15;
@@ -116,10 +109,17 @@ else
     if ~isfield(options,'txt');
         [p,options.txt]=fileparts(pwd);
     end
-    try
-        reals=load(sprintf('%s_m%d.asc',options.txt,im));
-    catch
-        reals=load(sprintf('%s%s%s_m%d.asc',options.txt,filesep,options.txt,im));
+    
+    fname{1}=sprintf('%s_m%d.asc',options.txt,im);
+    fname{2}=sprintf('%s%s%s_m%d.asc',options.txt,filesep,options.txt,im);
+    fname{3}=sprintf('%s_m%d_C%d.asc',options.txt,im,ichain);
+    fname{4}=sprintf('%s%s%s_m%d_C%d.asc',options.txt,filesep,options.txt,im,ichain);
+    for i=1:length(fname);
+        if exist(fname{i},'file')
+            disp(sprintf('%s: load data from %s',mfilename,fname{i}))
+            reals=load(fname{i});
+            break
+        end
     end
     
     n_reals=min([n_reals,size(reals,1)]);

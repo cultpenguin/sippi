@@ -87,8 +87,8 @@ end
 % SETUP ANNEALING PROFILE
 options.mcmc.anneal.i_begin=1; % default, iteration number when annealing begins
 options.mcmc.anneal.i_end=options.mcmc.nite; %  iteration number when annealing stops
-options.mcmc.anneal.fac_begin=4; % default, noise is scaled by fac_begin at iteration i_begin
-options.mcmc.anneal.fac_end=.001; % default, noise is scaled by fac_end at iteration i_end
+options.mcmc.anneal.T_begin=4; % start temperature at iteration i_begin
+options.mcmc.anneal.T_end=.001; % end temperature at iteration i_end
 
 %data{1}.i_use=[20:20:702];
 %options.txt='covar';

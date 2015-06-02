@@ -1,4 +1,4 @@
-<sect1 xml:id="InstallSippi"><title>SIPPI</title>
+<sect1 xml:id="InstallSippi"><title>Install &sippi;</title>
 <para>
 <link xlink:href="https://sourceforge.net/projects/sippi/files/latest/download?source=fileshttps://sourceforge.net/projects/sippi/files/latest/download?source=files">Download</link> the latest version of SIPPI from <link xlink:href="http://sippi.sourceforge.net">http://sippi.sourceforge.net</link>.
 </para>
@@ -11,24 +11,6 @@ addpath c:\Users\tmh\SIPPI
 sippi_set_path
 </screen>
 <para>
-
-
-
-<!--
-<figure xml:id="ex.pythagorean">
-    <title>The Pythagorean Theorem Illustrated</title>
-    <mediaobject>
-      <imageobject condition="print">
-        <imagedata fileref="figures/prior_example_1_2d_gaussian.png"/>
-      </imageobject>
-      <imageobject condition="web">
-        <imagedata fileref="figures/prior_example_1_2d_gaussian.png"/>
-      </imageobject>
-      <textobject><phrase>An illustration of the Pythagorean Theorem</phrase></textobject>
-    </mediaobject>
-   </figure> 
--->
-
 </para>
 
 <sect2 xml:id="SGEMS"><title>SGeMS (optional)</title>
@@ -41,4 +23,18 @@ Currently only SGeMS version 2.1 (<link xlink:href="http://sourceforge.net/proje
 </sect2>
 
 
+</sect1>
+
+<sect1 xml:id="SippiGithub"><title>Install development version of SIPPI from github</title>
+<para>
+If you want to test out the current development version of SIPPI (less stable and documented) then you can get the code using git. SIPPI makes heave use of the <link xlink:href="http://mgstat.sourceforge.net/">mGstat</link> toolbox which you will also need:
+<screen>
+git clone --recursive https://github.com/cultpenguin/sippi.git SIPPI
+</screen>
+Then add a path to both SIPPI and mGstat in Matlab using
+<screen>
+>> addpath INSTALL_DIR/SIPPI
+>> sippi_set_path
+</screen>
+</para>
 </sect1>

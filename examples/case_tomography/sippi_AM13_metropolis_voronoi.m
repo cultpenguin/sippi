@@ -120,8 +120,8 @@ doAnneal=0;
 if doAnneal==1
     options.mcmc.anneal.i_begin=1; % default, iteration number when annealing begins
     options.mcmc.anneal.i_end=1000; %  iteration number when annealing stops
-    options.mcmc.anneal.fac_begin=20; % default, noise is scaled by fac_begin at iteration i_begin
-    options.mcmc.anneal.fac_end=1; % default, noise is scaled by fac_end at iteration i_end
+    options.mcmc.anneal.T_begin=20; % Starting temperature T_begin at iteration i_begin
+    options.mcmc.anneal.T_end=1; % End temperature at iteration i_end
 end
 
 for ip=1:length(prior);

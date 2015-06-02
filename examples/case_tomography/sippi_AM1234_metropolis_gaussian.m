@@ -38,16 +38,26 @@ prior=sippi_prior_init(prior);
 forward.sources=D.S;
 forward.receivers=D.R;
 forward.type='eikonal';
+forward.type='fat';
 forward.forward_function='sippi_forward_traveltime';
 
+
+m=sippi_prior(prior);
+[d,forward,prior,data]=sippi_forward_traveltime(m,forward,prior,data);
 
 %% SETUP METROPOLIS
 options.mcmc.nite=2000000;
 options.mcmc.i_plot=1000;
 options.mcmc.i_sample=250;
 
-options=sippi_metropolis(data,prior,forward,options);
+options.mcmc.nite=2000;
+options.mcmc.i_plot=1000;
+options.mcmc.i_sample=50;
 
+
+%options=sippi_metropolis_chains(data,prior,forward,options);%
+%options=sippi_metropolis(data,prior,forward,options);
+return
 %% PLOT SAMPLE FROM PRIOR
 sippi_plot_prior(options.txt);
 

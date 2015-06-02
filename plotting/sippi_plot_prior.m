@@ -157,7 +157,7 @@ for im=im_array;
                 ylabel(prior{im}.name)
                 %try;set(gca,'ylim',cax);end
             catch
-                disp(sprintf('%s could not plot model #%d',mfilename,im))
+                sippi_verbose(sprintf('%s could not plot model #%d',mfilename,im),2)
             end
         end
         
@@ -165,6 +165,6 @@ for im=im_array;
             title(prior{im}.name,'interpreter','none')
         end
     else
-        disp(sprintf('%25s : m_%d=%g',prior{im}.name,im,m{im}))
+        sippi_verbose(sprintf('%25s : m_%d=%g',prior{im}.name,im,m{im}))
     end
 end

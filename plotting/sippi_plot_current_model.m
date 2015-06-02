@@ -48,11 +48,17 @@ try
             N=N+length(data{i}.d_obs);
         end
     end
-    if ~isfield(mcmc,'i');mcmc.i=max(find(mcmc.acc==1));end
+    if ~isfield(mcmc,'i');
+        if size(mcmc.acc,1)>1
+            mcmc.i=max(find(sum(mcmc.acc)==1));
+        else
+            mcmc.i=max(find(mcmc.acc==1));
+        end
+    end
     sippi_plot_loglikelihood(mcmc.logL(1:mcmc.i),mcmc.acc(1:mcmc.i),N);
    
 catch
-    disp(sprintf('%s: failed to plot log likelihood curve',mfilename))
+    sippi_verbose(sprintf('%s: failed to plot log likelihood curve',mfilename))
 end
 
 subplot(1,3,2);
