@@ -74,8 +74,8 @@ options.mcmc.nite=100000;
 options.mcmc.i_sample=100;
 options.mcmc.anneal.i_begin=1; % default, iteration number when annealing begins
 options.mcmc.anneal.i_end=options.mcmc.nite; %  iteration number when annealing stops
-options.mcmc.anneal.fac_begin=4; % default, noise is scaled by fac_begin at iteration i_begin
-options.mcmc.anneal.fac_end=.1; % default, noise is scaled by fac_end at iteration i_end
+options.mcmc.anneal.T_begin=4; % start temperature at iteration i_begin
+options.mcmc.anneal.T_end=.1; % end temperature iteration i_end
 for i=1:length(prior);
     prior{i}.seq_gibbs.i_update_step_max=options.mcmc.nite;
 end
@@ -86,8 +86,8 @@ end
 % options.mcmc.i_sample=25;
 % options.mcmc.anneal.i_begin=1; % default, iteration number when annealing begins
 % options.mcmc.anneal.i_end=2000; %  iteration number when annealing stops
-% options.mcmc.anneal.fac_begin=2; % default, noise is scaled by fac_begin at iteration i_begin
-% options.mcmc.anneal.fac_end=1; % default, noise is scaled by fac_end at iteration i_end
+% options.mcmc.anneal.T_begin=2; % start temperature iteration i_begin
+% options.mcmc.anneal.T_end=1; % end tenperature at iteration i_end
 
 % START SAMPLING/OPTIMIZATION
 options=sippi_metropolis(data,prior,forward,options);

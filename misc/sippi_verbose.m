@@ -14,11 +14,14 @@
 %
 % entries with a higher verbose value has a higher chance of being displayed
 % that entries with lower verbose values
-% verbose [0] : warnings (default)
-%         [1] : function names 
-%         [2] : subfunction progress
+% verbose [0] : normal (default)
+%         [-1] : little info 
+%         [-2] : no info
 %
-%
+% Default level is set using an environmental variable
+% e.g. setenv('SIPPI_VERBOSE_LEVEL','1')
+
+% 
 
 
 %
@@ -28,7 +31,7 @@ function sippi_verbose(txt,verbose)
   vlevel=0; % SHOW ALL VERBOSE INFO WITH 'VERBOSE' ABOVE 'VLEVEL'
   try
       % GET VERBOSE LEVEL FROM SYSTEM VARIABLE IF SET
-      tmp=str2num(getenv('MGSTAT_VERBOSE_LEVEL'));
+      tmp=str2num(getenv('SIPPI_VERBOSE_LEVEL'));
       if ~isempty(tmp)
           vlevel=tmp;
       end

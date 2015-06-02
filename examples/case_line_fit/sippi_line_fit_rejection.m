@@ -33,8 +33,9 @@ options.mcmc.nite=40000;
 %options.mcmc.T=30;
 options.mcmc.adaptive_rejection=1;
 options.mcmc.m_ref=m_ref;
-options.txt='case_line_fit_1ord';
+options.txt='case_line_fit_1Ord';
 
 [options]=sippi_rejection(data,prior,forward,options);
+
 sippi_plot_prior_sample(options.txt);
 sippi_plot_posterior(options.txt);

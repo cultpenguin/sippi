@@ -44,10 +44,16 @@ function [options,data,prior,forward,m_current]=sippi_metropolis_chains(data,pri
 %    %% ANNEALING (TEMPERATURE AS A FUNTION OF ITERAITON NUMBER)
 %    options.mcmc.anneal.i_begin=1; % default, iteration number when annealing begins
 %    options.mcmc.anneal.i_end=100000; %  iteration number when annealing stops
-%    options.mcmc.anneal.fac_begin=20; % default, noise is scaled by fac_begin at iteration i_begin
-%    options.mcmc.anneal.fac_end=1; % default, noise is scaled by fac_end at iteration i_end
-
+%    options.mcmc.anneal.T_begin=5; % Start temperature for annealing 
+%    options.mcmc.anneal.T_end=1; % End temperature for anneaing 
+% 
+%    The amount of text info displayed at the prompt, can be controlled by
+%    setenv('SIPPI_VERBOSE_LEVEL','1') % all
+%    setenv('SIPPI_VERBOSE_LEVEL','0'); % some
+%    setenv('SIPPI_VERBOSE_LEVEL','-2'); % none
+%
 % See also sippi_rejection
+%
 %
 
 %
@@ -137,9 +143,7 @@ if ~isfield(mcmc,'T');
     end
 end
 
-%step_array=logspace(log(.25),log(1),NC);
 for ic=1:NC
-    %C{ic}.prior_current{1}.seq_gibbs.step=step_array(ic);
     C{ic}.T=mcmc.T(ic);
 end
 
@@ -159,7 +163,7 @@ end
 for ic=1:NC
     if isfield(mcmc,'m_init');
         C{ic}.m_current=mcmc.m_init;
-        disp(sprintf('Using supplied model as starting model',mfilename))
+        sippi_verbose(sprintf('Using supplied model as starting model',mfilename))
     else
         [C{ic}.m_current,C{ic}.prior] = sippi_prior(C{ic}.prior);
     end
@@ -173,8 +177,6 @@ for ic=1:NC
     C{ic}.data_current=C{ic}.data;
     [C{ic}.logL_current,C{ic}.L_current]=sippi_likelihood(C{ic}.d_current,C{ic}.data_current);
     
-    %C{ic}.logL_current=C{ic}.logL_init;
-    %C{ic}.L_current=C{ic}.L_init;
     C{ic}.prior_current=C{ic}.prior;
     
 end
@@ -201,8 +203,7 @@ t_per_ite=sum(t_data)+sum(t_prior);
 if isfield(options,'i_update_txt');
     i_update_txt=options.i_update_txt;
 else
-    i_update_txt=max([1 ceil(1./(t_per_ite))]);
-    %i_update_txt=max([1 ceil(10./(t_per_ite))]);
+    i_update_txt=max([1 ceil(5./(t_per_ite))]);
 end
 
 %% PRE ALLOCATE ARRAY FOR MCMC OUTPUT
@@ -245,8 +246,8 @@ filename_mat=[options.txt,'.mat'];
 %% SET DFAULT PLOTTING SETTINGS
 options=sippi_plot_defaults(options);
 
-%% START THE METROPOLOS ALGORITHM
-disp(sprintf('%s : starting extended Metropolis sampler in %s',mfilename,options.txt))
+%% START THE METROPOLIS ALGORITHM
+sippi_verbose(sprintf('%s : starting extended Metropolis sampler in %s',mfilename,options.txt),-2)
 
 mcmc.t_start=now;
 for i=1:mcmc.nite;
@@ -308,7 +309,7 @@ for i=1:mcmc.nite;
         
         % set temperature
         if do_anneal==1;
-            [T_fac,mcmc]=sippi_anneal_factor(mcmc,i,C{ic}.prior_current);
+            [T_fac,mcmc]=sippi_anneal_temperature(i,mcmc,C{ic}.prior_current);
         end
         T=T_fac.*C{ic}.T;
         
@@ -406,7 +407,7 @@ for i=1:mcmc.nite;
                 for k=1:NC;for im=1:length(C{k}.prior_current);
                         C{k}.prior_current{im}.seq_gibbs.step=C{k}.mcmc.step(im,i);
                 end;end
-                disp(sprintf('%s: at i=%05d SWAP chains [%d<->%d]',mfilename,i,ic_i,ic_j));
+                sippi_verbose(sprintf('%s: at i=%05d SWAP chains [%d<->%d]',mfilename,i,ic_i,ic_j));
             end
         end
     end
@@ -425,7 +426,7 @@ for i=1:mcmc.nite;
         [t_end_txt,t_left_seconds]=time_loop_end(mcmc.t_start,i,mcmc.nite);
         %ic=1;
         for ic=1:NC
-            disp(sprintf('%06d/%06d (%10s): C%02d acc %5g %5g  T=%5.2f',mcmc.i,mcmc.nite,t_end_txt,ic,C{ic}.logL_current,C{ic}.logL_propose,C{ic}.T*T_fac))
+            sippi_verbose(sprintf('%06d/%06d (%10s): C%02d acc %5g %5g  T=%5.2f',mcmc.i,mcmc.nite,t_end_txt,ic,C{ic}.logL_current,C{ic}.logL_propose,C{ic}.T*T_fac),-1)
         end
     end
     
@@ -435,7 +436,7 @@ for i=1:mcmc.nite;
             %C{1}.mcmc.i=mcmc.i;
             sippi_plot_current_model(C{1}.mcmc,C{1}.data,C{1}.d_current,C{1}.m_current,C{1}.prior_current);
         catch
-            disp(sprintf('%s : Could not plot current model info',mfilename))
+            sippi_verbose(sprintf('%s : Could not plot current model info',mfilename),-10)
         end
         %%
         if NC>1
@@ -478,7 +479,7 @@ mcmc.m_current=m_current;
 options.C=C; % PERHAPS TOO MEMORY INTENSIVE
 options.mcmc=mcmc; % PERHAPS TOO MEMORY INTENSIVE
 save(filename_mat,'-v7.3')
-disp(sprintf('%s : DONE McMC in %5.2f hours, %s',mfilename,mcmc.time_elapsed_in_seconds/3600,options.txt));
+sippi_verbose(sprintf('%s : DONE McMC in %5.2f hours, %s',mfilename,mcmc.time_elapsed_in_seconds/3600,options.txt),-2);
 
 %%
 cd(start_dir);

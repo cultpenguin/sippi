@@ -62,7 +62,7 @@ try;
 end
 for im=1:length(prior)
     filename_asc{im}=sprintf('%s_m%d%s',options.txt,im,'.asc');
-    disp(filename_asc{im});
+    sippi_verbose(filename_asc{im},2);
     fid=fopen(filename_asc{im},'w');
     fclose(fid);
 end
@@ -104,6 +104,7 @@ else
     mcmc.time_end = Inf;
 end
 
+sippi_verbose(sprintf('%s : STARTING rejection sampler in %s',mfilename,options.txt),-2)
 for i=1:mcmc.nite
     
     m_propose = sippi_prior(prior);
@@ -121,8 +122,6 @@ for i=1:mcmc.nite
     if log(rand(1))<logLPacc
         iacc=iacc+1;
         mcmc.logL(iacc)=logL;
-        %disp(sprintf('%s : i=%04d, nacc=%04d',mfilename,i,iacc));
-        % write current model to disc
         for im=1:length(prior)
             fid=fopen(filename_asc{im},'a+');
             fprintf(fid,' %10.7g ',m_propose{im}(:));
@@ -147,7 +146,7 @@ for i=1:mcmc.nite
                 nite = i+ceil(i_left);
             end
         end
-        disp(sprintf('%s : %06d/%06d (%10s) nacc=%06d - %s',mfilename,i,nite,t_end_txt,iacc))
+        sippi_verbose(sprintf('%s : %06d/%06d (%10s) nacc=%06d - %s',mfilename,i,nite,t_end_txt,iacc),-1)
         
     end
     if ((i/(10*mcmc.i_plot))==round( i/(10*mcmc.i_plot) ))
@@ -160,7 +159,7 @@ for i=1:mcmc.nite
     else
         % Adaptive rejection sampling
         if logL>mcmc.rejection_normalize_log
-            disp(sprintf('%s : i=%06d,  new log(maxL) = %g (%g)',mfilename,i,logL,mcmc.rejection_normalize_log))
+            sippi_verbose(sprintf('%s : i=%06d,  new log(maxL) = %g (%g)',mfilename,i,logL,mcmc.rejection_normalize_log))
             mcmc.rejection_normalize_log=logL;
         end
         
@@ -179,7 +178,7 @@ mcmc.logL=mcmc.logL(1:iacc);
 options.mcmc=mcmc;
 
 save(filename_mat)
-disp(sprintf('%s : DONE rejection on %s',mfilename,options.txt))
+sippi_verbose(sprintf('%s : DONE rejection sampling in %s',mfilename,options.txt),-2)
 
 
 %%

@@ -58,7 +58,7 @@ try
     sippi_plot_loglikelihood(mcmc.logL(1:mcmc.i),mcmc.acc(1:mcmc.i),N);
    
 catch
-    disp(sprintf('%s: failed to plot log likelihood curve',mfilename))
+    sippi_verbose(sprintf('%s: failed to plot log likelihood curve',mfilename))
 end
 
 subplot(1,3,2);

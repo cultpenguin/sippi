@@ -55,8 +55,8 @@ doAnneal=1;
 if doAnneal==1
     %options.mcmc.anneal.i_begin=1; % default, iteration number when annealing begins
     options.mcmc.anneal.i_end=options.mcmc.nite; %  iteration number when annealing begins
-    options.mcmc.anneal.fac_begin=2; % default, noise is scaled by fac_begin at iteration i_begin
-    options.mcmc.anneal.fac_end=.01; % default, noise is scaled by fac_end at iteration i_end
+    options.mcmc.anneal.T_begin=5; % start temperature at iteration i_begin
+    options.mcmc.anneal.T_end=.01; % end temperature at iteration i_end
 end
 
 [options]=sippi_metropolis(data,prior,forward,options);
