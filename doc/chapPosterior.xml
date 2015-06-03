@@ -120,14 +120,20 @@ end
 Simulated annealing like behaviour can be controleld in the <varname>options.mcmc.anneal</varname> structure. By default annealing is disabled.
 </para>
 <para>
-Annealing consist of multiplying the the noise level using an exponentially decerasing noise factor from  
-<varname>options.mcmc.anneal.fac_begin</varname> to 
-<varname>options.mcmc.anneal.fac_end</varname>, from iteration number 
-<varname>options.mcmc.anneal.i_begin</varname> to 
-<varname>options.mcmc.anneal.i_end</varname>.
+Annealing consist of setting the temperature (simular to scaling the noise). A tempereture foes not affect the exploration. For temperatures larger than 1, the acceptance ratio increases (the exploration of the Metropolis sampler increases). For temperatures below 1, the acceptance ratio decreases (and hence the exploration of the Metropolis sampler).  
 </para>
 <para>
-The annealing schedule can be used start a Metropolis sampler that allow to explore more of the model space in the beginning. Recall though that the posterior is not sampled until (at least) the annealing has been ended at iteration, <varname>options.mcmc.anneal.i_end</varname>, if the <varname>options.mcmc.anneal.fac_end=1</varname>. This can potentially help not to get trapped in a local minima.
+The temperature is set to <varname>options.mcmc.anneal.T_begin</varname> at any iteration before <varname>options.mcmc.anneal.i_begin</varname>.
+The temperature is set to <varname>options.mcmc.anneal.T_end</varname> at any iteration after <varname>options.mcmc.anneal.i_end</varname>.
+</para>
+<para>
+Inbetween iteration number
+<varname>options.mcmc.anneal.i_start</varname> and
+<varname>options.mcmc.anneal.i_end</varname>
+the temperature changes following either an exponential decay (<varname>options.mcmc.anneal.type='exp'</varname>), or simple linear interpolation (<varname>options.mcmc.anneal.type='linear'</varname>). 
+</para>
+<para>
+An annealing schedule can be used allow a Metropolis sampler that allow exploration of more of the model space in the beginning of the chain. Recall though that the posterior is not sampled until (at least) the annealing has been ended at iteration, <varname>options.mcmc.anneal.i_end</varname>, if the <varname>options.mcmc.anneal.T_end=1</varname>. This can potentially help not to get trapped in a local minima.
 </para>
 <para>
 To use this type of annealing, where the annealing stops after 10000 iterations, after which the algorothm performs like a regular Metropolis sampler, use for example
@@ -140,8 +146,8 @@ which is equivalent to
 <screen>
 options.mcmc.anneal.i_begin=1; % default, iteration number when annealing begins
 options.mcmc.anneal.i_end=10000; %  iteration number when annealing stops
-options.mcmc.anneal.fac_begin=20; % default, noise is scaled by fac_begin at iteration i_begin
-options.mcmc.anneal.fac_end=1; % default, noise is scaled by fac_end at iteration i_end 
+options.mcmc.anneal.T_begin=5; % start temperature
+options.mcmc.anneal.T_end=1; % end temperature
 </screen>
 </para>
 </sect2>
