@@ -13,22 +13,25 @@
 ]]></programlisting></para>
 </sect2>
 
-<sect2 xml:id="sippi_anneal_adjust_noise"><title>sippi_anneal_adjust_noise</title>
-<para><programlisting><![CDATA[  sippi_anneal_adjust_noise : Adjust noise level in annealing schedul
- 
-  Call: 
-     [data_adjust,mcmc]=sippi_anneal_adjust_noise(data,i,mcmc,prior);
- 
-  See also: sippi_metropolis, sippi_anneal_factor
- 
-]]></programlisting></para>
-</sect2>
-
-<sect2 xml:id="sippi_anneal_factor"><title>sippi_anneal_factor</title>
-<para><programlisting><![CDATA[  sippi_anneal_factor : compute simple noise multiplication factor for
+<sect2 xml:id="sippi_anneal_temperature"><title>sippi_anneal_temperature</title>
+<para><programlisting><![CDATA[  sippi_anneal_temperature : compute annealing temperature for
   annealing type sampling
  
-  See also sippi_metropolis, sippi_anneal_adjust_noise
+    %% ANNEALING (TEMPERATURE AS A FUNTION OF ITERAITON NUMBER)
+     i % iteration number
+ 
+     mcmc.anneal.i_begin=1; % default, iteration number when annealing begins
+     mcmc.anneal.i_end=100000; %  iteration number when annealing stops
+     mcmc.anneal.T_begin=5; % Start temperature for annealing 
+     mcmc.anneal.T_end=1; % End temperature for anneaing 
+ 
+     mcmc.anneal.type='exp';     % Exponential temperature change
+     mcmc.anneal.type='linear';  % Linear temperature change
+  
+  Call
+    [T,mcmc]=sippi_anneal_temperature(i,mcmc);
+ 
+  See also sippi_metropolis
  
 ]]></programlisting></para>
 </sect2>
@@ -84,7 +87,7 @@
 <para><programlisting><![CDATA[  sippi_get_sample: Get a posterior sample
  
   Call :
-   [reals,etype_mean,etype_var,reals_all,reals_ite]=sippi_get_sample(wordking_directory,im,n_reals,skip_seq_gibbs);
+   [reals,etype_mean,etype_var,reals_all,reals_ite]=sippi_get_sample(working_directory,im,n_reals,skip_seq_gibbs);
  
      im: A priori model type
      n_reals: Number of realizations to return
@@ -140,9 +143,6 @@
    data{1}.Ct [1,1] : Constant Covariance of modelization error
                       imples data{1}.Ct=ones(N_data.N_data)*data{1}.Ct;
  
- 
- 
- 
   data{id}.recomputeCD [default=0], if '1' then data{1}.iCD is recomputed
   each time sippi_likelihood is called. This should be used if the noise model
   changes between each call to sippi_likelihood.
@@ -151,6 +151,16 @@
    (including the determinant) is computed. This not needed if the data
    civariance is constant, but if it changes, then use
    data{id}.full_likelihood=1;
+ 
+ 
+   A new type of noise model can be used as long as it is available in a 
+   m file staring with 'sippi_likelihood_'. Further, it should provide the
+   inputs and outputs as sippi_likelihood.m
+   If a noise model has been implemented in the m-files
+   sippi_likelihood_other.m
+   then this can be used to evaluate the likelhood in sippi using 
+   data{1}.noise_model='sippi_likelihood_other',
+ 
  
 ]]></programlisting></para>
 </sect2>
@@ -168,18 +178,22 @@
 <para><programlisting><![CDATA[  sippi_metropolis Extended Metropolis sampling in SIPPI
  
   Metropolis sampling.
-    See e.g. Hansen, T. M., Cordua, K. S., and Mosegaard, K., 2012. 
-      Inverse problems with non-trivial priors - Efficient solution through Sequential Gibbs Sampling. 
+    See e.g.
+      Hansen, T. M., Cordua, K. S., and Mosegaard, K., 2012.
+      Inverse problems with non-trivial priors - Efficient solution through Sequential Gibbs Sampling.
       Computational Geosciences. doi:10.1007/s10596-011-9271-1.
+ 
+      Sambridge, M., 2013 - A Parallel Tempering algorithm for
+      probabilistic sampling and multimodal optimization.
  
   Call :
      [options,data,prior,forward,m_current]=sippi_metropolis(data,prior,forward,options)
-  Input : 
+  Input :
      data : sippi data structure
      prior : sippi prior structure
      forward : sippi forward structure
  
-  options : 
+  options :
      options.txt [string] : string to be used as part of all output files
  
      options.mcmc.nite=30000;   % [1] : Number if iterations
@@ -194,29 +208,40 @@
  
      options_mcmc.accept_only_improvements [0] : Optimization
  
-    %% PERTUBATION STRATEGY
-    options.mcmc.pert_strategy.perturb_all=1; % Perturb all priors in each 
+     %% PERTUBATION STRATEGY
+     options.mcmc.pert_strategy.perturb_all=1; % Perturb all priors in each
                                                % iteration. def =[0]
-     %% SIMULATED ANNEALING 
+ 
+     %% TEMPERING
+     options.mcmc.n_chains=1; % set number of chains (def=1)
+     options.mcmc.T=1;      % set temperature of chains [1:n_chains]
+     options.mcmc.chain_frequency_jump=0.1; % probability allwoing a jump
+                                            %  between two chains
+     %% ANNEALING (TEMPERATURE AS A FUNTION OF ITERAITON NUMBER)
      options.mcmc.anneal.i_begin=1; % default, iteration number when annealing begins
      options.mcmc.anneal.i_end=100000; %  iteration number when annealing stops
-     options.mcmc.anneal.fac_begin=20; % default, noise is scaled by fac_begin at iteration i_begin
-     options.mcmc.anneal.fac_end=1; % default, noise is scaled by fac_end at iteration i_end
- 
+     options.mcmc.anneal.T_begin=5; % Start temperature for annealing 
+     options.mcmc.anneal.T_end=1; % End temperature for anneaing 
+  
+     The amount of text info displayed at the prompt, can be controlled by
+     setenv('SIPPI_VERBOSE_LEVEL','1') % all
+     setenv('SIPPI_VERBOSE_LEVEL','0'); % some
+     setenv('SIPPI_VERBOSE_LEVEL','-2'); % none
  
   See also sippi_rejection
+ 
  
 ]]></programlisting></para>
 </sect2>
 
 <sect2 xml:id="sippi_prior"><title>sippi_prior</title>
-<para><programlisting><![CDATA[  sippi_prior A priori models for SIPPI 
+<para><programlisting><![CDATA[  sippi_prior A priori models for SIPPI
  
-  To generate a realization of the prior model defined by the prior structure use: 
+  To generate a realization of the prior model defined by the prior structure use:
     [m_propose,prior]=sippi_prior(prior);
  
   To generate a realization of the prior model defined by the prior structure,
-  in the vicinity of a current model (using sequential Gibbs sampling) use: 
+  in the vicinity of a current model (using sequential Gibbs sampling) use:
     [m_propose,prior]=sippi_prior(prior,m_current);
  
   The following types of a priori models can be used
@@ -224,7 +249,7 @@
     GAUSSIAN   [1D] : 1D generalized gaussian model
     UNIFORM [1D-3D] : 1D-3D uncorrelated uniform distribution
     CHOLESKY[1D-3D] : based on Cholesky decomposition
-    FFTMA   [1D-3D] : based on the FFT-MA method (Multivariate Gaussian) 
+    FFTMA   [1D-3D] : based on the FFT-MA method (Multivariate Gaussian)
     VISIM   [1D-3D] : based on Sequential Gaussian and Direct Sequential simulation
     SISIM   [1D-3D] : based on Sequential indicator SIMULATION
     % multiple point based statistics
@@ -233,8 +258,8 @@
  
  %%% SIMPLE EXAMPLE %%%
  
- % A simple 2D multivariate Gaissian based prior model based on the 
- % FFT-MA method, can be defined using 
+ % A simple 2D multivariate Gaissian based prior model based on the
+ % FFT-MA method, can be defined using
     im=1;
     prior{im}.type='FFTMA';
     prior{im}.name='A SIMPLE PRIOR';
@@ -284,8 +309,8 @@
  
  %% Sequential Gibbs sampling
  
-    All a priori model types can be perturbed, such that a new realization 
-    is generated in the vicinity of a current model. 
+    All a priori model types can be perturbed, such that a new realization
+    is generated in the vicinity of a current model.
     To do this Sequential Gibbs Sampling is used.
     For more information, see <a href="matlab:web('http://dx.doi.org/10.1007/s10596-011-9271-1')">Hansen, T. M., Cordua, K. S., and Mosegaard, K., 2012. Inverse problems with non-trivial priors - Efficient solution through Sequential Gibbs Sampling. Computational Geosciences</a>.
     The type of sequential Gibbs sampling can be controlled in the
@@ -350,6 +375,27 @@
 <sect2 xml:id="sippi_prior_dsim"><title>sippi_prior_dsim</title>
 <para><programlisting><![CDATA[  sippi_prior_dsim : Direct simulation in SIPPI
  
+  Example: 
+   
+  prior{1}.type='dsim';
+  prior{1}.x=1:1:40;;
+  prior{1}.y=1:1:30;;
+  prior{1}.ti=channels;;
+ 
+  m=sippi_prior(prior);
+  sippi_plot_prior(prior,m);
+ 
+ 
+ 
+  % OPTIONAL OPTIONS
+ 
+    prior{1}.options.n_cond [int]: number of conditional points (def=5)
+    prior{1}.options.n_max_ite [int]: number of maximum iterations through the TI for matching patterns (def=200)
+  
+    prior{1}.options.plot    [int]: [0]:none, [1]:plot cond, [2]:storing movie (def=0)
+    prior{1}.options.verbose [int]: [0] no infor to screen, [1]:some info (def=1)
+  
+  
  
   TMH/2014
  
@@ -429,6 +475,20 @@
      prior{ip}.y=1:1:80;
      prior{ip}.ti=channels;
      % prior{ip}.ti=maze;
+ 
+     m=sippi_prior(prior);
+     sippi_plot_prior(prior,m)
+     figure(1);imagesc(prior{ip}.ti);axis image
+ 
+ % Example: scaling and rotation
+     ip=1;
+     prior{ip}.type='snesim';
+     prior{ip}.x=1:1:80;
+     prior{ip}.y=1:1:80;
+     prior{ip}.ti=channels;
+     prior{ip}.scaling=[.1];
+     prior{ip}.rotation=[10];
+ 
      m=sippi_prior(prior);
      sippi_plot_prior(prior,m)
      figure(1);imagesc(prior{ip}.ti);axis image
@@ -536,27 +596,49 @@
 ]]></programlisting></para>
 </sect2>
 
+<sect2 xml:id="sippi_prior_voronoi"><title>sippi_prior_voronoi</title>
+<para><programlisting><![CDATA[  sippi_prior_voronoi: 
+ 
+  TMH/2014
+ 
+  Ex: 
+    prior{1}.type='voronoi';
+    prior{1}.x=1:1:20;
+    prior{1}.y=1:1:20;
+    prior{1}.cells_N_min=2;
+    prior{1}.cells_N_max=100;
+    prior{1}.cells_N=10;
+    [m,prior]=sippi_prior(prior);
+    sippi_plot_prior(prior,m);
+ 
+  See also: sippi_prior_init, sippi_prior
+ 
+]]></programlisting></para>
+</sect2>
+
 <sect2 xml:id="sippi_rejection"><title>sippi_rejection</title>
 <para><programlisting><![CDATA[  sippi_rejection Rejection sampling
  
-  Call : 
+  Call :
       options=sippi_rejection(data,prior,forward,options)
  
   input arguments
  
     options.mcmc.i_plot
     options.mcmc.nite     % maximum number of iterations
-    options.mcmc.logLmax
+    options.mcmc.logLmax [def=1]; % Maximum possible log-likelihood value
  
     options.mcmc.rejection_normalize_log = log(options.mcmc.Lmax)
  
     options.mcmc.adaptive_rejection=1, adaptive setting of maxiumum likelihood
                    (def=[0])
-                   At each iteration Lmax will be set if log(L(m_cur)=>options.mcmc.logLmax
+                   At each iteration logLmax will be set if log(L(m_cur)=>options.mcmc.logLmax
  
  
     options.mcmc.max_run_time_hours = 1; % maximum runtime in hours
                                          % (overrides options.mcmc.nite if needed)
+ 
+    options.mcmc.T = 1; % Tempering temperature. T=1, implies no tempering
  
   See also sippi_metropolis
  

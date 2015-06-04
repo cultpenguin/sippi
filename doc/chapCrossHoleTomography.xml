@@ -113,7 +113,7 @@ forward.type='eikonal';
 Ray type models are based on an assumption that the wave propagating between the source and the receiver has infinitely high frequency. Therefore the travel time delay is due to the velocity along a ray connecting the source and receiver.
 </para>
 <para>
-The linear so-called straight ray approximation, which assumes that the travel time for a wave travelling between a source and a receiver is due to the travel time delay along a straight line connecting the source and receiver, can be chosen using
+The linear so-called straight ray approximation, which assumes that the travel time for a wave traveling between a source and a receiver is due to the travel time delay along a straight line connecting the source and receiver, can be chosen using
 <screen>
 forward.type='ray';
 forward.linear=1;

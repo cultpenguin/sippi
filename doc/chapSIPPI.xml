@@ -10,15 +10,10 @@ This section contains information about how to use and control SIPPI, which requ
       <listitem>
         <para>Define the <link linkend="chapdata">data and noise model</link>, in form of the prior data structure</para>
       </listitem>
-<!--
-      <listitem>
-        <para>Choose a method for <link linkend="chapposterior">sampling the a posteriori probability density</link>.</para>
-      </listitem>
--->
 </itemizedlist>
 </para>
 <para>
-[For examples of how to apply SIPPI for different problems, see <link linkend="chapExamples">the section with examples</link>].
+[For examples of how to apply &sippi; for different problems, see <link linkend="chapExamples">the section with examples</link>].
 </para>
 
 
@@ -74,10 +69,10 @@ The <link linkend="prior_uniform">UNIFORM</link> type prior specifies an uncorre
 The <link linkend="prior_gaussian">GAUSSIAN</link> type prior specifies a 1D generalized Gaussian model.
 </para>
 <para>
-The <link linkend="prior_fftma">FFTMA</link> type prior specifies a 1D-3D Gaussian type a prori model based on the FFT Moving Average method, whish is bery efficient for unconditional sampling, and for defining a prior Gaussian model with variable/uncertain mean, variance,  ranges, and rotation.
+The <link linkend="prior_fftma">FFTMA</link> type prior specifies a 1D-3D Gaussian type a priori model based on the FFT Moving Average method, which is very efficient for unconditional sampling, and for defining a prior Gaussian model with variable/uncertain mean, variance,  ranges, and rotation.
 </para>
 <para>
-The <link linkend="prior_cholesky">CHOLESKY</link> type prior specifies a 1D-3D Gaussian tyype a priori model based on Cholesky decomposition of the covariance model,
+The <link linkend="prior_cholesky">CHOLESKY</link> type prior specifies a 1D-3D Gaussian type a priori model based on Cholesky decomposition of the covariance model,
 </para>
 <para>
 The <link linkend="prior_visim">VISIM</link> type prior model specifies 1D-3D Gaussian models, utilizing both sequential Gaussian simulation (SGSIM) and direct sequential simulation (DSSIM) that can be conditioned to data of both point- and volume support and linear average data. 
@@ -98,7 +93,7 @@ Examples of using different types of prior models or combining prior models can 
 </para>
 
 <!-- GAUSSIAN -->
-<sect3 xml:id="prior_uniform"><title>Uniform distribtion</title>
+<sect3 xml:id="prior_uniform"><title>Uniform distribution</title>
 <para>
 A uniform prior model can be specified using the 'uniform' type prior model
 </para>
@@ -395,7 +390,7 @@ prior{im}.Cm='1 Sph(10)';
 
 <sect3 xml:id="prior_cholesky"><title>CHOLESKY - 3D Gaussian model</title>
 <para>
-The CHOLESKY type prior utilizes Cholesky decompostion of the covariance in order to generate realizations of a Gaussian random field. The CHOLESKY type prior needs a full description of the covariance odel, which will be of size [nxyz*nxyz*nxyz],  unlike using the <link linkend="prior_fftma">FFTMA</link> type prior model that only needs a specification of an isotropic covariance models of size [1,nxyz]. Hence, the CHOLEKSY type prior is much more demanding on memory, and CPU. However, the CHOLESKY type prior can be used to sample from any covariance model, also non-stationary covariance model.
+The CHOLESKY type prior utilizes Cholesky decomposition of the covariance in order to generate realizations of a Gaussian random field. The CHOLESKY type prior needs a full description of the covariance model, which will be of size [nxyz*nxyz*nxyz],  unlike using the <link linkend="prior_fftma">FFTMA</link> type prior model that only needs a specification of an isotropic covariance models of size [1,nxyz]. Hence, the CHOLESKY type prior is much more demanding on memory, and CPU. However, the CHOLESKY type prior can be used to sample from any covariance model, also non-stationary covariance model.
 </para>
 <para>
 The CHOLESKY model is can be defined almost identically to the <link linkend="prior_fftma">FFTMA</link> type prior model. As an example: 
@@ -595,7 +590,7 @@ The step-length (i.e. the degree of perturbation) is determined by the <varname>
 </para>
 
 <para>
-For the 'uniform' and 'gaussian' type a priori models a step-length closer to 0 zeros imples a 'shorter' step, while a step-length close to 1, implies a 'longer' step-length. A step length of 1, wil generate a new independent realization of the prior, while a step length of 0, will return the same realization of the prior
+For the 'uniform' and 'gaussian' type a priori models a step-length closer to 0 zeros imples a 'shorter' step, while a step-length close to 1, implies a 'longer' step-length. A step length of 1, will generate a new independent realization of the prior, while a step length of 0, will return the same realization of the prior
 <screen>
 prior{m}.seq_gibbs.step=.1;
 [m2,prior]=sippi_prior(prior,m1);
@@ -611,10 +606,10 @@ The default 'type' is 2, defined as
 prior{m}.seq_gibbs.step=1;
 prior{m}.seq_gibbs.type=2;
 </screen>
-where the step length defines the percentage of the of model parameters (selected at random) defined in <varname>prior{im}</varname> is conditionally resampled. Thus, a step-length closer to 0 zeros imples a 'shorter' step, while a step-length close to 1, implies a 'longer' step-length.
+where the step length defines the percentage of the of model parameters (selected at random) defined in <varname>prior{im}</varname> is conditionally re-sampled. Thus, a step-length closer to 0 zeros imples a 'shorter' step, while a step-length close to 1, implies a 'longer' step-length.
 </para>
 <para>
-If <varname>prior{m}.seq_gibbs.step=1</varname>, then <varname>prior{m}.seq_gibbs.step</varname> defines the size of a square rectangle/cube which is to be conditionally resimulated using sequential Gibbbs ssampling.
+If <varname>prior{m}.seq_gibbs.step=1</varname>, then <varname>prior{m}.seq_gibbs.step</varname> defines the size of a square rectangle/cube which is to be conditionally re-simulated using sequential Gibbs sampling.
 </para>
 
 </sect3>
@@ -682,7 +677,7 @@ Correlated Gaussian measurement uncertainty can be specified using the <varname>
 <screen>
 data{1}.Cd=[4 1 0 ; 1 4 1 ; 0 1 4];
 </screen>
-Note that <varname>data{1}.Cd</varname> must be of size [NDxND], where ND is the the number of data in <varname>data{1}.d_obs</varname>.
+Note that <varname>data{1}.Cd</varname> must be of size [NDxND], where ND is the number of data in <varname>data{1}.d_obs</varname>.
 </para>
 
 </sect3>

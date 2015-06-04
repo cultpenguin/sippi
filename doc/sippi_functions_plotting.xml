@@ -63,11 +63,12 @@
  
   Call :
     sippi_plot_movie(fname);
-    sippi_plot_movie(fname,im_array,n_frames,skip_burnin);
+    sippi_plot_movie(fname,im_array,n_frames,skip_burnin,i_chain);
        fname : name of folder with results (e.g. options.txt)
        im_array : array of indexes of model parameters to make into movies
        n_frames [200] : number of frames in movie
        skip_burnin [200] : start movie after burn_in;
+       i_chain[1]: make movie of chain number 'i_chain' (new 22/05/2014)
  
   Ex:
   sippi_plot_movie('20130812_Metropolis');
@@ -176,7 +177,7 @@
 </sect2>
 
 <sect2 xml:id="sippi_plot_prior_sample"><title>sippi_plot_prior_sample</title>
-<para><programlisting><![CDATA[  sippi_plot_prior Plot a sample of the prior in SIPPI
+<para><programlisting><![CDATA[  sippi_plot_prior_sample Plot a sample of the prior in SIPPI
  
   Call :
      sippi_plot_prior_sample(prior,im_array,n_reals,cax,options);
