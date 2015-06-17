@@ -8,7 +8,7 @@ function [options,data,prior,forward,m_current]=sippi_metropolis_chains(data,pri
 %     Computational Geosciences. doi:10.1007/s10596-011-9271-1.
 %
 %     Sambridge, M., 2013 - A Parallel Tempering algorithm for
-%     probabilistic sampling and multimodal optimization.
+%     probabilistic sampling and multi-modal optimization.
 %
 % Call :
 %    [options,data,prior,forward,m_current]=sippi_metropolis(data,prior,forward,options)
@@ -18,7 +18,6 @@ function [options,data,prior,forward,m_current]=sippi_metropolis_chains(data,pri
 %    forward : sippi forward structure
 %
 % options :
-%    options.txt [string] : string to be used as part of all output files
 %
 %    options.mcmc.nite=30000;   % [1] : Number if iterations
 %    options.mcmc.i_sample=100; % : Number of iterations between saving model to disk
@@ -32,21 +31,24 @@ function [options,data,prior,forward,m_current]=sippi_metropolis_chains(data,pri
 %
 %    options_mcmc.accept_only_improvements [0] : Optimization
 %
-%    %% PERTUBATION STRATEGY
+%    options.txt [string] : string to be used as part of all output file names
+%
+%    %% PERTURBATION STRATEGY
 %    options.mcmc.pert_strategy.perturb_all=1; % Perturb all priors in each
 %                                              % iteration. def =[0]
 %
 %    %% TEMPERING
 %    options.mcmc.n_chains=1; % set number of chains (def=1)
 %    options.mcmc.T=1;      % set temperature of chains [1:n_chains]
-%    options.mcmc.chain_frequency_jump=0.1; % probability allwoing a jump
+%    options.mcmc.chain_frequency_jump=0.1; % probability allowing a jump
 %                                           %  between two chains
-%    %% ANNEALING (TEMPERATURE AS A FUNTION OF ITERAITON NUMBER)
+%    %% ANNEALING (TEMPERATURE AS A FUNCTION OF ITERATION NUMBER)
 %    options.mcmc.anneal.i_begin=1; % default, iteration number when annealing begins
 %    options.mcmc.anneal.i_end=100000; %  iteration number when annealing stops
 %    options.mcmc.anneal.T_begin=5; % Start temperature for annealing 
-%    options.mcmc.anneal.T_end=1; % End temperature for anneaing 
+%    options.mcmc.anneal.T_end=1; % End temperature for annealing 
 % 
+%    %% VERBOSITY
 %    The amount of text info displayed at the prompt, can be controlled by
 %    setenv('SIPPI_VERBOSE_LEVEL','1') % all
 %    setenv('SIPPI_VERBOSE_LEVEL','0'); % some
@@ -56,15 +58,6 @@ function [options,data,prior,forward,m_current]=sippi_metropolis_chains(data,pri
 %
 %
 
-%
-% Consider multiple chains, with same temperature but different
-% exploration.!!
-%
-% Chains with high temperature will most likely NEVER reach a model that
-% will be accepted/swappable with the cgain for T=1, there it may not make
-% any sense
-%
-%
 options.null='';
 if ~isfield(options,'txt');options.txt='';end
 if ~isempty(options.txt)
@@ -282,7 +275,7 @@ for i=1:mcmc.nite;
         if mcmc.pert_strategy.perturb_all==1,
             im_perturb=1:1:length(prior_current);
         else
-            % perturb one parameter according to frequency distribuiton
+            % perturb one parameter according to frequency distribution
             i_pert=mcmc.pert_strategy.i_pert;
             pert_freq=cumsum(mcmc.pert_strategy.i_pert_freq);
             pert_freq=pert_freq./max(pert_freq);
