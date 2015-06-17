@@ -136,7 +136,6 @@ for im=im_array;
             if isfield(prior{im},'daspect');
                 daspect(prior{im}.daspect);
             end
-            
             try;caxis(cax);end
             
             colormap(sippi_colormap);

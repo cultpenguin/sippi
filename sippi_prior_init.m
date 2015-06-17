@@ -6,7 +6,6 @@ function prior=sippi_prior_init(prior,ip_array);
 %
 % See also sippi_prior
 %
-sippi_verbose(sprintf('%s : Initializing prior options',mfilename))
 
 if nargin<2
     ip_array=1:length(prior);
