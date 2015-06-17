@@ -34,8 +34,18 @@ function [options,data,prior,forward,m_current]=sippi_metropolis(data,prior,forw
 %    options.txt [string] : string to be used as part of all output file names
 %
 %    %% PERTURBATION STRATEGY
+%    % Perturb all model parameter all the time
 %    options.mcmc.pert_strategy.perturb_all=1; % Perturb all priors in each
 %                                              % iteration. def =[0]
+%
+%    % Perturb one a prior type at a time, according to some frequency
+%    options.mcmc.pert_strategy.i_pert = [1,3]; % only perturb prior 1 and 3
+%    options.mcmc.pert_strategy.i_pert = [2 8]; % perturb prior 3 80% of
+%                                               % the time and prior 1 20%
+%                                               % of the time
+%    % the default pertubation strategt is to select one prior model to 
+%    % perturb at tandom for each iteration 
+%
 %
 %    %% TEMPERING
 %    options.mcmc.n_chains=1; % set number of chains (def=1)
@@ -50,9 +60,12 @@ function [options,data,prior,forward,m_current]=sippi_metropolis(data,prior,forw
 % 
 %    %% VERBOSITY
 %    The amount of text info displayed at the prompt, can be controlled by
-%    setenv('SIPPI_VERBOSE_LEVEL','1') % all
-%    setenv('SIPPI_VERBOSE_LEVEL','0'); % some
-%    setenv('SIPPI_VERBOSE_LEVEL','-2'); % none
+%    setenv('SIPPI_VERBOSE_LEVEL','2') % all: information on chain swapping
+%    setenv('SIPPI_VERBOSE_LEVEL','1') % information about seq-gibbs step update
+%    setenv('SIPPI_VERBOSE_LEVEL','0'); % [def] frequent update 
+%    setenv('SIPPI_VERBOSE_LEVEL','-1'); % rare update om finish time
+%    setenv('SIPPI_VERBOSE_LEVEL','-2'); % indication of stop and start
+%    setenv('SIPPI_VERBOSE_LEVEL','-3'); % none
 %
 % See also sippi_rejection
 %
@@ -156,7 +169,7 @@ end
 for ic=1:NC
     if isfield(mcmc,'m_init');
         C{ic}.m_current=mcmc.m_init;
-        sippi_verbose(sprintf('Using supplied model as starting model',mfilename))
+        sippi_verbose(sprintf('Using supplied model as starting model',mfilename));
     else
         [C{ic}.m_current,C{ic}.prior] = sippi_prior(C{ic}.prior);
     end
@@ -196,7 +209,10 @@ t_per_ite=sum(t_data)+sum(t_prior);
 if isfield(options,'i_update_txt');
     i_update_txt=options.i_update_txt;
 else
-    i_update_txt=max([1 ceil(5./(t_per_ite))]);
+    vlevel=sippi_verbose;
+    if vlevel<0, t_up=50; else, t_up=5; end
+    
+    i_update_txt=max([1 ceil(t_up./(t_per_ite))]);
 end
 
 %% PRE ALLOCATE ARRAY FOR MCMC OUTPUT
@@ -240,7 +256,7 @@ filename_mat=[options.txt,'.mat'];
 options=sippi_plot_defaults(options);
 
 %% START THE METROPOLIS ALGORITHM
-sippi_verbose(sprintf('%s : starting extended Metropolis sampler in %s',mfilename,options.txt),-2)
+sippi_verbose(sprintf('%s : starting extended Metropolis sampler in %s',mfilename,options.txt),-2);
 
 mcmc.t_start=now;
 for i=1:mcmc.nite;
@@ -399,7 +415,7 @@ for i=1:mcmc.nite;
                 for k=1:NC;for im=1:length(C{k}.prior_current);
                         C{k}.prior_current{im}.seq_gibbs.step=C{k}.mcmc.step(im,i);
                 end;end
-                sippi_verbose(sprintf('%s: at i=%05d SWAP chains [%d<->%d]',mfilename,i,ic_i,ic_j),1);
+                sippi_verbose(sprintf('%s: at i=%05d SWAP chains [%d<->%d]',mfilename,i,ic_i,ic_j),2);
             end
         end
     end
@@ -417,8 +433,10 @@ for i=1:mcmc.nite;
     if ((i/i_update_txt)==round(i/i_update_txt))
         [t_end_txt,t_left_seconds]=time_loop_end(mcmc.t_start,i,mcmc.nite);
         %ic=1;
-        for ic=1:NC
-            sippi_verbose(sprintf('%06d/%06d (%10s): C%02d acc %5g %5g  T=%5.2f',mcmc.i,mcmc.nite,t_end_txt,ic,C{ic}.logL_current,C{ic}.logL_propose,C{ic}.T*T_fac),-1)
+        vlevel=sippi_verbose;
+        if vlevel>0, NC_end=NC; else NC_end=1; end
+        for ic=1:NC_end
+            sippi_verbose(sprintf('%06d/%06d (%10s): C%02d acc %5g %5g  T=%5.2f',mcmc.i,mcmc.nite,t_end_txt,ic,C{ic}.logL_current,C{ic}.logL_propose,C{ic}.T*T_fac),-1);
         end
     end
     
@@ -428,7 +446,7 @@ for i=1:mcmc.nite;
             C{1}.mcmc.i=mcmc.i;            
             sippi_plot_current_model(C{1}.mcmc,C{1}.data,C{1}.d_current,C{1}.m_current,C{1}.prior_current);
         catch
-            sippi_verbose(sprintf('%s : Could not plot current model info',mfilename),-10)
+            sippi_verbose(sprintf('%s : Could not plot current model info',mfilename),-10);
         end
         %%
         if NC>1

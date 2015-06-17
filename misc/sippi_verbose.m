@@ -25,7 +25,7 @@
 
 
 %
-function sippi_verbose(txt,verbose)
+function varargout=sippi_verbose(txt,verbose)
   
 
   vlevel=0; % SHOW ALL VERBOSE INFO WITH 'VERBOSE' ABOVE 'VLEVEL'
@@ -35,6 +35,13 @@ function sippi_verbose(txt,verbose)
       if ~isempty(tmp)
           vlevel=tmp;
       end
+  end
+  
+  if nargout;
+      varargout{1} = vlevel;    
+  end
+  if nargin==0;
+      return
   end
   
   if nargin==1,
