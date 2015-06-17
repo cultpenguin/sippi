@@ -56,7 +56,6 @@ try
         end
     end
     sippi_plot_loglikelihood(mcmc.logL(1:mcmc.i),mcmc.acc(1:mcmc.i),N);
-   
 catch
     sippi_verbose(sprintf('%s: failed to plot log likelihood curve',mfilename))
 end

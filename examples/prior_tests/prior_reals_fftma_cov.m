@@ -76,7 +76,7 @@ suptitle(sprintf('FFT-MA with varying covariance properties\n Sequential Gibbs s
 %% Show movie of a random walk in the prior (using sequential Gibbs sampling)
 fclose all;
 close all;
-save_movie=1;
+save_movie=0;
 randn('seed',4);rand('seed',4);
 fig=figure(13);clf
 prior{1}.seq_gibbs.type=1;
@@ -84,6 +84,16 @@ prior{1}.seq_gibbs.step=5;
 prior{2}.seq_gibbs.step=.15;
 prior{3}.seq_gibbs.step=.15;
 prior{3}.perturb=1;
+
+prior{1}.seq_gibbs.type=2;
+% only PSI
+prior{1}.seq_gibbs.step=0;prior{2}.seq_gibbs.step=.15;prior{3}.seq_gibbs.step=.15;
+% only random component
+prior{1}.seq_gibbs.step=.1;prior{2}.seq_gibbs.step=0;prior{3}.seq_gibbs.step=0;
+% both
+prior{1}.seq_gibbs.step=.1;prior{2}.seq_gibbs.step=.15;prior{3}.seq_gibbs.step=.15;
+
+
 [m,prior]=sippi_prior(prior);
 if (save_movie==1)
     fname=[mfilename,'.mp4'];
