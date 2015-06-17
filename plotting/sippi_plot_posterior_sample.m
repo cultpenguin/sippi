@@ -247,8 +247,56 @@ for im=im_arr;
         %ppp(options.plot.axis.width,options.plot.axis.height,options.plot.axis.fontsize,options.plot.axis.w0,options.plot.axis.h0);
         
     elseif ndim==1
-       
-        plot(prior{im}.x,reals,'k-');
+        
+        figure;
+        if isfield(prior{im},'cax');
+            lim=prior{im}.cax;
+            h=linspace(lim(1),lim(2),41);
+        else
+            h=linspace(min(reals(:)),max(reals(:)),41);
+        end
+        nh=length(h);
+        
+        probmat=zeros(nh,size(reals,1))
+        
+        for i=1:size(reals,1);
+            probmat(:,i)=hist(reals(i,:),h);
+        end
+        probmat=probmat./size(reals,2);
+        
+        % conditional cdf
+        %imagesc(prior{im}.x,h,cumsum(probmat));
+        % conditional pdf
+        imagesc(prior{im}.x,h,(probmat));
+        
+        colorbar
+        set(gca,'ydir','normal')
+        hold on
+        colormap(1-gray)
+        colormap(hot)     
+        if exist('quantile','file')
+            plot(prior{im}.x,quantile(reals',.025),'g--','linewidth',2);
+            plot(prior{im}.x,quantile(reals',.5),'g-','linewidth',2);
+            plot(prior{im}.x,quantile(reals',.975),'g--','linewidth',2);
+        end
+        hold off
+        
+        % PLOT REFERENCE IF IT EXISTS
+        if isfield(options.mcmc,'m_ref');
+            hold on
+            try 
+                plot(prior{im}.x,options.mcmc.m_ref{im},'b-','MarkerSize',11,'LineWidth',3);
+            catch
+                sippi_verbose(sprintf('cannot plot m_ref'));
+            end
+            hold off
+        end
+        print_mul(sprintf('%s_m%d_posterior_sample_density',fname,im),options.plot.hardcopy_types)
+        xlabel('X')
+        ylabel(prior{im}.name)
+        %%
+        figure_focus(f_id);
+        plot(prior{im}.x,reals,'k-','linewidth',.1);
         hold on
         %plot(prior{im}.x,etype_mean,'r-','linewidth',2);
         if exist('quantile','file')
@@ -267,7 +315,11 @@ for im=im_arr;
         % PLOT REFERENCE IF IT EXISTS
         if isfield(options.mcmc,'m_ref');
             hold on
-            plot(prior{im}.x,options.mcmc.m_ref{im},'g.','MarkerSize',11,'LineWidth',3);
+            try 
+                plot(prior{im}.x,options.mcmc.m_ref{im},'g.','MarkerSize',11,'LineWidth',3);
+            catch
+                sippi_verbose(sprintf('cannot plot m_ref'));
+            end
             hold off
         end
         

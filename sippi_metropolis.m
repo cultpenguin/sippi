@@ -1,4 +1,4 @@
-function [options,data,prior,forward,m_current]=sippi_metropolis_chains(data,prior,forward,options)
+function [options,data,prior,forward,m_current]=sippi_metropolis(data,prior,forward,options)
 % sippi_metropolis Extended Metropolis sampling in SIPPI
 %
 % Metropolis sampling.
@@ -273,7 +273,7 @@ for i=1:mcmc.nite;
         
         % PERTURBATION STRATEGY
         if mcmc.pert_strategy.perturb_all==1,
-            im_perturb=1:1:length(prior_current);
+            im_perturb=1:1:length(C{ic}.prior_current);
         else
             % perturb one parameter according to frequency distribution
             i_pert=mcmc.pert_strategy.i_pert;
@@ -281,7 +281,6 @@ for i=1:mcmc.nite;
             pert_freq=pert_freq./max(pert_freq);
             im_perturb=i_pert(min(find(rand(1)<pert_freq)));
         end
-        
         for k=1:length(im_perturb);
             C{ic}.prior_current{im_perturb(k)}.perturb=1;
             C{ic}.mcmc.perturb(im_perturb(k),i)=1;
@@ -400,7 +399,7 @@ for i=1:mcmc.nite;
                 for k=1:NC;for im=1:length(C{k}.prior_current);
                         C{k}.prior_current{im}.seq_gibbs.step=C{k}.mcmc.step(im,i);
                 end;end
-                sippi_verbose(sprintf('%s: at i=%05d SWAP chains [%d<->%d]',mfilename,i,ic_i,ic_j));
+                sippi_verbose(sprintf('%s: at i=%05d SWAP chains [%d<->%d]',mfilename,i,ic_i,ic_j),1);
             end
         end
     end
@@ -426,7 +425,7 @@ for i=1:mcmc.nite;
     %% PLOT CURRENT MODEL AND STATUS
     if ((mcmc.i/mcmc.i_plot)==round( mcmc.i/mcmc.i_plot ))
         try
-            %C{1}.mcmc.i=mcmc.i;
+            C{1}.mcmc.i=mcmc.i;            
             sippi_plot_current_model(C{1}.mcmc,C{1}.data,C{1}.d_current,C{1}.m_current,C{1}.prior_current);
         catch
             sippi_verbose(sprintf('%s : Could not plot current model info',mfilename),-10)

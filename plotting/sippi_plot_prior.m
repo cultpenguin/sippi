@@ -155,7 +155,7 @@ for im=im_array;
                 plot(x,m{im},'k-*')
                 xlabel('X');
                 ylabel(prior{im}.name)
-                %try;set(gca,'ylim',cax);end
+                try;set(gca,'ylim',cax);end
             catch
                 sippi_verbose(sprintf('%s could not plot model #%d',mfilename,im),2)
             end
