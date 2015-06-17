@@ -18,15 +18,19 @@
 %         [-1] : little info 
 %         [-2] : no info
 %
-% Default level is set using an environmental variable
+% The verbose level can be set either using a an environmental variable
 % e.g. setenv('SIPPI_VERBOSE_LEVEL','1')
-
-% 
-
-
+% or one can call sippi_verbose with a third argument, which will set the
+% verbose level. To set the verbose level to 2, use:
+% sippi_verbose('',0,2);
 %
-function varargout=sippi_verbose(txt,verbose)
+
+function varargout=sippi_verbose(txt,verbose,set_verbose_level)
   
+  if nargin==3;
+      setenv('SIPPI_VERBOSE_LEVEL',num2str(set_verbose_level));
+      sippi_verbose(sprintf('setting verbose level at %d',set_verbose_level));
+  end
 
   vlevel=0; % SHOW ALL VERBOSE INFO WITH 'VERBOSE' ABOVE 'VLEVEL'
   try

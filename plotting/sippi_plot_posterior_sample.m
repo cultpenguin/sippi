@@ -257,8 +257,7 @@ for im=im_arr;
         end
         nh=length(h);
         
-        probmat=zeros(nh,size(reals,1))
-        
+        probmat=zeros(nh,size(reals,1));        
         for i=1:size(reals,1);
             probmat(:,i)=hist(reals(i,:),h);
         end

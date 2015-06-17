@@ -190,7 +190,7 @@ for im=im_array
         
         
     else
-        try;disp(sprintf('''%s'' only applies to 2D/3D parameters (not prior #%d : %s)',mfilename,im,prior{im}.name));end
+        try;sippi_versboe(sprintf('''%s'' only applies to 2D/3D parameters (not prior #%d : %s)',mfilename,im,prior{im}.name),1);end
     end
 end
 %%db

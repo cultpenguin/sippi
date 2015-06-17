@@ -256,8 +256,11 @@ filename_mat=[options.txt,'.mat'];
 options=sippi_plot_defaults(options);
 
 %% START THE METROPOLIS ALGORITHM
-sippi_verbose(sprintf('%s : starting extended Metropolis sampler in %s',mfilename,options.txt),-2);
-
+sippi_verbose(sprintf('%s : Starting extended Metropolis sampler in %s',mfilename,options.txt),-2);
+if NC>1
+    T_str=sprintf('%3.1g ',mcmc.T);
+    sippi_verbose(sprintf('%s : Using %d chains at temperatures: %s',mfilename,NC,T_str),-2);
+end
 mcmc.t_start=now;
 for i=1:mcmc.nite;
     mcmc.i=i;
