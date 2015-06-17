@@ -290,9 +290,10 @@ for im=im_arr;
             end
             hold off
         end
-        print_mul(sprintf('%s_m%d_posterior_sample_density',fname,im),options.plot.hardcopy_types)
         xlabel('X')
         ylabel(prior{im}.name)
+        print_mul(sprintf('%s_m%d_posterior_sample_density',fname,im),options.plot.hardcopy_types)
+        
         %%
         figure_focus(f_id);
         plot(prior{im}.x,reals,'k-','linewidth',.1);
