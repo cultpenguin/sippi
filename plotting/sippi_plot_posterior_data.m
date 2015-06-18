@@ -51,7 +51,10 @@ pl_hist=1;
 try;cd(plotdir);end
 
 %%
-nd=length(data);
+% optionally only show a limited number of data...
+% nd=length(data);
+nd=min([options.plot.data.show_max length(data)]);
+
 try
     %%
     for id=1:nd;

@@ -58,5 +58,14 @@ end
 try
     mgstat_set_path;
 catch
-    disp(sprintf('%s : No path seems to be set of mGstat - SIPPI will probably fail',mfilename))
+    sippi_verbose(sprintf('%s : No path seems to be set of mGstat - SIPPI will probably fail',mfilename))
 end
+
+
+succ=savepath;
+if succ==0
+    sippi_verbose(sprintf('%s : saved path for later session',mfilename),0)
+else
+    sippi_verbose(sprintf('%s : COULD NOT SAVE PATH for later session',mfilename),0)
+end
+

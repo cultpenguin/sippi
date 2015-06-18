@@ -31,6 +31,14 @@ if ~isfield(options.plot.axis,'height');options.plot.axis.height=8;end
 if ~isfield(options.plot.axis,'w0');options.plot.axis.w0=2;end
 if ~isfield(options.plot.axis,'h0');options.plot.axis.h0=2;end
 
+%% 'POSTERIOR' DATA 
+options.plot.data.null='';
+if ~isfield(options.plot.data,'show_max')
+    % options.plot.data.show_max=Inf;
+    options.plot.data.show_max=1;
+end
+
+
 %% 2D MARG
 options.plot.marg2d.null='';
 if ~isfield(options.plot.marg2d,'pl_marg2d_scatter')

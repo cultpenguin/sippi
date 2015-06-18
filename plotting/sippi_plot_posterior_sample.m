@@ -257,7 +257,7 @@ for im=im_arr;
         end
         nh=length(h);
         
-        probmat=zeros(nh,size(reals,1));        
+        probmat=zeros(nh,size(reals,1));
         for i=1:size(reals,1);
             probmat(:,i)=hist(reals(i,:),h);
         end
@@ -272,7 +272,7 @@ for im=im_arr;
         set(gca,'ydir','normal')
         hold on
         colormap(1-gray)
-        colormap(hot)     
+        colormap(hot)
         if exist('quantile','file')
             plot(prior{im}.x,quantile(reals',.025),'g--','linewidth',2);
             plot(prior{im}.x,quantile(reals',.5),'g-','linewidth',2);
@@ -283,7 +283,7 @@ for im=im_arr;
         % PLOT REFERENCE IF IT EXISTS
         if isfield(options.mcmc,'m_ref');
             hold on
-            try 
+            try
                 plot(prior{im}.x,options.mcmc.m_ref{im},'b-','MarkerSize',11,'LineWidth',3);
             catch
                 sippi_verbose(sprintf('cannot plot m_ref'));
@@ -315,7 +315,7 @@ for im=im_arr;
         % PLOT REFERENCE IF IT EXISTS
         if isfield(options.mcmc,'m_ref');
             hold on
-            try 
+            try
                 plot(prior{im}.x,options.mcmc.m_ref{im},'g.','MarkerSize',11,'LineWidth',3);
             catch
                 sippi_verbose(sprintf('cannot plot m_ref'));
@@ -335,7 +335,6 @@ for im=im_arr;
         try;clear m;end
         for i=1:n_reals(im)
             
-            progress_txt(i,n_reals(im),'computing data response')
             subplot(nsp_y,nsp_x,i);
             
             use_colorbar=0;
@@ -349,7 +348,6 @@ for im=im_arr;
                     m{i}{im}=reals(:,:,i);
                 end
                 sippi_plot_prior(prior,m{i},im,use_colorbar,f_id);
-                %sippi_plot_prior(prior,m{i}{id},im,use_colorbar,f_id);
             catch
                 disp(sprintf('%s : failed to plot realization %d',mfilename,i))
             end
@@ -362,6 +360,21 @@ for im=im_arr;
         %title(title_txt)
     end
     print_mul(sprintf('%s_m%d_posterior_sample',fname,im),options.plot.hardcopy_types)
+    
+    %% PLOT REF MODEL
+    
+    % PLOT REFERENCE IF IT EXISTS
+    if isfield(options.mcmc,'m_ref');
+        try
+            for im=1:length(prior);
+                sippi_plot_prior(prior,options.mcmc.m_ref,im)
+                print_mul(sprintf('%s_m%d_ref',fname,im),options.plot.hardcopy_types)
+            end
+        catch
+            sippi_verbose('Could not plot reference model')
+        end
+    end
+    
     
     %% PLOT ETYPES
     if ndim>1
@@ -501,7 +514,7 @@ for im=im_arr;
             %%
             
         elseif ndim>=1
-        
+            
             fn=(im-1)*10+6;
             figure_focus(fn);set_paper('landscape');clf;
             set(gca,'FontSize',options.plot.axis.fontsize)
