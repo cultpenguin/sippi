@@ -14,8 +14,6 @@ if isempty(i_perturb);
     return
 end
 P_current = sippi_compute_acceptance_rate(mcmc.acc(im,i_perturb),prior{im}.seq_gibbs.n_update_history);
-%im
-%keyboard
 if P_current==0, P_current=1./prior{im}.seq_gibbs.n_update_history;end
 step_old=prior{im}.seq_gibbs.step;
 step=sippi_adjust_step_size(step_old,P_current,prior{im}.seq_gibbs.P_target);

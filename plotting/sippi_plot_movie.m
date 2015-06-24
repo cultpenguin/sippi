@@ -164,7 +164,7 @@ for im=im_array
         
         %% PRIOR
         prior{im}.seq_gibbs.step=prior{im}.seq_gibbs.step_max;
-        prior{im}.perturb=1;
+        prior{im}.perturb=0;
         vname=sprintf('%s_m%d_prior_C%d',options.txt,im,i_chain);
         try
             if exist(vname,'file');
@@ -179,7 +179,7 @@ for im=im_array
         open(writerObj);
         
         for i=1:length(i_frames)
-            [m,prior]=sippi_prior(prior);
+            [m]=sippi_prior(prior);
             sippi_plot_prior(prior,m,im);
             text(.02,.02,sprintf('#%05d, prior',i),'units','normalized')
             drawnow;
