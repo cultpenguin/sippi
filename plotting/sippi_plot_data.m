@@ -1,4 +1,5 @@
-% sippi_plot_data plot data in SIPPI
+% sippi_plot_data: plot NMR data response
+%                  overwrites sippi_plot_data plot data in SIPPI
 %
 % Call.
 %    sippi_plot_data(d,data);
