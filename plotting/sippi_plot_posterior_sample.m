@@ -20,10 +20,9 @@ elseif nargin==1;
         cd(fname);
         load(fname);
     end
-else
-    
-    
 end
+
+try
 
 % JUST IN CASE LSQ WAS PERFORMED
 if exist('m_est','var');options.m_est=m_est;end
@@ -139,6 +138,16 @@ for im=im_arr;
         disp(sprintf('%s : could not plot last accepted model',mfilename));
         cd(cwd);
     end
+    
+    
+    %% PLOT REFERENCE MODEL
+    fn=101;
+    figure_focus(fn);clf;
+    if isfield(options.mcmc,'m_ref');
+        sippi_plot_prior(prior,options.mcmc.m_ref,im,1,fn);
+        watermark(sprintf('reference model - %d - %s',im,prior{im}.name));
+        print_mul(sprintf('%s_m%d_ref_model',fname,im),options.plot.hardcopy_types);
+    end  
     
     %% PLOT POSTERIOR REALS
     f_id=(im)*10+1;
@@ -335,7 +344,7 @@ for im=im_arr;
         try;clear m;end
         for i=1:n_reals(im)
             
-            progress_txt(i,n_reals(im),'computing data response')
+            % progress_txt(i,n_reals(im),'plot realization')
             subplot(nsp_y,nsp_x,i);
             
             use_colorbar=0;
@@ -362,6 +371,7 @@ for im=im_arr;
         %title(title_txt)
     end
     print_mul(sprintf('%s_m%d_posterior_sample',fname,im),options.plot.hardcopy_types)
+    
     
     %% PLOT ETYPES
     if ndim>1
@@ -545,4 +555,7 @@ for im=im_arr;
 end
 cd(cwd);
 
-
+catch
+    sippi_verbose(sprintf('%s : something went wrong',mfilename))
+    cd(cwd)
+end

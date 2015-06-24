@@ -121,6 +121,7 @@ for im=im_array;
             colormap(sippi_colormap);
             if use_colorbar==1
                 %colorbar_shift;
+                colorbar;
             end
             
             
@@ -141,7 +142,6 @@ for im=im_array;
             colormap(sippi_colormap);
             if use_colorbar==1
                 colorbar_shift;
-            %    colorbar;
             end
             xlabel('X');
             ylabel('Y');

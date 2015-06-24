@@ -36,11 +36,9 @@ elseif nargin==1;
         options.mcmc=mcmc;
     end
 else
-    
     if nargin>3
         options.mcmc=mcmc;
     end
-    
 end
 if nargin<5
     try
@@ -76,13 +74,12 @@ end
 
 %% PLOT log-likelihood
 try
-    sippi_plot_loglikelihood(mcmc.logL_all);
-    legend(num2str([1:size(mcmc.logL_all,1)]'))
-    y1=max(max(mcmc.logL_all));
+    sippi_plot_loglikelihood(mcmc.logL);
+    y1=max(max(mcmc.logL));
     try
-        y2=min(min(mcmc.logL_all(:,i1)))
+        y2=min(min(mcmc.logL(:,i1)));
     catch
-        y2=min(min(mcmc.logL_all));
+        y2=min(min(mcmc.logL));
     end
 catch
     sippi_plot_loglikelihood(mcmc.logL);
@@ -119,6 +116,9 @@ print_mul(sprintf('%s_logL_start',fname),options.plot.hardcopy_types);
 set(gca,'xlim',[xlim(1) xlim(2)]);
 print_mul(sprintf('%s_logL',fname),options.plot.hardcopy_types);
 
+set(gca,'xscale','log')
+print_mul(sprintf('%s_logL_logN',fname),options.plot.hardcopy_types);
+set(gca,'xscale','linear')
 
 
 %% autocorrelation
