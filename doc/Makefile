@@ -61,7 +61,11 @@ clean:
 update_sf:
 	./updateSF
 
-all:clean html dblatex_ubuntu update_sf
+all:
+	make clean 
+	make html 
+	make dblatex_ubuntu 
+	./updateSF
 
 help:
 	# USAGE
