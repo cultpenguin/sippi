@@ -12,6 +12,12 @@
 ]]></programlisting></para>
 </sect2>
 
+<sect2 xml:id="sippi_get_posterior_data"><title>sippi_get_posterior_data</title>
+<para><programlisting><![CDATA[ options,prior,data,forward
+ % LOAD THE CORRECT DATA
+]]></programlisting></para>
+</sect2>
+
 <sect2 xml:id="sippi_plot_current_model"><title>sippi_plot_current_model</title>
 <para><programlisting><![CDATA[  sippi_plot_current_model Plots the current model during Metropolis sampling
  
@@ -22,7 +28,8 @@
 </sect2>
 
 <sect2 xml:id="sippi_plot_data"><title>sippi_plot_data</title>
-<para><programlisting><![CDATA[  sippi_plot_data plot data in SIPPI
+<para><programlisting><![CDATA[  sippi_plot_data: plot NMR data response
+                   overwrites sippi_plot_data plot data in SIPPI
  
   Call.
      sippi_plot_data(d,data);

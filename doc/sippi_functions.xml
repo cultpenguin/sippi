@@ -184,7 +184,7 @@
       Computational Geosciences. doi:10.1007/s10596-011-9271-1.
  
       Sambridge, M., 2013 - A Parallel Tempering algorithm for
-      probabilistic sampling and multimodal optimization.
+      probabilistic sampling and multi-modal optimization.
  
   Call :
      [options,data,prior,forward,m_current]=sippi_metropolis(data,prior,forward,options)
@@ -194,7 +194,6 @@
      forward : sippi forward structure
  
   options :
-     options.txt [string] : string to be used as part of all output files
  
      options.mcmc.nite=30000;   % [1] : Number if iterations
      options.mcmc.i_sample=100; % : Number of iterations between saving model to disk
@@ -208,25 +207,41 @@
  
      options_mcmc.accept_only_improvements [0] : Optimization
  
-     %% PERTUBATION STRATEGY
+     options.txt [string] : string to be used as part of all output file names
+ 
+     %% PERTURBATION STRATEGY
+     % Perturb all model parameter all the time
      options.mcmc.pert_strategy.perturb_all=1; % Perturb all priors in each
                                                % iteration. def =[0]
+ 
+     % Perturb one a prior type at a time, according to some frequency
+     options.mcmc.pert_strategy.i_pert = [1,3]; % only perturb prior 1 and 3
+     options.mcmc.pert_strategy.i_pert = [2 8]; % perturb prior 3 80% of
+                                                % the time and prior 1 20%
+                                                % of the time
+     % the default pertubation strategt is to select one prior model to 
+     % perturb at tandom for each iteration 
+ 
  
      %% TEMPERING
      options.mcmc.n_chains=1; % set number of chains (def=1)
      options.mcmc.T=1;      % set temperature of chains [1:n_chains]
-     options.mcmc.chain_frequency_jump=0.1; % probability allwoing a jump
+     options.mcmc.chain_frequency_jump=0.1; % probability allowing a jump
                                             %  between two chains
-     %% ANNEALING (TEMPERATURE AS A FUNTION OF ITERAITON NUMBER)
+     %% ANNEALING (TEMPERATURE AS A FUNCTION OF ITERATION NUMBER)
      options.mcmc.anneal.i_begin=1; % default, iteration number when annealing begins
      options.mcmc.anneal.i_end=100000; %  iteration number when annealing stops
      options.mcmc.anneal.T_begin=5; % Start temperature for annealing 
-     options.mcmc.anneal.T_end=1; % End temperature for anneaing 
+     options.mcmc.anneal.T_end=1; % End temperature for annealing 
   
+     %% VERBOSITY
      The amount of text info displayed at the prompt, can be controlled by
-     setenv('SIPPI_VERBOSE_LEVEL','1') % all
-     setenv('SIPPI_VERBOSE_LEVEL','0'); % some
-     setenv('SIPPI_VERBOSE_LEVEL','-2'); % none
+     setenv('SIPPI_VERBOSE_LEVEL','2') % all: information on chain swapping
+     setenv('SIPPI_VERBOSE_LEVEL','1') % information about seq-gibbs step update
+     setenv('SIPPI_VERBOSE_LEVEL','0'); % [def] frequent update 
+     setenv('SIPPI_VERBOSE_LEVEL','-1'); % rare update om finish time
+     setenv('SIPPI_VERBOSE_LEVEL','-2'); % indication of stop and start
+     setenv('SIPPI_VERBOSE_LEVEL','-3'); % none
  
   See also sippi_rejection
  
@@ -630,7 +645,7 @@
  
     options.mcmc.rejection_normalize_log = log(options.mcmc.Lmax)
  
-    options.mcmc.adaptive_rejection=1, adaptive setting of maxiumum likelihood
+    options.mcmc.adaptive_rejection=1, adaptive setting of maximum likelihood
                    (def=[0])
                    At each iteration logLmax will be set if log(L(m_cur)=>options.mcmc.logLmax
  
