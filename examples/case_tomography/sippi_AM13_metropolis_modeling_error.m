@@ -50,7 +50,7 @@ forward_full.type='fat';forward_full.linear=0;forward_full.freq=0.1;
 
 % COMPUTE MODELING ERROR DUE TO USE OF forward AS OPPOSED TO forward_full
 N=600;
-[Ct,dt,dd]=sippi_compute_modelization_forward_error(forward_full,forward,prior,data,N);
+[Ct,dt,dd]=sippi_compute_modelization_forward_error(forward_full,forward,prior,N);
 
 % ASSIGN MODELING ERROR TO DATA
 for id=1:length(data);

@@ -7,7 +7,7 @@
 % assumed by centered around 0, (dt{1}=0).
 %
 % Call
-%   [Ct,dt,dd]=sippi_compute_modelization_forward_error(forward_full,forward_app,prior,data,N);
+%   [Ct,dt,dd]=sippi_compute_modelization_forward_error(forward_full,forward_app,prior,N,d);
 %
 %
 % For details see:
@@ -15,11 +15,17 @@
 %  Accounting for imperfect forward modeling in geophysical inverse problems - exemplified for cross hole tomography.
 %  Geophsyics, 79(3) H1-H21, 2014. doi:10.1190/geo2013-0215.1
 %
-function [Ct,dt,dd]=sippi_compute_modelization_forward_error(forward_full,forward_app,prior,data,N);
+function [Ct,dt,dd]=sippi_compute_modelization_forward_error(forward_full,forward_app,prior,N,d);
 
-if nargin<5,
+
+if nargin<4,
     N=500;
 end
+if nargin<5
+    m=sippi_prior(prior);
+    [d,forward_app]=sippi_forward(m,forward_app,prior);
+end
+
 
 N_app = length(forward_app);
 
@@ -39,11 +45,11 @@ for i=1:N
     end
     if i==1;
         % PRE ALLOCATE
-        for j=1:length(data);
+        for j=1:length(d);
             try
-                dd{j}=zeros(length(data{j}.i_use),N);
+                dd{j}=zeros(length(d{j}),N);
             catch
-                dd{j}=zeros(length(data{j}.d_obs),N);
+                dd{j}=zeros(length(d{j}),N);
             end
         end    
     end
@@ -51,12 +57,12 @@ for i=1:N
     
     m=sippi_prior(prior);
     
-    [d_1,forward_full,prior,data]=sippi_forward(m,forward_full,prior,data);
+    [d_1,forward_full,prior]=sippi_forward(m,forward_full,prior);
     if N_app==1;
-        [d_2{1},forward_app,prior,data]=sippi_forward(m,forward_app,prior,data);
+        [d_2{1},forward_app,prior]=sippi_forward(m,forward_app,prior);
     else
         for na=1:N_app;
-            [d_2{na},forward_app{na},prior,data]=sippi_forward(m,forward_app{na},prior,data);
+            [d_2{na},forward_app{na},prior]=sippi_forward(m,forward_app{na},prior);
         end
     end
     
