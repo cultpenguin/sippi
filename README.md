@@ -36,16 +36,16 @@ $SIPPI/plotting
 $SIPPI/examples/ 
   contains a number of example for using/running SIPPI
 
-$SIPPI/examples/manuscript_examples/prior_tests
+$SIPPI/examples/prior_tests
   contains m-files used to generate samples from the prior pdf of a number 
   of different prior type models
 
-$SIPPI/examples/manuscript_examples/case_line_fit
-  sippi_line_fit.m demonstrates fitting a straight lin, CASE 1 in the manuscript
+$SIPPI/examples/case_line_fit
+  sippi_line_fit.m demonstrates fitting a straight lin, CASE 1 in the SIPPI manuscript
   
-$SIPPI/examples/manuscript_examples/tomography
+$SIPPI/examples/tomography
   contains a number of example or sampling the a posteriori pdf of 
-  tomographic inverse problems, CASE 2 in the manuscript
+  tomographic inverse problems, CASE 2 in the SIPPI manuscript
 
   - using data AM13 (2D)
   sippi_AM13_metropolis_gaussian.m : Metropolis sampling using Gaussian prior
@@ -59,8 +59,20 @@ $SIPPI/examples/manuscript_examples/tomography
 
   - using data AM1234 (3D)
   sippi_AM1234_metropolis_gaussian.m : sippi_AM13_metropolis_gaussian.m but for data set AM1234
+
+$SIPPI/examples/covariance_ingerence
+  - jura_covariance_inference
+  Example of probabilistic covariance model parameter inference following
+  Hansen et al., 2015 - A general probabilistic approach for inference of Gaussian model parameters from noisy data of point and volume support. 
+  doi:10.1007/s11004-014-9567-5 
+
   
 ## Releases history
+
+#v1.3 
+Added parallel tempering to sippi_metropolis
+Many small bugfixes. 
+Testet with Matlab R2015b
 
 #v1.2 
 Moving from SVN to GIT (on github)
