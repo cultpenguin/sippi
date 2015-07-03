@@ -197,11 +197,12 @@ for im=ip_array
             end
             prior{im}.V.gmean=prior{im}.m0;
         end
-        
-        if isfield(prior{im},'d_target');
-            sippi_verbose(sprintf('%s : Due to a bug in VISIM currently DSSIM mode (d_target) cannot be used for prior{%d}',mfilename,im))
+        try 
+             f_cond=sprintf('d_target_%02d.eas',im);
+             if exist(f_cond','file')
+                 delete(f_cond);
+             end
         end
-    
     end
     
     %% CHOLESKY
