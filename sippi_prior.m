@@ -17,7 +17,8 @@
 %   VISIM   [1D-3D] : based on Sequential Gaussian and Direct Sequential simulation
 %   SISIM   [1D-3D] : based on Sequential indicator SIMULATION
 %   % multiple point based statistics
-%   SNESIM  [1D-3D] : based on a multiple point statistical model inferref from a training images. Relies in the SNESIM algorithm
+%   SNESIM_STD  [1D-3D] : (SGEMS) based on a multiple point statistical model inferref from a training images. Relies in the SNESIM algorithm
+%   SNESIM  [1D-3D] : (GSLIB STYLE) based on a multiple point statistical model inferref from a training images. Relies in the SNESIM algorithm
 %
 %
 %%%% SIMPLE EXAMPLE %%%

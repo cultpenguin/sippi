@@ -257,8 +257,8 @@ for im=ip_array
         end
     end
     
-    %% SNESIM OPTIONS
-    if (strcmp(upper(prior{im}.type),'SNESIM'))
+    %% SNESIM_STD OPTIONS (SGeMS version)
+    if (strcmp(upper(prior{im}.type),'SNESIM_STD'))
         if ~isfield(prior{im},'S');
             prior{im}.S=sgems_get_par('snesim_std');
             sippi_verbose(sprintf('%s : Setting default SNESIM structure in prior{%d}.S',mfilename,im));
@@ -279,6 +279,25 @@ for im=ip_array
             sippi_verbose(sprintf('%s : Setting default training image as prior{%d}.ti=%s',mfilename,im,prior{im}.ti));
         end
     end
+    
+    %% SNESIM OPTIONS (V10 FORTRAN VERSION)
+    if (strcmp(upper(prior{im}.type),'SNESIM'))
+        if ~isfield(prior{im},'ti');
+          prior{im}.ti=channels;
+          sippi_verbose(sprintf('%s : Setting default training image as prior{%d}.ti=%s',mfilename,im,prior{im}.ti));
+        end
+        if ~isfield(prior{im},'S');
+            prior{im}.S=snesim_init(prior{im}.ti,prior{im}.x,prior{im}.y,prior{im}.z);
+            sippi_verbose(sprintf('%s : Setting default SNESIM structure in prior{%d}.S',mfilename,im));
+        end
+        
+        
+        
+        write_snesim(prior{im}.S);
+        
+    end
+    
+    
     
     
     %% SISIM OPTIONS

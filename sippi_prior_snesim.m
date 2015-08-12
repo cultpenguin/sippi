@@ -1,5 +1,8 @@
 % sippi_prior_snesim : SNESIM type Gaussian prior for SIPPI
 %
+%                      Using SNESIM form 
+%                      https://github.com/SCRFpublic/snesim-standalone
+% 
 %% Example:
 %    ip=1;
 %    prior{ip}.type='snesim';
@@ -58,39 +61,36 @@ if ~isfield(prior{ip},'init')
 end
 
 
-% SGEMS / SNESIM
+% SNESIM
 
-% REMOVE CONDITIONAL DATA.
-% FIX : NEED TO CHANGE TO HANDLE CONDITIONAL DATA
-if isfield(prior{ip}.S,'f_obs')
-    prior{ip}.S=rmfield(prior{ip}.S,'f_obs');
-end
-prior{ip}.S.XML.parameters.Hard_Data.grid='';
-prior{ip}.S.XML.parameters.Hard_Data.property='';
+%% REMOVE CONDITIONAL DATA.
+%% FIX : NEED TO CHANGE TO HANDLE CONDITIONAL DATA
+%if isfield(prior{ip}.S,'f_obs')
+%    prior{ip}.S=rmfield(prior{ip}.S,'f_obs');
+%end
+%prior{ip}.S.XML.parameters.Hard_Data.grid='';
+%prior{ip}.S.XML.parameters.Hard_Data.property='';
 
-%
-prior{ip}.S.XML.parameters.Nb_Realizations.value=1;
+% force nsim=1 in sippi
+prior{ip}.S.nsim=1;
 
+% set random seed
 if isfield(prior{ip},'seed');
-    prior{ip}.S.XML.parameters.Seed.value=prior{ip}.seed;
+    prior{ip}.S.rseed.seed;
 else
-    prior{ip}.S.XML.parameters.Seed.value=ceil(rand(1).*1e+6);
+    prior{ip}.S.rseed=ceil(rand(1).*1e+6);
 end
-%disp(prior{ip}.S.XML.parameters.Seed.value)
-% CHECK FOR SCALING AND ROTATION
 
-if isfield(prior{ip},'rotation')
-    prior{ip}.S.XML.parameters.Use_Rotation.value=1;
-    prior{ip}.S.XML.parameters.Use_Global_Rotation.value=1;
-    prior{ip}.S.XML.parameters.Global_Angle.value=-1*prior{ip}.rotation;
+% optionally set rotation and affinity
+set_aff=0;
+if isfield(prior{ip},'rotation')|isfield(prior{ip},'scaling')
+  set_aff=1;
 end
-if isfield(prior{ip},'scaling')
-    aff=prior{ip}.scaling;
-    if length(prior{ip}.scaling)==1; aff=prior{ip}.scaling.*[1 1 1]; end
-    if length(prior{ip}.scaling)==2; aff(3)=1; end
-    prior{ip}.S.XML.parameters.Use_Affinity.value=1;
-    prior{ip}.S.XML.parameters.Use_Global_Affinity.value=1;
-    prior{ip}.S.XML.parameters.Global_Affinity.value=aff;
+if set_aff==1
+  if ~isfield(prior{ip},'rotation'), prior{ip}.rotation=1; end
+  if ~isfield(prior{ip},'scaling'), prior{ip}.scaling=1; end
+  prior{ip}.S=snesim_set_rotation_affinity(prior{ip}.S,prior{ip}.rotation,1./prior{ip}.scaling);
+  prior{ip}.S.frotaff.use=1;
 end
 
 if nargin>1
@@ -105,12 +105,15 @@ if nargin>1
         m_current{ip}=m;
     end
     sippi_verbose(sprintf('%s : Sequential Gibbs',mfilename),2)
-    prior{ip}.S=sgems_set_resim_data(prior{ip}.S,m_current{ip},prior{ip}.seq_gibbs.step,prior{ip}.seq_gibbs.type);
+    %prior{ip}.S=snesim_set_resim_data(prior{ip}.S,prior{ip}.S.D,[10 10]);
+    
+    prior{ip}.S=snesim_set_resim_data(prior{ip}.S,m_current{ip},prior{ip}.seq_gibbs.step,prior{ip}.seq_gibbs.type);
 
 end
 
-prior{ip}.S = sgems_grid(prior{ip}.S);
-m_propose{ip} = prior{ip}.S.D';
+%% RUN SNESIM
+prior{ip}.S = snesim(prior{ip}.S,prior{ip}.x,prior{ip}.y,prior{ip}.z);
+m_propose{ip} = prior{ip}.S.D;
 
 if isfield(prior{ip},'index_values');
     for i=1:length(prior{ip}.index_values)
