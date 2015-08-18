@@ -196,8 +196,8 @@ for ic=1:NC
     t_prior(ic)=toc;
     
     % COMPUTE THE TIME OF ONE CALL TO SIPPI_FORWARD
+    tic
     [d_init,forward,prior,data]=sippi_forward(m_tmp,C{ic}.forward,prior_tmp,C{ic}.data);
-    tic,
     d_current=d_init;
     t_data(ic)=toc;
     clear m_tmp prior_tmp d_init;

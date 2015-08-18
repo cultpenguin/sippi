@@ -72,10 +72,9 @@ try
 end
 %%
 subplot(1,3,3);
-% CHANGE TO SUPPORT MORE THAN ONE DATA SET
-%hx=linspace(-5,5,60);
 
-for id=1:length(data);
+show_max_data=2; % NEEDS TO BE AN ADJUSTABLE PARAMETER
+for id=1:[min([show_max_data length(data)])];
     %try
     try
         [h,hx]=hist(data{id}.d_obs(data{id}.i_use)-d{id}(:),30);
