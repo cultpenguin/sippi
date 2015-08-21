@@ -1,8 +1,12 @@
-% sippi_plot_data: plot NMR data response
-%                  overwrites sippi_plot_data plot data in SIPPI
+% sippi_plot_data: Plot data response
 %
-% Call.
+% Call:
 %    sippi_plot_data(d,data);
+%
+% sippi_plot_data provides a very simple way to plot data. 
+% A more appropriate data plot can be implemented by implementing a new
+% mfile called "sippi_plot_data" and add it the Matlab path before the 
+% main SIPPI folders
 %
 function sippi_plot_data(d,data);
 
