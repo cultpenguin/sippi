@@ -79,7 +79,7 @@ end
 prior{ip}.V.cond_sim=0;
 if isfield(prior{ip},'seed');
     prior{ip}.V.rseed=prior{ip}.seed;
-    elsec
+else
     prior{ip}.V.rseed=ceil(rand(1).*1e+6);
     sippi_verbose(sprintf('%s : setting seed (%d)for VISIM',mfilename,prior{ip}.V.rseed),2)
 end
