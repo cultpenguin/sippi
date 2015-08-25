@@ -43,8 +43,8 @@ function [options,data,prior,forward,m_current]=sippi_metropolis(data,prior,forw
 %    options.mcmc.pert_strategy.i_pert = [2 8]; % perturb prior 3 80% of
 %                                               % the time and prior 1 20%
 %                                               % of the time
-%    % the default pertubation strategt is to select one prior model to 
-%    % perturb at tandom for each iteration 
+%    % the default pertubation strategt is to select one prior model to
+%    % perturb at tandom for each iteration
 %
 %
 %    %% TEMPERING
@@ -55,14 +55,14 @@ function [options,data,prior,forward,m_current]=sippi_metropolis(data,prior,forw
 %    %% ANNEALING (TEMPERATURE AS A FUNCTION OF ITERATION NUMBER)
 %    options.mcmc.anneal.i_begin=1; % default, iteration number when annealing begins
 %    options.mcmc.anneal.i_end=100000; %  iteration number when annealing stops
-%    options.mcmc.anneal.T_begin=5; % Start temperature for annealing 
-%    options.mcmc.anneal.T_end=1; % End temperature for annealing 
-% 
+%    options.mcmc.anneal.T_begin=5; % Start temperature for annealing
+%    options.mcmc.anneal.T_end=1; % End temperature for annealing
+%
 %    %% VERBOSITY
 %    The amount of text info displayed at the prompt, can be controlled by
 %    setenv('SIPPI_VERBOSE_LEVEL','2') % all: information on chain swapping
 %    setenv('SIPPI_VERBOSE_LEVEL','1') % information about seq-gibbs step update
-%    setenv('SIPPI_VERBOSE_LEVEL','0'); % [def] frequent update 
+%    setenv('SIPPI_VERBOSE_LEVEL','0'); % [def] frequent update
 %    setenv('SIPPI_VERBOSE_LEVEL','-1'); % rare update om finish time
 %    setenv('SIPPI_VERBOSE_LEVEL','-2'); % indication of stop and start
 %    setenv('SIPPI_VERBOSE_LEVEL','-3'); % none
@@ -90,7 +90,7 @@ try;
     mkdir(options.txt);
     cd(options.txt);
     addpath(['..',filesep])
-    
+
     for im=1:length(prior);
         if isstr(prior{im}.ti)
             try
@@ -141,7 +141,7 @@ end
 if ~isfield(mcmc,'T');
     if ~isfield(mcmc,'T_min');mcmc.T_min=1;end
     if ~isfield(mcmc,'T_max');mcmc.T_max=NC;end
-    
+
     if NC==1;
         mcmc.T=mcmc.T_min;
     else
@@ -179,12 +179,12 @@ end
 %% INITIAL LIKELIHOODS
 for ic=1:NC
     [C{ic}.d_current,C{ic}.forward,C{ic}.prior,C{ic}.data]=sippi_forward(C{ic}.m_current,C{ic}.forward,C{ic}.prior,C{ic}.data);
-    
+
     C{ic}.data_current=C{ic}.data;
     [C{ic}.logL_current,C{ic}.L_current]=sippi_likelihood(C{ic}.d_current,C{ic}.data_current);
-    
+
     C{ic}.prior_current=C{ic}.prior;
-    
+
 end
 
 %% COMPUTE TIME PER ITERATION
@@ -194,7 +194,7 @@ for ic=1:NC
     tic
     [m_tmp,prior_tmp] = sippi_prior(prior_tmp);
     t_prior(ic)=toc;
-    
+
     % COMPUTE THE TIME OF ONE CALL TO SIPPI_FORWARD
     tic
     [d_init,forward,prior,data]=sippi_forward(m_tmp,C{ic}.forward,prior_tmp,C{ic}.data);
@@ -211,7 +211,7 @@ if isfield(options,'i_update_txt');
 else
     vlevel=sippi_verbose;
     if vlevel<0, t_up=50; else, t_up=5; end
-    
+
     i_update_txt=max([1 ceil(t_up./(t_per_ite))]);
 end
 
@@ -230,15 +230,15 @@ for ic=1:NC
     C{ic}.mcmc.perturb=zeros(nm,mcmc.nite);
     C{ic}.mcmc.step=zeros(nm,mcmc.nite);
     C{ic}.mcmc.time=zeros(1,mcmc.nite);
-    
+
     if mcmc.store_all==1
         %    C{ic}.logL_all = zeros(1,mcmc.nite);
         C{ic}.m_cur_all = zeros(nm,mcmc.nite);
     end
-    
+
     C{ic}.iacc=0;
     C{ic}.isample=0;
-    
+
 end
 
 
@@ -265,15 +265,15 @@ mcmc.t_start=now;
 for i=1:mcmc.nite;
     mcmc.i=i;
     mcmc.time(i)=now;
-    
-    
+
+
     for ic=1:NC
-        
+
         %% set seed / necessary?
         for im=1:length(C{ic}.prior_current)
             C{ic}.prior_current{im}.seed=i;
         end
-        
+
         %% SELECT IF STEP LENGTH HAS TO BE UPDATED
         for im=1:length(C{ic}.prior_current)
             if (( (mcmc.i./C{ic}.prior_current{im}.seq_gibbs.i_update_step)==round((mcmc.i./C{ic}.prior_current{im}.seq_gibbs.i_update_step)))&(mcmc.i<C{ic}.prior_current{im}.seq_gibbs.i_update_step_max))
@@ -282,14 +282,14 @@ for i=1:mcmc.nite;
             end
             C{ic}.mcmc.step(im,i)=C{ic}.prior_current{im}.seq_gibbs.step(1);
         end
-        
+
         %% Sample prior
         % SELECT WHICH MODEL PARAMETERS TO PERTURB
-        
+
         for im=1:length(C{ic}.prior_current);
             C{ic}.prior_current{im}.perturb=0;
         end
-        
+
         % PERTURBATION STRATEGY
         if mcmc.pert_strategy.perturb_all==1,
             im_perturb=1:1:length(C{ic}.prior_current);
@@ -304,28 +304,28 @@ for i=1:mcmc.nite;
             C{ic}.prior_current{im_perturb(k)}.perturb=1;
             C{ic}.mcmc.perturb(im_perturb(k),i)=1;
         end
-        
+
         % SAMPLE PRIOR
         [C{ic}.m_propose,C{ic}.prior_propose] = sippi_prior(C{ic}.prior_current,C{ic}.m_current);
-        
+
         %% FORWARD PROBLEM
         [C{ic}.d,C{ic}.forward,C{ic}.prior_propose,C{ic}.data]=sippi_forward(C{ic}.m_propose,C{ic}.forward,C{ic}.prior_propose,C{ic}.data);
-        
+
         %% LIKELIHOOD
         [C{ic}.logL_propose,C{ic}.L_propose,C{ic}.data]=sippi_likelihood(C{ic}.d,C{ic}.data);
-        
+
         %%  MOVE?
         % Accept probability
-        
-        
+
+
         % set temperature
         if do_anneal==1;
             [T_fac,mcmc]=sippi_anneal_temperature(i,mcmc,C{ic}.prior_current);
         end
         T=T_fac.*C{ic}.T;
-        
+
         C{ic}.Pacc = exp((1./T).*(C{ic}.logL_propose-C{ic}.logL_current));
-        
+
         if (mcmc.accept_only_improvements==1)
             % Optimization only?
             if C{ic}.logL_propose>C{ic}.logL_current
@@ -336,13 +336,13 @@ for i=1:mcmc.nite;
         end
         % Optionally accept all proposed models
         if (mcmc.accept_all==1), C{ic}.Pacc=1; end
-        
+
         % Aceept move
         C{ic}.forward.last_proposed_model_accept=0; %
         if C{ic}.Pacc>rand(1)
             % ACCEPT MODEL
             C{ic}.forward.last_proposed_model_accept=1;
-            
+
             % move to current model
             C{ic}.prior_current=C{ic}.prior_propose; % NEEDED FOR GAUSSIAN TYPE PRIOR
             C{ic}.m_current=C{ic}.m_propose;
@@ -352,20 +352,20 @@ for i=1:mcmc.nite;
             C{ic}.iacc=C{ic}.iacc+1;
             %C{ic}.mcmc.logL(C{ic}.iacc)=C{ic}.logL_current;
             C{ic}.mcmc.acc(im_perturb,mcmc.i)=1;
-            
+
         else
             % REJECT MOVE MODEL
         end
         C{ic}.mcmc.logL(mcmc.i)=C{ic}.logL_current;
-        
-        
+
+
         if mcmc.store_all==1
             %C{ic}.logL_all(i)=C{ic}.logL_current;
             for im=1:length(prior);
                 C{ic}.m_cur_all(im,i) = C{ic}.m_current{im}(1);
             end
         end
-        
+
         % SAVE CURRENT MODEL
         if ((mcmc.i/mcmc.i_sample)==round( mcmc.i/mcmc.i_sample ))
             C{ic}.isample=C{ic}.isample+1;
@@ -377,9 +377,9 @@ for i=1:mcmc.nite;
                 fclose(C{ic}.fid);
             end
         end
-        
+
     end % END MC CHAIN LOOP
-    
+
     %% TEMPERING
     if NC>1
         if rand(1)<mcmc.chain_frequency_jump; %frequency of swap tests
@@ -387,33 +387,33 @@ for i=1:mcmc.nite;
             ic_i=ceil(NC*rand(1));
             j_arr=setxor(1:NC,ic_i);
             ic_j=j_arr(ceil((NC-1)*rand(1)));
-            
+
             Pi=exp(C{ic_j}.logL_current-C{ic_i}.logL_current).^(1./C{ic_i}.T);
             Pj=exp(C{ic_i}.logL_current-C{ic_j}.logL_current).^(1./C{ic_j}.T);
-            
+
             Pacc=Pi*Pj;
             if rand(1)<Pacc
                 % accept swap
                 n_swap=n_swap+1;
-                
+
                 mcmc.i_swap(1,n_swap)=ic_i;
                 mcmc.i_swap(2,n_swap)=ic_j;
-                
+
                 % perform the swap
                 C_i=C{ic_i};
-                
+
                 C{ic_i}.m_current=C{ic_j}.m_current;
                 C{ic_i}.prior_current=C{ic_j}.prior_current;
                 C{ic_i}.data=C{ic_j}.data;
                 C{ic_i}.logL_current=C{ic_j}.logL_current;
                 C{ic_i}.m_current=C{ic_j}.m_current;
-                
+
                 C{ic_j}.m_current=C_i.m_current;
                 C{ic_j}.prior_current=C_i.prior_current;
                 C{ic_j}.data=C_i.data;
                 C{ic_j}.logL_current=C_i.logL_current;
                 C{ic_j}.m_current=C_i.m_current;
-                
+
                 % Keep step length constant within chains
                 for k=1:NC;for im=1:length(C{k}.prior_current);
                         C{k}.prior_current{im}.seq_gibbs.step=C{k}.mcmc.step(im,i);
@@ -422,7 +422,7 @@ for i=1:mcmc.nite;
             end
         end
     end
-    
+
     %% SAVE WORKSPACE
     if ((mcmc.i/(mcmc.i_save_workspace))==round( mcmc.i/(mcmc.i_save_workspace) ))
         try
@@ -431,7 +431,7 @@ for i=1:mcmc.nite;
             disp(sprintf('%s : failed to save data to %s',mfilename,filename_mat))
         end
     end
-    
+
     %% DISPLAY PROGRES AND TIME TO FINISH
     if ((i/i_update_txt)==round(i/i_update_txt))
         [t_end_txt,t_left_seconds]=time_loop_end(mcmc.t_start,i,mcmc.nite);
@@ -442,11 +442,11 @@ for i=1:mcmc.nite;
             sippi_verbose(sprintf('%06d/%06d (%10s): C%02d acc %5g %5g  T=%5.2f',mcmc.i,mcmc.nite,t_end_txt,ic,C{ic}.logL_current,C{ic}.logL_propose,C{ic}.T*T_fac),-1);
         end
     end
-    
+
     %% PLOT CURRENT MODEL AND STATUS
     if ((mcmc.i/mcmc.i_plot)==round( mcmc.i/mcmc.i_plot ))
         try
-            C{1}.mcmc.i=mcmc.i;            
+            C{1}.mcmc.i=mcmc.i;
             sippi_plot_current_model(C{1}.mcmc,C{1}.data,C{1}.d_current,C{1}.m_current,C{1}.prior_current);
         catch
             sippi_verbose(sprintf('%s : Could not plot current model info',mfilename),-10);
@@ -457,23 +457,23 @@ for i=1:mcmc.nite;
             ylim=[min(C{1}.mcmc.logL(ceil(i*.1):i)),max(C{1}.mcmc.logL(ceil(i*.1):i))];
             for ic=1:NC;
                 L{ic}=sprintf('T=%3.1f',C{ic}.T);
-                
+
                 lmin=min(C{ic}.mcmc.logL(ceil(i*.1):i));
                 lmax=max(C{ic}.mcmc.logL(ceil(i*.1):i));
                 if lmin<ylim(1),ylim(1)=lmin;end
                 if lmax>ylim(2),ylim(2)=lmax;end
-                
+
                 plot(1:i,C{ic}.mcmc.logL(1:i),'-');
                 hold on
             end
             hold off
-            
+
             set(gca,'ylim',ylim)
             legend(L,'location','northeastoutside')
             xlabel('Iteration number')
             ylabel('log(L)')
             grid on
-            
+
         end
         drawnow
     end
@@ -496,4 +496,3 @@ sippi_verbose(sprintf('%s : DONE McMC in %5.2f hours, %s',mfilename,mcmc.time_el
 
 %%
 cd(start_dir);
-

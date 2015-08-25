@@ -25,8 +25,8 @@
 % or
 %   prior{ip}.m0=10;
 %  and the 'Cmat' variable 'prior{ip}.Cmat' which much the contain a full
-%  nd X nd size covariance matrix. 
-%  (it is computed the first the sippi_prior_cholesky is called) 
+%  nd X nd size covariance matrix.
+%  (it is computed the first the sippi_prior_cholesky is called)
 %
 % See also: gaussian_simulation_cholesky
 %
@@ -57,7 +57,7 @@ end
 if nargin>1
     z_cur=prior{ip}.z_rand;
     z_new=randn(size(z_cur));
-    
+
     if prior{ip}.seq_gibbs.type==1
         disp(sprintf('%s : Box type resimulation not implemented for CHOL type prior',mfilename));
     elseif prior{ip}.seq_gibbs.type==2
@@ -70,13 +70,13 @@ if nargin>1
         end
         n_resim=ceil(n_resim);
         n_resim = min([n_resim n_all]);
-        
+
         ii=randomsample(n_all,n_resim);
         z_cur(ii)=randn(size(z_cur(ii)));
-        
+
     end
     prior{ip}.z_rand=z_cur;
-    
+
 end
 
 
@@ -99,15 +99,15 @@ else
             prior{ip}.Cmat=precal_cov([prior{ip}.xx(:) prior{ip}.yy(:) prior{ip}.zz(:)],[prior{ip}.xx(:) prior{ip}.yy(:) prior{ip}.zz(:)],prior{ip}.Cm);
         end
     end
-    
+
     is_chol=0;
     if isfield(prior{ip},'z_rand')
         [z,D,prior{ip}.L,prior{ip}.z_rand]=gaussian_simulation_cholesky(0,prior{ip}.Cmat,nsim,is_chol,prior{ip}.z_rand);
     else
         [z,D,prior{ip}.L,prior{ip}.z_rand]=gaussian_simulation_cholesky(0,prior{ip}.Cmat,nsim,is_chol);
     end
-    
-    
+
+
 end
 
 % return data to m_propose
@@ -120,18 +120,15 @@ elseif prior{ip}.ndim==3;
 end
 m_propose{ip}=D;
 if isfield(prior{ip},'o_nscore')
-    
+
     if ~isstruct(prior{ip}.Va);
         prior{ip}.Va=deformat_variogram(prior{ip}.Va);
     end
     Va_par=prior{ip}.Va;
     gvar=sum([Va_par.par1]);
     D=D./sqrt(gvar);
-    
+
     m_propose{ip}=inscore(D,prior{ip}.o_nscore)+prior{ip}.m0;
 else
     m_propose{ip}=D+prior{ip}.m0;
 end
-        
-
-

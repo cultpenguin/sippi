@@ -23,6 +23,7 @@
 % plimage [0/1] : Show image beneath wiggles [def=0];
 % caxis [min max]/[scalar] : amplitude range for colorscale
 %
+
 %
 % MAKE IT WORK FOR ANY X-AXIS !!!
 %
@@ -47,7 +48,7 @@
 %
 %
 
-function wiggle(x,t,Data,style,dmax,showmax,plImage,imageax,ax_order,lineColor,example_plot);
+function dmax=wiggle(x,t,Data,style,dmax,showmax,plImage,imageax,ax_order,lineColor,example_plot);
 
 is_hold_on = ishold;
 

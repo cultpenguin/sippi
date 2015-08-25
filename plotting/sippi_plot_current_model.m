@@ -27,8 +27,12 @@ end
 
 %% PLOT DATA RESPONSE
 try
-    sippi_plot_data(d,data);
-    subfigure(2,2,1)
+  try
+    sippi_plot_data(d,data,1,prior);
+  catch
+    sippi_plot_data(d,data,1);
+  end
+  subfigure(2,2,1)
 end
 
 %%
