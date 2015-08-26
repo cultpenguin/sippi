@@ -75,16 +75,18 @@ for id=id_array;
         %data{id}.noise_model='generalized_gaussian';
         %data{id}.noise_model='laplace';
     end
-    
     if ~isfield(data{id},'noise_uncorr');
-        if (~isfield(data{id},'Cd')|~isfield(data{id},'CD'))
-            % Force uncorrelated noise in case Cd ot CD is not set!!
-            data{id}.noise_uncorr=1;
-        end
-        if (isfield(data{id},'Ct'))
+        %if (~isfield(data{id},'Cd')|~isfield(data{id},'CD'))
+        %    % Force uncorrelated noise in case Cd ot CD is not set!!
+        %    data{id}.noise_uncorr=1;
+        %end
+        if (isfield(data{id},'Ct')|isfield(data{id},'Cd')|isfield(data{id},'CD'))
             % Force Correlated noise in case Cd ot CD is not set!!
             data{id}.noise_uncorr=0;
+        else
+            data{id}.noise_uncorr=1;
         end
+          
         
     end
     
@@ -104,7 +106,6 @@ for id=id_array;
             logL(id)=-.5*sum(sum(sum(dd.^2./(data{id}.d_std(data{id}.i_use).^2))));
         end
         L(id)=exp(logL(id));
-        
     else
         
         N=length(data{id}.d_obs);
