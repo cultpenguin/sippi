@@ -131,6 +131,8 @@ elseif (strcmp(lower(forward.type),'weak_contrast'));
     % following Buland and Omre (2003)
     % the backgrond model vp0, vs0, rho0 are set to constant values
     % vs^2/vp^2 is set to a constant
+    %
+    % d = WADm
     
     % check for log-parameterization
     if forward.log==0
@@ -164,29 +166,42 @@ elseif (strcmp(lower(forward.type),'weak_contrast'));
         forward.omre.A=A;
     end
     
+    %keyboard
+    %zoeppritz_aki_richards_timeseries(vp,vs,rho,forward.angle);
+    
     for it=1:ntraces;
         
-        mm = [0;diff(vp(:,it));0;diff(vs(:,it));0;diff(rho(:,it))];
+      m_all=[vp(:,it);vs(:,it);rho(:,it)];
+      
+      if ~isfield(forward.omre,'D');
+        % setup differential operatroe
+        n=size(vp,1);
+        %D_small=zeros(n,n);for i=1:(n-1);D_small(i,[1:2]+i-1)=[-1 1];end %%pad top
+        D_small=zeros(n,n);for i=2:n;D_small(i,[1:2]+i-2)=[-1 1];end % pad bot
+        D=blkdiag(D_small,D_small,D_small);
+        forward.omre.D=D;
+      end
+      m_diff=forward.omre.D*m_all;
+      % alternatively without ysing difference operator
+      %m_diff = [0;diff(vp(:,it));0;diff(vs(:,it));0;diff(rho(:,it))];
+      
         
-        do_forward=1;
-        if isfield(forward.omre,'WA')
-            % linear forward matrix allready available
-            seis_data=forward.omre.WA*mm;
-            do_forward=0;
-        elseif isfield(forward.omre,'W'); 
-            if ~isempty(forward.omre.W);
-                %seis_data=forward.omre.W*forward.omre.A*mm;
-                seis_data=forward.omre.W*rpp(:);
-                do_forward=0;
-            end
-        end
-        if do_forward==1
-            rpp = reshape(forward.omre.A*mm,ns,nangle);
-            [seis_data,forward.omre.W,forward.omre.Wsmall]=reflectivity_convolution(rpp,forward.wl,forward.conv_method);
-            forward.omre.WA=forward.omre.W*forward.omre.A;
-        end
-        
-        d{it}=seis_data(:);
+      
+      do_forward=1;
+      if isfield(forward.omre,'WA')
+        % linear forward matrix allready available
+        % seis_data = W*A*D*m_all = [W*A]*[D*m_all];
+        seis_data=forward.omre.WA*m_diff;
+        do_forward=0;
+      end
+      if do_forward==1
+        rpp = reshape(forward.omre.A*m_diff,ns,nangle);
+        [seis_data,forward.omre.W,forward.omre.Wsmall]=reflectivity_convolution(rpp,forward.wl,forward.conv_method);
+        % store the product of W and A
+        forward.omre.WA=forward.omre.W*forward.omre.A;
+      end
+      
+      d{it}=seis_data(:);
     end
     
     
