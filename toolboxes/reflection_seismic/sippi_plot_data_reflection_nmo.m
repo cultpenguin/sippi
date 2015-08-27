@@ -31,7 +31,7 @@ for id=id_arr;
     if ~isempty(data)
       hold on
       avo_gather_obs=reshape(data{id}.d_obs,nt,na);
-      wiggle(1:na,t,avo_gather_obs,'VA',dmax);
+      wiggle(1:na,t,avo_gather_obs,'wiggle',dmax);
       hold off
     end
     

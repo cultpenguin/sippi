@@ -135,73 +135,30 @@ elseif (strcmp(lower(forward.type),'weak_contrast'));
     % d = WADm
     
     % check for log-parameterization
+    
     if forward.log==0
         vp=log(vp);
         vs=log(vs);
         rho=log(rho);
     end
+    
     if ~isfield(forward,'vp0'); forward.vp0=mean(vp(:));end
     if ~isfield(forward,'rho0'); forward.rho0=mean(rho(:));end
     if ~isfield(forward,'vs0'); forward.vs0=mean(vs(:));end
     [ns,ntraces]=size(vp);
-    nangle=length(forward.wl);
+    
     if ~isfield(forward,'omre');
-        vs2vp2=exp(forward.vs0).^2./exp(forward.vp0).^2;
-        forward.omre.a_vp=0.5*(1+tan(pi*forward.angle/180).^2);
-        forward.omre.a_vs=-4*(vs2vp2)*sin(pi*forward.angle/180).^2;
-        forward.omre.a_rho=.5*(1+forward.omre.a_vs);
-        forward.omre.Asmall=[forward.omre.a_vp(:) forward.omre.a_vs(:) forward.omre.a_rho(:)];
-        na=length(forward.wl);
-        for ia=1:na;
-            A1=eye(ns).*forward.omre.Asmall(ia,1);
-            A2=eye(ns).*forward.omre.Asmall(ia,2);
-            A3=eye(ns).*forward.omre.Asmall(ia,3);
-            
-            if ia==1
-                A=[A1 A2 A3];
-            else
-                A=[A;A1 A2 A3];
-            end
-        end
-        forward.omre.A=A;
+      [A,D,W]=buland_omre_setup(forward.vp0,forward.vs0,forward.rho0,ns,forward.angle,forward.wl);
+      forward.omre.A=A;
+      forward.omre.D=D;
+      forward.omre.W=W;
+      forward.omre.G=W*A*D;
     end
     
-    %keyboard
-    %zoeppritz_aki_richards_timeseries(vp,vs,rho,forward.angle);
     
     for it=1:ntraces;
-        
       m_all=[vp(:,it);vs(:,it);rho(:,it)];
-      
-      if ~isfield(forward.omre,'D');
-        % setup differential operatroe
-        n=size(vp,1);
-        %D_small=zeros(n,n);for i=1:(n-1);D_small(i,[1:2]+i-1)=[-1 1];end %%pad top
-        D_small=zeros(n,n);for i=2:n;D_small(i,[1:2]+i-2)=[-1 1];end % pad bot
-        D=blkdiag(D_small,D_small,D_small);
-        forward.omre.D=D;
-      end
-      m_diff=forward.omre.D*m_all;
-      % alternatively without ysing difference operator
-      %m_diff = [0;diff(vp(:,it));0;diff(vs(:,it));0;diff(rho(:,it))];
-      
-        
-      
-      do_forward=1;
-      if isfield(forward.omre,'WA')
-        % linear forward matrix allready available
-        % seis_data = W*A*D*m_all = [W*A]*[D*m_all];
-        seis_data=forward.omre.WA*m_diff;
-        do_forward=0;
-      end
-      if do_forward==1
-        rpp = reshape(forward.omre.A*m_diff,ns,nangle);
-        [seis_data,forward.omre.W,forward.omre.Wsmall]=reflectivity_convolution(rpp,forward.wl,forward.conv_method);
-        % store the product of W and A
-        forward.omre.WA=forward.omre.W*forward.omre.A;
-      end
-      
-      d{it}=seis_data(:);
+      d{it}=forward.omre.G*m_all;
     end
     
     
