@@ -1,8 +1,15 @@
 % reflection_convolution_angle : convolution of vp,vs,rho profiles
 % using full zoeppritz, Shuey
+%
+% type:
+% 'zoeppritz','akirichard','shuey','shuey_castagna','shuey_2_term','shuey_3_term'
+%
+% Seealso avorpp, reflectivity_convolution
+%
+
 function [seis]=reflection_convolution_angle(vp,vs,rho,angle,wavelet,type)
 if nargin<6
-    type='full_zoeppritz';
+    type='zoeppritz';
     type='shuey';
     type='shuey_2_term';
 end
@@ -11,15 +18,24 @@ ndata=size(vp,1);
 nangle=length(angle);
 
 seis=zeros(ndata*nangle,ntraces);
-
-if strcmp(lower(type),'full_zoeppritz');
-    %% FULL ZOEPPRITZ
+if strcmp(lower(type),'zoeppritz')|strcmp(lower(type),'akirichards')|strcmp(lower(type),'shuey')|strcmp(lower(type),'shuey_castagna');
+    %% Makeuse of avopp from Rock Physics Handbook
+    
+    if strcmp(lower(type),'zoeppritz')
+      itype=1;
+    elseif strcmp(lower(type),'akirichards')
+      itype=2;
+    elseif strcmp(lower(type),'shuey')
+      itype=3;
+    elseif strcmp(lower(type),'shuey_castagna')
+      itype=4;
+    end
+    
     for i=1:ntraces;
         % OBTAIN RPP SERIES
         rpp=zeros(ndata,nangle);
         for j=2:ndata
-            rt_ps=zoepprits_forward(vp(j-1,i),vs(j-1,i),rho(j-1,i),vp(j,i),vs(j,i),rho(j,i),angle)';
-            rpp(j,:)=rt_ps(1,:);
+            rpp(j,:)=avopp(vp(j-1,i),vs(j-1,i),rho(j-1,i),vp(j,i),vs(j,i),rho(j,i),angle,itype);
         end
         
         % CONVOLUTION
@@ -27,7 +43,7 @@ if strcmp(lower(type),'full_zoeppritz');
         seis(:,i)=seis_data(:);
         
     end
-elseif strfind(lower(type),'shuey');
+elseif strfind(lower(type),'term')|strfind(lower(type),'term');
     %% LINEAR AKI AND RICHARDS
     
     
@@ -49,7 +65,7 @@ elseif strfind(lower(type),'shuey');
         for k=1:nangle
             if strfind(lower(type),'shuey_2_term');
                 rpp(2:end,k)=R(:,i) + G(:,i)*sin(arad(k)).^2;
-            else
+            else % shuey_3_term 
                 rpp(2:end,k)=R(:,i) + G(:,i)*sin(arad(k)).^2 + F(:,i)*(tan(arad(k)).^2 - sin(arad(k)).^2);
             end
         end

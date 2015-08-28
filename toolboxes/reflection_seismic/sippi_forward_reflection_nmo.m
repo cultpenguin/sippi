@@ -110,23 +110,8 @@ end
 % 1 check for log- and depth-parameterizations
 %
 
-if (strcmp(lower(forward.type),'full_zoeppritz')|strfind(lower(forward.type),'shuey'));
-    % CHANGE TO LOOP OVER X AND Y TO USE WITH 3D DATA
-    if strcmp(forward.parameter,'depth');
-        [vp,vs,rho]=depth_to_time(vp,vs,rho,forward.x,forward.y,forward.t);
-    end
-    if forward.log==1
-        seis=reflection_convolution_angle(exp(vp),exp(vs),exp(rho),forward.angle,forward.wl,forward.type);
-    else
-        seis=reflection_convolution_angle(vp,vs,rho,forward.angle,forward.wl,forward.type);
-    end
     
-    % output each NMO gather in a data structure
-    for ix=1:size(vp,2);
-        d{ix}=seis(:,ix);
-    end
-    
-elseif (strcmp(lower(forward.type),'weak_contrast'));
+if (strcmp(lower(forward.type),'weak_contrast'));
     % Aki and Richard Weak Contrast approximation
     % following Buland and Omre (2003)
     % the backgrond model vp0, vs0, rho0 are set to constant values
@@ -161,9 +146,25 @@ elseif (strcmp(lower(forward.type),'weak_contrast'));
       d{it}=forward.omre.G*m_all;
     end
     
-    
 elseif strcmp(lower(forward.type),'elastic_waveform_2d')
-    %% MPM
+    %% MPM: 
+    sippi_verbose(sprintf('%s: type ''%s'' not yet implemented',mfilename,forward.type));
+else 
+    % CHANGE TO LOOP OVER X AND Y TO USE WITH 3D DATA
+    if strcmp(forward.parameter,'depth');
+        [vp,vs,rho]=depth_to_time(vp,vs,rho,forward.x,forward.y,forward.t);
+    end
+    if forward.log==1
+        seis=reflection_convolution_angle(exp(vp),exp(vs),exp(rho),forward.angle,forward.wl,forward.type);
+    else
+        seis=reflection_convolution_angle(vp,vs,rho,forward.angle,forward.wl,forward.type);
+    end
+    
+    % output each NMO gather in a data structure
+    for ix=1:size(vp,2);
+        d{ix}=seis(:,ix);
+    end
+    
 end
 
 
