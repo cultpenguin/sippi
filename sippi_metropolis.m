@@ -492,7 +492,7 @@ mcmc.m_current=m_current;
 options.C=C; % PERHAPS TOO MEMORY INTENSIVE
 options.mcmc=mcmc; % PERHAPS TOO MEMORY INTENSIVE
 save(filename_mat,'-v7.3')
-sippi_verbose(sprintf('%s : DONE McMC in %5.2f hours, %s',mfilename,mcmc.time_elapsed_in_seconds/3600,options.txt),-2);
+sippi_verbose(sprintf('%s : DONE McMC in %5.2f hours (%g minutes), %s',mfilename,mcmc.time_elapsed_in_seconds/3600,mcmc.time_elapsed_in_seconds/60,options.txt),-2);
 
 %%
 cd(start_dir);

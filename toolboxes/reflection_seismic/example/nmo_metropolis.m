@@ -15,7 +15,7 @@ for ip=1:length(prior);
   prior{ip}.seq_gibbs.i_update_step_max=10000;
 end
 
-options.mcmc.nite=20000;   % [1] : Number if iterations
+options.mcmc.nite=10000;   % [1] : Number if iterations
 options.mcmc.i_sample=200; % : Number of iterations between saving model to disk
 options.mcmc.i_plot=500;  % [1]: Number of iterations between updating plots
 
