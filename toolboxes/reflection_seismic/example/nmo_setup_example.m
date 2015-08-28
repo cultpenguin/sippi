@@ -1,16 +1,16 @@
 %% nmo_setup_prior;
-clear all;close all
 rng('default');
 rng(1);
 
-ptype=[2]; % prior type
-SN=1; % SIGNAL TO NOISE LEVEL
-
+% PRIOR TYPE
+if ~exist('ptype','var');  ptype=[2]; end
+% SIGNAL TO NOISE
+if ~exist('SN','var');  SN=1; end
 
 % Set nmo gather center locations
 dx=10;
-x=0:dx:100;
-nx=length(x);
+if ~exist('nx','var');nx=11;end
+x=[0:1:(nx-1)].*dx;
 
 % Set time
 dt=0.001;

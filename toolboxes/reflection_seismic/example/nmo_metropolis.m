@@ -2,13 +2,18 @@
 %
 % see also nmo_setup_example
 %
-clear all;
+clear all;close all;
 
 % load data from nmo_setup_example
-%load nmo_reference_data_type2_SN20_nx01.mat
-%load nmo_reference_data_type2_SN20_nx11.mat
-load nmo_reference_data_type2_SN1_nx01.mat
-%load nmo_reference_data_type2_SN1_nx11.mat
+mat_file='nmo_reference_data_type2_SN1_nx01.mat';
+if exist(mat_file);
+  load(mat_file)
+else
+  SN=1;
+  ptype=2;
+  nx=1;
+  nmo_setup_example;
+end
 
 try;clear options;end
 for ip=1:length(prior);
