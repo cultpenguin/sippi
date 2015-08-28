@@ -4,7 +4,7 @@ rng('default');
 rng(1);
 
 ptype=[2]; % prior type
-SN=20; % SIGNAL TO NOISE LEVEL
+SN=1; % SIGNAL TO NOISE LEVEL
 
 
 % Set nmo gather center locations
@@ -155,4 +155,4 @@ end
 
 sippi_plot_data_reflection_nmo(d_ref,data,1,prior);
 
-save(sprintf('nmo_reference_data_type%d_SN%g',ptype,SN));
+save(sprintf('nmo_reference_data_type%d_SN%g_nx%02d',ptype,SN,nx));

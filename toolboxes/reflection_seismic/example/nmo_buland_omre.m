@@ -5,7 +5,7 @@
 clear all;
 
 % load data from nmo_setup_example
-load nmo_reference_data_type2_SN20
+load nmo_reference_data_type2_SN20_nx11.mat
 
 
 %% Perform linearized inversion

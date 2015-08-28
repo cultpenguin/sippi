@@ -5,8 +5,8 @@
 clear all;
 
 % load data from nmo_setup_example
-load nmo_reference_data_type1_SN1
-%load nmo_reference_data_type2_SN1
+% load nmo_reference_data_type1_SN20_nx11.mat
+load nmo_reference_data_type2_SN20_nx11.mat
 
 
 %% TEST DIFFERENT FORWARD MODELS
