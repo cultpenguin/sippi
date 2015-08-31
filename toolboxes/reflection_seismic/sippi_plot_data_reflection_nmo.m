@@ -25,16 +25,18 @@ for id=id_arr;
     n=length(d{id});
     na=n/nt;
     
-    avo_gather=reshape(d{id},nt,na);
-    dmax=wiggle(1:na,t,avo_gather,'VA');
     
     if ~isempty(data)
-      hold on
+      %hold on
       avo_gather_obs=reshape(data{id}.d_obs,nt,na);
-      wiggle(1:na,t,avo_gather_obs,'wiggle',dmax);
-      hold off
+      dmax=wiggle(1:na,t,avo_gather_obs,'VA');
+      %hold off
     end
     
+    hold on
+    avo_gather=reshape(d{id},nt,na);
+    wiggle(1:na,t,avo_gather,'wiggle',dmax);
+    hold off
   else
     % simple plot
     plot(d{id},'k-')

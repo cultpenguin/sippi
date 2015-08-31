@@ -48,3 +48,20 @@ end
 %return
 %%
 [options]=sippi_metropolis(data,prior,forward,options);
+
+%%
+m1=sippi_get_sample(options.txt,1);
+m2=sippi_get_sample(options.txt,2);
+m3=sippi_get_sample(options.txt,3);
+%%
+for i=1:size(m1,3);
+  m{1}=m1(:,i);
+  m{2}=m2(:,i);
+  m{3}=m3(:,i);
+  d=sippi_forward(m,forward,prior);
+  sippi_plot_data_reflection_nmo(d,data,1,prior);
+  drawnow;
+end
+sippi_plot_data_reflection_nmo(d_ref,data,1,prior);
+drawnow;
+  
