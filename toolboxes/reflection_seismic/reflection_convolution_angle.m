@@ -11,7 +11,10 @@ function [seis]=reflection_convolution_angle(vp,vs,rho,angle,wavelet,type)
 if nargin<6
     type='zoeppritz';
     type='shuey';
+    type='shuey_castagna';
     type='shuey_2_term';
+    type='shuey_3_term';
+    type='akirichards';
 end
 ntraces=size(vp,2);
 ndata=size(vp,1);
