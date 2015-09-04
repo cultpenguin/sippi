@@ -1,11 +1,11 @@
 % sippi_forward_reflection_nmo : AVO reflection seismic forward
 %
 % Call :
-%  [d,forward,prior,data]=sippi_forward_reflection_nmo(m,forward,prior,data,id,im)
+%  [d,forward,prior,data]=sippi_forward_reflection_nmo(m,forward,prior,data)
 %
-%  m{1}: Vp
-%  m{2}: Density
-%  m{3}: Vs
+%  m{1}: Vp         % prior{1}.name='vp';
+%  m{2}: Vs%        % prior{2}.name='vs';
+%  m{3}: Density    % prior{3}.name='rho';
 %  d : d{i} AVO ANGLE GATHER, for i=1:size(m{1},2)
 %
 %  % define angle gathers 
@@ -29,7 +29,13 @@
 %
 %
 %
+%  % forward.i_trace : number of traces to use. default is to use all traces:
+%                    forward.i_trace=1:size(m{1}),2)
 %
+%
+%  See also reflection_convolution_angle
+%
+
 function [d,forward,prior,data]=sippi_forward_reflection_nmo(m,forward,prior,data,id,im)
 
 if nargin<6, im=1;end
@@ -42,7 +48,8 @@ if ~isfield(forward,'parameter')
 end
 
 if ~isfield(forward,'type')
-    forward.type='shuey';
+    forward.type='akirichard';
+    forward.type='zoeppritz';
 end
 
 if ~isfield(forward,'conv_method')
@@ -56,20 +63,26 @@ if ~isfield(forward,'log')
     forward.log=0;
 end
 
+% How many traces should should data be compute for.
+if ~isfield(forward,'i_traces')
+  forward.i_traces=1:size(m{1},2);
+end
+
 %% OBTAIN THE ELASTIC PARAMETERS
 % convert m{..} into 'vp', 'vs', 'rho'
 if strcmp(lower(prior{1}.name),'vp');
-    % Vp,Vs,Rho independent prior
+  
+  % Vp,Vs,Rho independent prior
     for ip=1:length(prior)
         if strcmp(lower(prior{ip}.name),'vp');
             i_vp=ip;
-            vp=m{i_vp};
+            vp=m{i_vp}(:,forward.i_traces);
         elseif strcmp(lower(prior{ip}.name),'rho');
             i_rho=ip;
-            rho=m{i_rho};
+            rho=m{i_rho}(:,forward.i_traces);
         elseif strcmp(lower(prior{ip}.name),'vs');
             i_vs=ip;
-            vs=m{i_vs};
+            vs=m{i_vs}(:,forward.i_traces);
         end
     end
     
@@ -165,6 +178,8 @@ else
         d{ix}=seis(:,ix);
     end
     
+%else
+%  sippi_verbose(sprintf('%s: type ''%s'' not yet implemented',mfilename,forward.type));
 end
 
 

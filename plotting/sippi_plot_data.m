@@ -11,7 +11,7 @@
 function sippi_plot_data(d,data,id_arr);
 
 if nargin<3;
-  id_arr=1:lenghth(d);
+  id_arr=1:length(d);
 end
 
 for id=id_arr;
