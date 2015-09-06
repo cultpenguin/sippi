@@ -8,7 +8,7 @@
 % See also: buland_omre_setup
 %
 %
-function  [M,V,vp_est,vs_est,rho_est]=buland_omre_inversion(d,log_vp0,log_vs0,log_rho0,angle,wavelet,Cd,Cm);
+function  [M,V,vp_est,vs_est,rho_est,Cm_est]=buland_omre_inversion(d,log_vp0,log_vs0,log_rho0,angle,wavelet,Cd,Cm);
 
 na=length(angle);
 
