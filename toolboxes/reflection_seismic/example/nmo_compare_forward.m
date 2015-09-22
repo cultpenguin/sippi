@@ -22,7 +22,7 @@ it=it+1;type{it}='akirichards';
 it=it+1;type{it}='shuey_2_term';
 it=it+1;type{it}='shuey_3_term';
 it=it+1;type{it}='shuey_castagna';
-it=it+1;type{it}='weak_contrast';
+it=it+1;type{it}='buland_omre';
 
 data_ref=data;
 for i=1:length(data)

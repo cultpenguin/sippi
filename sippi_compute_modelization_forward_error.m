@@ -15,7 +15,7 @@
 %  Accounting for imperfect forward modeling in geophysical inverse problems - exemplified for cross hole tomography.
 %  Geophsyics, 79(3) H1-H21, 2014. doi:10.1190/geo2013-0215.1
 %
-function [Ct,dt,dd]=sippi_compute_modelization_forward_error(forward_full,forward_app,prior,N,d);
+function [Ct,dt,dd,dfull]=sippi_compute_modelization_forward_error(forward_full,forward_app,prior,N,d);
 
 
 if nargin<4,
@@ -25,7 +25,6 @@ if nargin<5
     m=sippi_prior(prior);
     [d,forward_app]=sippi_forward(m,forward_app,prior);
 end
-
 
 N_app = length(forward_app);
 
@@ -48,8 +47,10 @@ for i=1:N
         for j=1:length(d);
             try
                 dd{j}=zeros(length(d{j}),N);
+                dfull{j}=zeros(length(d{j}),N);
             catch
                 dd{j}=zeros(length(d{j}),N);
+                dfull{j}=zeros(length(d{j}),N);
             end
         end    
     end
@@ -71,6 +72,7 @@ for i=1:N
     for j=1:length(d_1);
         for na=1:N_app
             dd{j}(:,i,na)=d_1{j}-d_2{na}{j};
+            dfull{j}(:,i,na)=d_1{j};
         end
     end
     
