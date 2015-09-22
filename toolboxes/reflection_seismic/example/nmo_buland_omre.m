@@ -5,11 +5,11 @@
 clear all;close all;
 
 % load data from nmo_setup_example
-mat_file='nmo_reference_data_type2_SN1_nx11.mat';
+mat_file='nmo_reference_data_type2_SN10_nx11.mat';
 if exist(mat_file);
   load(mat_file)
 else
-  SN=1;
+  SN=10;
   ptype=2;
   nx=11;
   nmo_setup_example
@@ -96,6 +96,10 @@ end
  hold off
  title('rho')
  
+ 
+ figure(12);
+ vp=M(1:201,:);
+ plot(m_ref{1},vp,'.')
  
  
   
