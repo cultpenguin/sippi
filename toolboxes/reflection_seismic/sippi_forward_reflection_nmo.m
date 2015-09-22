@@ -23,9 +23,10 @@
 %     forward.type='shuey';           % 3 term Shuey
 %     forward.type='shuey_2_term';    % 2 term Shuey
 %     forward.type='full_zoeppritz';    % 2 term Shuey
-%     forward.type='weak_contrast'; Aki and Richard liear weak contract approximation
-%
-%     forward.convolution_type='full_zoeppritz';  % Full zoepprit
+%     forward.type='akirichards'; Aki and Richard linear weak contract approximation
+%     forward.type='buland_omre'; Aki and Richard linear weak contract
+%                                 approximation using Buland and Omre
+%                                 formulation
 %
 %
 %
@@ -87,7 +88,7 @@ if strcmp(lower(prior{1}.name),'vp');
     end
     
 elseif strcmp(lower(prior{ip}.name),'vpvsrho');
-    % Cholesky type prior
+    % Cholesky type prior / split vp,vs,rho from 1x[3*nm] vector
 end
 
 
@@ -124,7 +125,7 @@ end
 %
 
     
-if (strcmp(lower(forward.type),'weak_contrast'));
+if (strcmp(lower(forward.type),'buland_omre'));
     % Aki and Richard Weak Contrast approximation
     % following Buland and Omre (2003)
     % the backgrond model vp0, vs0, rho0 are set to constant values

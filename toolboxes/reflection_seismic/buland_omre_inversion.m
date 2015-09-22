@@ -32,15 +32,24 @@ m0=[ones(ns,1)*log_vp0;ones(ns,1)*log_vs0;ones(ns,1)*log_rho0];
 % INVERT
 for ix=1:nx
   
-  progress_txt(ix,nx,'nmo inversion')
+  progress_txt(ix,nx,'Buland and Omre linear NMO inversion')
   
   if iscell(d);
     d_obs=d{ix};
   else
     d_obs=d(:,ix);
   end
-  [m_est,Cm_est]=least_squares_inversion(G,Cm,Cd,m0,d_obs);
   
+  % call solver each time
+  %[m_est,Cm_est]=least_squares_inversion(G,Cm,Cd,m0,d_obs);
+  
+  % Much faster 
+  if ix==1;
+      S = Cd + G*Cm*G';
+      K=(Cm*G')/S;
+  end
+  m_est  = m0 + K * (d_obs-G*m0);
+  Cm_est = Cm - K * (G*Cm);
   
   M(:,ix)=m_est(:);
   V(:,ix)=diag(Cm_est);

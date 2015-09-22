@@ -5,13 +5,15 @@
 clear all;close all;
 
 % load data from nmo_setup_example
-mat_file='nmo_reference_data_type2_SN10_nx11.mat';
+mat_file='nmo_reference_data_type2_SN1_nx111.mat';
+mat_file='nmo_reference_data_type2_SN5_nx111.mat';
+%mat_file='nmo_reference_data_type2_SN10_nx101.mat';
 if exist(mat_file);
   load(mat_file)
 else
   SN=10;
   ptype=2;
-  nx=11;
+  nx=101;
   nmo_setup_example
 end
 
@@ -43,10 +45,10 @@ end
  title('Vp lsq est')
  
  subplot(2,4,2);
- imagesc(m_ref{2});cax=caxis;
+ imagesc(m_ref{2});cax=caxis;colorbar
  title('Vs')
  subplot(2,4,6);
- imagesc(vs_est);caxis(cax);
+ imagesc(vs_est);caxis(cax);colorbar
  
  subplot(2,4,3);
  imagesc(m_ref{3});cax=caxis;

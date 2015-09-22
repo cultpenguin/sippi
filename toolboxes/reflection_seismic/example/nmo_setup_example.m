@@ -4,12 +4,13 @@ rng(1);
 
 % PRIOR TYPE
 if ~exist('ptype','var');  ptype=[2]; end
+
 % SIGNAL TO NOISE
 if ~exist('SN','var');  SN=1; end
 
 % Set nmo gather center locations
 dx=10;
-if ~exist('nx','var');nx=11;end
+if ~exist('nx','var');nx=111;end
 x=[0:1:(nx-1)].*dx;
 
 % Set time
@@ -20,10 +21,10 @@ nt=length(t);
 %% SETUP PRIOR STRUCTURE
 
 % Covariance model properties
-h_x=80;
+h_x=300;
 ang=90;
 h_t=0.01;
-h_aniso=h_t/80;
+h_aniso=h_t/h_x;
 
 % mean and standard devaition of elastic parameters
 vp_m0=3000;
@@ -110,14 +111,13 @@ forward.freq=linspace(60,30,length(forward.angle)); % frequency of each gather
 %% SETUP FORWARD MODEL
 forward.forward_function='sippi_forward_reflection_nmo';
 forward.t=t;
-forward.type='zoeppritz';
 
 %% REFERENCE MODEL
 [m_ref,prior]=sippi_prior(prior);
 figure(1);
 for i=1:3;
   subplot(1,3,i);
-  imagesc(m_ref{i});title(prior{i}.name);colorbar
+  imagesc(x,t,m_ref{i});title(prior{i}.name);colorbar
 end
 
 %% REFERENCE DATA

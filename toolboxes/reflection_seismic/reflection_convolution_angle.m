@@ -4,7 +4,7 @@
 % type:
 % 'zoeppritz','akirichard','shuey','shuey_castagna','shuey_2_term','shuey_3_term'
 %
-% Seealso avorpp, reflectivity_convolution
+% See also: avopp, reflectivity_convolution
 %
 
 function [seis]=reflection_convolution_angle(vp,vs,rho,angle,wavelet,type)

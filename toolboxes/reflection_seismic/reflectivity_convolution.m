@@ -1,7 +1,7 @@
-% reflectivity_convoltion: convolve a reflectivity series with a wavelet
+% reflectivity_convolution: convolve a reflectivity series with a wavelet
 %
 % Call: 
-%    [seis_data,bigG,G]=reflection_coefficient_to_anglegather(rpp,wavelet,use_method,bigG,G)
+%    [seis_data,bigG,G]=reflectivity_convolution(rpp,wavelet,use_method,bigG,G)
 % 
 %    % INPUT
 %    rpp [nt,1]: reflecitivty series
@@ -19,8 +19,8 @@
 %    % OUTPUT
 %    seis_data: reflection seimic data
 %
+% See also: reflection_convolution_angle 
 %
-%function [seis_data,bigG,G]=reflection_coefficient_to_anglegather(rpp,wavelet,use_method,bigG,G)
 function [seis_data,bigG,G]=reflectivity_convolution(rpp,wavelet,use_method,bigG,G)
 
 if nargin<3

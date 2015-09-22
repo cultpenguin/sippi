@@ -14,16 +14,14 @@ else
   nx=11;
   nmo_setup_example
 end
-
 %% TEST DIFFERENT FORWARD MODELS
 clear d f type
 it=0;
+it=it+1;type{it}='zoeppritz';
 it=it+1;type{it}='akirichards';
 it=it+1;type{it}='shuey_2_term';
 it=it+1;type{it}='shuey_3_term';
-%it=it+1;type{it}='shuey';
 it=it+1;type{it}='shuey_castagna';
-it=it+1;type{it}='zoeppritz';
 it=it+1;type{it}='weak_contrast';
 
 data_ref=data;
@@ -49,9 +47,45 @@ for itype=1:length(type)
   title(forward.type);
   
   figure(3);
+  xlim=[-.05 .05];
   subplot(2,4,itype)
-  hist(d{itype}{1}-data_ref{1}.d_obs)
+  hist(d{itype}{1}-data_ref{1}.d_obs,linspace(xlim(1),xlim(2),31))
+  set(gca,'xlim',xlim);
   xlabel('difference')
   title(forward.type);
   
 end
+
+%% TEST MODELING ERROR
+prior{1}.d_target=[7.9 8.1];prior{1}.m0=0;
+prior{2}.d_target=[7.9 8.1];prior{2}.m0=0;
+
+forward_1=forward;
+forward_1.type='zoeppritz';
+forward_2=forward;
+forward_2.type='weak_contrast';
+%forward_2.type='akirichards';
+[Ct,dt,dd]=sippi_compute_modelization_forward_error(forward_1, forward_2, prior,100);
+%
+figure(5);
+subplot(2,1,1);
+wiggle(forward.angle,forward.t,reshape(dd{1}(:,1),201,10))
+title('Modeing error realization')
+%subplot(2,2,2);
+n=diag(diag(Ct{1})).*.00001;
+r=gaussian_simulation_cholesky(dt{1},Ct{1}+n,1);
+hold on
+wiggle(forward.angle,forward.t,reshape(r,201,10))
+hold off
+
+subplot(2,2,3);
+plot(sqrt(diag(Ct{1})))
+ylabel('std(diag(Ct))')
+
+subplot(2,2,4);
+imagesc(Ct{1})
+title('Ct_{est}')
+caxis([-1 1].*1e-4)
+
+SN=1./(std(reshape(dd{1}(:,1),201,10))./std(reshape(d{1}{1},201,10)))
+
