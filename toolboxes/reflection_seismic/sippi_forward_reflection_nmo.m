@@ -134,7 +134,6 @@ if (strcmp(lower(forward.type),'buland_omre'));
     % d = WADm
     
     % check for log-parameterization
-    
     if forward.log==0
         vp=log(vp);
         vs=log(vs);
