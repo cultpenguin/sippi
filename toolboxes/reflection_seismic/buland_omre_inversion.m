@@ -59,14 +59,17 @@ for iix=1:length(i_traces);
   if iix==1;
       S = Cd + G*Cm*G';
       K=(Cm*G')/S;
-      GCm=G*Cm;
   end
   m_est  = m0 + K * (d_obs-G*m0);
   M(:,ix)=m_est(:);
   
   % only compute posterior covariance if asked for
-  if nargout>5
-      Cm_est = Cm - K * GCm;
+  if (nargout>5)&(iix==1)
+      % if Cd is constant and the geometry the same for all traces, then
+      % Cm_est is the same fo all traces
+      %GCm=G*Cm;
+      %Cm_est = Cm - K * GCm;
+      Cm_est = Cm - K * G*Cm;
       V(:,ix)=diag(Cm_est);
   else
       V(:,ix)=diag(Cm);
