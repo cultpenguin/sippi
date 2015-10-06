@@ -138,12 +138,13 @@ else
     if skip_seq_gibbs==0;
         i1_post=1;
     end
+        
     
     %% TAKE OUT ALL 'POSTERIOR' REALIZATION AND THE ITERATION NUMBER
     nr=size(reals,1);
     
     % all posterior sampels
-    ii_post_reals=ceil(i1_post./options.mcmc.i_sample):1:n_reals_all;
+    ii_post_reals=i1_post:1:n_reals_all;
     ni_post_reals=ii_post_reals*options.mcmc.i_sample;
     
     reals=reals(ii_post_reals,:);

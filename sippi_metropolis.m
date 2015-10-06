@@ -37,6 +37,8 @@ function [options,data,prior,forward,m_current]=sippi_metropolis(data,prior,forw
 %    % Perturb all model parameter all the time
 %    options.mcmc.pert_strategy.perturb_all=1; % Perturb all priors in each
 %                                              % iteration. def =[0]
+%    options.mcmc.pert_strategy.perturb_all=2; % Perturb a random selection of 
+%                                              % all priors in each iteration. def =[0]
 %
 %    % Perturb one a prior type at a time, according to some frequency
 %    options.mcmc.pert_strategy.i_pert = [1,3]; % only perturb prior 1 and 3
@@ -292,7 +294,15 @@ for i=1:mcmc.nite;
 
         % PERTURBATION STRATEGY
         if mcmc.pert_strategy.perturb_all==1,
+            % perturb all
             im_perturb=1:1:length(C{ic}.prior_current);
+        elseif mcmc.pert_strategy.perturb_all==2,
+            % perturb random selection
+            i_perturb=round(rand(1,length(C{ic}.prior_current)));
+            im_perturb=find(i_perturb);
+            if isempty(im_perturb);
+                im_perturb=ceil(rand(length(C{ic}.prior_current)));
+            end
         else
             % perturb one parameter according to frequency distribution
             i_pert=mcmc.pert_strategy.i_pert;
