@@ -82,7 +82,7 @@ for id=1:length(d);
   data{id}.d_obs=data{id}.d_ref+data{id}.d_noise;
   
 end
-sippi_plot_data(d,data);
+sippi_plot_data_gpr(d,data);
 print -dpng ref_data;
 figure(10);imagesc(m_ref{1});axis image;print -dpng ref_model
 
