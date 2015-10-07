@@ -98,7 +98,11 @@ prior{ip}.S.nsim=1;
 
 % set random seed
 if isfield(prior{ip},'seed');
-    prior{ip}.S.rseed=prior{ip}.seed;
+    if (prior{ip}.seed)==0
+        prior{ip}.S.rseed=ceil(rand(1).*1e+6);
+    else
+        prior{ip}.S.rseed=prior{ip}.seed;
+    end
 else
     prior{ip}.S.rseed=ceil(rand(1).*1e+6);
 end

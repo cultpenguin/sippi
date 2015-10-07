@@ -51,13 +51,17 @@ end
 if ~isfield(prior{ip},'ti')
     prior{ip}.ti=channels;
 end
-%prior{ip}.S.method='mps_snesim_list';
-prior{ip}.S.method='mps_snesim_tree';
+
+if ~isfield(prior{ip},'method')
+    prior{ip}.method='mps_snesim_tree';
+    % prior{ip}.method='mps_snesim_list';
+    % prior{ip}.method='mps_enesim';
+end
+
+prior{ip}.S.method=prior{ip}.method;
 %prior{ip}.S.template_size=[9 9 1];
 prior{ip}.S.nreal=1;
-%prior{ip}.S.n_multiple_grids=3;
-%prior{ip}.S.shuffle_simulation_grid=1;
-prior{ip}.S.parameter_filename='uncond.txt';
+prior{ip}.S.parameter_filename='mps.txt';
 
 if prior{ip}.ndim==1;
     SIM=zeros(prior{ip}.dim(1));    

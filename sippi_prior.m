@@ -121,6 +121,7 @@ end
 %% SELECT WHICH MODEL PARAMETERS TO PERTURB
 im_array=[];
 for im=1:nm
+    tic;
     if isfield(prior{im},'perturb'),
         if prior{im}.perturb==1;
             im_array=[im_array im];
@@ -288,6 +289,7 @@ for im=im_array;
         end
     end
     
+    prior{im}.time=toc;
 end
 
 %% CHECK IF ANY MASTER TYPES HAS BEEN SET
