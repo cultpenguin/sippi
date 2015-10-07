@@ -62,7 +62,8 @@ if ~isfield(forward,'output_type');
 end
   
 if ~isfield(forward,'dx_fwd');
-  forward.dx_fwd=0.05;
+    dx_in=prior{1}.x(2)-prior{1}.x(1);
+    forward.dx_fwd=dx_in;
 end
 
 
@@ -109,14 +110,13 @@ if ~isfield(forward.addpar,'debug');forward.addpar.debug=-1;end
 
 %% run forward
 dx_in=prior{1}.x(2)-prior{1}.x(1);
-eps_fd=resize(eps,dx_in/forward.dx_fwd)*forward.EPS0;
-sig_fd=resize(sig,dx_in/forward.dx_fwd)*forward.SIG0;
-
-%load eps_est43
-%load sig_est43
-%eps_est=resize(eps_est,5);
-%sig_est=resize(sig_est43,5);
-%plot(sig_fd(:),'r-');hold on;plot(sig_est(:),'k-')
+if dx_in~=forward.dx_fwd;
+    eps_fd=resize(eps,dx_in/forward.dx_fwd)*forward.EPS0;
+    sig_fd=resize(sig,dx_in/forward.dx_fwd)*forward.SIG0;
+else
+    eps_fd=eps.*forward.EPS0;
+    sig_fd=eps.*forward.SIG0;
+end
 
 [forward.dt forward.nt forward.addpar]=FDTD_fwi(eps_fd,sig_fd,forward.dx_fwd,forward.t,forward.ant_pos,forward.addpar);
 

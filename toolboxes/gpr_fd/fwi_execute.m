@@ -328,8 +328,8 @@ for i=1:ceil(Ntrn/Ncores_applied)
         % If snapshots are produced they are moved to the working directory
         if snap*dt<addpar.t
             for m=snap:snap:nt
-                movefile(sprintf('%s\\EzS%05d_T00.dat',fpath,m),sprintf('forward_EzS%05d_T%02d.dat',m,c_forward_data-1))
-                movefile(sprintf('%s\\ExS%05d_T00.dat',fpath,m),sprintf('forward_ExS%05d_T%02d.dat',m,c_forward_data-1))
+                movefile(sprintf('%s%sEzS%05d_T00.dat',fpath,filesep,m),sprintf('forward_EzS%05d_T%02d.dat',m,c_forward_data-1))
+                movefile(sprintf('%s%sExS%05d_T00.dat',fpath,filesep,m),sprintf('forward_ExS%05d_T%02d.dat',m,c_forward_data-1))
             end
         end
     end
