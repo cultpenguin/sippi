@@ -94,6 +94,15 @@ else
     prior{ip}.S.rseed=ceil(rand(1).*1e+6);
 end
 
+
+%% Sequential gibbs resampling
+if nargin>1
+   d_cond=sippi_get_resim_data(m_current,prior,ip);    
+   % set hard data
+   prior{ip}.hard_data=d_cond;
+end
+   
+
 %% hard data?
 if isfield(prior{ip},'hard_data');
     if isstr(prior{ip}.hard_data)
@@ -161,9 +170,11 @@ else
     prior{ip}.S.soft_data_filename=['mps_soft_data_dummy.dat'];
 end
 
-%% Sequential gibbs resampling
 
-% RUN FORWARD
+
+
+
+%% RUN FORWARD
 [m_propose{ip},prior{ip}.S]=mps_cpp(prior{ip}.ti,SIM,prior{ip}.S);
 
 
