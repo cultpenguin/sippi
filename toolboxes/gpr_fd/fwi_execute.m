@@ -39,9 +39,9 @@ try
     disp(sprintf('%s %i','Snapshot "freqency" (in number of time-steps):',snap))
     end
 catch
-    snap=10000;
+    snap=100000;
     if addpar.debug==1
-    disp(sprintf('%s %i %s','Snapshot "freqency" (in number of time-steps):',10000,'~no snapshots (default)'))
+    disp(sprintf('%s %i %s','Snapshot "freqency" (in number of time-steps):',100000,'~no snapshots (default)'))
     end
 end
 
@@ -80,7 +80,7 @@ addpar.Ntrn=Ntrn;
 %x_pos=[(invfw_ratio/2)*addpar.dx:invfw_ratio*addpar.dx:addpar.Epsx*addpar.dx];
 
 if sim_mode~=1    
-    [X Z]=meshgrid(addpar.ipos_x*addpar.dx,addpar.ipos_z*addpar.dx);
+    [X,Z]=meshgrid(addpar.ipos_x*addpar.dx,addpar.ipos_z*addpar.dx);
     add_rec=[X(:) Z(:)];
     NREC=length(X(:));
 end
@@ -125,6 +125,7 @@ for i=1:ceil(Ntrn/Ncores_applied)
         WorkDir=[addpar.workdir,filesep,sprintf('run%03d',k)];
         fpath=WorkDir;
         %[fpath fname]=fileparts(which(eval(sprintf('%s%i','addpar.forwardexe',k))));
+        delete(sprintf('%s%s%s',fpath,filesep,'*.txt'))
         
         % Writing the trnrec.cor file containing all receiver positions
         delete(sprintf('%s%s%s',fpath,filesep,'*.cor'))
@@ -161,7 +162,6 @@ for i=1:ceil(Ntrn/Ncores_applied)
             end
             delete(sprintf('%s%s%s',fpath,filesep,'*.bat'))
             delete(sprintf('%s%s%s',fpath,filesep,'*.sh'))
-            
             
             fid=fopen(batch_file,'w');
             if ~isunix
@@ -332,6 +332,7 @@ for i=1:ceil(Ntrn/Ncores_applied)
                 movefile(sprintf('%s%sExS%05d_T00.dat',fpath,filesep,m),sprintf('forward_ExS%05d_T%02d.dat',m,c_forward_data-1))
             end
         end
+
     end
 
     if sim_mode==2
