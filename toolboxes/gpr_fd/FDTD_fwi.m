@@ -10,7 +10,7 @@ function [dt nt addpar]=FDTD_fwi(Eps,Sig,dx_fwd,t,ant_pos,addpar)
 % contains several parameters which may be defined if needed. If the additional 
 % parameters are not defined default values are used.
 %
-% --- General input parameters (needed)---�
+% --- General input parameters (needed)---
 % * Eps: 2D array containing the eps-model
 % * Sig: 2D array containing the sig-model
 % * dx_fwd: Cell size (m) for forward simulations
@@ -221,18 +221,31 @@ if ~isempty(I)
     disp('-----------------------------------------------')
     return
 end
-I=find(ant_pos(:,1)>addpar.Epsx*addpar.dx);
+I=find(ant_pos(:,3)>addpar.Epsx*addpar.dx);
 if ~isempty(I)
     disp('Warning: A receiver-position has exceeded the x-axis')
     disp('-----------------------------------------------')
     return
 end
-I=find(ant_pos(:,2)>addpar.Epsz*addpar.dx);
+I=find(ant_pos(:,4)>addpar.Epsz*addpar.dx);
 if ~isempty(I)
     disp('Warning: A receiver-position has exceeded the z-axis')
     disp('-----------------------------------------------')
     return
 end
+I=find(ant_pos(:,2)<addpar.dx/2);
+if ~isempty(I)
+    disp('Warning: A transmitter-position is too close to the top')
+    disp('-----------------------------------------------')
+    return
+end
+I=find(ant_pos(:,4)<addpar.dx/2);
+if ~isempty(I)
+    disp('Warning: A receiver-position is too close to the top')
+    disp('-----------------------------------------------')
+    return
+end
+
 
 % Distribute the parameter files to the number of cores applied
 [Ncores_applied error]=distribute_to_cores(ant_pos,Eps,Sig,addpar);

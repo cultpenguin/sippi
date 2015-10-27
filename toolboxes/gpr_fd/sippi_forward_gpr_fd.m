@@ -115,7 +115,7 @@ if dx_in~=forward.dx_fwd;
     sig_fd=resize(sig,dx_in/forward.dx_fwd)*forward.SIG0;
 else
     eps_fd=eps.*forward.EPS0;
-    sig_fd=eps.*forward.SIG0;
+    sig_fd=sig.*forward.SIG0;
 end
 
 [forward.dt forward.nt forward.addpar]=FDTD_fwi(eps_fd,sig_fd,forward.dx_fwd,forward.t,forward.ant_pos,forward.addpar);
