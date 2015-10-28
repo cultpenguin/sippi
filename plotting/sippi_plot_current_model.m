@@ -1,9 +1,10 @@
 % sippi_plot_current_model Plots the current model during Metropolis sampling
 %
 % Call :
-%   sippi_plot_current_model(mcmc,data,d,m_current,prior);
+%   sippi_plot_current_model(mcmc,data,d,m_current,prior,options);
 %
-function sippi_plot_current_model(mcmc,data,d,m_current,prior);
+function sippi_plot_current_model(mcmc,data,d,m_current,prior,options);
+options.null='';
 
 
 col=[
@@ -27,12 +28,7 @@ end
 
 %% PLOT DATA RESPONSE
 try
-  try
-    sippi_plot_data(d,data,1,prior);
-  catch
-    sippi_plot_data(d,data,1);
-  end
-  subfigure(2,2,1)
+    sippi_plot_data(d,data,1:length(data),options);
 end
 
 %%

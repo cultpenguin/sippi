@@ -93,3 +93,9 @@ if ~isfield(options.plot,'hardcopy_types');
     options.plot.hardcopy_types=1; % PNG hardcopy
     %options.plot.hardcopy_types=2; % PDF hardcopy
 end
+
+%% SHOW_MAXIMUM NUMBER OF DATA IN SIPPI_PLOT_DATA
+if ~isfield(options.plot,'plot_data_max_data');
+    options.plot.plot_data_max_data=5;
+end
+
