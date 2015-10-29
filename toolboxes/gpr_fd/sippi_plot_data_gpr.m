@@ -23,7 +23,7 @@ for id=id_arr;
 end
 [nt,nx]=size(D1);
 
-showmax=100;
+showmax=300;
 scale=[];
 type='image';
 plImage=1;
