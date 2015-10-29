@@ -129,7 +129,6 @@ forward.Nsources=size(tpos,1);
 
 path_sim=[pwd,filesep,'observed_Ez_trn'];
 
-
 j=0; % counter for trace id
 for id=1:forward.Nsources
   filename_sim=sprintf('%s%d%s',path_sim,id,'.mat');
@@ -148,6 +147,23 @@ for id=1:forward.Nsources
       d{j}=d_sim(:,it);
     end
   end
-  
+ 
+end
+
+%% check that the output sizeof 'd' is the same as 'data'
+if nargin>3
+    if length(d)~=length(data)
+        sippi_verbose(sprintf('%s: SOMETHING WENT WRONG.... TRYING FDTD AGAIN',mfilename),-10)
+        
+        % HMM SOMETHING WENT WRONG, try again
+        [d,forward,prior,data]=sippi_forward_gpr_fd(m,forward,prior,data,id,im);
+        
+        if length(d)~=length(data)
+            disp('SOMETHING WENT WRONG.... CHECK THE OUTOUT OF FDTD')
+            keyboard
+        end
+        
+        
+    end
 end
 

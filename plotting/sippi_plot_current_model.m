@@ -24,6 +24,19 @@ col=[
 %% PLOT CURRENT MODELS
 if nargin>3
     sippi_plot_prior(prior,m_current);
+    
+    % If reference model is set, then plot the reference model   
+    if isfield(options.mcmc,'m_ref');
+        try
+        for ip=1:length(prior);
+            sippi_plot_prior(prior,options.mcmc.m_ref,ip,1,20+ip-1); 
+            title(sprintf('Reference Prior #%d',ip))
+        end
+        catch
+            keyboard
+        end
+    end
+    
 end
 
 %% PLOT DATA RESPONSE

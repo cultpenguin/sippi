@@ -42,11 +42,12 @@ if nargin>1
   title('Data (observed)')
   
   subplot(3,1,3);
-  wiggle(1:1:nx,1:1:nt,D2,type,scale,showmax,0);
-  hold on
-  wiggle(1:1:nx,1:1:nt,D1,type,scale,showmax,0);
-  hold off
+  wiggle(1:1:nx,1:1:nt,D1-D2,type,scale,showmax,plImage);
+  %hold on
+  %wiggle(1:1:nx,1:1:nt,D1,type,scale,showmax,0);
+  %hold off
   xlabel('i_{data}');
+  title('Data residual')
   
 else
     wiggle(1:1:nx,1:1:nt,D1,type,scale,showmax,plImage);
