@@ -153,13 +153,15 @@ end
 %% check that the output sizeof 'd' is the same as 'data'
 if nargin>3
     if length(d)~=length(data)
-        sippi_verbose(sprintf('%s: SOMETHING WENT WRONG.... TRYING FDTD AGAIN',mfilename),-10)
+        sippi_verbose(sprintf('%s: SOMETHING WENT WRONG READING FROM MATLAB OUTPUT OF FDTD',mfilename),-10)
+        sippi_verbose(sprintf('%s: length(d)=%d, length(data)=%d',mfilename,length(d),length(data)),-10)
+        sippi_verbose(sprintf('%s: TRYING FDTD AGAIN',mfilename),-10)
         
         % HMM SOMETHING WENT WRONG, try again
         [d,forward,prior,data]=sippi_forward_gpr_fd(m,forward,prior,data,id,im);
         
         if length(d)~=length(data)
-            disp('SOMETHING WENT WRONG.... CHECK THE OUTOUT OF FDTD')
+            disp('SOMETHING WENT WRONG.... CHECK THE OUTPUT OF FDTD')
             keyboard
         end
         
