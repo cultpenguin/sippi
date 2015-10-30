@@ -6,6 +6,7 @@ clear all;close all;
 
 % load data from nmo_setup_example
 mat_file='nmo_reference_data_type2_SN1_nx01.mat';
+mat_file='nmo_reference_data_type3_SN1_nx01.mat';
 if exist(mat_file);
   load(mat_file)
 else

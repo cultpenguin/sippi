@@ -40,11 +40,11 @@ options.null='';
 
 if nargin>3
     if isfield(options,'sippi_plot_data_function');
-        sippi_verbose(sprintf('%s : Using ''%s'' instead of sippi_plot_data',mfilename,options.sippi_plot_data_function),2)
+        sippi_verbose(sprintf('%s : Using ''%s'' instead of sippi_plot_data',mfilename,options.sippi_plot_data_function),-2)
         if nargin==1;
             feval(options.sippi_plot_data_function,d);
         else
-            feval(options.sippi_plot_data_function,d,data,id_arr);
+            feval(options.sippi_plot_data_function,d,data,id_arr,options);
         end
         return
     end

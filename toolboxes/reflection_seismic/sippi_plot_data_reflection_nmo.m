@@ -8,15 +8,13 @@
 function sippi_plot_data_reflection_nmo(d,data,id_arr,options);
 
 
-
-
 if nargin<3;
   id_arr=1:length(d);
 end
 if nargin<4,options.null='';end
 
 if isfield(options,'na'); 
-    na=options.na, 
+    na=options.na;
 else; 
     na=1;
 end

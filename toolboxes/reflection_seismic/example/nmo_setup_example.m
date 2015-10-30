@@ -184,6 +184,8 @@ for id=1:length(x);
 end
 
 options.t=forward.t;
-sippi_plot_data_reflection_nmo(d_ref,data,1,options);
+options.na=length(forward.angle);
+options.sippi_plot_data_function='sippi_plot_data_reflection_nmo';
+sippi_plot_data(d_ref,data,1,options);
 
 save(sprintf('nmo_reference_data_type%d_SN%g_nx%02d',ptype,SN,nx));
