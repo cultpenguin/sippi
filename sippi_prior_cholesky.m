@@ -97,7 +97,7 @@ else
             prior{ip}.Cmat=precal_cov([prior{ip}.xx(:) prior{ip}.yy(:)],[prior{ip}.xx(:) prior{ip}.yy(:)],prior{ip}.Cm);
         elseif prior{ip}.ndim==3;
             prior{ip}.Cmat=precal_cov([prior{ip}.xx(:) prior{ip}.yy(:) prior{ip}.zz(:)],[prior{ip}.xx(:) prior{ip}.yy(:) prior{ip}.zz(:)],prior{ip}.Cm);
-        end
+        end        
     end
 
     is_chol=0;

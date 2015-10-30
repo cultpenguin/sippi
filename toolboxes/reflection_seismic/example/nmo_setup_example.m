@@ -3,14 +3,14 @@ rng('default');
 rng(1);
 
 % PRIOR TYPE
-if ~exist('ptype','var');  ptype=[2]; end
+if ~exist('ptype','var');  ptype=[3]; end
 
 % SIGNAL TO NOISE
 if ~exist('SN','var');  SN=1; end
 
 % Set nmo gather center locations
 dx=10;
-if ~exist('nx','var');nx=111;end
+if ~exist('nx','var');nx=1;end
 x=[0:1:(nx-1)].*dx;
 
 % Set time
@@ -101,8 +101,37 @@ elseif ptype==2
   prior{ip}.Cm=sprintf('%g Gau(%f,90,%3.3g)',var_omre(ip),h_x,h_t/h_x);
    
   forward.log=1;
+
+elseif ptype==3
+  % BULAND and OMRE type log parameterization
+  forward.log=1;
+  mu_omre = log([vp_m0 vs_m0 rho_m0 ]);
+  var_omre = [0.0074 0.00240 .0074 ];
+  cc=[1 0.8 0.7;0.8 1 0.5;0.7 0.5 1];
+  r_omre=20; % ms
+  
+  ii=[1 2 3];
+  mu_omre=mu_omre(ii);
+  var_omre=var_omre(ii);
+  cc=cc(ii,ii);
+  
+  
+  ip=0;
+  ip=ip+1;
+  prior{ip}.name='vpvsrho';
+  prior{ip}.type='cholesky';
+  prior{ip}.x=x;
+  prior{ip}.y=t;
+  
+  Va=sprintf('0.001 Nug(0) + 0.999 Gau(%f,90,%3.3g)',h_x,h_t/h_x);
+  pos=[prior{1}.y(:) prior{1}.y(:)];
+  Cm0=precal_cov(pos,pos,Va);
+  [prior{ip}.m0,prior{ip}.Cmat]=setup_Cm_corr(Cm0,mu_omre,var_omre,cc);
+  
   
 end
+
+m=sippi_prior(prior);
 
 %% SETUP WAVELETS
 forward.angle=[0:5:45]; % angle for each trace in NMO gather
@@ -114,15 +143,16 @@ forward.t=t;
 
 %% REFERENCE MODEL
 [m_ref,prior]=sippi_prior(prior);
-figure(1);
-for i=1:3;
-  subplot(1,3,i);
-  imagesc(x,t,m_ref{i});title(prior{i}.name);colorbar
-end
+%figure(1);
+%for i=1:3;
+%  subplot(1,3,i);
+%  imagesc(x,t,m_ref{i});title(prior{i}.name);colorbar
+%end
 
 %% REFERENCE DATA
 forward.type='zoeppritz';
 [d_ref,forward]=sippi_forward(m_ref,forward,prior);
+
 
 use_corr_noise=1;
 S=std(d_ref{1}(:));
@@ -153,6 +183,7 @@ for id=1:length(x);
   data{id}.d_obs=data{id}.d_ref+data{id}.d_noise;
 end
 
-sippi_plot_data_reflection_nmo(d_ref,data,1,prior);
+options.t=forward.t;
+sippi_plot_data_reflection_nmo(d_ref,data,1,options);
 
 save(sprintf('nmo_reference_data_type%d_SN%g_nx%02d',ptype,SN,nx));

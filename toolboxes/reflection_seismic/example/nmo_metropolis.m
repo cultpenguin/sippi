@@ -32,8 +32,7 @@ if doTempering==1
 end
 
 forward.type='akirichards';
-forward.type='zoeppritz';
-forward.type='weak_contrast';
+%forward.type='zoeppritz';
 
 %%
 [m,prior]=sippi_prior(prior);

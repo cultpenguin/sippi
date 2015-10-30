@@ -5,11 +5,20 @@
 %
 % See also sippi_plot_data, sippi_forward_reflection_nmo
 %
-function sippi_plot_data(d,data,id_arr,prior);
+function sippi_plot_data_reflection_nmo(d,data,id_arr,options);
+
+
 
 
 if nargin<3;
   id_arr=1:length(d);
+end
+if nargin<4,options.null='';end
+
+if isfield(options,'na'); 
+    na=options.na, 
+else; 
+    na=1;
 end
 
 for id=id_arr;
@@ -17,34 +26,37 @@ for id=id_arr;
   if ~ishold
     figure_focus(20+id);
   end
+  
+  nt=length(d{id})/na;
+  if isfield(options,'t'); 
+      t=options.t;
+      nt=length(t);
+      na=length(d{id})/nt;
+  else, 
+      t=1:nt;
+  end
+
+  avo_gather=reshape(d{id},nt,na);
+    
+  
+  
   hold off
   if nargin>3
-    % wiggle plot
-    nt=length(prior{1}.y);
-    t=prior{1}.y;
-    n=length(d{id});
-    na=n/nt;
-    
-    
     if ~isempty(data)
       %hold on
       avo_gather_obs=reshape(data{id}.d_obs,nt,na);
       dmax=wiggle(1:na,t,avo_gather_obs,'VA');
       %hold off
-    end
-    
-    hold on
-    avo_gather=reshape(d{id},nt,na);
-    wiggle(1:na,t,avo_gather,'wiggle',dmax);
-    hold off
-  else
-    % simple plot
-    plot(d{id},'k-')
-    if nargin>1
       hold on
-      plot(data{id}.d_obs,'r-')
+      wiggle(1:na,t,avo_gather,'wiggle',dmax);
+      hold off
+    else
+        wiggle(1:na,t,avo_gather,'wiggle');
     end
     
+  else
+       % simple plot
+       wiggle(1:na,t,avo_gather,'VA');    
   end
   
 end
