@@ -5,7 +5,8 @@
 % 
 %% Example:
 %    ip=1;
-%    prior{ip}.type='snesim';
+%    prior{ip}.type='mps';
+%    prior{ip}.method='mps_snesim';
 %    prior{ip}.x=1:1:80;
 %    prior{ip}.y=1:1:80;
 %    prior{ip}.ti=channels;
@@ -53,8 +54,10 @@ if ~isfield(prior{ip},'ti')
 end
 
 if ~isfield(prior{ip},'method')
-    prior{ip}.method='mps_snesim_tree';
+    prior{ip}.method='mps_snesim';
+    % prior{ip}.method='mps_snesim_tree';
     % prior{ip}.method='mps_snesim_list';
+    % prior{ip}.method='mps_enesim_general';
     % prior{ip}.method='mps_enesim';
 end
 
