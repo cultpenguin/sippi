@@ -10,7 +10,6 @@
 %
 % All entries with vebose>vlevel are displayed
 %
-
 %
 % entries with a higher verbose value has a higher chance of being displayed
 % that entries with lower verbose values
@@ -23,6 +22,17 @@
 % or one can call sippi_verbose with a third argument, which will set the
 % verbose level. To set the verbose level to 2, use:
 % sippi_verbose('',0,2);
+%
+% The verbose level can also be set using an environmental variable:
+%    %% VERBOSITY
+%    The amount of text info displayed at the prompt, can be controlled by
+%    setenv('SIPPI_VERBOSE_LEVEL','2') % all: information on chain swapping
+%    setenv('SIPPI_VERBOSE_LEVEL','1') % information about seq-gibbs step update
+%    setenv('SIPPI_VERBOSE_LEVEL','0'); % [def] frequent update
+%    setenv('SIPPI_VERBOSE_LEVEL','-1'); % rare update om finish time
+%    setenv('SIPPI_VERBOSE_LEVEL','-2'); % indication of stop and start
+%    setenv('SIPPI_VERBOSE_LEVEL','-3'); % none
+%
 %
 
 function varargout=sippi_verbose(txt,verbose,set_verbose_level)

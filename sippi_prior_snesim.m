@@ -180,6 +180,7 @@ if isfield(prior{ip},'soft_data');
     end
 end
 
+%% optionally set soft data grid
 if isfield(prior{ip},'soft_data_grid');
     if isstr(prior{ip}.soft_data_grid)
         % soft data is provided in file
@@ -212,8 +213,6 @@ else
     prior{ip}.S.condition_to_lp=0;
     prior{ip}.S.iauto=0;
 end
-
-%% optionally set soft data grid
 
 
 

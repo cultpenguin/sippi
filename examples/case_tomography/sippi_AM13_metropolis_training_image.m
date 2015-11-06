@@ -1,8 +1,8 @@
-% sippi_AM13_metropolis_training_image 2D inversion using the extended Metropolis sampler (MP prior)
+% sippi_AM13_metropolis_training_ipage 2D inversion using the extended Metropolis sampler (MP prior)
 %
 % Example of inverting 2D Arrenæs tomographic data (AM13)
 % using the extended Metropolis sampler and prior model 
-% based on a training image
+% based on a training ipage
 %
 % See http://dx.doi.org/10.1016/j.cageo.2012.10.001
 %
@@ -21,21 +21,24 @@ data{id}.Ct=1; % modelization error
 data{id}.Ct=1+D.Ct; % modelization and static error
 
 % SETUP PRIOR
-im=1;
-prior{im}.type='SNESIM';
-prior{im}.ti='snesim_std.ti';
-prior{im}.index_values=[0 1];
-prior{im}.m_values=[.12 .16];
-prior{im}.scaling=.7;
-prior{im}.rotation=30;
-prior{im}.x=[-1:.2:6];
-prior{im}.y=[0:.2:13];
-prior{im}.cax=[.1 .18];
+ip=1;
+prior{ip}.type='mps';
+prior{ip}.method='mps_snesim_dsim';   
+ti=channels;
+ti=ti(4:4:end,4:4:end);
+prior{ip}.ti=channels;
+prior{ip}.index_values=[0 1];
+prior{ip}.m_values=[.12 .16];
+%prior{ip}.scaling=.7;
+%prior{ip}.rotation=30;
+prior{ip}.x=[-1:.2:6];
+prior{ip}.y=[0:.2:13];
+prior{ip}.cax=[.1 .18];
 
-prior{1}.seq_gibbs.type=1;
-prior{1}.seq_gibbs.step=5;
-prior{1}.seq_gibbs.step_min=0.4;
-prior{1}.seq_gibbs.step_max=5;
+prior{ip}.seq_gibbs.type=1;
+prior{ip}.seq_gibbs.step=5;
+prior{ip}.seq_gibbs.step_min=0.4;
+prior{ip}.seq_gibbs.step_max=5;
 
 prior=sippi_prior_init(prior);
 
@@ -44,7 +47,6 @@ forward.sources=D.S;
 forward.receivers=D.R;
 forward.type='eikonal';
 forward.forward_function='sippi_forward_traveltime';
-
 
 %% SETUP METROPOLIS
 options.mcmc.nite=500000;
@@ -63,12 +65,8 @@ sippi_plot_posterior(options.txt);
 %% PLOT TI
 close all
 
-O=sgems_read(prior{1}.ti);
 figure;
-d_ti=O.D';
-d_ti(find(d_ti==0))=prior{1}.m_values(1);
-d_ti(find(d_ti==1))=prior{1}.m_values(2);
-imagesc(d_ti);
+imagesc(ti);
 xlabel('X pixel #')
 ylabel('Y pixel #')
 axis image
