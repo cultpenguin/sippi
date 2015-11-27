@@ -61,8 +61,8 @@ for im=ip_array
     
     prior{im}.ndim=length(find(prior{im}.dim>1));
     
-    if ~isfield(prior{im},'cax');
-        if isfield(prior{im},'min')&isfield(prior{im},'max');
+    if (~isfield(prior{im},'cax'));
+        if ((isfield(prior{im},'min'))&&(isfield(prior{im},'max')));
             prior{im}.cax=[prior{im}.min prior{im}.max];
         end
         
@@ -236,7 +236,7 @@ for im=ip_array
     end
         
     %% FFTMA and CHOLESKY
-    if (strcmp(upper(prior{im}.type),'FFTMA'))|(strcmp(upper(prior{im}.type),'CHOLESKY'))
+    if (strcmp(upper(prior{im}.type),'FFTMA'))||(strcmp(upper(prior{im}.type),'CHOLESKY'))
         % THE CHECKS BELOW ARE SIMILAT FOR FFTMA AND CHOLESKY TYPE PRIORS
         % PERHAPS CHECK BOTH AT THE SAME TIME
         if ~isfield(prior{im},'m0')

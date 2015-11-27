@@ -19,7 +19,7 @@ function sippi_plot_prior(prior,m,im_array,use_colorbar,fhandle);
 %
 % See also sippi_plot_prior, sippi_prior
 
-if isstr(prior);
+if ischar(prior);
     disp(sprintf('%s: You probably intend to call sippi_plot_prior_sample',mfilename));   
     sippi_plot_prior_sample(prior);
     return
