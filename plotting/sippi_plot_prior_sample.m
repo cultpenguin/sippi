@@ -21,7 +21,7 @@ options=sippi_plot_defaults(options);
 
 
 %% DATA
-if isstr(prior)
+if ischar(prior)
     % load prior from MATFILE
     fname=prior;
     try

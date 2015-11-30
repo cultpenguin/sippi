@@ -22,7 +22,7 @@ cwd=pwd;
 
 
 %% DATA
-if isstr(fname)
+if ischar(fname)
     try
         cd(fname);
         load([fname,'.mat']);

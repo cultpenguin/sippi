@@ -121,7 +121,7 @@ end
 
 %% optionally set hard data
 if isfield(prior{ip},'hard_data');
-    if isstr(prior{ip}.hard_data)
+    if ischar(prior{ip}.hard_data)
         % Hard data is provided in file
         prior{ip}.S.fconddata.fname=prior{ip}.hard_data;
     else
@@ -140,7 +140,7 @@ end
 
 %% optionally set soft data
 if isfield(prior{ip},'soft_data');
-    if isstr(prior{ip}.soft_data)
+    if ischar(prior{ip}.soft_data)
         % soft data is provided in file
         prior{ip}.S.flocalprob.fname=prior{ip}.soft_data;
     else
@@ -182,7 +182,7 @@ end
 
 %% optionally set soft data grid
 if isfield(prior{ip},'soft_data_grid');
-    if isstr(prior{ip}.soft_data_grid)
+    if ischar(prior{ip}.soft_data_grid)
         % soft data is provided in file
         prior{ip}.S.flocalprob.fname=prior{ip}.soft_data_grid;
     else

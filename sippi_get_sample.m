@@ -28,7 +28,7 @@ start_dir=pwd;
 
 
 if nargin>0;
-    if isstr(wd)
+    if ischar(wd)
         old.start_dir=start_dir;
         if nargin>1, old.im=im;; end
         cd(wd);

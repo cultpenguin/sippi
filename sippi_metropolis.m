@@ -94,7 +94,7 @@ try;
     addpath(['..',filesep])
 
     for im=1:length(prior);
-        if isstr(prior{im}.ti)
+        if ischar(prior{im}.ti)
             try
                 if isunix
                     system(sprintf('cp ..%s%s . ',filesep,prior{im}.ti));

@@ -284,7 +284,7 @@ for im=ip_array
     if (strcmp(upper(prior{im}.type),'SNESIM'))
         if ~isfield(prior{im},'ti');
           prior{im}.ti=channels;
-          sippi_verbose(sprintf('%s : Setting default training image as prior{%d}.ti=%s',mfilename,im,prior{im}.ti));
+          sippi_verbose(sprintf('%s : Setting default training image as ''channels''',mfilename,im));
         end
         if ~isfield(prior{im},'S');
             prior{im}.S=snesim_init(prior{im}.ti,prior{im}.x,prior{im}.y,prior{im}.z);

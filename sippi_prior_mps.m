@@ -108,7 +108,7 @@ end
 
 %% hard data?
 if isfield(prior{ip},'hard_data');
-    if isstr(prior{ip}.hard_data)
+    if ischar(prior{ip}.hard_data)
         % Hard data is provided in file
         prior{ip}.S.hard_data_filename=prior{ip}.hard_data;
     else
@@ -127,7 +127,7 @@ end
 
 %% soft data?
 if isfield(prior{ip},'soft_data');
-    if isstr(prior{ip}.soft_data)
+    if ischar(prior{ip}.soft_data)
         % Hard data is provided in file
         prior{ip}.S.soft_data_filename=prior{ip}.soft_data;
     else
@@ -141,7 +141,7 @@ if isfield(prior{ip},'soft_data');
         write_eas(filename_soft,prior{ip}.soft_data);
     end
 elseif isfield(prior{ip},'soft_data_grid');
-    if isstr(prior{ip}.soft_data_grid)
+    if ischar(prior{ip}.soft_data_grid)
         % Hard data is provided in file
         prior{ip}.S.soft_data_filename=prior{ip}.soft_data_grid;
     else

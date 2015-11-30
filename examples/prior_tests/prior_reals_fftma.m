@@ -58,7 +58,11 @@ colorbar_shift;
 print_mul('prior_reals_fftma_nscore')
 
 %% MOVIE
-save_movie=0;
+save_movie=1;
+if (isoctave)
+    save_movie=0;    
+end
+
 for j=1:2
     randn('seed',1);
     figure(11+j);clf

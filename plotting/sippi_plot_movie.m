@@ -46,7 +46,7 @@ n_frames_org=n_frames;
 cwd=pwd;
 
 %% DATA
-if isstr(fname)
+if ischar(fname)
     try
         cd(fname);
         load([fname,'.mat']);
