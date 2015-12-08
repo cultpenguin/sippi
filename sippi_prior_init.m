@@ -1,4 +1,4 @@
-function prior=sippi_prior_init(prior,ip_array);
+function prior=sippi_prior_init(prior,im_array);
 % sippi_prior_init Initialize PRIOR structure for SIPPI
 %
 % Call
@@ -8,19 +8,19 @@ function prior=sippi_prior_init(prior,ip_array);
 %
 
 if nargin<2
-    ip_array=1:length(prior);
+    im_array=1:length(prior);
 end
 
-for im=ip_array
+for im=im_array
     % only perform initialization of not allready done.
     if isfield(prior{im},'init')
         if prior{im}.init==1
-            ip_array=setxor(ip_array,im);
+            im_array=setxor(im_array,im);
         end
     end
 end
 
-for im=ip_array
+for im=im_array
     
     
     prior{im}.init=0;

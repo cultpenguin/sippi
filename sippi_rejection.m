@@ -90,7 +90,7 @@ if ~isfield(mcmc,'logLmax');
     end
 end
 if isfield(mcmc,'Lmax');mcmc.Lmax=exp(mcmc.Lmax);end
-if ~isfield(mcmc,'rejection_normalize_log');mcmc.rejection_normalize_log = mcmc.logLmax;end
+if ~isfield(mcmc,'rejection_normalize_log');mcmc.rejection_normalize_log = log(mcmc.logLmax);end
 
 prior=sippi_prior_init(prior);
 iacc=0;
@@ -120,6 +120,7 @@ for i=1:mcmc.nite
     logLPacc = (1./mcmc.T).*(logL-mcmc.rejection_normalize_log);
     
     if log(rand(1))<logLPacc
+        sippi_verbose(sprintf('%s : %06d/%06d ACCEPT logLPacc=%4.1g, Pacc=%4.1g',mfilename,i,mcmc.nite,logLPacc,exp(logLPacc)),1);
         iacc=iacc+1;
         mcmc.logL(iacc)=logL;
         for im=1:length(prior)

@@ -92,7 +92,8 @@ try;
     mkdir(options.txt);
     cd(options.txt);
     addpath(['..',filesep])
-
+    
+    % copy training image file if it exists
     for im=1:length(prior);
         if ischar(prior{im}.ti)
             try
