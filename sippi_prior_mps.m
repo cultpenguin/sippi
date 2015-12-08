@@ -114,8 +114,14 @@ if isfield(prior{ip},'hard_data');
     else
         % save hard data, and set hard data filename
         filename_hard=prior{ip}.S.hard_data_filename;
-        sippi_verbose(sprintf('%s: saving hard data to %s',mfilename,filename_hard));
-        write_eas(filename_hard,prior{ip}.hard_data);
+        if isempty(prior{ip}.hard_data)
+            if exist(filename_hard,'file');
+                delete(filename_hard);
+            end
+        else
+            sippi_verbose(sprintf('%s: saving hard data to %s',mfilename,filename_hard));
+            write_eas(filename_hard,prior{ip}.hard_data);
+        end
     end
 else
     if exist('mps_hard_data_dummy.dat','file');
