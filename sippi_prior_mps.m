@@ -119,7 +119,7 @@ if isfield(prior{ip},'hard_data');
                 delete(filename_hard);
             end
         else
-            sippi_verbose(sprintf('%s: saving hard data to %s',mfilename,filename_hard));
+            sippi_verbose(sprintf('%s: saving hard data to %s',mfilename,filename_hard),2);
             write_eas(filename_hard,prior{ip}.hard_data);
         end
     end
