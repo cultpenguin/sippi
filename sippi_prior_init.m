@@ -10,6 +10,16 @@ function prior=sippi_prior_init(prior,ip_array);
 if nargin<2
     ip_array=1:length(prior);
 end
+
+for im=ip_array
+    % only perform initialization of not allready done.
+    if isfield(prior{im},'init')
+        if prior{im}.init==1
+            ip_array=setxor(ip_array,im);
+        end
+    end
+end
+
 for im=ip_array
     
     
