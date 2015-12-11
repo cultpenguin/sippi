@@ -50,13 +50,19 @@ try;
     cd(options.txt);
     addpath(['..',filesep])
     
+    % copy training image file if used    
     for im=1:length(prior);
+        if isfield(prior{im},'ti')
+        if ischar(prior{im}.ti)
         try
-            if isunix
+            if isunix               
                 system(sprintf('cp ..%s%s . ',filesep,prior{im}.ti));
             else
-                system(sprintf('copy ..%s%s ',filesep,prior{im}.ti));
+                cmd=sprintf('copy ..%s%s ',filesep,prior{im}.ti);
+                system(cmd);
             end
+        end
+        end
         end
     end
 end
