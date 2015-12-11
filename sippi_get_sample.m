@@ -21,13 +21,16 @@ function [reals_mat,etype_mean,etype_var,reals_all,ite_num]=sippi_get_sample(wd,
 %
 %
 
+if nargin==0;
+    wd=pwd; % assume that function is called from an SIPPI output directory
+end
+
 if nargin<5
     ichain=1;
 end
 start_dir=pwd;
 
-
-if nargin>0;
+%if nargin>0;
     if ischar(wd)
         old.start_dir=start_dir;
         if nargin>1, old.im=im;; end
@@ -53,7 +56,7 @@ if nargin>0;
             sippi_verbose(sprintf('%s : first input should in integer value or a string',mfilename))
         end
     end
-end
+%end
 
 if ~exist('n_reals','var');
     n_reals=15;
