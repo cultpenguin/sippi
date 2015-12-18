@@ -44,7 +44,7 @@ if nargin>3
         if nargin==1;
             feval(options.sippi_plot_data_function,d);
         else
-            feval(options.sippi_plot_data_function,d,data,id_arr,options);
+            feval(options.sippi_plot_data_function,d,data,id_arr);
         end
         return
     end

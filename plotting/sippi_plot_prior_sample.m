@@ -1,4 +1,4 @@
-function sippi_plot_prior_sample(prior,im_arr,n_reals,caxis,options);
+function prior=sippi_plot_prior_sample(prior,im_arr,n_reals,cax,options);
 % sippi_plot_prior_sample Plot a sample of the prior in SIPPI
 %
 % Call :
@@ -219,7 +219,17 @@ for im=im_arr;
             i_cb=ceil((nsp_y+1)/2)*nsp_x;
             if i==i_cb; use_colorbar=1;end
             
+            % plot the realizations
             sippi_plot_prior(p,m_prior,1,use_colorbar,f_id);
+            % use the same caxis unless prior{1}.cax is set
+            if ~isfield(prior{1},'cax')               
+                if ~exist('caxis_use','var')
+                    caxis_use=caxis;
+                end
+                caxis(caxis_use);
+            end
+            
+            
         end
         %%%
         
@@ -239,74 +249,3 @@ for im=im_arr;
 end
 
 cd(cwd);
-
-return
-
-
-
-%    end
-
-
-x=forward.x;
-y=forward.y;
-z=forward.z;
-
-
-%% PLOT NOISE MODEL
-%try;
-figure(21);set_paper('landscape');clf;
-
-i_use=forward.i_use;
-
-ha=tight_subplot(1,2,[.08 .08],[.1 .1],[.1 .1]);
-
-%subplot(1,2,1);
-axes(ha(2));
-ax1=gca;
-set(ax1,'FontSize',16);
-imagesc(forward.CD(i_use,i_use));
-xlabel('Data #')
-ylabel('Data #')
-%axis image
-cb=colorbar;
-pos=get(ax1,'position');
-set(get(cb,'Ylabel'),'String','Covariance')
-title('CD')
-axis image
-
-%subplot(1,2,2);
-axes(ha(1));
-ax2=gca;
-set(ax2,'FontSize',16);
-plot(forward.dt0(i_use));
-xlabel('Data #')
-ylabel('d_0 (ns)')
-set(ax2,'xlim',[0 length(i_use)])
-pos2=get(ax2,'position');
-pos = plotboxpos(ax1);
-pos2(2)=pos(2);
-pos2(4)=pos(4);
-set(ax2,'position',pos2);
-%end
-print_mul(sprintf('%s_noisemodel',fname),options.plot.hardcopy_types)
-
-return
-%% PLOT REALS
-figure(12);set_paper('landscape');clf;
-
-nsp_x=5;
-nsp_y=ceil(n_reals/nsp_x);
-for i=1:n_reals
-    subplot(nsp_y,nsp_x,i);
-    imagesc(x,y,m_prior(:,:,i));
-    caxis(cax)
-    if (i==(2*nsp_x));
-        colorbar_shift;
-    end
-    axis image;
-
-end
-colormap(1-gray)
-try
-    print_mul(sprintf('%s_prior_sample',fname),options.plot.hardcopy_types)
-end
