@@ -4,7 +4,7 @@
 %  [d,forward,prior,data]=sippi_forward_gpr_fd(m,forward,prior,data,id,im)
 %
 %  the prior must be such that m{1} relfect the eps field, and (optionally)
-%  m{2} reflect the sig field (if not set it is trated as constance).
+%  m{2} reflect the sig field (if not set it is trated as constant).
 % 
 % % Mandatory 
 % forward.ant_pos: antenna postions for receivers and recorders
@@ -23,7 +23,7 @@
 % forward.dx_forward % the spatial sampling used for FDTD modeling
 %                      If this is different than the spatial sampling
 %                      density for the prior, then prior realizations are
-%                      rescales before forward modeling
+%                      rescaled before forward modeling
 %
 %
 % % Settings for forward modeler
