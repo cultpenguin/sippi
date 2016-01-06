@@ -91,6 +91,10 @@ for ipg=1:prior{ip}.NG
     if ~isfield(prior{ip}.pg_prior{ipg},'type')
         prior{ip}.pg_prior{ipg}.type='fftma';
     end
+    if isfield(prior{ip}.seq_gibbs,'step');
+        prior{ip}.pg_prior{ipg}.seq_gibbs.step=prior{ip}.seq_gibbs.step;
+    end
+    
 end
 
 %% SIMULATE PLURIGAUSSIAN DATA
@@ -110,7 +114,7 @@ m_propose{ip} = pg_m_propose{1}.*0;
 m_propose{ip}(find(pg_m_propose{1}>-1))=1;
 m_propose{ip}(find(pg_m_propose{1}>0))=0;
 m_propose{ip}(find( (pg_m_propose{1}>1.5) ))=3;
-m_propose{ip}(find( (pg_m_propose{1}>1.5)&(pg_m_propose{2}>1.5) ))=4;
+m_propose{ip}(find( (pg_m_propose{1}>1.5)&(pg_m_propose{2}>1.5) ))=-1;
 
 
        
