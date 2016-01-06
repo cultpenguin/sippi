@@ -100,11 +100,14 @@ end
 %% SIMULATE PLURIGAUSSIAN DATA
 if nargin>1
     % Sequential Gibbs?
-    % [pg_m_propose,prior{1}.pg_prior]=sippi_prior(prior{1}.pg_prior);
-    disp('STOP')
-    keyboard
+    [pg_m_propose,prior{ip}.pg_prior]=sippi_prior(prior{ip}.pg_prior);
 else
-    % unconditional simulation
+    % unconditional simulation, set seq_gibbs step=1,
+    for ipg=1:prior{ip}.NG
+        if isfield(prior{ip}.seq_gibbs,'step');
+            prior{ip}.pg_prior{ipg}.seq_gibbs.step=1;
+        end
+    end
     [pg_m_propose,prior{ip}.pg_prior]=sippi_prior(prior{ip}.pg_prior);
 end
 
@@ -114,7 +117,7 @@ m_propose{ip} = pg_m_propose{1}.*0;
 m_propose{ip}(find(pg_m_propose{1}>-1))=1;
 m_propose{ip}(find(pg_m_propose{1}>0))=0;
 m_propose{ip}(find( (pg_m_propose{1}>1.5) ))=3;
-m_propose{ip}(find( (pg_m_propose{1}>1.5)&(pg_m_propose{2}>1.5) ))=-1;
+m_propose{ip}(find( (pg_m_propose{1}>1.5)&(pg_m_propose{2}>1.5) ))=4;
 
 
        
