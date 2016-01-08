@@ -28,7 +28,7 @@
 %       caxis([8 12]);drawnow;
 %   end
 %
-% See also: sippi_prior
+% See also: sippi_prior, pg_transform
 %
 function [m_propose,prior]=sippi_prior_plurigaussian(prior,m_current,ip)
 
@@ -112,12 +112,16 @@ else
 end
 
 %% CONVERT N(0,1) using PG_MAP
-%m_propose = plurigaussian_transform(pg_m_propose,prior{ip}.pg_map);
-m_propose{ip} = pg_m_propose{1}.*0;
-m_propose{ip}(find(pg_m_propose{1}>-1))=1;
-m_propose{ip}(find(pg_m_propose{1}>0))=0;
-m_propose{ip}(find( (pg_m_propose{1}>1.5) ))=3;
-m_propose{ip}(find( (pg_m_propose{1}>1.5)&(pg_m_propose{2}>1.5) ))=4;
+%m_propose{ip} = pg_m_propose{1}.*0;
+%m_propose{ip}(find(pg_m_propose{1}>-1))=1;
+%m_propose{ip}(find(pg_m_propose{1}>0))=0;
+%m_propose{ip}(find( (pg_m_propose{1}>1.5) ))=3;
+%m_propose{ip}(find( (pg_m_propose{1}>1.5)&(pg_m_propose{2}>1.5) ))=4;
 
+if isfield(prior{ip},'pg_limits');
+    [m_propose{ip}]=pg_transform(pg_m_propose,prior{ip}.pg_map,prior{ip}.pg_limits);
+else
+    [m_propose{ip}]=pg_transform(pg_m_propose,prior{ip}.pg_map);
+end
 
        
