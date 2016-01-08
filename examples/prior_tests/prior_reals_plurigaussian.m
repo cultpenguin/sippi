@@ -10,11 +10,13 @@ prior{im}.y=[0:dx:180]; % Y array
 
 % define plurigaussian setup
 prior{im}.pg_prior{1}.Cm='1 Gau(30,90,.6)';
-prior{im}.pg_prior{2}.Cm='1 Gau(10,45,.3)';
+prior{im}.pg_prior{2}.Cm='1 Gau(30,0,.3)';
 
 % pg_map=[0 1];
-pg_map=[0 1 2 1 2 1 ];
-pg_map=[0 1 2 1 2 1 ; 1 1 1 2 2 2 ];
+pg_map=[1:10];
+pg_map=ceil(3*rand(4,2));
+%pg_map=[0 1 2 1 2 1 ];
+%pg_map=[0 1 2 1 2 1 ; 1 1 1 2 2 2 ];
 %pg_map=[0 0 0 1 1 1 2 2 2 1 1 1];
 %pg_map=[0 0 0 1 1 1; 1 0 1 2 2 2; 2 1 0 1 1 1];
 %pg_map=[0 0 0 ; 1 0 1; 2 1 0];
@@ -28,10 +30,12 @@ for i=1:5;
     [m,prior]=sippi_prior(prior);
     subplot(1,5,i);
     imagesc(prior{1}.x,prior{1}.y,m{1});
+    caxis(cax)
     axis image
 end
 colormap(sippi_colormap(1));
 colorbar_shift;
+drawnow;
 %print_mul('prior_reals_plurigaussian')
 %suptitle(sprintf('plurigaussian'))
 
