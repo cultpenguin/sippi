@@ -9,14 +9,17 @@ prior{im}.x=[0:dx:100]; % X array
 prior{im}.y=[0:dx:180]; % Y array
 
 % define plurigaussian setup
-prior{im}.pg_prior{1}.Cm='1 Gau(30,90,.6)';
-prior{im}.pg_prior{2}.Cm='1 Gau(30,0,.3)';
+prior{im}.pg_prior{1}.Cm='1 Gau(30,45,.6)';
+prior{im}.pg_prior{2}.Cm='1 Sph(30,-45,.3)';
 
 % pg_map=[0 1];
 pg_map=[1:10];
-pg_map=ceil(3*rand(4,2));
+pg_map=ones(1,100);
+pg_map([20:46])=2;
+pg_map([70:76])=2;
+%pg_map=ceil(3*rand(4,4));
 %pg_map=[0 1 2 1 2 1 ];
-%pg_map=[0 1 2 1 2 1 ; 1 1 1 2 2 2 ];
+%pg_map=[0 1 2 1 2 1 ; 1 1 1 7 2 2 ];
 %pg_map=[0 0 0 1 1 1 2 2 2 1 1 1];
 %pg_map=[0 0 0 1 1 1; 1 0 1 2 2 2; 2 1 0 1 1 1];
 %pg_map=[0 0 0 ; 1 0 1; 2 1 0];
