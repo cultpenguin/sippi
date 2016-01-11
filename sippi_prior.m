@@ -275,7 +275,7 @@ for im=im_array;
         m_file=sprintf('sippi_prior_%s',lower(prior{im}.type));
         if exist(m_file,'file')
             p{1}=prior{im};
-            if nargin==1
+            if nargin==1                
                 [m_p,p]=feval(m_file,p);
             else
                 m_c{1}=m_current{im};

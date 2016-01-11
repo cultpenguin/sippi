@@ -6,26 +6,26 @@
 %   prior{ip}.type='plurigaussian';
 %   prior{ip}.x=1:1:80;
 %   prior{ip}.y=1:1:80;
-%   prior{ip}.Cm='.001 Nug(0) + 1 Gau(10)';
-%   prior{ip}.pmap=[0 0 0 0 1 1 0 0 2 2 2];
+%   prior{ip}.Cm='1 Gau(10)';
+%   prior{ip}.pg_map=[0 0 0 0 1 1 0 0 2 2 2];
 %   % PluriGaussian based on two Gaussian models 
 %   ip=ip+1;
 %   prior{ip}.type='plurigaussian';
 %   prior{ip}.x=1:1:80;
 %   prior{ip}.y=1:1:80;
-%   prior{ip}.Cm{1}='1 Nug(0) + 1 Gau(10)';
-%   prior{ip}.Cm{2}='1 Nug(0) + 1 Gau(10)';
-%   prior{ip}.pmap=[0 0 0 1 1; 1 2 0 0 1 1; 1 1 1 1 1];
+%   prior{ip}.pg_prior{1}.Cm=' 1 Gau(10)';
+%   prior{ip}.pg_prior{2}.Cm=' 1 Sph(10,90,.4)';
+%   prior{ip}.pg_map=[0 0 0 1 1; 1 2 0 1 1; 1 1 1 1 1];
 %
 %   [m,prior]=sippi_prior(prior);
 %   sippi_plot_prior(prior,m);
 %
 %% Sequential Gibbs sampling
-%   prior{1}.seq_gibbs.step=.1;
+%   prior{1}.seq_gibbs.step=.01;
 %   for i=1:100;
 %       [m,prior]=sippi_prior(prior,m);
 %       sippi_plot_prior(prior,m);
-%       caxis([8 12]);drawnow;
+%       caxis([0 2]);drawnow;
 %   end
 %
 % See also: sippi_prior, pg_transform
