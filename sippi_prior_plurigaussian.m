@@ -64,7 +64,7 @@ if isfield(prior{ip},'Cm')
         prior{ip}.pg_prior{1}.x=prior{ip}.x;
         prior{ip}.pg_prior{1}.y=prior{ip}.y;
         prior{ip}.pg_prior{1}.z=prior{ip}.z;
-        prior{ip}.pg_prior{1}.m0=1;
+        prior{ip}.pg_prior{1}.m0=0;
         prior{ip}.pg_prior{1}.Cm=prior{ip}.Cm;
     end
 end
@@ -117,7 +117,6 @@ end
 %m_propose{ip}(find(pg_m_propose{1}>0))=0;
 %m_propose{ip}(find( (pg_m_propose{1}>1.5) ))=3;
 %m_propose{ip}(find( (pg_m_propose{1}>1.5)&(pg_m_propose{2}>1.5) ))=4;
-
 if isfield(prior{ip},'pg_limits');
     [m_propose{ip}]=pg_transform(pg_m_propose,prior{ip}.pg_map,prior{ip}.pg_limits);
 else
