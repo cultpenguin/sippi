@@ -69,6 +69,11 @@ $SIPPI/examples/covariance_ingerence
   
 ## Releases history
 
+#v1.4 2015-02-01
+Notice that V1.3 was packed without mGstat :/
+So v1.4 is like V1.4 but repackaged properly with mGstat. 
+
+
 #v1.3 
 Added parallel tempering to sippi_metropolis
 Many small bugfixes. 
