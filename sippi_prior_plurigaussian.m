@@ -4,21 +4,26 @@
 %   % PluriGaussian based on one Gaussian model / truncated Gaussian
 %   ip=1;
 %   prior{ip}.type='plurigaussian';
-%   prior{ip}.x=1:1:80;
-%   prior{ip}.y=1:1:80;
+%   prior{ip}.x=1:1:100;
+%   prior{ip}.y=1:1:100;
 %   prior{ip}.Cm='1 Gau(10)';
 %   prior{ip}.pg_map=[0 0 0 0 1 1 0 0 2 2 2];
+%
 %   % PluriGaussian based on two Gaussian models 
 %   ip=ip+1;
 %   prior{ip}.type='plurigaussian';
-%   prior{ip}.x=1:1:80;
-%   prior{ip}.y=1:1:80;
+%   prior{ip}.x=1:1:100;
+%   prior{ip}.y=1:1:100;
 %   prior{ip}.pg_prior{1}.Cm=' 1 Gau(10)';
 %   prior{ip}.pg_prior{2}.Cm=' 1 Sph(10,90,.4)';
 %   prior{ip}.pg_map=[0 0 0 1 1; 1 2 0 1 1; 1 1 1 1 1];
 %
 %   [m,prior]=sippi_prior(prior);
 %   sippi_plot_prior(prior,m);
+%
+%   sippi_plot_prior_sample(prior,1,5);
+%   sippi_plot_prior_sample(prior,2,5);
+%
 %
 %% Sequential Gibbs sampling
 %   prior{1}.seq_gibbs.step=.01;
