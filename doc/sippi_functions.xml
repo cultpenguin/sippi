@@ -55,7 +55,7 @@
   assumed by centered around 0, (dt{1}=0).
  
   Call
-    [Ct,dt,dd]=sippi_compute_modelization_forward_error(forward_full,forward_app,prior,data,N);
+    [Ct,dt,dd]=sippi_compute_modelization_forward_error(forward_full,forward_app,prior,N,d);
  
  
   For details see:
@@ -79,6 +79,18 @@
     [d,forward,prior,data]=sippi_forward(m,forward,prior)
     [d,forward,prior,data]=sippi_forward(m,forward,prior,data)
     [d,forward,prior,data]=sippi_forward(m,forward,prior,data,options)
+ 
+]]></programlisting></para>
+</sect2>
+
+<sect2 xml:id="sippi_get_resim_data"><title>sippi_get_resim_data</title>
+<para><programlisting><![CDATA[  sippi_get_resim_data: Get conditional data for resimulation
+ 
+  d_cond=sippi_get_resim_data(m_current,prior,ip);
+  
+  c_cond [n_cond,4]: col1: x, col2: y, col4: z, col4: d
+ 
+  See also sippi_prior
  
 ]]></programlisting></para>
 </sect2>
@@ -213,14 +225,16 @@
      % Perturb all model parameter all the time
      options.mcmc.pert_strategy.perturb_all=1; % Perturb all priors in each
                                                % iteration. def =[0]
+     options.mcmc.pert_strategy.perturb_all=2; % Perturb a random selection of 
+                                               % all priors in each iteration. def =[0]
  
      % Perturb one a prior type at a time, according to some frequency
      options.mcmc.pert_strategy.i_pert = [1,3]; % only perturb prior 1 and 3
      options.mcmc.pert_strategy.i_pert = [2 8]; % perturb prior 3 80% of
                                                 % the time and prior 1 20%
                                                 % of the time
-     % the default pertubation strategt is to select one prior model to 
-     % perturb at tandom for each iteration 
+     % the default pertubation strategt is to select one prior model to
+     % perturb at tandom for each iteration
  
  
      %% TEMPERING
@@ -231,14 +245,14 @@
      %% ANNEALING (TEMPERATURE AS A FUNCTION OF ITERATION NUMBER)
      options.mcmc.anneal.i_begin=1; % default, iteration number when annealing begins
      options.mcmc.anneal.i_end=100000; %  iteration number when annealing stops
-     options.mcmc.anneal.T_begin=5; % Start temperature for annealing 
-     options.mcmc.anneal.T_end=1; % End temperature for annealing 
-  
+     options.mcmc.anneal.T_begin=5; % Start temperature for annealing
+     options.mcmc.anneal.T_end=1; % End temperature for annealing
+ 
      %% VERBOSITY
      The amount of text info displayed at the prompt, can be controlled by
      setenv('SIPPI_VERBOSE_LEVEL','2') % all: information on chain swapping
      setenv('SIPPI_VERBOSE_LEVEL','1') % information about seq-gibbs step update
-     setenv('SIPPI_VERBOSE_LEVEL','0'); % [def] frequent update 
+     setenv('SIPPI_VERBOSE_LEVEL','0'); % [def] frequent update
      setenv('SIPPI_VERBOSE_LEVEL','-1'); % rare update om finish time
      setenv('SIPPI_VERBOSE_LEVEL','-2'); % indication of stop and start
      setenv('SIPPI_VERBOSE_LEVEL','-3'); % none
@@ -268,7 +282,8 @@
     VISIM   [1D-3D] : based on Sequential Gaussian and Direct Sequential simulation
     SISIM   [1D-3D] : based on Sequential indicator SIMULATION
     % multiple point based statistics
-    SNESIM  [1D-3D] : based on a multiple point statistical model inferref from a training images. Relies in the SNESIM algorithm
+    SNESIM_STD  [1D-3D] : (SGEMS) based on a multiple point statistical model inferref from a training images. Relies in the SNESIM algorithm
+    SNESIM  [1D-3D] : (GSLIB STYLE) based on a multiple point statistical model inferref from a training images. Relies in the SNESIM algorithm
  
  
  %%% SIMPLE EXAMPLE %%%
@@ -379,8 +394,8 @@
   or
     prior{ip}.m0=10;
    and the 'Cmat' variable 'prior{ip}.Cmat' which much the contain a full
-   nd X nd size covariance matrix. 
-   (it is computed the first the sippi_prior_cholesky is called) 
+   nd X nd size covariance matrix.
+   (it is computed the first the sippi_prior_cholesky is called)
  
   See also: gaussian_simulation_cholesky
  
@@ -426,6 +441,64 @@
     prior=sippi_prior_init(prior);
  
   See also sippi_prior
+ 
+]]></programlisting></para>
+</sect2>
+
+<sect2 xml:id="sippi_prior_mps"><title>sippi_prior_mps</title>
+<para><programlisting><![CDATA[  sippi_prior_mps : prior based on MPS
+ 
+                       Using SNESIM/ENESIM FROM 
+                       https://github.com/cultpenguin/mps
+  
+ % Example:
+     ip=1;
+     prior{ip}.type='mps';
+     prior{ip}.method='mps_snesim';
+     prior{ip}.x=1:1:80;
+     prior{ip}.y=1:1:80;
+     prior{ip}.ti=channels;
+     % prior{ip}.ti=maze;
+ 
+     m=sippi_prior(prior);
+     sippi_plot_prior(prior,m)
+     figure(1);imagesc(prior{ip}.ti);axis image
+ 
+]]></programlisting></para>
+</sect2>
+
+<sect2 xml:id="sippi_prior_plurigaussian"><title>sippi_prior_plurigaussian</title>
+<para><programlisting><![CDATA[  sippi_prior_plurigaussian: Plurigaussian type prior for SIPPI
+ 
+ % Example:
+    % PluriGaussian based on one Gaussian model / truncated Gaussian
+    ip=1;
+    prior{ip}.type='plurigaussian';
+    prior{ip}.x=1:1:80;
+    prior{ip}.y=1:1:80;
+    prior{ip}.Cm='1 Gau(10)';
+    prior{ip}.pg_map=[0 0 0 0 1 1 0 0 2 2 2];
+    % PluriGaussian based on two Gaussian models 
+    ip=ip+1;
+    prior{ip}.type='plurigaussian';
+    prior{ip}.x=1:1:80;
+    prior{ip}.y=1:1:80;
+    prior{ip}.pg_prior{1}.Cm=' 1 Gau(10)';
+    prior{ip}.pg_prior{2}.Cm=' 1 Sph(10,90,.4)';
+    prior{ip}.pg_map=[0 0 0 1 1; 1 2 0 1 1; 1 1 1 1 1];
+ 
+    [m,prior]=sippi_prior(prior);
+    sippi_plot_prior(prior,m);
+ 
+ % Sequential Gibbs sampling
+    prior{1}.seq_gibbs.step=.01;
+    for i=1:100;
+        [m,prior]=sippi_prior(prior,m);
+        sippi_plot_prior(prior,m);
+        caxis([0 2]);drawnow;
+    end
+ 
+  See also: sippi_prior, pg_transform
  
 ]]></programlisting></para>
 </sect2>
@@ -483,6 +556,9 @@
 <sect2 xml:id="sippi_prior_snesim"><title>sippi_prior_snesim</title>
 <para><programlisting><![CDATA[  sippi_prior_snesim : SNESIM type Gaussian prior for SIPPI
  
+                       Using SNESIM form
+                       https://github.com/SCRFpublic/snesim-standalone
+ 
  % Example:
      ip=1;
      prior{ip}.type='snesim';
@@ -498,6 +574,84 @@
  % Example: scaling and rotation
      ip=1;
      prior{ip}.type='snesim';
+     prior{ip}.x=1:1:80;
+     prior{ip}.y=1:1:80;
+     prior{ip}.ti=channels;
+     prior{ip}.scaling=[.1];
+     prior{ip}.rotation=[10];
+ 
+     m=sippi_prior(prior);
+     sippi_plot_prior(prior,m)
+     figure(1);imagesc(prior{ip}.ti);axis image
+ 
+ % Hard data
+    % hard data are given using either matrix of 4 columns (x,y,z,val)
+    % or as a 4 column EAS file (x,y,z,val)
+    d_hard=[1 1 0 0; 1 2 0 0; 2 2 0 1 ];
+    prior{ip}.hard_data=d_hard;
+ 
+    write_eas('snesim_hard.dat',d_hard);
+    prior{ip}.hard_data='snesim_hard.dat';
+ 
+ % Soft data
+    % soft mush be provided as a matrix of the same size as the simulation
+    % grid
+    d_soft(:,:,1)=ones(80,80).*NaN
+    d_soft(:,:,2)=1-d_soft(:,:,1);
+    prior{ip}.soft_data_grid=d_soft;
+ 
+ 
+    % Optionally the soft data can be provided as point data, in which case
+    % a grid, the size of the simulation grid, with soft data values will be computed
+    d_soft=[1 1 0 0.2 0.8; 1 2 0 0.1 0.9; 2 2 0  0.05 0.95];
+    prior{ip}.soft_data=d_soft;
+ 
+ % Sequential Gibbs sampling type 1 (box selection of pixels)
+     prior{ip}.seq_gibbs.type=1;%
+     prior{ip}.seq_gibbs.step=10; % resim data in 10x10 pixel grids
+     [m,prior]=sippi_prior(prior);
+     for i=1:10;
+        [m,prior]=sippi_prior(prior,m);
+        sippi_plot_prior(prior,m);
+        drawnow;
+     end
+ 
+ % Sequential Gibbs sampling type 2 (random pixels)
+     prior{ip}.seq_gibbs.type=2;%
+     prior{ip}.seq_gibbs.step=.6; % Resim 60% of data
+     [m,prior]=sippi_prior(prior);
+     for i=1:10;
+        [m,prior]=sippi_prior(prior,m);
+        sippi_plot_prior(prior,m);
+        drawnow;
+     end
+ 
+  See also: sippi_prior, ti
+ 
+]]></programlisting></para>
+</sect2>
+
+<sect2 xml:id="sippi_prior_snesim_std"><title>sippi_prior_snesim_std</title>
+<para><programlisting><![CDATA[  sippi_prior_snesim_std : SNESIM_STD (SGeMS) type Gaussian prior for SIPPI
+                       
+                       Requires SGeMS version 2.1b, available from 
+                       http://sgems.sourceforge.net/?q=node/77
+  
+ % Example:
+     ip=1;
+     prior{ip}.type='snesim_std';
+     prior{ip}.x=1:1:80;
+     prior{ip}.y=1:1:80;
+     prior{ip}.ti=channels;
+     % prior{ip}.ti=maze;
+ 
+     m=sippi_prior(prior);
+     sippi_plot_prior(prior,m)
+     figure(1);imagesc(prior{ip}.ti);axis image
+ 
+ % Example: scaling and rotation
+     ip=1;
+     prior{ip}.type='snesim_std';
      prior{ip}.x=1:1:80;
      prior{ip}.y=1:1:80;
      prior{ip}.ti=channels;
@@ -528,7 +682,7 @@
         drawnow;
      end
  
-  See also: sippi_prior, ti
+  See also: sippi_prior, sippi_prior_snbesim, ti
  
 ]]></programlisting></para>
 </sect2>
@@ -587,10 +741,11 @@
      prior{ip}.seed=1;
  
  % Sequential Gibbs sampling type 1 (box selection of pixels)
-     prior{ip}.seq_gibbs.type=1;%
+     prior{ip}.seq_gibbs.type=1;
      prior{ip}.seq_gibbs.step=10; % resim data in 10x10 pixel grids
+     prior{ip}.cax=[-2 2];
      [m,prior]=sippi_prior(prior);
-     for i=1:10;
+     for i=1:1000;
         [m,prior]=sippi_prior(prior,m);
         sippi_plot_prior(prior,m);
         drawnow;
@@ -605,6 +760,21 @@
         sippi_plot_prior(prior,m);
         drawnow;
      end
+ 
+ % TARGET DISTRIBUTION
+  clear prior
+  d_target=[7 8 9 10 11 11 12];
+ 
+  ip=1;
+  prior{ip}.type='visim';
+  prior{ip}.d_target=d_target;
+  prior{ip}.cax=[min(d_target) max(d_target)];
+  prior{ip}.x=1:1:80;
+  prior{ip}.y=1:1:80;
+  prior{ip}.Cm=sprintf('%g Gau(20)',var(d_target));
+  [m,prior]=sippi_prior(prior);
+  sippi_plot_prior(prior,m);
+ 
  
   See also: sippi_prior, visim
  

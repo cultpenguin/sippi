@@ -77,6 +77,9 @@ The <link linkend="prior_cholesky">CHOLESKY</link> type prior specifies a 1D-3D 
 <para>
 The <link linkend="prior_visim">VISIM</link> type prior model specifies 1D-3D Gaussian models, utilizing both sequential Gaussian simulation (SGSIM) and direct sequential simulation (DSSIM) that can be conditioned to data of both point- and volume support and linear average data. 
 </para>
+<para>
+The <link linkend="prior_plurigaussian">PLURIGAUSSIAN</link> type prior model specifies 1D-3D pluriGaussian. It is a type if truncated Gaussian model that can be used for efficient simulation of categorical values.
+</para>
 <!--
 <para>
 The <link linkend="prior_sisim">SISIM</link> type prior model specifies a 1D-3D prior model based on Gaussian indicator statistics. This type of prior requires <link linkend="SGEMS">SGEMS</link> to be installed.
@@ -427,7 +430,11 @@ Be warned that the 'cholesky' type prior model is much more memory demanding tha
 
 
 
-
+<sect3 xml:id="prior_plurigaussian"><title>PluriGaussian - ND truncated Gaussian</title>
+<para>
+..
+</para>
+</sect3>
 
 
 

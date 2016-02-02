@@ -85,6 +85,24 @@
 ]]></programlisting></para>
 </sect2>
 
+<sect2 xml:id="pg_transform"><title>pg_transform</title>
+<para><programlisting><![CDATA[  pg_transform: plurigaussian transformation
+ 
+  Call: 
+     [pg_d]=pg_transform(m,pg_map,pg_limits);
+       m: realizations of gaussian distribtion(s)
+       pg_map: Map defining pluri-Gaussian transformation 
+       pg_limits: Limit values for pg_map (def:[-3 3])
+ 
+       pd_d: Pluri-Gaussian transformed data
+  
+  See also: sippi_prior_plurigaussian, prior_reals_plurigaussian
+ 
+  Example
+ 
+]]></programlisting></para>
+</sect2>
+
 <sect2 xml:id="plotboxpos"><title>plotboxpos</title>
 <para><programlisting><![CDATA[ PLOTBOXPOS Returns the position of the plotted axis region
  
@@ -124,6 +142,27 @@
 ]]></programlisting></para>
 </sect2>
 
+<sect2 xml:id="setup_Cm_corr"><title>setup_Cm_corr</title>
+<para><programlisting><![CDATA[  setup_Cm_corr: setup correlated covariance model structure according to 
+                 Buland and Omre (2003)
+ 
+ 
+  Example:
+ 
+   mu_omre = log([3000 2250 3000]);
+   var_omre = [0.0074 0.00240 .0074 ];
+   cc=[1 0.8 0.7;0.8 1 0.5;0.7 0.5 1];
+   Va=sprintf('0.001 Nug(0) + 0.999 Gau(20)');
+   pos=[1:1:80]';
+   Cm0=precal_cov(pos,pos,Va);
+   [m0,Cmat]=setup_Cm_corr(Cm0,mu_omre,var_omre,cc);
+ 
+ 
+  See also; sippi_prior_cholesky
+ 
+]]></programlisting></para>
+</sect2>
+
 <sect2 xml:id="sippi_verbose"><title>sippi_verbose</title>
 <para><programlisting><![CDATA[  sippi_verbose : displays verbose information to the console
  
@@ -136,6 +175,30 @@
   'vlevel' must be set in the sippi_verbose.m m-file.
  
   All entries with vebose>vlevel are displayed
+ 
+ 
+  entries with a higher verbose value has a higher chance of being displayed
+  that entries with lower verbose values
+  verbose [0] : normal (default)
+          [-1] : little info 
+          [-2] : no info
+ 
+  The verbose level can be set either using a an environmental variable
+  e.g. setenv('SIPPI_VERBOSE_LEVEL','1')
+  or one can call sippi_verbose with a third argument, which will set the
+  verbose level. To set the verbose level to 2, use:
+  sippi_verbose('',0,2);
+ 
+  The verbose level can also be set using an environmental variable:
+     %% VERBOSITY
+     The amount of text info displayed at the prompt, can be controlled by
+     setenv('SIPPI_VERBOSE_LEVEL','2') % all: information on chain swapping
+     setenv('SIPPI_VERBOSE_LEVEL','1') % information about seq-gibbs step update
+     setenv('SIPPI_VERBOSE_LEVEL','0'); % [def] frequent update
+     setenv('SIPPI_VERBOSE_LEVEL','-1'); % rare update om finish time
+     setenv('SIPPI_VERBOSE_LEVEL','-2'); % indication of stop and start
+     setenv('SIPPI_VERBOSE_LEVEL','-3'); % none
+ 
  
 ]]></programlisting></para>
 </sect2>

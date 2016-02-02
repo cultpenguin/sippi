@@ -13,8 +13,13 @@
 </sect2>
 
 <sect2 xml:id="sippi_get_posterior_data"><title>sippi_get_posterior_data</title>
-<para><programlisting><![CDATA[ options,prior,data,forward
- % LOAD THE CORRECT DATA
+<para><programlisting><![CDATA[  sippi_get_posterior_data: load all data stored in mat-file
+ 
+  Call: 
+ 
+   [data,prior,options,mcmc]=sippi_get_posterior_data(folder_name);
+   [data,prior,options,mcmc]=sippi_get_posterior_data(output_stuct);
+ 
 ]]></programlisting></para>
 </sect2>
 
@@ -22,17 +27,40 @@
 <para><programlisting><![CDATA[  sippi_plot_current_model Plots the current model during Metropolis sampling
  
   Call :
-    sippi_plot_current_model(mcmc,data,d,m_current,prior);
+    sippi_plot_current_model(mcmc,data,d,m_current,prior,options);
  
 ]]></programlisting></para>
 </sect2>
 
 <sect2 xml:id="sippi_plot_data"><title>sippi_plot_data</title>
-<para><programlisting><![CDATA[  sippi_plot_data: plot NMR data response
-                   overwrites sippi_plot_data plot data in SIPPI
+<para><programlisting><![CDATA[  sippi_plot_data: Plot data response
  
-  Call.
+  Call:
      sippi_plot_data(d,data);
+ 
+  sippi_plot_data provides a very simple way to plot data. 
+  A more appropriate data plot can be implemented by implementing a new
+  mfile called "sippi_plot_data" and add it the Matlab path before the 
+  main SIPPI folders
+ 
+  A maximum of options.plot.plot_data_max_data (def:=5) data is plotted.
+  Change the value in sippi_plot_defaults.m
+ 
+  A specific m-file for handling plotting for a specfic type of data can
+  be implemented, and can be called instead of sippi_plot_data, if the name
+  of the m-file is set in the options.sippi_plot_data_functions is set, as
+  e.g:
+     options.sippi_plot_data_function='sippi_plot_data_gpr';
+  then 
+     sippi_plot_data(d,data,[],options)
+     sippi_plot_data(d,data,1:length(d),options); 
+  will be equivalent to call
+     sippi_plot_data_gpr(d,data); 
+ 
+  
+ 
+  
+  See also sippi_plot_defaults, sippi_plot_data_gpr
  
 ]]></programlisting></para>
 </sect2>
@@ -225,10 +253,6 @@
   showmax [scalar] : max number of traces to show on display [def=100]
   plimage [0/1] : Show image beneath wiggles [def=0];
   caxis [min max]/[scalar] : amplitude range for colorscale
- 
- 
-  MAKE IT WORK FOR ANY X-AXIS !!!
- 
  
 ]]></programlisting></para>
 </sect2>
