@@ -10,9 +10,9 @@
 % 
 % See also: sippi_prior_plurigaussian, prior_reals_plurigaussian
 %
-% Example
+% See also: pg_plot
 %
-function [pg_d]=pg_transform(m,pg_map,pg_limits);
+function [pg_d,pg_limits]=pg_transform(m,pg_map,pg_limits);
 
 %% check input data
 if nargin<2
