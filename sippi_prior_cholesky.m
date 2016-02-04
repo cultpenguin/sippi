@@ -129,6 +129,6 @@ if isfield(prior{ip},'o_nscore')
     D=D./sqrt(gvar);
 
     m_propose{ip}=inscore(D,prior{ip}.o_nscore)+prior{ip}.m0;
-else
-    m_propose{ip}=D+prior{ip}.m0;
+else    
+    m_propose{ip}=D(:)+prior{ip}.m0;
 end

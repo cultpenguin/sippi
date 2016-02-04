@@ -19,7 +19,7 @@ function [m,Cmat]=setup_Cm_corr(Cm0,m0,var0,cc);
   N=length(var0);
           
   nCm=size(Cm0,1);
-  m=zeros(1,N*nCm);
+  m=zeros(N*nCm,1);
 
   Cmat=[];
   for i=1:N;
