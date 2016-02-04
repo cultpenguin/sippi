@@ -18,7 +18,7 @@ lim=linspace(pg_limits(1),pg_limits(2),1001);
 [xx,yy]=meshgrid(lim,lim);
 
 if n2==1;
-    M=interp1(x1,pg_map,lim,'nearest');
+    M=interp1(x1,pg_map,lim,'next');
     plot(lim,M,'.');
     xlabel('Gaussian #1')
     ylabel('index')

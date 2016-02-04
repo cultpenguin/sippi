@@ -82,8 +82,8 @@ sippi_plot_prior(prior,m,im)      % visualize the realization from the prior
 print_mul('prior_example_5_2d_snesim')
 
 %% PLURIGAUSSIAN
+clear all;close all;im=0;
 im=im+1;
-clear all;im=1;
 prior{im}.name='Plurigaussian'; % [optional] specifies name to prior
 prior{im}.type='plurigaussian';                % the type of a priori model
 prior{im}.x=[0:1:100];                 % specifies the scales of the 1st (X) dimension
@@ -91,17 +91,18 @@ prior{im}.y=[10:1:90];                 % specifies the scales of the 2nd (Y) dim
 prior{im}.Cm='1 Gau(10)';
 prior{im}.pg_prior{1}.Cm=' 1 Gau(10)';
 prior{im}.pg_map=[0 0 0 0 1 1 0 0 2 2 2];
+prior{im}.pg_map=[0 0  1 1 0  2 2];
 [m,prior]=sippi_prior(prior);          % generate a realization from the prior model
 sippi_plot_prior_sample(prior,im,5)
 print_mul('prior_example_2d_plurigaussian_1')
 figure;
 pg_plot(prior{im}.pg_map,prior{im}.pg_limits);
 colormap(sippi_colormap);
-print_mul('prior_example_5_2d_plurigaussian_1_pgmap')
+print_mul('prior_example_2d_plurigaussian_1_pgmap')
 
 %%
+clear all;im=0;
 im=im+1;
-clear all;im=1;
 prior{im}.name='Plurigaussian'; % [optional] specifies name to prior
 prior{im}.type='plurigaussian';                % the type of a priori model
 prior{im}.x=[0:1:100];                 % specifies the scales of the 1st (X) dimension
@@ -111,13 +112,13 @@ prior{im}.pg_prior{2}.Cm=' 1 Sph(10,35,.4)';
 prior{im}.pg_map=[0 0 0 1 1; 1 2 0 1 1; 1 1 1 3 3];
 [m,prior]=sippi_prior(prior);          % generate a realization from the prior model
 sippi_plot_prior_sample(prior,im,5)
-print_mul('prior_example_5_2d_plurigaussian_2')
+print_mul('prior_example_2d_plurigaussian_2')
 
 figure;
 pg_plot(prior{im}.pg_map,prior{im}.pg_limits);
 set(gca,'FontSize',16)
 colormap(sippi_colormap);
-print_mul('prior_example_5_2d_plurigaussian_2_pgmap')
+print_mul('prior_example_2d_plurigaussian_2_pgmap')
 
 %%
 

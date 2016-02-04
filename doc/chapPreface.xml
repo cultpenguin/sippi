@@ -1,7 +1,7 @@
   <preface>
     <title>About</title>
     <para>
-SIPPI is a Matlab toolbox (compatible with GNU Octave) that allows Sampling the solution of non-linear Inverse Problems with realistic a Priori Information.
+&sippi; is a &matlab; toolbox (compatible with GNU &octave;) that allows Sampling the solution of non-linear Inverse Problems with realistic a Priori Information.
 </para>
 <para>
 In order to make use of SIPPI one has to

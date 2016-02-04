@@ -1,6 +1,6 @@
 <sect1 xml:id="InstallSippi"><title>Install &sippi;</title>
 <para>
-<link xlink:href="https://sourceforge.net/projects/sippi/files/latest/download?source=fileshttps://sourceforge.net/projects/sippi/files/latest/download?source=files">Download</link> the latest version of SIPPI from <link xlink:href="http://sippi.sourceforge.net">http://sippi.sourceforge.net</link>.
+The latest stable version  (v &sippi-version;) of &sippi; can be downloaded from <link xlink:href="http://sippi.sourceforge.net">http://sippi.sourceforge.net</link> as <link xlink:href="https://sourceforge.net/projects/sippi/files/latest/download?source=fileshttps://sourceforge.net/projects/sippi/files/latest/download?source=files">SIPPI.zip</link>. This version includes &mgstat; and &mps;.
 </para>
 
 <para>
@@ -13,28 +13,40 @@ sippi_set_path
 <para>
 </para>
 
+<sect2 xml:id="SippiGithub"><title>Install development version of SIPPI from github</title>
+<para>
+The current development version of SIPPI (less stable and documented) is hosted on github. SIPPI also makes makes use of
+<link xlink:href="http://mgstat.sourceforge.net/">&mgstat;</link>
+and
+<link xlink:href="http://github.com/cultpenguin/mps/">&mps;</link>. These three project can be downloaded using git using:
+<screen>
+git clone  https://github.com/cultpenguin/sippi.git SIPPI
+git clone  https://github.com/cultpenguin/sippi.git mGstat
+git clone  https://github.com/cultpenguin/mps.git MPS
+</screen>
+Then add a path to both SIPPI, mGstat and MPS in Matlab using
+<screen>
+>> addpath INSTALL_DIR/mGstat
+>> addpath INSTALL_DIR/MPS/matlab
+>> addpath INSTALL_DIR/SIPPI
+>> sippi_set_path
+</screen>
+</para>
+</sect2>
+
+
 <sect2 xml:id="SGEMS"><title>SGeMS (optional)</title>
 <para>
-To make use of the SISIM and SNESIM type prior models, SGeMS needs to be available.
+To make use of the SISIM and SNESIM_STD type prior models, SGeMS needs to be available.
 </para>
 <para>
 Currently only SGeMS version 2.1 (<link xlink:href="http://sourceforge.net/projects/sgems/files/sgems/sgems-2.1Beta/sgems_2.1beta_installer.exe/download">download</link>) for Windows is supported by SIPPI. 
+</para>
+<para>
+Support for SGeMS will be discontinued after relevase v1.5, as the <link xlink:href="http://github.com/cultpenguin/mps/">&mps;</link> library will be used instead.
 </para>
 </sect2>
 
 
 </sect1>
 
-<sect1 xml:id="SippiGithub"><title>Install development version of SIPPI from github</title>
-<para>
-If you want to test out the current development version of SIPPI (less stable and documented) then you can get the code using git. SIPPI makes heave use of the <link xlink:href="http://mgstat.sourceforge.net/">mGstat</link> toolbox which you will also need:
-<screen>
-git clone --recursive https://github.com/cultpenguin/sippi.git SIPPI
-</screen>
-Then add a path to both SIPPI and mGstat in Matlab using
-<screen>
->> addpath INSTALL_DIR/SIPPI
->> sippi_set_path
-</screen>
-</para>
-</sect1>
