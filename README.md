@@ -7,12 +7,17 @@ http://sippi.sourceforge.net/sippi.pdf
 http://sippi.sourceforge.net/htmldoc/
 
 ### INSTALL
-To make us of SIPPI, unpack SIPPI.zip to a fodler $SIPPI. 
-The start Matlab add the appropriate paths using
+
+#### Latest stable release
+The simplet approach to start using SIPPI is to download the latest SIPPI pakcgaed from http://sippi.sourceforge.net/
+
+Simply download [SIPPI.zip](https://sourceforge.net/projects/sippi/files/latest/download?source=files), and unzip SIPPI.zip to a folder such as $SIPPI.
+
+hen start Matlab add the appropriate paths using
 	>> addpath $SIPPI
 	>> sippi_set_path
 
-Please go to [http://sippi.sourceforge.net] for examples and details on how to use sippi
+Please go to (http://sippi.sourceforge.net) for examples and details on how to use SIPPI
 	
 	
 ### DIRECTORIES :

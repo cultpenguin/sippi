@@ -17,23 +17,22 @@ sippi_set_path
 <para>
 The current development version of SIPPI (less stable and documented) is hosted on github. SIPPI also makes makes use of
 <link xlink:href="http://mgstat.sourceforge.net/">&mgstat;</link>
+<!--
 and
-<link xlink:href="http://github.com/cultpenguin/mps/">&mps;</link>. These three project can be downloaded using git using:
+<link xlink:href="http://github.com/cultpenguin/mps/">&mps;</link>.-->
+These three project can be downloaded using git using:
 <screen>
 git clone  https://github.com/cultpenguin/sippi.git SIPPI
 git clone  https://github.com/cultpenguin/sippi.git mGstat
-git clone  https://github.com/cultpenguin/mps.git MPS
 </screen>
 Then add a path to both SIPPI, mGstat and MPS in Matlab using
 <screen>
 >> addpath INSTALL_DIR/mGstat
->> addpath INSTALL_DIR/MPS/matlab
 >> addpath INSTALL_DIR/SIPPI
 >> sippi_set_path
 </screen>
 </para>
 </sect2>
-
 
 <sect2 xml:id="SGEMS"><title>SGeMS (optional)</title>
 <para>
