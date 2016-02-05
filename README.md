@@ -71,26 +71,27 @@ $SIPPI/examples/tomography
 
 * using data AM13 (2D)
 
-sippi_AM13_metropolis_gaussian.m : Metropolis sampling using Gaussian prior
+sippi_AM13_metropolis_gaussian.m: Metropolis sampling using Gaussian prior
 
-sippi_AM13_metropolis_bimodal.m : Metropolis sampling using Gaussian prior / bimodal distribution
+sippi_AM13_metropolis_bimodal.m: Metropolis sampling using Gaussian prior / bimodal distribution
 
-sippi_AM13_metropolis_uniform.m : Metropolis sampling using Gaussian prior / uniform distribution
+sippi_AM13_metropolis_uniform.m: Metropolis sampling using Gaussian prior / uniform distribution
 
-sippi_AM13_rejection_gaussian.m : Rejection sampling using Gaussian prior
+sippi_AM13_rejection_gaussian.m: Rejection sampling using Gaussian prior
 
-sippi_AM13_least_squares.m : Least squares inversion using Gaussian prior
+sippi_AM13_least_squares.m: Least squares inversion using Gaussian prior
   
 * using data AM24 (2D)
 
-sippi_AM24_gaussian.m : as sippi_AM13_metropolis_gaussian.m but for data set AM24
+sippi_AM24_gaussian.m: as sippi_AM13_metropolis_gaussian.m but for data set AM24
 
 * using data AM1234 (3D)
 
 sippi_AM1234_metropolis_gaussian.m : sippi_AM13_metropolis_gaussian.m but for data set AM1234
 
-$SIPPI/examples/covariance_ingerence
-  - jura_covariance_inference
+$SIPPI/examples/covariance_inference
+
+  - jura_covariance_inference:
   Example of probabilistic covariance model parameter inference following
   Hansen et al., 2015 - A general probabilistic approach for inference of Gaussian model parameters from noisy data of point and volume support. 
   doi:10.1007/s11004-014-9567-5 
