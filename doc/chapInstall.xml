@@ -1,6 +1,7 @@
 <sect1 xml:id="InstallSippi"><title>Install &sippi;</title>
 <para>
-The latest stable version  (v &sippi-version;) of &sippi; can be downloaded from <link xlink:href="http://sippi.sourceforge.net">http://sippi.sourceforge.net</link> as <link xlink:href="https://sourceforge.net/projects/sippi/files/latest/download?source=fileshttps://sourceforge.net/projects/sippi/files/latest/download?source=files">SIPPI.zip</link>. This version includes &mgstat; and &mps;.
+  The latest stable version  (v &sippi-version;) of &sippi; can be downloaded from <link xlink:href="http://sippi.sourceforge.net">http://sippi.sourceforge.net</link> as <link xlink:href="https://sourceforge.net/projects/sippi/files/latest/download?source=fileshttps://sourceforge.net/projects/sippi/files/latest/download?source=files">SIPPI.zip</link>. This version includes &mgstat;.
+<!-- and &mps;. -->
 </para>
 
 <para>
@@ -13,17 +14,18 @@ sippi_set_path
 <para>
 </para>
 
-<sect2 xml:id="SippiGithub"><title>Install development version of SIPPI from github</title>
+<sect2 xml:id="SippiGithub"><title>Install SIPPI manually from github</title>
 <para>
 The current development version of SIPPI (less stable and documented) is hosted on github. SIPPI also makes makes use of
 <link xlink:href="http://mgstat.sourceforge.net/">&mgstat;</link>
 <!--
 and
 <link xlink:href="http://github.com/cultpenguin/mps/">&mps;</link>.-->
-These three project can be downloaded using git using:
+These projects can be downloaded using git:
 <screen>
+cd INSTALL_DIR
 git clone  https://github.com/cultpenguin/sippi.git SIPPI
-git clone  https://github.com/cultpenguin/sippi.git mGstat
+git clone  https://github.com/cultpenguin/mgstat.git mGstat
 </screen>
 Then add a path to both SIPPI, mGstat and MPS in Matlab using
 <screen>
@@ -32,6 +34,26 @@ Then add a path to both SIPPI, mGstat and MPS in Matlab using
 >> sippi_set_path
 </screen>
 </para>
+
+<sect3><title>Manual compilation</title>
+<para>
+The &mgstat; toolbox make use SNESIM and VISIM (which can be used from &sippi;). Pre-compiled binaries are available for windows, but for other platforms one may need to manually compile both programs.
+</para>
+<para>
+These programs are needed to make use of the  <link linkend="prior_visim">VISIM</link>  and <link linkend="prior_snesim">SNESIM</link> type <link linkend="prior_types">a priori models</link> (and can hence be ignored if not used).
+</para>
+<para>
+The source code for VISIM is located in <varname>mGstat/visim/visim_src</varname>
+</para>
+<para>
+The source code for SNESIM is available from <link xlink:href="https://github.com/SCRFpublic/snesim-standalone">github</link>.
+</para>
+<para>
+compiled program should be placed in <varname>mGstat/bin</varname> and called <varname>snesim</varname> and <varname>visim</varname>.  
+</para>
+</sect3>
+  
+
 </sect2>
 
 <sect2 xml:id="SGEMS"><title>SGeMS (optional)</title>
