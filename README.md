@@ -13,7 +13,7 @@ The simplest approach to start using SIPPI is to download the latest SIPPI packa
 
 Simply download [SIPPI.zip](https://sourceforge.net/projects/sippi/files/latest/download?source=files), and unzip SIPPI.zip to a folder such as $SIPPI.
 
-Then start Matlab add the appropriate paths using
+Then start Matlab and add the appropriate paths using
 
      >> addpath $SIPPI
      >> sippi_set_path
