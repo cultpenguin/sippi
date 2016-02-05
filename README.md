@@ -93,8 +93,8 @@ $SIPPI/examples/covariance_ingerence
 
 #v1.4 2015-02-01
 Notice that V1.3 was packed without mGstat :/
-So v1.4 is like V1.4 but repackaged properly with mGstat. 
-
+So v1.4 is like V1.4 but repackaged properly with mGstat.
++ sippi_prior_plurigaussian added for the first time.
 
 #v1.3 
 Added parallel tempering to sippi_metropolis
