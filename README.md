@@ -48,13 +48,15 @@ See also http://sippi.sourceforge.net/htmldoc/Installation.html for more details
 **$SIPPI/data**
   Currently only contains the data from ARRENAES described in the paper
 
-**$SIPPI/toolboxes*'
+**$SIPPI/toolboxes'**
 
-*'fast_marching_kron' -> Fast marching toolbox by Dirk-Jan Kroon. 
++'fast_marching_kron' -> Fast marching toolbox by Dirk-Jan Kroon. 
          http://www.mathworks.com/matlabcentral/fileexchange/24531-accurate-fast-marching
-*'mGstat' -> geostatistical toolbox for Matlab, by Thomas M Hansen and Knud S Cordua
+
++'mGstat' -> geostatistical toolbox for Matlab, by Thomas M Hansen and Knud S Cordua
          http://mgstat.sourceforge.net
-*'tomography' -> A few m-files realated to the cross hole tomographic examples
+
++'tomography' -> A few m-files realated to the cross hole tomographic examples
 
 **$SIPPI/examples/** 
   contains a number of example for using/running SIPPI
