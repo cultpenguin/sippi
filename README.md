@@ -39,33 +39,34 @@ See also http://sippi.sourceforge.net/htmldoc/Installation.html for more details
 
 ### DIRECTORIES :
 
-$SIPPI/
+**$SIPPI/**
   SIPPI core m-files
   
-$SIPPI/plotting
+**$SIPPI/plotting**
   Directory containing m-files for plotting
 
-  $SIPPI/data
+**$SIPPI/data**
   Currently only contains the data from ARRENAES described in the paper
 
-  $SIPPI/toolboxes
-  'fast_marching_kron' -> Fast marching toolbox by Dirk-Jan Kroon. 
-         http://www.mathworks.com/matlabcentral/fileexchange/24531-accurate-fast-marching
-  'mGstat' -> geostatistical toolbox for Matlab, by Thomas M Hansen and Knud S Cordua
-         http://mgstat.sourceforge.net
-  'tomography' -> A few m-files realated to the tomographics examples
+**$SIPPI/toolboxes*'
 
-$SIPPI/examples/ 
+*'fast_marching_kron' -> Fast marching toolbox by Dirk-Jan Kroon. 
+         http://www.mathworks.com/matlabcentral/fileexchange/24531-accurate-fast-marching
+*'mGstat' -> geostatistical toolbox for Matlab, by Thomas M Hansen and Knud S Cordua
+         http://mgstat.sourceforge.net
+*'tomography' -> A few m-files realated to the cross hole tomographic examples
+
+**$SIPPI/examples/** 
   contains a number of example for using/running SIPPI
 
-$SIPPI/examples/prior_tests
+**$SIPPI/examples/prior_tests**
   contains m-files used to generate samples from the prior pdf of a number 
   of different prior type models
 
-$SIPPI/examples/case_line_fit
+**$SIPPI/examples/case_line_fit**
   sippi_line_fit.m demonstrates fitting a straight lin, CASE 1 in the SIPPI manuscript
   
-$SIPPI/examples/tomography
+**$SIPPI/examples/tomography**
   contains a number of examples of sampling the a posteriori pdf for 
   tomographic inverse problems, CASE 2 in the SIPPI manuscript
 
@@ -89,7 +90,7 @@ sippi_AM24_gaussian.m: as sippi_AM13_metropolis_gaussian.m but for data set AM24
 
 sippi_AM1234_metropolis_gaussian.m : sippi_AM13_metropolis_gaussian.m but for data set AM1234
 
-$SIPPI/examples/covariance_inference
+**$SIPPI/examples/covariance_inference**
 
   - jura_covariance_inference:
   Example of probabilistic covariance model parameter inference following
