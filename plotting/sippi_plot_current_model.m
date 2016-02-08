@@ -78,7 +78,9 @@ try
     % MAKE SURE THIS WORKS FOR MANY PRIOR MODELS
     %    plot(1:1:mcmc.i,mcmc.step(1:1:mcmc.i),'k-')
     %else
-    semilogy(1:1:mcmc.i,mcmc.step(:,1:1:mcmc.i),'k-')
+    semilogy(1:1:mcmc.i,mcmc.step(:,1:1:mcmc.i))
+    for ii=1:size(mcmc.step(:,1:1:mcmc.i),1),HH{ii}=sprintf('Prior%i',ii);end
+    legend(HH)
     %end
     ylabel('Step length')
     xlabel('Iteration number')
