@@ -36,6 +36,7 @@
 %% TARGET DISTRIBUTION
 % clear prior
 % d_target=[7 8 9 10 11 11 12];
+% d_target=[7 8 9 10 14 15 20];
 %
 % ip=1;
 % prior{ip}.type='visim';
@@ -46,11 +47,20 @@
 % prior{ip}.x=1:1:80;
 % prior{ip}.y=1:1:80;
 % prior{ip}.Cm=sprintf('%g Gau(20)',var(d_target));
+% prior{ip}.Cm=sprintf('%g Gau(20)',1);
 % [m,prior]=sippi_prior(prior);
 % sippi_plot_prior(prior,m);
 %
+% prior{ip}.seq_gibbs.step=16;
+% prior{ip}.seq_gibbs.type=1;
+% for i=1:10;
+%    [m,prior]=sippi_prior(prior,m);
+%    sippi_plot_prior(prior,m);
+%    drawnow
+% end
 %
-% See also: sippi_prior, visim
+%
+% See also: sippi_prior, visim, nscore, inscore
 %
 function [m_propose,prior]=sippi_prior_visim(prior,m_current,ip);
 
@@ -142,7 +152,7 @@ if isfield(prior{ip},'d_target')
         Va_par=prior{ip}.Va;
         gvar_Va=sum([Va_par.par1]);
         gvar_d_target=var(prior{ip}.d_target);
-        prior{ip}.V.var=gvar_d_target;
+        prior{ip}.V.gvar=gvar_d_target;
         
         for j=1:length(prior{ip}.Va);
             prior{ip}.Va(j).par1 = prior{ip}.Va(j).par1 * (gvar_d_target./gvar_Va);
@@ -154,10 +164,27 @@ if isfield(prior{ip},'d_target')
         % setup normal score transform
         if (isfield(prior{ip},'d_target'))&(~isfield(prior{ip},'o_nscore'))
             % UPDATE PRIOR STRUCTURE TO USE TARGET DISTRIBUTION
-            d_min=min(prior{im}.d_target);
-            d_max=max(prior{im}.d_target);
-            [d_nscore,o_nscore]=nscore(prior{im}.d_target,1,1,d_min,d_max,0);
-            prior{im}.o_nscore=o_nscore;
+            d_min=min(prior{ip}.d_target);
+            d_max=max(prior{ip}.d_target);
+            [d_nscore,o_nscore]=nscore(prior{ip}.d_target,1,1,d_min,d_max,0);
+            prior{ip}.o_nscore=o_nscore;
+            
+            % force mean to zero and variance to 1
+            sippi_verbose(sprintf('%s: Updating global mean and variance to N(0,1)',mfilename),10);
+            if ~isstruct(prior{ip}.Va);
+                prior{ip}.Va=deformat_variogram(prior{ip}.Va);
+            end
+            Va_par=prior{ip}.Va;
+            gvar=sum([Va_par.par1]);
+ 
+            for j=1:length(prior{ip}.Va);
+                prior{ip}.Va(j).par1 = prior{ip}.Va(j).par1./gvar
+            end
+            prior{ip}.V.gvar=1;
+            prior{ip}.V.gmean=0;
+            prior{ip}.m0=0;
+            
+        
         end
      
     end
@@ -168,8 +195,25 @@ end
 if nargin>1
     % SEQUENTIAL GIBBS
     mgstat_verbose(sprintf('%s : Sequential Gibbs',mfilename),2)
-    %prior{ip}.S=sgems_set_resim_data(prior{ip}.S,m_current,prior{ip}.seq_gibbs.step,prior{ip}.seq_gibbs.type);
-    [prior{ip}.V, i_resim]=visim_set_resim_data(prior{ip}.V,m_current{ip},prior{ip}.seq_gibbs.step,[],[],prior{ip}.seq_gibbs.type);
+    
+    m=m_current{ip};
+    
+    % if using SGSIM methods and using target distribution, then perform
+    % forward normal score
+    if (strcmp(prior{ip}.method,'sgsim'))&(isfield(prior{ip},'o_nscore'))
+        m=nscore(m,prior{ip}.o_nscore);
+        
+        if ~isstruct(prior{ip}.Va);
+            prior{ip}.Va=deformat_variogram(prior{ip}.Va);
+        end
+        Va_par=prior{ip}.Va;
+        gvar=sum([Va_par.par1]);
+ 
+        m=m;%.*gvar;
+        
+    end
+    
+    [prior{ip}.V, i_resim]=visim_set_resim_data(prior{ip}.V,m,prior{ip}.seq_gibbs.step,[],[],prior{ip}.seq_gibbs.type);
     prior{ip}.seq_gibbs.used=i_resim;
     if isempty(i_resim)
         prior{ip}.V.cond_sim=0;
@@ -184,7 +228,7 @@ prior{ip}.V=visim(prior{ip}.V);
 m_propose{ip} = prior{ip}.V.D';
 
 %% PERFORM NORMAL SCORE OF NEEDED
-if isfield(prior{ip},'o_nscore');
+if (strcmp(prior{1}.method,'sgsim'))&(isfield(prior{ip},'o_nscore'))
     if ~isstruct(prior{ip}.Va);
         prior{ip}.Va=deformat_variogram(prior{ip}.Va);
     end

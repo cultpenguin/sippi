@@ -97,6 +97,8 @@ for im=1:length(prior);
 end
 
 for im=im_arr;
+    
+    if exist('caxis_use','var'); clear caxis_use;end
     % CLEAR FIGURES
     f_id=90+im;
     figure_focus(f_id);clf;
@@ -222,7 +224,7 @@ for im=im_arr;
             % plot the realizations
             sippi_plot_prior(p,m_prior,1,use_colorbar,f_id);
             % use the same caxis unless prior{1}.cax is set
-            if ~isfield(prior{1},'cax')               
+            if ~isfield(prior{im},'cax')
                 if ~exist('caxis_use','var')
                     caxis_use=caxis;
                 end
