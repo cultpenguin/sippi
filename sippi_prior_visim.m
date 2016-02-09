@@ -132,7 +132,23 @@ if isfield(prior{ip},'d_target')
             prior{ip}.V.tail.zmax=max(prior{ip}.d_target);
         end
         
+        % update global mean and variance in visim parameter file!
+        sippi_verbose(sprintf('%s: Updating global mean and variance from target dist',mfilename),10);
+        
         prior{ip}.V.gmean=mean(prior{ip}.d_target);
+        if ~isstruct(prior{ip}.Va);
+            prior{ip}.Va=deformat_variogram(prior{ip}.Va);
+        end
+        Va_par=prior{ip}.Va;
+        gvar_Va=sum([Va_par.par1]);
+        gvar_d_target=var(prior{ip}.d_target);
+        prior{ip}.V.var=gvar_d_target;
+        
+        for j=1:length(prior{ip}.Va);
+            prior{ip}.Va(j).par1 = prior{ip}.Va(j).par1 * (gvar_d_target./gvar_Va);
+        end
+        [prior{ip}.V]=visim_set_variogram(prior{ip}.V,prior{ip}.Va);
+        
     else
         %% SGSIM
         % setup normal score transform
