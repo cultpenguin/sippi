@@ -39,6 +39,8 @@
 %
 % ip=1;
 % prior{ip}.type='visim';
+% prior{ip}.method='sgsim';
+% % prior{ip}.method='dssim';
 % prior{ip}.d_target=d_target;
 % prior{ip}.cax=[min(d_target) max(d_target)];
 % prior{ip}.x=1:1:80;
@@ -75,6 +77,16 @@ if isfield(prior{ip},'m0')
     prior{ip}.V.gmean=prior{ip}.m0; % set global mean
 end
 
+% SIMULATION METHOD
+if ~isfield(prior{ip},'method');
+    if isfield(prior{ip},'d_target')
+        %prior{ip}.method='sgsim';
+        prior{ip}.method='dssim';
+    else
+        prior{ip}.method='sgsim';
+    end
+end
+
 %% RANDOM SEED
 prior{ip}.V.cond_sim=0;
 if isfield(prior{ip},'seed');
@@ -86,33 +98,53 @@ end
 
 %% SET TARGET DISTRIBUTION
 if isfield(prior{ip},'d_target')
-    f_cond=sprintf('d_target_%02d.eas',ip);
-    if ~exist(f_cond,'file');
-        write_eas(f_cond,prior{ip}.d_target(:));
-        sippi_verbose(sprintf('%s : writing target distribution to %s',mfilename,f_cond));
-    end
-    % set data the define a realization of a 1D marginal distribution
-    prior{ip}.V.refhist.fname=f_cond;
-    % Use the 1D marginal distribution as terget distritbution    
-    prior{ip}.V.ccdf=1;
-    % Treat the 1D marginal distribution as a discrete distribution
-    % in this case only actual values from the 1D marginal will 
-    % be realized
-    prior{ip}.V.refhist.do_discrete=1;
-   
-    
-    if isfield(prior{ip},'min')
-        prior{ip}.V.tail.zmin=prior{ip}.min;
+    if strcmp(prior{ip}.method,'dssim');
+        
+        %% DSSIM
+        % make sure each visim type has different filename for target dist.
+        if isfield(prior{ip},'visim_id');
+            f_cond=sprintf('d_target_%02d.eas',prior{ip}.visim_id);
+        else
+            f_cond=sprintf('d_target_%02d.eas',ip);
+        end
+        if ~exist(f_cond,'file');
+            write_eas(f_cond,prior{ip}.d_target(:));
+            sippi_verbose(sprintf('%s : writing target distribution to %s',mfilename,f_cond));
+        end
+        % set data the define a realization of a 1D marginal distribution
+        prior{ip}.V.refhist.fname=f_cond;
+        % Use the 1D marginal distribution as terget distritbution
+        prior{ip}.V.ccdf=1;
+        % Treat the 1D marginal distribution as a discrete distribution
+        % in this case only actual values from the 1D marginal will
+        % be realized
+        prior{ip}.V.refhist.do_discrete=1;
+        
+        
+        if isfield(prior{ip},'min')
+            prior{ip}.V.tail.zmin=prior{ip}.min;
+        else
+            prior{ip}.V.tail.zmin=min(prior{ip}.d_target);
+        end
+        if isfield(prior{ip},'max')
+            prior{ip}.V.tail.zmin=prior{ip}.max;
+        else
+            prior{ip}.V.tail.zmax=max(prior{ip}.d_target);
+        end
+        
+        prior{ip}.V.gmean=mean(prior{ip}.d_target);
     else
-        prior{ip}.V.tail.zmin=min(prior{ip}.d_target);
+        %% SGSIM
+        % setup normal score transform
+        if (isfield(prior{ip},'d_target'))&(~isfield(prior{ip},'o_nscore'))
+            % UPDATE PRIOR STRUCTURE TO USE TARGET DISTRIBUTION
+            d_min=min(prior{im}.d_target);
+            d_max=max(prior{im}.d_target);
+            [d_nscore,o_nscore]=nscore(prior{im}.d_target,1,1,d_min,d_max,0);
+            prior{im}.o_nscore=o_nscore;
+        end
+     
     end
-    if isfield(prior{ip},'max')
-        prior{ip}.V.tail.zmin=prior{ip}.max;
-    else
-        prior{ip}.V.tail.zmax=max(prior{ip}.d_target);
-    end
-    
-    prior{ip}.V.gmean=mean(prior{ip}.d_target);
     
 end
 
@@ -134,6 +166,23 @@ end
 %% RUN VISIM
 prior{ip}.V=visim(prior{ip}.V);
 m_propose{ip} = prior{ip}.V.D';
+
+%% PERFORM NORMAL SCORE OF NEEDED
+if isfield(prior{ip},'o_nscore');
+    if ~isstruct(prior{ip}.Va);
+        prior{ip}.Va=deformat_variogram(prior{ip}.Va);
+    end
+    Va_par=prior{ip}.Va;
+    gvar=sum([Va_par.par1]);
+    m_propose{ip}=m_propose{ip}./sqrt(gvar);
+    m_propose{ip}=inscore(m_propose{ip},prior{ip}.o_nscore);
+    
+    
+    % add mean model
+    m_propose{ip}=m_propose{ip}+prior{ip}.m0;
+    
+end
+     
 
 
 

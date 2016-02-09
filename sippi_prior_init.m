@@ -191,6 +191,11 @@ for im=im_array
     %% VISIM OPTIONS
     if (strcmp(upper(prior{im}.type),'VISIM'))
         visim_clean;
+       
+        if ~isfield(prior{im},'visim_id');
+            prior{im}.visim_id=im;
+        end    
+       
         if ~isfield(prior{im},'V');
             prior{im}.V=visim_init(prior{im}.x,prior{im}.y,prior{im}.z);
         end
