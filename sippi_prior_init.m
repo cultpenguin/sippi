@@ -214,7 +214,7 @@ for im=im_array
         end
         try 
              f_cond=sprintf('d_target_%02d.eas',im);
-             if exist(f_cond','file')
+             if exist([pwd,filesep,f_cond],'file')
                  delete(f_cond);
              end
         end

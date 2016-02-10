@@ -89,12 +89,12 @@ end
 
 % SIMULATION METHOD
 if ~isfield(prior{ip},'method');
-    if isfield(prior{ip},'d_target')
-        %prior{ip}.method='sgsim';
-        prior{ip}.method='dssim';
-    else
-        prior{ip}.method='sgsim';
-    end
+    prior{ip}.method='dssim';
+%    if isfield(prior{ip},'d_target')
+%        %prior{ip}.method='sgsim';
+%    else
+%        prior{ip}.method='sgsim';
+%    end
 end
 
 %% RANDOM SEED
@@ -111,13 +111,13 @@ if isfield(prior{ip},'d_target')
     if strcmp(prior{ip}.method,'dssim');
         
         %% DSSIM
-        % make sure each visim type has different filename for target dist.
+        % make sure each visim type has different filename for target dist.       
         if isfield(prior{ip},'visim_id');
             f_cond=sprintf('d_target_%02d.eas',prior{ip}.visim_id);
         else
-            f_cond=sprintf('d_target_%02d.eas',ip);
+            f_cond=sprintf('d_target.eas',ip);
         end
-        if ~exist(f_cond,'file');
+        if ~exist([pwd,filesep,f_cond],'file');
             write_eas(f_cond,prior{ip}.d_target(:));
             sippi_verbose(sprintf('%s : writing target distribution to %s',mfilename,f_cond));
         end
@@ -158,11 +158,15 @@ if isfield(prior{ip},'d_target')
             prior{ip}.Va(j).par1 = prior{ip}.Va(j).par1 * (gvar_d_target./gvar_Va);
         end
         [prior{ip}.V]=visim_set_variogram(prior{ip}.V,prior{ip}.Va);
+       
+        prior{ip}.m0= prior{ip}.V.gmean;
+        
         
     else
         %% SGSIM
         % setup normal score transform
-        if (isfield(prior{ip},'d_target'))&(~isfield(prior{ip},'o_nscore'))
+        %if (isfield(prior{ip},'d_target'))&(~isfield(prior{ip},'o_nscore'))
+        if (isfield(prior{ip},'d_target'));
             % UPDATE PRIOR STRUCTURE TO USE TARGET DISTRIBUTION
             d_min=min(prior{ip}.d_target);
             d_max=max(prior{ip}.d_target);
@@ -178,10 +182,13 @@ if isfield(prior{ip},'d_target')
             gvar=sum([Va_par.par1]);
  
             for j=1:length(prior{ip}.Va);
-                prior{ip}.Va(j).par1 = prior{ip}.Va(j).par1./gvar
+                prior{ip}.Va(j).par1 = prior{ip}.Va(j).par1./gvar;
             end
+            prior{ip}.V.ccdf=0; % DO NOT USE TARGET DISTRIBUTION
             prior{ip}.V.gvar=1;
             prior{ip}.V.gmean=0;
+            %prior{ip}.V.tail.zmin=-5;
+            %prior{ip}.V.tail.zmin=5;
             prior{ip}.m0=0;
             
         
