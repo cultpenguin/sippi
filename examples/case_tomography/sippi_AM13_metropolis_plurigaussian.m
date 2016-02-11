@@ -1,19 +1,19 @@
-% sippi_AM13_gaussian 2D inversion using the extended Metropolis sampler (Gaussian prior) 
+% sippi_AM13_plurigaussian 2D inversion using the extended Metropolis sampler (PluriGaussian prior) 
 %
 % Example of inverting 2D Arrenaes tomographic data (AM13)
 % using the extended Metropolis sampler and a 
-% Gaussian a priori model.
+% plurigaussian a priori model.
 %
 % See http://dx.doi.org/10.1016/j.cageo.2012.10.001
 % 
-% See also: sippi_metropolis
+% See also: sippi_metropolis, sippi_prior_plurigaussian
 %
 
 
 %% Load the travel time data set from ARRENAES
 clear all;close all
 D=load('AM13_data.mat');
-options.txt='AM13_gaussian';
+options.txt='AM13_plurigaussian';
 
 
 %% SETUP DATA, PRIOR and FORWARD
@@ -27,10 +27,14 @@ data{id}.Ct=D.Ct; % Correlated noise model according to Cordua et al (2008; 2009
 
 %% SETUP PRIOR
 im=1;
-prior{im}.type='FFTMA';
+prior{im}.type='plurigaussian';
 prior{im}.name='Velocity (m/ns)';
-prior{im}.m0=0.145;
-prior{im}.Va='.0003 Sph(6)';
+%prior{im}.m0=0.145;
+
+prior{im}.pg_prior{1}.Cm=' 1 Gau(5,90,.5)';
+prior{im}.pg_map=[0.11 .11 .13 .13 .15 .15 .17 .13 .17];
+
+%prior{im}.Va='1 Sph(6)';
 dx=0.15;
 prior{im}.x=[-1:dx:6];
 prior{im}.y=[0:dx:13];
@@ -66,7 +70,7 @@ randn('seed',2);rand('seed',2);
 % example of starting with a high temperature, that allow higher
 % exploration. The temperature is lowered to T=1, after which the 
 % algorithm proceeds as a usual Metropolis sampler 
-doAnneal=1;
+doAnneal=0;
 if doAnneal==1;
     i_stop_anneal=1000;
     for im=1:length(prior);
@@ -82,7 +86,7 @@ end
 % example of using parallel tempering (Sambridge, 2013)
 doTempering=1;
 if doTempering==1;
-    options.mcmc.n_chains=4; % set number of chains (def=1)
+    options.mcmc.n_chains=2; % set number of chains (def=1)
     options.mcmc.T=[1 1.5 2 3]; % set number of chains (def=1)
 end
 
