@@ -86,7 +86,13 @@ The <link linkend="prior_sisim">SISIM</link> type prior model specifies a 1D-3D 
 </para>
 -->
 <para>
-The <link linkend="prior_snesim">SNESIM</link> type prior model specifies a 1D-3D multiple-point-based statistical prior model, which relies on training images from where the conditional dependencies of the spatial variables are obtained (i.e., learned). This type of prior model requires <link linkend="SGEMS">SGEMS</link> to be installed.
+The <link linkend="prior_mps">MPS</link> type prior model specifies a 1D-3D multiple-point-based statistical prior model, based on the  <link xlink:href="https://github.com/cultpenguin/mps">&mps;</link> C++ library. Simulation types includes SNESIM (based on a search tree or list), ENESIM, and GENESIM (generalized ENESIM).
+</para>
+<para>
+The <link linkend="prior_snesim">SNESIM</link> type prior model specifies a 1D-3D multiple-point-based statistical prior model based on the SNESIM code from <link xlink:href="https://github.com/SCRFpublic/snesim-standalone">Stanford/SCRF</link>.
+</para>
+<para>
+The <link linkend="prior_snesim_std">SNESIM_STD</link> is similar to the 'SNESIM' type prior, but is based on <link linkend="SGEMS">SGEMS</link>.
 </para>
 <para>
 The following section documents the properties of each type of prior model.
@@ -528,9 +534,54 @@ print_mul('prior_example_2d_plurigaussian_2_pgmap')
 <para></para>
 </sect3>
 -->
+<sect3 xml:id="prior_mps"><title>MPS</title>
+<para>
+The 'MPS' type prior make use of the <link xlink:href="https://github.com/cultpenguin/mps">&mps; library</link> for mulitple-point based simulation. For compilation and installation help see <link linkend="InstallSippi">Install &sippi;</link>. &mps; implements the SNESIM (using both a search tree and a list to stor conditional statistics), and the generalized ENESIM algoritm. The type of multiple-point algorithm is define in the method field
+<screen>
+ip=1; 
+prior{ip}.type='mps';
+prior{ip}.method='mps_snesim';
+% prior{ip}.method='mps_snesim_tree';
+% prior{ip}.method='mps_snesim_list';
+% prior{ip}.method='mps_enesim_general';
+prior{ip}.x=1:1:80;
+prior{ip}.y=1:1:80;
+prior{ip}.ti=channels;
+</screen>
+</para>
+<para>
+
+</para>
+<sect4 xml:id="prior_mps_options"><title>options for &mps;</title>
+<para>
+All options for the MPS type simulation algorithm are be available in the <varname>prior{ip}.MPS</varname> data structure.
+</para>
+<para>
+For example, to set the number of used multiple grids, set the <varname>MPS.n_multiple_grids</varname> as
+<screen>
+ip=1; 
+prior{ip}.type='mps';
+prior{ip}.method='mps_snesim';
+prior{ip}.x=0:.1:10;
+prior{ip}.y=0:.1:20;
+[m,prior]=sippi_prior(prior);
+i=0;
+for n_mul_grids=[0:1:4];
+    prior{ip}.MPS.rseed=1;
+    prior{ip}.MPS.n_multiple_grids=n_mul_grids;
+    [m,prior]=sippi_prior(prior);
+    i=i+1;subplot(1,5,i);
+    imagesc(prior{1}.x,prior{1}.y,m{1});axis image
+    title(sprintf('NMG = %d',n_mul_grids));
+end
+</screen>
+</para>
+</sect4>
+</sect3>
+
 <sect3 xml:id="prior_snesim"><title>SNESIM</title>
 <para>
-The 'SNESIM' type prior model utilizes the SNESIM algorithm, as implemented in <link linkend="SGEMS">SGeMS</link>. As opposed to the Gaussian prior models defined above, the SNESIM prior model infer spatial statistics from a training image, which should be a 2D/3D stationary image.
+The 'SNESIM' type prior model utilizes the SNESIM algorithm, as implemented in Fortran available at <link xlink:href="https://github.com/SCRFpublic/snesim-standalone">Stanford/SCRF</link>.
 </para>
 <para>
 By default a training image (channel structures) from Sebastian Strebelle's PhD theses is used (if no training image is specified). A simple 2D type SNESIM prior model can be defined using the following code: 
@@ -622,6 +673,12 @@ end
 </para>
 </sect4>
 
+</sect3>
+
+<sect3 xml:id="prior_snesim_std"><title>SNESIM</title>
+<para>
+The 'SNESIM' type prior model utilizes the SNESIM algorithm, as implemented in <link linkend="SGEMS">SGeMS</link>. It can be called using the options as <link linkend="sippi_prior_snesim">sippi_prior_snesim</link>.
+</para>
 </sect3>
 
 

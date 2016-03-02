@@ -1,6 +1,6 @@
 <sect1 xml:id="InstallSippi"><title>Install &sippi;</title>
 <para>
-  The latest stable version  (v &sippi-version;) of &sippi; can be downloaded from <link xlink:href="http://sippi.sourceforge.net">http://sippi.sourceforge.net</link> as <link xlink:href="https://sourceforge.net/projects/sippi/files/latest/download?source=fileshttps://sourceforge.net/projects/sippi/files/latest/download?source=files">SIPPI.zip</link>. This version includes &mgstat;.
+The latest stable version  (v &sippi-version;) of &sippi; can be downloaded from <link xlink:href="http://sippi.sourceforge.net">http://sippi.sourceforge.net</link> as <link xlink:href="https://sourceforge.net/projects/sippi/files/latest/download?source=fileshttps://sourceforge.net/projects/sippi/files/latest/download?source=files">SIPPI.zip</link>. This version includes &mgstat;, SNESIM, VISIM and &mps;.
 <!-- and &mps;. -->
 </para>
 
@@ -12,6 +12,10 @@ addpath c:\Users\tmh\SIPPI
 sippi_set_path
 </screen>
 <para>
+For use on Windows or Mac, no other setup should be needed.
+</para>
+<para>
+For use on Linux/Unix some standolone programs will probably need to be recompiled (see below). 
 </para>
 
 <sect2 xml:id="SippiGithub"><title>Install SIPPI manually from github</title>
@@ -37,19 +41,30 @@ Then add a path to both SIPPI, mGstat and MPS in Matlab using
 
 <sect3><title>Manual compilation</title>
 <para>
-The &mgstat; toolbox make use SNESIM and VISIM (which can be used from &sippi;). Pre-compiled binaries are available for windows, but for other platforms one may need to manually compile both programs.
+The &mgstat; toolbox make use MPS, SNESIM and VISIM (which can be used from &sippi;). Pre-compiled binaries are available for windows, but for other platforms one may need to manually compile both programs.
 </para>
 <para>
-These programs are needed to make use of the  <link linkend="prior_visim">VISIM</link>  and <link linkend="prior_snesim">SNESIM</link> type <link linkend="prior_types">a priori models</link> (and can hence be ignored if not used).
+These programs are needed to make use of the  <link linkend="prior_mps">MPS</link>, <link linkend="prior_visim">VISIM</link>  and <link linkend="prior_snesim">SNESIM</link> type <link linkend="prior_types">a priori models</link> (and can hence be ignored if not used).
 </para>
 <para>
-The source code for VISIM is located in <varname>mGstat/visim/visim_src</varname>
+The source code for VISIM is located in <varname>mGstat/visim/visim_src</varname>. The compiled program should be placed in <varname>mGstat/bin</varname> and called <varname>visim</varname>.  
 </para>
 <para>
-The source code for SNESIM is available from <link xlink:href="https://github.com/SCRFpublic/snesim-standalone">github</link>.
+The source code for SNESIM is available from <link xlink:href="https://github.com/SCRFpublic/snesim-standalone">github</link>. The compiled program should be placed in <varname>mGstat/bin</varname> and called <varname>snesim</varname>.  
+
 </para>
 <para>
-compiled program should be placed in <varname>mGstat/bin</varname> and called <varname>snesim</varname> and <varname>visim</varname>.  
+The source code for &mps; is available from <link xlink:href="https://github.com/cultpenguin/mps">github</link>. 
+To dowload and compile &mps; use for example 
+<screen>
+cd INSTALL_DIR
+git clone  https://github.com/cultpenguin/mps.git MPS
+cd MPS
+make all
+</screen>
+Matlabs path should be updated to include <varname>INSTALL_DIR/MPS/matlab</varname>.
+</para>
+<para>
 </para>
 </sect3>
   
@@ -61,7 +76,7 @@ compiled program should be placed in <varname>mGstat/bin</varname> and called <v
 To make use of the SISIM and SNESIM_STD type prior models, SGeMS needs to be available.
 </para>
 <para>
-Currently only SGeMS version 2.1 (<link xlink:href="http://sourceforge.net/projects/sgems/files/sgems/sgems-2.1Beta/sgems_2.1beta_installer.exe/download">download</link>) for Windows is supported by SIPPI. 
+Currently only SGeMS version 2.1 (<link xlink:href="http://sourceforge.net/projects/sgems/files/sgems/sgems-2.1Beta/sgems_2.1beta_installer.exe/download">download</link>) for Windows is supported by &sippi;
 </para>
 <para>
 Support for SGeMS will be discontinued after relevase v1.5, as the <link xlink:href="http://github.com/cultpenguin/mps/">&mps;</link> library will be used instead.
