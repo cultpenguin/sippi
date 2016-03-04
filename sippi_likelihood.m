@@ -44,11 +44,13 @@
 %% CHECK THAT GENERALIZED GAUSSIAN WORKS FOR data{1}.d_std. and/or data{1}.d_var !!
 %
 %
-function [logL,L,data]=sippi_likelihood(d,data,id_array);
+function [logL,L,data]=sippi_likelihood(d,data,id_array)
 
 if  nargin<3
     id_array=1:length(d);
 end
+logL=zeros(1,length(d));
+L=zeros(1,length(d));
 for id=id_array;
     
     %if size(data{id}.d_obs,2)~=1
@@ -60,7 +62,7 @@ for id=id_array;
     %    end
     %end
     
-    % Check whether tp use user supplied noise model.
+    % Check whether to use user supplied noise model.
     if isfield(data{id},'noise_model')        
         % next line may be slow...
         if strfind(data{id}.noise_model,'sippi_likelihood_');
@@ -80,7 +82,7 @@ for id=id_array;
         %    % Force uncorrelated noise in case Cd ot CD is not set!!
         %    data{id}.noise_uncorr=1;
         %end
-        if (isfield(data{id},'Ct')|isfield(data{id},'Cd')|isfield(data{id},'CD'))
+        if (isfield(data{id},'Ct')||isfield(data{id},'Cd')||isfield(data{id},'CD'))
             % Force Correlated noise in case Cd ot CD is not set!!
             data{id}.noise_uncorr=0;
         else
@@ -93,7 +95,7 @@ for id=id_array;
     if ~isfield(data{id},'i_use'); data{id}.i_use=1:1:length(data{id}.d_obs);end
     
     
-    if strcmp(data{id}.noise_model,'gaussian')&(data{id}.noise_uncorr==1)
+    if strcmp(data{id}.noise_model,'gaussian')&&(data{id}.noise_uncorr==1)
         % UNCORRELATED GAUSSIAN NOISE
         
         % dd=data{id}.d_obs-d{id};
@@ -105,6 +107,16 @@ for id=id_array;
         else
             logL(id)=-.5*sum(sum(sum(dd.^2./(data{id}.d_std(data{id}.i_use).^2))));
         end
+        if ~isfield(data{id},'full_likelihood');
+            data{id}.full_likelihood=0;
+        end
+        if data{id}.full_likelihood==1;
+            % compute full Gaussian  probability, necessary if the variance
+            % is changing
+            k = length(dd).*log(((data{id}.d_std.*sqrt(2*pi)).^(-1)));
+            logL(id)=k+logL(id);
+        end
+        
         L(id)=exp(logL(id));
     else
         
@@ -113,8 +125,8 @@ for id=id_array;
         %% CHECK OF ONE SHOULD REMOVE ICD
         if isfield(data{id},'recomputeCD');
             if (data{id}.recomputeCD==1)
-                try; data{id}=rmfield(data{id},'CD');end
-                try; data{id}=rmfield(data{id},'iCD');end
+                try data{id}=rmfield(data{id},'CD');end
+                try data{id}=rmfield(data{id},'iCD');end
             end
         end
         
@@ -122,8 +134,8 @@ for id=id_array;
         try
             if ~(size(data{id}.iCD,1)==length(data{id}.i_use))
                 % recompute CD
-                try; data{id}=rmfield(data{id},'CD');end
-                try; data{id}=rmfield(data{id},'iCD');end
+                try data{id}=rmfield(data{id},'CD');end
+                try data{id}=rmfield(data{id},'iCD');end
                 %disp('recomputing  iCD');;
             end
         end
@@ -176,21 +188,21 @@ for id=id_array;
         
         % Only compute iCD if it is computed only once (i.e.
         % data{id}.recomputeCD==0)
-        if (~isfield(data{id},'iCD'))&(data{id}.recomputeCD==0)
+        if (~isfield(data{id},'iCD'))&&(data{id}.recomputeCD==0)
             %data{id}.iCD=inv(data{id}.CD);
             data{id}.iCD=inv(data{id}.CD(data{id}.i_use,data{id}.i_use));
             
         end
         
         % compute logdet(CD) if it does not exist, and if recomputeCD=1;
-        if (~isfield(data{id},'logdet'))|(data{id}.recomputeCD==1)
+        if (~isfield(data{id},'logdet'))||(data{id}.recomputeCD==1)
             data{id}.logdet = logdet(data{id}.CD(data{id}.i_use,data{id}.i_use));
         end
         
         
     end %%%%%%%%%%%%%%%%%
     
-    if strcmp(data{id}.noise_model,'gaussian')&(data{id}.noise_uncorr==0)
+    if strcmp(data{id}.noise_model,'gaussian')&&(data{id}.noise_uncorr==0)
         nknown=length(data{id}.i_use);
         
         if ~isfield(data{id},'full_likelihood');
@@ -203,20 +215,26 @@ for id=id_array;
             
             if isinf(f1);
                 %% this os pretty bad if CD changes !! Because then the determinant also changes..
-                disp(sprintf('%s : Full likelihood cannot be computed !',mfilename))
-                disp(sprintf('%s : --> ignoring determinant !',mfilename))
+                sippi_verbose(sprintf('%s : Full likelihood cannot be computed !',mfilename),-1)
+                sippi_verbose(sprintf('%s : --> ignoring determinant !',mfilename),-1)
                 f1=-f2;
             end;
             
             if data{id}.recomputeCD==1
-                f3 = -.5*dd'*(data{id}.CD\dd);
+                try
+                    f3 = -.5*dd'*(data{id}.CD(data{id}.i_use,data{id}.i_use)\dd);
+                catch
+                    keyboard
+                end
                 % disp(sprintf('f3=%g, logdet=%g',f3,data{id}.logdet))
             else
                 f3 =  -.5 * dd'*data{id}.iCD*dd;
             end
+            %10,keyboard
             logL(id) = f1 +f2 +f3;
             
         else
+            %20,keyboard
             if data{id}.recomputeCD==1
                 f3 = -.5*dd'*(data{id}.CD(data{id}.i_use,data{id}.i_use)\dd);
                 %f3 = -.5*dd'*(data{id}.CD\dd);
@@ -246,7 +264,7 @@ for id=id_array;
     elseif (strcmp(data{id}.noise_model,'gaussian'))
         % ALLEADY DONE
     else
-        disp(sprintf('%s : noise model ''%s'' is not supported',mfilename,data{id}.noise_model));
+        sippi_verbose(sprintf('%s : noise model ''%s'' is not supported',mfilename,data{id}.noise_model),-10);
         %keyboard
     end
     

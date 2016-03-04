@@ -42,7 +42,7 @@ function [options,data,prior,forward,m_current]=sippi_metropolis(data,prior,forw
 %
 %    % Perturb one a prior type at a time, according to some frequency
 %    options.mcmc.pert_strategy.i_pert = [1,3]; % only perturb prior 1 and 3
-%    options.mcmc.pert_strategy.i_pert = [2 8]; % perturb prior 3 80% of
+%    options.mcmc.pert_strategy.i_pert_freq = [2 8]; % perturb prior 3 80% of
 %                                               % the time and prior 1 20%
 %                                               % of the time
 %    % the default pertubation strategt is to select one prior model to
