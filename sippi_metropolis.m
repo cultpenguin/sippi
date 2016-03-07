@@ -479,7 +479,11 @@ for i=1:mcmc.nite;
             end
             hold off
 
-            set(gca,'ylim',ylim)
+            try 
+                set(gca,'ylim',ylim)
+            catch
+                %% Happen in vey rary cases..
+            end
             legend(L,'location','northeastoutside')
             xlabel('Iteration number')
             ylabel('log(L)')
