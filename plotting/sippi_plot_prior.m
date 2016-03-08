@@ -53,7 +53,7 @@ if ~iscell(m)
 end
 
 for im=im_array;
-    
+
     dim=prior{im}.dim;
     x=prior{im}.x;
     y=prior{im}.y;

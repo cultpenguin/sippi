@@ -37,6 +37,7 @@ if nargin<5
 end
 if ~exist('mcmc','var')&isfield(options,'mcmc')
     mcmc=options.mcmc;
+    mcmc=options.C{1}.mcmc;
 end
 
 % ALL DATA LOADED
@@ -126,12 +127,15 @@ for im=im_arr;
     
     %% PLOT LAST ACCEPTED MODEL
     try
+        if prior{im}.ndim>0
         try
             sippi_plot_prior(prior,m_current,im);
             print_mul(sprintf('%s_m%d_last_accepted_model',fname,im),options.plot.hardcopy_types)
+            
         catch
             sippi_plot_prior(prior,options.mcmc.m_current,im);
             print_mul(sprintf('%s_m%d_last_accepted_model',fname,im),options.plot.hardcopy_types)
+        end
         end
     catch
         try;close(fn);end
@@ -144,9 +148,11 @@ for im=im_arr;
     fn=101;
     figure_focus(fn);clf;
     if isfield(options.mcmc,'m_ref');
-        sippi_plot_prior(prior,options.mcmc.m_ref,im,1,fn);
-        watermark(sprintf('reference model - %d - %s',im,prior{im}.name));
-        print_mul(sprintf('%s_m%d_ref_model',fname,im),options.plot.hardcopy_types);
+        if prior{im}.ndim>0
+            sippi_plot_prior(prior,options.mcmc.m_ref,im,1,fn);
+            watermark(sprintf('reference model - %d - %s',im,prior{im}.name));
+            print_mul(sprintf('%s_m%d_ref_model',fname,im),options.plot.hardcopy_types);
+        end
     end  
     
     %% PLOT POSTERIOR REALS
@@ -433,6 +439,9 @@ for im=im_arr;
         
         fn=(im-1)*10+5;
         figure_focus(fn);set_paper('landscape');clf;
+        
+        % NEXT LINE ADDED TO ACCOUNT FOR MULTIPLE CHAINS
+        mcmc=options.C{1}.mcmc;
         acc=mcmc.acc(im,1:mcmc.i);
         perturb=mcmc.perturb(im,1:mcmc.i);
         ip=find(perturb==1); % find indice of iteration when parameter has been perturbed
@@ -464,7 +473,7 @@ for im=im_arr;
         print_mul(sprintf('%s_m%d_rate',fname,im),options.plot.hardcopy_types)
     catch
         try;close(fn);end
-        disp(sprintf('%s : could not plot acceptance rate for prior{%d}',mfilename,im));
+        disp(sprintf('%s : could not plot acceptance rate for prior{%d}',mfilename,im));        
         cd(cwd);
     end
     %% PLOT CORRELATION COEFFICIENT / FIND NITE PER INDEPENDANT POST REAL

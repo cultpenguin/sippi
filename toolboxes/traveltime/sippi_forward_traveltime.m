@@ -40,7 +40,6 @@ R=forward.receivers;
 x=prior{im}.x;
 y=prior{im}.y;
 z=prior{im}.z;
-
 if ~isfield(data{id},'i_use');
     %data{id}.i_use=1:size(data{id}.d_obs,1);
     data{id}.i_use=1:size(forward.sources,1);

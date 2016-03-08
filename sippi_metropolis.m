@@ -457,9 +457,9 @@ for i=1:mcmc.nite;
     %% PLOT CURRENT MODEL AND STATUS
     if ((mcmc.i/mcmc.i_plot)==round( mcmc.i/mcmc.i_plot ))
         try
-            C{1}.mcmc.i=mcmc.i;
+            C{1}.mcmc.i=mcmc.i;           
             sippi_plot_current_model(C{1}.mcmc,C{1}.data,C{1}.d_current,C{1}.m_current,C{1}.prior_current,options);
-        catch
+        catch            
             sippi_verbose(sprintf('%s : Could not plot current model info',mfilename),0);            
         end
         %%

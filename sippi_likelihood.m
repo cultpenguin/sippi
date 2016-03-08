@@ -99,8 +99,7 @@ for id=id_array;
         % UNCORRELATED GAUSSIAN NOISE
         
         % dd=data{id}.d_obs-d{id};
-        % d_std could be an array of lenth(data{id}.d_obs)...
-        
+        % d_std could be an array of lenth(data{id}.d_obs)...                
         dd=data{id}.d_obs(data{id}.i_use)-d{id};
         if length(data{id}.d_std)==1
             logL(id)=-.5*sum(sum(sum(dd.^2./(data{id}.d_std.^2))));
