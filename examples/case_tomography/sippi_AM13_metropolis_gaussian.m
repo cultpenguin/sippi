@@ -21,9 +21,10 @@ options.txt='AM13_gaussian';
 %% SETUP DATA
 id=1;
 data{id}.d_obs=D.d_obs;
-data{id}.d_std=D.d_std;
-data{id}.Ct=1; % Data covariance describing modelization error
-data{id}.Ct=D.Ct; % Correlated noise model according to Cordua et al (2008; 2009)
+data{id}.d_std=D.d_std.*0+0.4;;
+%data{id}.Ct=1; % Data covariance describing modelization error
+%data{id}.Ct=D.Ct; % Correlated noise model according to Cordua et al (2008; 2009)
+options.txt=[options.txt,'_noCt'];
 
 %% SETUP PRIOR
 im=1;
