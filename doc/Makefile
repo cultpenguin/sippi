@@ -2,7 +2,7 @@
 #
 #
 
-VERSION=2.14
+VERSION=1.5 
 
 validate:
 
@@ -55,11 +55,11 @@ tidy:
 
 
 release:
-	rm -fr SIPPI
-	rm -fr SIPPI_${VERSION}.zip
 	./make_sippi_release.sh ${VERSION}
 
 clean:
+	rm -fr SIPPI
+	rm -fr SIPPI_${VERSION}.zip
 	rm -f *.htmldoc
 	rm -fr htmldoc
 	rm -f *.op
