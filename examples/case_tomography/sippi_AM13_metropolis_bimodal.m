@@ -45,7 +45,7 @@ prior{im}.o_nscore=o_nscore;
 
 prior=sippi_prior_init(prior);
 m=sippi_prior(prior);
-forward.linear_m=0.14; % Needed when m0 is set to 0 (using target distribution, and forward.linear=1;)´
+forward.linear_m=0.14; % Needed when m0 is set to 0 (using target distribution, and forward.linear=1;)ï¿½
 
 %% SETUP THE FORWARD MODEL
 forward.sources=D.S;
@@ -57,8 +57,9 @@ forward.freq=0.1;
 forward.forward_function='sippi_forward_traveltime';
 
 m=sippi_prior(prior);
-d=sippi_forward(m,forward,prior,data)
+d=sippi_forward(m,forward,prior,data);
 
+comp_model_error=0;
 if comp_model_error==1;
     
     % SETUP THE 'OPTIMAL' FORWARD MODEL
@@ -69,7 +70,7 @@ if comp_model_error==1;
     
     % COMPUTE MODELING ERROR DUE TO USE OF forward AS OPPOSED TO forward_full
     N=600;
-[Ct,dt,dd]=sippi_compute_modelization_forward_error(forward_full,forward,prior,N);
+    [Ct,dt,dd]=sippi_compute_modelization_forward_error(forward_full,forward,prior,N);
     
     % ASSIGN MODELING ERROR TO DATA
     for id=1:length(data);
@@ -77,6 +78,7 @@ if comp_model_error==1;
         data{id}.Ct=Ct{id};
     end
 end
+doTempering=0;
 if doTempering==1;
     options.mcmc.n_chains=4; % set number of chains (def=1)
     options.mcmc.T=[1 1.5 2 3]; % set number of chains (def=1)

@@ -1,4 +1,4 @@
-% sippi_forward_traveltime Traveltime computation in SIPPI
+% sippi_forward_travel0time Traveltime computation in SIPPI
 %
 % Call :
 %   [d,forward,prior,data]=sippi_forward_traveltime(m,forward,prior,data)
@@ -12,6 +12,19 @@
 %   forward.sources [ndata,ndim]: Source locations
 %   forward.receivers [ndata,ndim]: Receiver locations
 %
+%   % the following options does not apply to 'eikonal' type modeling
+%   forward.linear : [0] a linear kernel is computed, based on the current velocity model
+%                    [1] a linear kenrel is computed only once, based on
+%                    the velocity field defined in forward.linear_m;
+%
+%   forward.linear_m: the reference velocity field, for a linear forward
+%                     operator (forward.G) will be computed.
+%                     Can be eithe a scalar (constant velocity field) or
+%                     the same size as the the velcity model 'm'.
+%
+%
+%   forward.freq : [scalar] Signal frequency,m used ot define the width of
+%                  the kernels forward.G
 %
 function [d,forward,prior,data]=sippi_forward_traveltime(m,forward,prior,data,id,im)
 
