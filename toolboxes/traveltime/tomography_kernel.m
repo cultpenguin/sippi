@@ -83,7 +83,7 @@ RAY=zeros(size(dt));
 str_options = [.01 10000];
 [xx,yy]=meshgrid(x,y);
 for is=1:ns
-    %progress_txt(is,ns);
+    progress_txt(is,ns);
 
     % geometrical spreading type
     % spread_type=0; % PLANE
@@ -122,6 +122,10 @@ for is=1:ns
     start_point=R(is,:);
     raypath = stream2(xx,yy,-U,-V,start_point(1),start_point(2),str_options);
     raypath=raypath{1};
+    
+    if isempty(raypath)
+        sippi_verbose(sprintf('%s: Unable to compute raypath from start point (%g,%g)',mfilename,start_point(1),start_point(2)))
+    end
     
     % GET RID OF DATA CLOSE TO SOURCE (DIST<DX)
     r2=raypath;r2(:,1)=r2(:,1)-S(is,1);r2(:,2)=r2(:,2)-S(is,2);

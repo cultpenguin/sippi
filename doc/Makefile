@@ -2,13 +2,15 @@
 #
 #
 
+VERSION=2.14
+
 validate:
 
 	date +"%Y" > yearnow.xml	
 	date "+%b %d, %Y" > pubdate.xml	
 	xmllint --valid --noout sippi.xml
-
-
+	echo "${VERSION}" > version.xml
+ 
 dblatex:
 	dblatex -T simple -p xsl/dblatex.xsl -b xetex sippi.xml
 
@@ -51,6 +53,11 @@ html_cygwin:
 tidy:
 	tidy  -f tidyerrrors.txt  -m  -quiet  htmldoc/*.html
 
+
+release:
+	rm -fr SIPPI
+	rm -fr SIPPI_${VERSION}.zip
+	./make_sippi_release.sh ${VERSION}
 
 clean:
 	rm -f *.htmldoc

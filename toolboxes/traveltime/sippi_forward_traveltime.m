@@ -88,7 +88,7 @@ elseif (strcmp(forward.type,'ray')|strcmp(forward.type,'fat'));
         
         if forward.is_slowness==1;
             [K,RAY,Gk,Gray]=tomography_kernel(1./m_use,x,y,z,S(data{id}.i_use,:),R(data{id}.i_use,:),T);
-        else
+        else            
             [K,RAY,Gk,Gray]=tomography_kernel(m_use,x,y,z,S(data{id}.i_use,:),R(data{id}.i_use,:),T);
         end
         

@@ -14,7 +14,7 @@ book SYSTEM "docbook.dtd"
 <!ENTITY gstat "GSTAT"> 
 <!ENTITY visim "VISIM"> 
 <!ENTITY snesim "SNESIM"> 
-<!ENTITY sippi-version "1.4">
+<!ENTITY sippi-version "2.0">
 <!ENTITY pubdate SYSTEM "pubdate.xml"> 
 <!ENTITY yearnow SYSTEM "yearnow.xml"> 
 <!ENTITY chapIntroduction SYSTEM "chapIntroduction.xml"> 
@@ -83,12 +83,12 @@ book SYSTEM "docbook.dtd"
     </authorgroup>
 <!--
     <copyright>
-      <year>2013-2014;</year>
+      <year>2013-2016;</year>
       <holder role="mailto:thomas.mejer.hansen@gmail.com">Thomas
       Mejer Hansen</holder>
     </copyright>
 -->
-    <edition>version 1.0</edition>
+    <edition>&sippi-version;</edition>
     <pubdate>&pubdate;</pubdate>
 
 

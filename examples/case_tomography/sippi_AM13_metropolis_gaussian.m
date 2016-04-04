@@ -35,7 +35,13 @@ prior{im}.Va='.0003 Sph(6)';
 dx=0.15;
 prior{im}.x=[-1:dx:6];
 prior{im}.y=[0:dx:13];
-prior{im}.cax=[.1 .18];
+prior{im}.cax=[.04 .18];
+
+d_target=[randn(1,100)*.003+0.11 randn(1,100)*.003+0.16];
+prior{im}.d_target=d_target;
+prior{im}.m0=0; %% MAKE SURE sippi_forward_traveltime tests for a non-zero velocity
+
+sippi_plot_prior(prior);
 
 
 %% SETUP THE FORWARD MODEL(S)
@@ -44,18 +50,19 @@ forward.forward_function='sippi_forward_traveltime';
 forward.sources=D.S;
 forward.receivers=D.R;
 forward.type='fat';forward.linear=1;forward.freq=0.1;
+forward.m0=0.10;
 
 
 %% TEST THE SETUP 
 % generate a realization from the prior
 [m,prior]=sippi_prior(prior);
 % Compute the forward response related to the realization of the prior model generated above
-[d]=sippi_forward(m,forward,prior,data);
+[d,forward]=sippi_forward(m,forward,prior,data);
 % Compute the likelihood 
 [logL,L,data]=sippi_likelihood(d,data);
 % plot the forward response and compare it to the observed data
 sippi_plot_data(d,data);
-
+return
 [logL,L,data]=sippi_likelihood(d,data);
 %% SETUP METROPOLIS
 options.mcmc.nite=100000;
