@@ -125,6 +125,9 @@ if isfield(prior{ip},'hard_data');
         prior{ip}.MPS.hard_data_filename=prior{ip}.hard_data;
     else
         % save hard data, and set hard data filename
+        if ~isfield(prior{ip}.MPS,'hard_data_filename')
+            prior{ip}.MPS.hard_data_filename='f_cond.dat';
+        end
         filename_hard=prior{ip}.MPS.hard_data_filename;
         if isempty(prior{ip}.hard_data)
             if exist(filename_hard,'file');

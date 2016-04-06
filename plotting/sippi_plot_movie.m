@@ -49,9 +49,11 @@ cwd=pwd;
 if ischar(fname)
     try
         cd(fname);
-        load([fname,'.mat']);
+        % load([fname,'.mat'],'prior','options','mcmc');
+        load([fname,'.mat'],'prior','mcmc');
     catch
-        load([fname,'.mat']);
+        % load([fname,'.mat'],'prior','options','mcmc');
+        load([fname,'.mat'],'prior','mcmc');
     end
     
 else
@@ -67,6 +69,9 @@ end
 if ~isfield(options,'FS')
     options.FS=12;
 end
+if ~isfield(options,'txt')
+    [p,options.txt]=fileparts(plotdir);
+end
 
 if nargin<2
     im_array=1:1:length(prior);
@@ -81,6 +86,7 @@ options.h0=2;
 
 FrameRate=10;
 Quality=90;
+
 %%
 for im=im_array
     

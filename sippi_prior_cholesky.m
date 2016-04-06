@@ -56,6 +56,7 @@ end
 %% Sequential Gibbs?
 if nargin>1
     z_cur=prior{ip}.z_rand;
+    z_init=z_cur;
     z_new=randn(size(z_cur));
 
     if prior{ip}.seq_gibbs.type==1
@@ -75,11 +76,24 @@ if nargin>1
         z_cur(ii)=randn(size(z_cur(ii)));
 
     end
+    
+    %% linear combinartion of the perturbed paramaters
+    if (isfield(prior{ip},'gradual'))
+        if prior{ip}.gradual<1
+            if exist('gaussian_linear_combine','file')
+                i_perturbed=ii;%find((z_init-z_cur)~=0);
+                z_cur(i_perturbed) = gaussian_linear_combine(z_init(i_perturbed),z_cur(i_perturbed),prior{ip}.gradual,0);
+            end
+        end
+    end
+
     prior{ip}.z_rand=z_cur;
 
 end
 
 
+
+%%
 nsim=1;
 if isfield(prior{ip},'L')
     is_chol=1;
