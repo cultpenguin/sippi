@@ -63,13 +63,29 @@ and mGstat
 <para>
 These programs are needed to make use of the  <link linkend="prior_mps">MPS</link>, <link linkend="prior_visim">VISIM</link>  and <link linkend="prior_snesim">SNESIM</link> type <link linkend="prior_types">a priori models</link> (and can hence be ignored if not used).
 </para>
+<sect4><title>Compiling &visim;</title>
 <para>
 The source code for VISIM is located in <varname>mGstat/visim/visim_src</varname>. The compiled program should be placed in <varname>mGstat/bin</varname> and called <varname>visim</varname>.
 </para>
-<para>
-The source code for SNESIM is available from <link xlink:href="https://github.com/SCRFpublic/snesim-standalone">github</link>. The compiled program should be placed in <varname>mGstat/bin</varname> and called <varname>snesim</varname>.
+</sect4>
 
+
+
+<sect4><title>Compiling &snesim;</title>
+<para>
+The source code for SNESIM is available from <link xlink:href="https://github.com/SCRFpublic/snesim-standalone">github</link>.
 </para>
+<para>
+The compiled program should be placed in <varname>mGstat/bin</varname> and
+called
+<varname>snesim.exe</varname> (windows)
+<varname>snesim_glnxa64.exe</varname> (64 bit Linux)
+<varname>snesim_maci64.exe</varname> (64 but OS X).
+.
+</para>
+</sect4>
+
+<sect4><title>Compiling &mps;</title>
 <para>
 The source code for &mps; is available from <link xlink:href="https://github.com/cultpenguin/mps">github</link>.
 To dowload and compile &mps; use for example
@@ -83,6 +99,8 @@ Matlabs path should be updated to include <varname>INSTALL_DIR/MPS/matlab</varna
 </para>
 <para>
 </para>
+</sect4>
+
 </sect3>
 
 

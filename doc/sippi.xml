@@ -39,7 +39,7 @@ book SYSTEM "docbook.dtd"
 %xinclude;
 ]>
 <book>
-  <title>SIPPI</title>
+  <title>SIPPI (v&sippi-version; - &pubdate;)</title>
   <titleabbrev>Example</titleabbrev>
 
   <info>

@@ -80,7 +80,7 @@ SR_dist_linear=sqrt(sum((S-R).^2')');
 dt=tS+tR;
 K=zeros(size(dt));
 RAY=zeros(size(dt));
-str_options = [.01 10000];
+str_options = [.01 50000];
 [xx,yy]=meshgrid(x,y);
 for is=1:ns
     progress_txt(is,ns);
