@@ -1,5 +1,5 @@
 <?xml version="1.0"?>
-<!DOCTYPE 
+<!DOCTYPE
 book SYSTEM "docbook.dtd"
 [
 <!-- book SYSTEM "/usr/share/xml/docbook/schema/dtd/5.0/docbook.dtd" -->
@@ -7,41 +7,41 @@ book SYSTEM "docbook.dtd"
 <!ENTITY sippi "SIPPI">
 <!ENTITY mgstat "mGstat">
 <!ENTITY mps "MPS(C++)">
-<!ENTITY matlab "Matlab"> 
-<!ENTITY octave "Octave"> 
-<!ENTITY gslib "GSLIB"> 
-<!ENTITY sgems "SGeMS"> 
-<!ENTITY gstat "GSTAT"> 
-<!ENTITY visim "VISIM"> 
-<!ENTITY snesim "SNESIM"> 
-<!ENTITY sippi-version "2.0">
-<!ENTITY pubdate SYSTEM "pubdate.xml"> 
-<!ENTITY yearnow SYSTEM "yearnow.xml"> 
-<!ENTITY chapIntroduction SYSTEM "chapIntroduction.xml"> 
-<!ENTITY chapPreface SYSTEM "chapPreface.xml"> 
-<!ENTITY chapInstall SYSTEM "chapInstall.xml"> 
-<!ENTITY chapAbout SYSTEM "chapAbout.xml"> 
-<!ENTITY chapExamples SYSTEM "chapExamples.xml"> 
-<!ENTITY chapPrior SYSTEM "chapPrior.xml"> 
-<!ENTITY chapPosterior SYSTEM "chapPosterior.xml"> 
-<!ENTITY chapData SYSTEM "chapData.xml"> 
-<!ENTITY chapForward SYSTEM "chapForward.xml"> 
-<!ENTITY chapSIPPI SYSTEM "chapSIPPI.xml"> 
-<!ENTITY chapExamples SYSTEM "chapExamples.xml"> 
-<!ENTITY chapCrossHoleTomography SYSTEM "chapCrossHoleTomography.xml"> 
-<!ENTITY chapCovarianceInference SYSTEM "chapCovarianceInference.xml"> 
-<!ENTITY chapBibliography SYSTEM "chapBibliography.xml"> 
-<!ENTITY funcSIPPI SYSTEM "sippi_functions.xml"> 
-<!ENTITY funcSIPPIplotting SYSTEM "sippi_functions_plotting.xml"> 
-<!ENTITY funcTRAVELTIME SYSTEM "sippi_functions_toolboxes_traveltime.xml"> 
-<!ENTITY funcCOVARIANCE SYSTEM "sippi_functions_toolboxes_covariance_inference.xml"> 
+<!ENTITY matlab "Matlab">
+<!ENTITY octave "Octave">
+<!ENTITY gslib "GSLIB">
+<!ENTITY sgems "SGeMS">
+<!ENTITY gstat "GSTAT">
+<!ENTITY visim "VISIM">
+<!ENTITY snesim "SNESIM">
+<!ENTITY sippi-version SYSTEM "version.xml">
+<!ENTITY pubdate SYSTEM "pubdate.xml">
+<!ENTITY yearnow SYSTEM "yearnow.xml">
+<!ENTITY chapIntroduction SYSTEM "chapIntroduction.xml">
+<!ENTITY chapPreface SYSTEM "chapPreface.xml">
+<!ENTITY chapInstall SYSTEM "chapInstall.xml">
+<!ENTITY chapAbout SYSTEM "chapAbout.xml">
+<!ENTITY chapExamples SYSTEM "chapExamples.xml">
+<!ENTITY chapPrior SYSTEM "chapPrior.xml">
+<!ENTITY chapPosterior SYSTEM "chapPosterior.xml">
+<!ENTITY chapData SYSTEM "chapData.xml">
+<!ENTITY chapForward SYSTEM "chapForward.xml">
+<!ENTITY chapSIPPI SYSTEM "chapSIPPI.xml">
+<!ENTITY chapExamples SYSTEM "chapExamples.xml">
+<!ENTITY chapCrossHoleTomography SYSTEM "chapCrossHoleTomography.xml">
+<!ENTITY chapCovarianceInference SYSTEM "chapCovarianceInference.xml">
+<!ENTITY chapBibliography SYSTEM "chapBibliography.xml">
+<!ENTITY funcSIPPI SYSTEM "sippi_functions.xml">
+<!ENTITY funcSIPPIplotting SYSTEM "sippi_functions_plotting.xml">
+<!ENTITY funcTRAVELTIME SYSTEM "sippi_functions_toolboxes_traveltime.xml">
+<!ENTITY funcCOVARIANCE SYSTEM "sippi_functions_toolboxes_covariance_inference.xml">
 <!ENTITY % xinclude SYSTEM "xinclude.mod">
 %xinclude;
 ]>
 <book>
   <title>SIPPI</title>
   <titleabbrev>Example</titleabbrev>
-   
+
   <info>
     <authorgroup>
       <author>
@@ -59,7 +59,7 @@ book SYSTEM "docbook.dtd"
 		  <address>
             <email>thomas.mejer.hansen@gmail.com</email>
           </address>
-		  -->          
+		  -->
         </affiliation>
       </author>
       <author>
@@ -71,13 +71,13 @@ book SYSTEM "docbook.dtd"
         <affiliation>
           <!-- <shortaffil>NBI</shortaffil> -->
           <!-- <jobtitle>Associate Professor</jobtitle> -->
-          <!-- 
+          <!--
 		  <orgname>Niels Bohr Instute</orgname>
           <orgdiv>Computational Geoscience</orgdiv>
 	       <address>
             <email>knudcordua@gmail.com</email>
           </address>
-		  -->         
+		  -->
         </affiliation>
       </author>
     </authorgroup>
@@ -94,11 +94,11 @@ book SYSTEM "docbook.dtd"
 
 
   </info>
- 
+
   <!-- PREFACE -->
   &chapPreface;
 
-  <!-- INTRODUCTION 
+  <!-- INTRODUCTION
   <chapter xml:id="Introduction"><title>Introduction</title>
     &chapIntroduction;
   </chapter>
