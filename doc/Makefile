@@ -8,8 +8,8 @@ validate:
 
 	date +"%Y" > yearnow.xml	
 	date "+%b %d, %Y" > pubdate.xml	
-	xmllint --valid --noout sippi.xml
 	echo "${VERSION}" > version.xml
+	xmllint --valid --noout sippi.xml
  
 dblatex:
 	dblatex -T simple -p xsl/dblatex.xsl -b xetex sippi.xml
