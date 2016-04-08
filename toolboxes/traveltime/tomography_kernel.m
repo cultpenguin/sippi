@@ -53,7 +53,7 @@ dx=x(2)-x(1);
 
 ns=max([size(S,1) size(R,1)]);
 dx=x(2)-x(1);
-dy=y(1)-y(1);
+dy=y(2)-y(1);
 d1=(dx+dy)/2;
 
 itype=1; % MSFM
@@ -80,7 +80,7 @@ SR_dist_linear=sqrt(sum((S-R).^2')');
 dt=tS+tR;
 K=zeros(size(dt));
 RAY=zeros(size(dt));
-str_options = [.01 50000];
+str_options = [.01 50000]; % CONTROL STREAM2 BELOW!!
 [xx,yy]=meshgrid(x,y);
 for is=1:ns
     progress_txt(is,ns);
@@ -123,8 +123,19 @@ for is=1:ns
     raypath = stream2(xx,yy,-U,-V,start_point(1),start_point(2),str_options);
     raypath=raypath{1};
     
+    % MAKE CHECK THAT THAT THE RAY IS ACTUALLY TRACED WITHIN A SMALL
+    % DISTANCE OF THE SOURCE
+    end_point=S(is,:);
+    
+    dist_to_source=sqrt(sum( (raypath(end,:)-S(is,:)).^2));    
+    if (dist_to_source>dx)||(dist_to_source>dy);
+        sippi_verbose(sprintf('%s: Unable to trace the ray to the source point for S=[%g,%g], R=[%g,%g] (%g,%g)',mfilename,S(is,1),S(is,2),start_point(1),start_point(2)),-1)
+        sippi_verbose(sprintf('%s: CHECK OPTIONS FOR ''stream2''',mfilename),-1)
+        return
+    end
+    
     if isempty(raypath)
-        sippi_verbose(sprintf('%s: Unable to compute raypath from start point (%g,%g)',mfilename,start_point(1),start_point(2)))
+        sippi_verbose(sprintf('%s: Unable to compute raypath from start point (%g,%g)',mfilename,start_point(1),start_point(2)),-1)
     end
     
     % GET RID OF DATA CLOSE TO SOURCE (DIST<DX)
