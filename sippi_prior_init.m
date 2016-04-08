@@ -277,7 +277,18 @@ for im=im_array
         if ~isfield(prior{im},'S');
             prior{im}.S=sgems_get_par('snesim_std');
             sippi_verbose(sprintf('%s : Setting default SNESIM structure in prior{%d}.S',mfilename,im));
-        end
+        else
+            S=prior{im}.S;
+            prior{im}.S=sgems_get_par('snesim_std');
+            fn=fieldnames(S.XML.parameters);
+            for ifn=1:length(fn);
+                if isfield(S.XML.parameters,fn{ifn})
+                    prior{im}.S.XML.parameters.(fn{ifn})=S.XML.parameters.(fn{ifn});
+                end
+            end           
+            
+            sippi_verbose(sprintf('%s : Updating with default SNESIM structure in prior{%d}.S',mfilename,im));
+        end        
         prior{im}.S.dim.x=prior{im}.x;
         prior{im}.S.dim.y=prior{im}.y;
         prior{im}.S.dim.z=prior{im}.z;
@@ -304,6 +315,9 @@ for im=im_array
         if ~isfield(prior{im},'S');
             prior{im}.S=snesim_init(prior{im}.ti,prior{im}.x,prior{im}.y,prior{im}.z);
             sippi_verbose(sprintf('%s : Setting default SNESIM structure in prior{%d}.S',mfilename,im));
+        else
+            prior{im}.S=snesim_init(prior{im}.ti,prior{im}.x,prior{im}.y,prior{im}.z,prior{im}.S);
+            sippi_verbose(sprintf('%s : Updating SNESIM structure in prior{%d}.S',mfilename,im));
         end
         
         

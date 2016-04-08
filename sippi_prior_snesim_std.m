@@ -15,6 +15,16 @@
 %    sippi_plot_prior(prior,m)
 %    figure(1);imagesc(prior{ip}.ti);axis image
 %
+%% Hard data
+%   % hard data are given using either matrix of 4 columns (x,y,z,val)
+%   % or as a 4 column EAS file (x,y,z,val)
+%   d_hard=[1 1 0 0; 1 2 0 0; 2 2 0 1 ];
+%   prior{ip}.hard_data=d_hard;
+%
+%   write_eas('snesim_hard.dat',d_hard);
+%   sgems_write_pointset('snesim_hard.sgems',d_hard);
+%   prior{ip}.hard_data='snesim_hard.sgems';
+%
 %% Example: scaling and rotation
 %    ip=1;
 %    prior{ip}.type='snesim_std';
@@ -60,8 +70,22 @@ if ~isfield(prior{ip},'init')
     prior=sippi_prior_init(prior);
 end
 
+%% optionally set hard data
+if isfield(prior{ip},'hard_data');
+    %if ischar(prior{ip}.hard_data)
+    %    % Hard data is provided in file
+    %    prior{ip}.S.fconddata.fname=prior{ip}.hard_data;
+    %else
+        % save hard data, and set hard data filename
+        prior{ip}.S.d_obs=prior{ip}.hard_data;
+        %prior{ip}.S.fconddata.fname='snesim_hard.dat';
+        %filename=prior{ip}.S.fconddata.fname;
+        %sippi_verbose(sprintf('%s: saving hard data to %s',mfilename,filename));
+        %write_eas(filename,prior{ip}.hard_data);
+    
+   %end
+end
 
-% SGEMS / SNESIM
 
 % REMOVE CONDITIONAL DATA.
 % FIX : NEED TO CHANGE TO HANDLE CONDITIONAL DATA

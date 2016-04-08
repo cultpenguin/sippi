@@ -8,15 +8,16 @@ TI=TI(2:2:end,2:2:end);
 
 x=[0:1:80]*.5;y=[0:1:40]*.5;
 x=[0:2:80];y=[0:2:40];
-x=[0:3:240];y=[0:3:120];
+x=[0:1:80];y=[0:1:40];
+%x=[0:3:240];y=[0:3:120];
 
 nr=100;
-
+%nr=3;
 
 use_hard=1;n_hard=10;
 use_soft=0;
 use_soft_random=1;n_soft=50;
-%use_soft_random=0;n_soft=length(x)*length(y);
+use_soft_random=0;n_soft=length(x)*length(y);
 
 shuffle_simulation_grid=2;
 n_multiple_grids=3;
@@ -31,6 +32,7 @@ cax=[0 1];
 ip=1;
 prior{ip}.type='mps'; % MPS type
 prior{ip}.method='mps_snesim_tree';
+prior{ip}.name='MPS - SNESIM_TREE'; % MPS type
 prior{ip}.x=x; % X array
 prior{ip}.y=y; % Y array
 prior{ip}.ti=TI;
@@ -41,6 +43,7 @@ prior{ip}.MPS.shuffle_simulation_grid=shuffle_simulation_grid;
 ip=ip+1;
 prior{ip}.type='mps'; % MPS type
 prior{ip}.method='mps_enesim_general';
+prior{ip}.name='MPS - ENESIM/DSIM'; % MPS type
 prior{ip}.x=x; % X array
 prior{ip}.y=y; % Y array
 prior{ip}.ti=TI;
@@ -51,48 +54,47 @@ prior{ip}.MPS.n_max_ite=100000;
 prior{ip}.MPS.n_cond=n_cond;
 prior{ip}.MPS.shuffle_simulation_grid=shuffle_simulation_grid;
 
-
-
 ip=ip+1;
 prior{ip}.type='mps'; % MPS type
 prior{ip}.method='mps_enesim';
+prior{ip}.name='MPS - ENESIM'; % MPS type
 prior{ip}.x=x; % X array
 prior{ip}.y=y; % Y array
 prior{ip}.ti=TI;
-%if (use_hard), prior{ip}.hard_data=d_hard; end
-%if (use_soft), prior{ip}.soft_data=d_soft; end
 prior{ip}.MPS.n_max_cpdf_count=100; % D SAMP
 prior{ip}.MPS.n_max_ite=100000;
 prior{ip}.MPS.n_cond=n_cond;
 prior{ip}.MPS.shuffle_simulation_grid=shuffle_simulation_grid;
 
+ip=ip+1;
+prior{ip}.type='snesim_std'; % MPS type
+prior{ip}.name='SGeMS snesim'; % MPS type
+prior{ip}.x=x; % X array
+prior{ip}.y=y; % Y array
+prior{ip}.ti=TI;
+prior{ip}.S.XML.parameters.Nb_Multigrids_ADVANCED.value=n_multiple_grids+1;
+prior{ip}.S.XML.parameters.Max_Cond.value=n_cond;
 
-%ip=ip+1;
-%prior{ip}.type='snesim_std'; % MPS type
-%prior{ip}.x=x; % X array
-%prior{ip}.y=y; % Y array
-%prior{ip}.ti=TI;
-
-%ip=ip+1;
-%prior{ip}.type='snesim'; % MPS type
-%prior{ip}.x=x; % X array
-%prior{ip}.y=y; % Y array
-%prior{ip}.ti=TI;
-%prior{ip}.hard_data=d_hard;
-%[m,prior]=sippi_prior(prior);
-%prior{ip}.S.nmulgrids=n_multiple_grids;
-%prior{ip}.S.max_cond=n_cond;
-
-
-
+ip=ip+1;
+prior{ip}.type='snesim'; % MPS type
+prior{ip}.name='Fortran snesim'; % MPS type
+prior{ip}.x=x; % X array
+prior{ip}.y=y; % Y array
+prior{ip}.ti=TI;
+prior{ip}.S.XML.parameters.nmulgrids=n_multiple_grids+1;
+prior{ip}.S.XML.parameters.max_Cond=n_cond;
 
 %%
-p_ref{1}=prior{2};
+%[m,prior]=sippi_prior(prior);
+
+%return
+%%
+i_ref=length(prior);
+p_ref{1}=prior{i_ref};
 p_ref{1}.MPS.rseed=3;
 p_ref{1}.MPS.template_size=[9 9 1];
 p_ref{1}.MPS.n_cond=81;
 m_ref=sippi_prior(p_ref);
-
 
 %template_size=prior{1}.MPS.template_size;
 %prior{1}.MPS.rseed=1;
@@ -170,8 +172,8 @@ figure(2);clf;set_paper;
 np=length(prior);
 nr_show=3;
 for ir=1:nr;
-    %[m,prior]=sippi_prior(prior); % WHY DOES THIS NOT WORK!!!
-    [m]=sippi_prior(prior);
+    [m,prior]=sippi_prior(prior); % WHY DOES THIS NOT WORK!!!
+    %[m]=sippi_prior(prior);
     
     subplot(nr_show+2,np,(nr_show+1)*np+1);
     imagesc(x,y,m_ref{1});axis image;
@@ -216,7 +218,7 @@ for ir=1:nr;
             
             if ir==1;
                 try
-                    title(prior{ip}.method,'interpreter','none');
+                    title(prior{ip}.name,'interpreter','none');
                 catch
                     title(prior{ip}.type,'interpreter','none');
                 end

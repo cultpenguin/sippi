@@ -62,6 +62,12 @@ for id=id_array;
     %    end
     %end
     
+    % Check whether 'full_likelihood' is set
+    if ~isfield(data{id},'full_likelihood');
+        data{id}.full_likelihood=0;
+    end
+      
+    
     % Check whether to use user supplied noise model.
     if isfield(data{id},'noise_model')        
         % next line may be slow...
@@ -105,9 +111,6 @@ for id=id_array;
             logL(id)=-.5*sum(sum(sum(dd.^2./(data{id}.d_std.^2))));
         else
             logL(id)=-.5*sum(sum(sum(dd.^2./(data{id}.d_std(data{id}.i_use).^2))));
-        end
-        if ~isfield(data{id},'full_likelihood');
-            data{id}.full_likelihood=0;
         end
         if data{id}.full_likelihood==1;
             % compute full Gaussian  probability, necessary if the variance
@@ -194,20 +197,18 @@ for id=id_array;
         end
         
         % compute logdet(CD) if it does not exist, and if recomputeCD=1;
-        if (~isfield(data{id},'logdet'))||(data{id}.recomputeCD==1)
-            data{id}.logdet = logdet(data{id}.CD(data{id}.i_use,data{id}.i_use));
+        if (data{id}.full_likelihood)
+            if (~isfield(data{id},'logdet'))||(data{id}.recomputeCD==1)
+                data{id}.logdet = logdet(data{id}.CD(data{id}.i_use,data{id}.i_use));
+            end
         end
-        
         
     end %%%%%%%%%%%%%%%%%
     
     if strcmp(data{id}.noise_model,'gaussian')&&(data{id}.noise_uncorr==0)
         nknown=length(data{id}.i_use);
-        
-        if ~isfield(data{id},'full_likelihood');
-            data{id}.full_likelihood=0;
-        end
-        
+       
+         
         if data{id}.full_likelihood==1
             f1 = -(nknown/2)*log(2*pi);
             f2 = -0.5*data{id}.logdet;
