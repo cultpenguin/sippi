@@ -76,7 +76,10 @@ end
 prior{ip}.MPS.method=prior{ip}.method;
 %prior{ip}.MPS.template_size=[9 9 1];
 prior{ip}.MPS.nreal=1;
-prior{ip}.MPS.parameter_filename='mps.txt';
+
+if ~isfield(prior{ip}.MPS,'parameter_filename')
+    prior{ip}.MPS.parameter_filename=sprintf('%s_%04d.txt',prior{ip}.method,round(1000*rand(1)));;
+end
 
 if prior{ip}.ndim==1;
     SIM=zeros(prior{ip}.dim(1));    
@@ -145,7 +148,6 @@ else
     prior{ip}.MPS.hard_data_filename=['mps_hard_data_dummy.dat'];
 end
 
-
 %% soft data?
 if isfield(prior{ip},'soft_data');
     if ischar(prior{ip}.soft_data)
@@ -158,6 +160,7 @@ if isfield(prior{ip},'soft_data');
         catch
             filename_soft='mps_soft.dat';
         end
+        prior{ip}.MPS.soft_data_filename=filename_soft;
         sippi_verbose(sprintf('%s: saving soft data to %s',mfilename,filename_soft));
         write_eas(filename_soft,prior{ip}.soft_data);
     end

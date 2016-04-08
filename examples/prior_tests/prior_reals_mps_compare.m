@@ -2,7 +2,7 @@
 rng('default');rng(6);
 clear all;
 
-nr=200;
+nr=20;
 
 n_multiple_grids=5;
 n_cond_1d=9;
@@ -13,8 +13,8 @@ TI=TI(2:2:end,2:2:end);
 
 x=[0:1:80]*.5;
 y=[0:1:40]*.5;
-x=[0:1:80];
-y=[0:1:40];
+%x=[0:1:40];
+%y=[0:1:20];
 
 x=[0:2:80];
 y=[0:2:40];
@@ -22,10 +22,15 @@ y=[0:2:40];
 z=0;
 
 n_hard=20;
-n_soft=20;
+n_soft=100;
 
-use_hard=1;
+use_hard=0;
 use_soft=1;
+use_soft_random=1;
+
+
+% 
+%m_ref=TI(y,x)
 
 
 %% CONDITIONAL DATA
@@ -46,24 +51,46 @@ write_eas(f_cond,d_cond);
 
 % SOFT
 clear d_s
-ix=ceil(rand(1,n_soft).*length(x));
-iy=ceil(rand(1,n_soft).*length(y));
-iz=iy.*0+1;
-%d_x=ceil(rand(1,n_soft).*(max(x)-min(x))+min(x));
-%d_y=ceil(rand(1,n_soft).*(max(y)-min(y))+min(y));
-%d_z=d_y.*0+z(1);
+if use_soft_random==1
+    ix=ceil(rand(1,n_soft).*length(x));
+    iy=ceil(rand(1,n_soft).*length(y));
+    iz=iy.*0+1;
+else
+    
+    [xx,yy]=meshgrid(1:length(x),1:length(y));
+    ix=xx(1:n_soft);
+    iy=yy(1:n_soft);
+    iz=ix.*0+1;
+    %d_x=ceil(rand(1,n_soft).*(max(x)-min(x))+min(x));
+    %d_y=ceil(rand(1,n_soft).*(max(y)-min(y))+min(y));
+    %d_z=d_y.*0+z(1);
+end
 for i=1:n_soft
-    p=rand(1)*.01;
+    p=rand(1)*.5;
     v=TI(iy(i),ix(i));
     if v==0;
         d_s(i)=1-p;
     else
-        d_s(i)=p;
+        %d_s(i)=p;
+        d_s(i)=p.*.1;
     end
 end
 f_soft=sprintf('f_soft_%d.dat',n_soft);
 d_soft=[x(ix)' y(iy)' z(iz)' d_s(:) 1-d_s(:)];
 write_eas(f_soft,d_soft);
+
+
+%% PLOT DATA
+figure(1);clf;
+subplot(3,1,2);
+scatter(d_cond(:,1),d_cond(:,2),15,d_cond(:,4),'filled');axis image;
+box on
+
+subplot(3,1,3);
+scatter(d_soft(:,1),d_soft(:,2),15,d_soft(:,4),'filled');axis image;
+box on
+
+
 
 
 
