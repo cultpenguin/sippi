@@ -1,4 +1,4 @@
-% sippi_forward_travel0time Traveltime computation in SIPPI
+% sippi_forward_traveltime Traveltime computation in SIPPI
 %
 % Call :
 %   [d,forward,prior,data]=sippi_forward_traveltime(m,forward,prior,data)
@@ -111,12 +111,17 @@ elseif (strcmp(forward.type,'ray')|strcmp(forward.type,'fat'));
             forward.G=Gk;
         end
     end
+    
+    if length(data{id}.i_use)==size(forward.G,1)
+        ig=1:size(forward.G,1);
+    else
+        ig=data{id}.i_use;       
+    end
     if forward.is_slowness==1
-        d{id}=forward.G*m{im}(:);
+        d{id}=forward.G(ig,:)*m{im}(:);
     else
         s=1./m{im}(:);
-        d{id}=forward.G*s;
-        
+        d{id}=forward.G(ig,:)*s;
     end
     
 elseif strcmp(forward.type,'born');

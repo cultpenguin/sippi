@@ -1,13 +1,13 @@
 % sippi_AM13_metropolis_gaussian 2D inversion using the extended Metropolis sampler (Gaussian prior) 
 %
-% Example of inverting 2D Arrenæs tomographic data (AM13)
+% Example of inverting 2D Arrenï¿½s tomographic data (AM13)
 % using the extended Metropolis sampler and a 
 % Gaussian a priori model
 %
 % See http://dx.doi.org/10.1016/j.cageo.2012.10.001
 %
 
-%% Load the travel time data set from ARRENÆS
+%% Load the travel time data set from ARRENï¿½S
 clear all;close all
 D=load('AM13_data.mat');
 options.txt='AM13';
@@ -19,9 +19,9 @@ id=1;
 data{id}.d_obs=D.d_obs;
 data{id}.d_std=D.d_std;
 % optionally use only a subset of data
-%data{id}.i_use=[10:10:length(data{id}.d_obs)];
+data{id}.i_use=[10:10:length(data{id}.d_obs)];
 %data{id}.Ct=D.Ct; % Covaiance describing modelization error
-data{id}.Ct=D.Ct+1; % Covaiance describing modelization error
+%data{id}.Ct=D.Ct+1; % Covaiance describing modelization error
 
 %% SETUP PRIOR
 im=1;
@@ -48,9 +48,9 @@ sippi_plot_prior(prior,m)
 forward.forward_function='sippi_forward_traveltime';
 forward.sources=D.S;
 forward.receivers=D.R;
-%forward.type='eikonal';
+forward.type='eikonal';
 %forward.type='ray';forward.linear=1;
-forward.type='fat';forward.linear=1;forward.freq=0.1;
+%forward.type='fat';forward.linear=1;forward.freq=0.1;
 %forward.type='born';forward.linear=1;forward.freq=0.1;
 
 % Compute the forward response related to the realization of the prior
@@ -62,6 +62,8 @@ sippi_plot_data(d,data);
 
 [logL,L,data]=sippi_likelihood(d,data);
 
+%
+sippi_plot_data(d,data)
 %% SETUP METROPOLIS/ANNEALING
 options.mcmc.nite=500000;
 options.mcmc.i_plot=1000;

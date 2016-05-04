@@ -22,8 +22,9 @@ options.txt='AM13_gaussian';
 id=1;
 data{id}.d_obs=D.d_obs;
 data{id}.d_std=D.d_std.*0+0.4;;
+data{id}.i_use=1:20;
 %data{id}.Ct=1; % Data covariance describing modelization error
-%data{id}.Ct=D.Ct; % Correlated noise model according to Cordua et al (2008; 2009)
+data{id}.Ct=D.Ct; % Correlated noise model according to Cordua et al (2008; 2009)
 options.txt=[options.txt,'_noCt'];
 
 %% SETUP PRIOR
@@ -50,6 +51,7 @@ forward.forward_function='sippi_forward_traveltime';
 forward.sources=D.S;
 forward.receivers=D.R;
 forward.type='fat';forward.linear=1;forward.freq=0.1;
+%forward.type='eikonal';
 forward.m0=0.10;
 
 
