@@ -74,6 +74,12 @@ forward.addpar.Tg=100*10^6;
 sippi_plot_prior(prior,m_ref);
 [d,forward,prior]=sippi_forward_gpr_fd(m_ref,forward,prior);
 
+
+
+forward_t.type='fd';
+[d,forward,prior]=sippi_forward_traveltime(m_ref,forward_t,prior);
+
+
 for id=1:length(d);
   data{id}.d_ref=d{id};
   data{id}.d_std=.001;

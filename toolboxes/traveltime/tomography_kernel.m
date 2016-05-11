@@ -26,7 +26,6 @@
 %
 %
 function [K,RAY,Gk,Gray,tS,tR,raypath_mat,raylength_mat]=tomography_kernel(Vel,x,y,z,S,R,T,alpha,Knorm,doPlot);
-
 if nargin<7, T=1; end
 if nargin<8, alpha=1; end
 if nargin<9,

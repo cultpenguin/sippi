@@ -8,6 +8,7 @@
 %   forward.type='fat';
 %   forward.type='eikonal';
 %   forward.type='born';
+%   forward.type='fd';
 %
 %   forward.sources [ndata,ndim]: Source locations
 %   forward.receivers [ndata,ndim]: Receiver locations
@@ -85,11 +86,11 @@ elseif (strcmp(forward.type,'ray')|strcmp(forward.type,'fat'));
         
         if ~isfield(forward,'linear_m'),
             if ~isfield(forward,'m0'),
-                if isfield(prior{im},'m0')
-                    forward.m0=prior{im}.m0;
-                else
+                %if isfield(prior{im},'m0')
+                %    forward.m0=prior{im}.m0;
+                %else
                     forward.m0=mean(m{im}(:));
-                end
+                %end
             end
             forward.linear_m = m{im}.*0+forward.m0;
         end
@@ -168,13 +169,56 @@ elseif strcmp(forward.type,'born');
         s=1./m{im}(:);
         d{id}=forward.G*s;
     end
+
+elseif strcmp(forward.type,'fd');
+    %% ERNST FW CODE WITH KNUDS PARRALLEL MATLAB INTERFACE
     
-elseif strcmp(forward.type,'fw');
-    %% ERNST FW CODE WITH KNUDS PARRALLEL MATLAB INTERFACE
-    [d,forward,prior,data]=sippi_forward_gpr_ernst_knud(m,forward,prior,data,id,im);
- elseif strcmp(forward.type,'fw_firstarrival');
-    %% ERNST FW CODE WITH KNUDS PARRALLEL MATLAB INTERFACE
-    [d,forward,prior,data]=sippi_forward_gpr_ernst_knud(m,forward,prior,data,id,im);
+    %% full waveform modeling
+    if ~isfield(forward,'fd'); forward.fd.null='';end
+    
+    forward.fd.output_type='trace'; % 'trace' or 'gather'
+    forward.fd.ant_pos=[forward.sources forward.receivers];
+    forward.fd.ant_pos=forward.fd.ant_pos(1:1:200,:);
+    
+    forward.fd.output_it=1; % output every 'output_ti' samples
+    
+    if ~isfield(forward.fd,'t')forward.fd.t=1e-7; end;% SIMULATION TIME
+    if ~isfield(forward.fd,'sig');forward.fd.sig=3; end;% constant
+    if ~isfield(forward.fd,'debug');forward.fd.addpar.debug=-1;end
+    %if ~isfield(forward.fd,'sig');forward.fd.addpar.cores=4;end
+    %if ~isfield(forward.fd,'sig');forward.fd.addpar.Tg=100*10^6;end
+    
+    % convert from velocity to dielectric permittivity
+    MU0=1.25663706143591730*1e-6;
+    m_fd{1}=1e-7*1./(MU0*m{1}.^2);%imagesc(eps);colorbar
+    m_fd{1}=m_fd{1}-min(m_fd{1}(:));
+    m_fd{1}=m_fd{1}./max(m_fd{1}(:));
+    m_fd{1}=3+m_fd{1};
+    
+    
+    [d_fd,forward.fd]=sippi_forward_gpr_fd(m_fd,forward.fd,prior);
+    
+    %% first arrival picking    
+    if ~isfield(forward,'fa'); forward.fa.null='';end
+    if ~isfield(forward.fa,'ref_to');forward.fa.ref_t0=0;end
+    if ~isfield(forward.fa,'doPlot');forward.fa.doPlot=0;end
+    if ~isfield(forward.fa,'use_method');forward.fa.use_method=2;end
+    forward.fa.wf_time=forward.fd.time;
+    if ~isfield(forward.fa,'ref_trace');
+        forward.fa.ref_trace=d_fd{1};
+    end
+    %try
+        for i=1:size(forward.fd.ant_pos,1);
+            wf_data=d_fd{i};
+            [tt_pick(i),t(i)]=pick_first_arrival(wf_data,forward.fa.ref_trace,forward.fa.ref_t0,forward.fa.doPlot,forward.fa.wf_time,forward.fa.use_method);
+        end
+    %catch
+    %    keyboard
+    %end
+    
+    % output traveltime in m/ns
+    d{id}=t*1e+9;
+    
 else
     disp(sprintf('%s : forward of type ''%s'' not known',mfilename,forward.type))
     d{id}=[];

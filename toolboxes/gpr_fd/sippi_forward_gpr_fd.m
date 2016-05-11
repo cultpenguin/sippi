@@ -13,7 +13,7 @@
 %                   ..];
 %
 % % Optional settings
-% forward.T=100*10^-9; % Frequecy of sourve wavelet
+% forward.T=100*10^-9; % Frequecy of source wavelet
 % forward.sig=3; % If not set it is set as a constant field
 % forward.output_type='shot'; % each shot gather is output as individual data structures
 % forward.output_type='trace'; % each trace is output as individual data structures
@@ -52,7 +52,7 @@ end
 
 % output only every 'output_it' sample
 if ~isfield(forward,'output_it');
-  forward.it=1;
+  forward.output_it=1;
 end
 
 % return in data in structures of SHOT of TRACE data
