@@ -178,25 +178,33 @@ elseif strcmp(forward.type,'fd');
     
     forward.fd.output_type='trace'; % 'trace' or 'gather'
     forward.fd.ant_pos=[forward.sources forward.receivers];
-    forward.fd.ant_pos=forward.fd.ant_pos(1:1:200,:);
+    %forward.fd.ant_pos=forward.fd.ant_pos(1:1:351,:);
     
     forward.fd.output_it=1; % output every 'output_ti' samples
-    
     if ~isfield(forward.fd,'t')forward.fd.t=1e-7; end;% SIMULATION TIME
     if ~isfield(forward.fd,'sig');forward.fd.sig=3; end;% constant
     if ~isfield(forward.fd,'debug');forward.fd.addpar.debug=-1;end
     %if ~isfield(forward.fd,'sig');forward.fd.addpar.cores=4;end
     %if ~isfield(forward.fd,'sig');forward.fd.addpar.Tg=100*10^6;end
     
-    % convert from velocity to dielectric permittivity
-    MU0=1.25663706143591730*1e-6;
-    m_fd{1}=1e-7*1./(MU0*m{1}.^2);%imagesc(eps);colorbar
-    m_fd{1}=m_fd{1}-min(m_fd{1}(:));
-    m_fd{1}=m_fd{1}./max(m_fd{1}(:));
-    m_fd{1}=3+m_fd{1};
     
     
-    [d_fd,forward.fd]=sippi_forward_gpr_fd(m_fd,forward.fd,prior);
+    
+    %% convert from velocity to dielectric permittivity
+    forward.m_fd{1}=velocity_to_eps(m{1});
+    [d_fd,forward.fd]=sippi_forward_gpr_fd(forward.m_fd,forward.fd,prior);          
+      
+    % compute one data set in a homo
+    v0=mean(m{1}(:));
+    eps0=velocity_to_eps(v0);
+    forward.m_fd_0{1}=forward.m_fd{1}.*0+eps0;
+    f=forward.fd;
+    f.ant_pos=forward.fd.ant_pos(1,:);
+    [d_fd_0]=sippi_forward_gpr_fd(forward.m_fd,f,prior);    
+    % t_0 is the actual travel time
+    
+    t_0 = sqrt((f.ant_pos(1,3)-f.ant_pos(1,1))^2+(f.ant_pos(1,4)-f.ant_pos(1,2))^2)./v0;
+    
     
     %% first arrival picking    
     if ~isfield(forward,'fa'); forward.fa.null='';end
@@ -207,17 +215,24 @@ elseif strcmp(forward.type,'fd');
     if ~isfield(forward.fa,'ref_trace');
         forward.fa.ref_trace=d_fd{1};
     end
-    %try
+    try
         for i=1:size(forward.fd.ant_pos,1);
             wf_data=d_fd{i};
             [tt_pick(i),t(i)]=pick_first_arrival(wf_data,forward.fa.ref_trace,forward.fa.ref_t0,forward.fa.doPlot,forward.fa.wf_time,forward.fa.use_method);
         end
-    %catch
-    %    keyboard
-    %end
+    catch
+        i
+        %keyboard
+    end
+
+    [tt_pick_0_pick,t_0_pick]=pick_first_arrival(d_fd_0{1},forward.fa.ref_trace,forward.fa.ref_t0,forward.fa.doPlot,forward.fa.wf_time,forward.fa.use_method);
+    dt = (t_0_pick*1e+9-t_0);
+    disp(sprintf('t_0_ex=%g, t_0_pick=%g, dt=%g',t_0, t_0_pick*1e+9,dt));
     
-    % output traveltime in m/ns
-    d{id}=t*1e+9;
+    
+    
+    %output traveltime in m/ns
+    d{id}=t*1e+9-dt;
     
 else
     disp(sprintf('%s : forward of type ''%s'' not known',mfilename,forward.type))

@@ -7,6 +7,24 @@
 clear all;close all
 rng(1)
 D=load('AM13_data.mat');
+
+D2=D;
+D.S(352:end,:)=D2.R(352:end,:);
+D.R(352:end,:)=D2.S(352:end,:);
+
+%% plot data
+%figure(1);clf,
+%figure(1);clf;
+%for i=1:size(D.S,1);
+%    plot(D.S(i,1),D.S(i,2),'r*');
+%    hold on
+%    plot(D.R(i,1),D.R(i,2),'go');
+%    plot([D.S(i,1) D.R(i,1)],[D.S(i,2) D.R(i,2)],'k-');
+%    axis image;
+%    axis([-1 6 0 13]);set(gca,'ydir','reverse')
+%    drawnow;
+%end
+
 % SETUP DATA
 id=1;
 data{id}.d_obs=D.d_obs;
@@ -18,23 +36,32 @@ im=1;
 prior{im}.type='FFTMA';
 prior{im}.name='Velocity (m/ns)';
 prior{im}.Va='.0003 Sph(6,90,.33)';
-dx=0.075;
-prior{im}.x=[-1:dx:6];
-prior{im}.y=[0:dx:13];
+prior{im}.m0=0.10;
+dx=0.05;
+prior{im}.x=[-2:dx:7];
+prior{im}.y=[-2:dx:13];
 prior{im}.cax=[.04 .18];
+%d_target=[randn(1,100)*.003+0.11 randn(1,100)*.003+0.16];
+%prior{im}.d_target=d_target;
+prior{im}.Va='.0001 Sph(6,90,.33)';
+prior{im}.Va='.000001 Sph(6,90,.33)';
+prior{im}.m0=0.10;
 
-d_target=[randn(1,100)*.003+0.11 randn(1,100)*.003+0.16];
-prior{im}.d_target=d_target;
+%% compute t in hom model
+for i=1:size(D.S,1);
+    dis(i)=sqrt(sum( (D.S(i,:)-D.R(i,:)).^2));
+end
+t_ref=dis./prior{im}.m0;
 
 
 %% SETUP THE FORWARD MODEL
-forward.forward_function='sippi_forward_traveltime';
+forward.forward_function='sippi_forw    progress_txt(is,ns);ard_traveltime';
 forward.sources=D.S;
 forward.receivers=D.R;
 [m,prior]=sippi_prior(prior);
 sippi_plot_prior(prior,m);
 
-for it=1:4;
+for it=1:2;
     forwardi{it}=forward;
     if it==1;
         forwardi{it}.type='fd';
@@ -61,5 +88,7 @@ for it=1:4;
     plot(d{it}{1});
     hold on
 end
+plot(t_ref,'k-')
+L{it+1}='HOM'
 hold off
 legend(L)

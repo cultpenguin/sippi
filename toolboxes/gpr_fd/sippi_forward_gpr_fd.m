@@ -12,7 +12,11 @@
 %                   Sx2, Sy2, Rx2, Ry2
 %                   ..];
 %
-% % Optional settings
+% ! Note that idential source locations muyst be located in neighboring row
+% in forward.ant_pos
+%
+%
+% Optional settings
 % forward.T=100*10^-9; % Frequecy of source wavelet
 % forward.sig=3; % If not set it is set as a constant field
 % forward.output_type='shot'; % each shot gather is output as individual data structures
@@ -30,6 +34,7 @@
 % All seetings for the forward modelling code can be set in the 
 % forward.addpar structure. E.g to set the number of threads used:
 % forward.addpar.cores=4;%
+%
 %
 % See also FDTD_fwi
 %
@@ -117,7 +122,7 @@ else
     eps_fd=eps.*forward.EPS0;
     sig_fd=sig.*forward.SIG0;
 end
-
+try; delete('observed*.mat');end
 [forward.dt forward.nt forward.addpar]=FDTD_fwi(eps_fd,sig_fd,forward.dx_fwd,forward.t,forward.ant_pos,forward.addpar);
 
 forward.time=[0:(forward.nt-1)].*forward.dt;
