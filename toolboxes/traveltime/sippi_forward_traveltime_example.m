@@ -37,14 +37,14 @@ prior{im}.type='FFTMA';
 prior{im}.name='Velocity (m/ns)';
 prior{im}.Va='.0003 Sph(6,90,.33)';
 prior{im}.m0=0.10;
-dx=0.05;
+dx=0.15;
 prior{im}.x=[-2:dx:7];
 prior{im}.y=[-2:dx:13];
 prior{im}.cax=[.04 .18];
 %d_target=[randn(1,100)*.003+0.11 randn(1,100)*.003+0.16];
 %prior{im}.d_target=d_target;
 prior{im}.Va='.0001 Sph(6,90,.33)';
-prior{im}.Va='.000001 Sph(6,90,.33)';
+prior{im}.Va='.0001 Sph(6,90,.33)';
 prior{im}.m0=0.10;
 
 %% compute t in hom model
@@ -59,9 +59,11 @@ forward.forward_function='sippi_forw    progress_txt(is,ns);ard_traveltime';
 forward.sources=D.S;
 forward.receivers=D.R;
 [m,prior]=sippi_prior(prior);
+%m{1}=m{1}.*0+0.1;
 sippi_plot_prior(prior,m);
 
-for it=1:2;
+for i=1:size(D.S,1);
+for it=1:4;
     forwardi{it}=forward;
     if it==1;
         forwardi{it}.type='fd';
@@ -82,13 +84,34 @@ for it=1:2;
     end
 
     L{it}=forwardi{it}.type;
+for i=1:size(D.S,1);
     [d{it},forwardi{it},prior,data]=sippi_forward_traveltime(m,forwardi{it},prior,data);
     
-    figure(3);
+end
+%plot(t_ref,'k-')
+%L{it+1}='HOM'
+%hold off
+%legend(L)
+
+L{it+1}='HOM';
+
+%%
+figure(3);clf,
+for it=1:length(forwardi);
     plot(d{it}{1});
     hold on
 end
-plot(t_ref,'k-')
-L{it+1}='HOM'
+plot(t_ref,'k:')
 hold off
 legend(L)
+
+%%
+for i=1:size(D.S,1);
+figure(4);
+for it=2:length(forwardi);
+    dd=d{it}{1}(:)-d{1}{1}(:);
+    md(it)=mean(dd);
+    sd(it)=std(dd);
+    subplot(1,4,it-1);
+    hist(d{it}{1}(:)-d{1}{1}(:),-30:.1:30);
+end

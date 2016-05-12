@@ -232,7 +232,7 @@ elseif strcmp(forward.type,'fd');
     
     
     %output traveltime in m/ns
-    d{id}=t*1e+9-dt;
+    d{id}=t*1e+9-dt(:);
     
 else
     disp(sprintf('%s : forward of type ''%s'' not known',mfilename,forward.type))
