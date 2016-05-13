@@ -38,8 +38,8 @@ prior{im}.name='Velocity (m/ns)';
 prior{im}.Va='.0003 Sph(6,90,.33)';
 prior{im}.m0=0.10;
 dx=0.15;
-prior{im}.x=[-2:dx:7];
-prior{im}.y=[-2:dx:13];
+prior{im}.x=[-1:dx:6];
+prior{im}.y=[0:dx:13];
 prior{im}.cax=[.04 .18];
 %d_target=[randn(1,100)*.003+0.11 randn(1,100)*.003+0.16];
 %prior{im}.d_target=d_target;
@@ -55,20 +55,28 @@ t_ref=dis./prior{im}.m0;
 
 
 %% SETUP THE FORWARD MODEL
-forward.forward_function='sippi_forw    progress_txt(is,ns);ard_traveltime';
+forward.forward_function='sippi_forward_traveltime';
+%forward.sources=D.S(1:500,:);
+%forward.receivers=D.R(1:500,:);
 forward.sources=D.S;
 forward.receivers=D.R;
 [m,prior]=sippi_prior(prior);
-%m{1}=m{1}.*0+0.1;
-sippi_plot_prior(prior,m);
+m{1}=m{1}.*0+0.1;
+%m{1}(50:end,:)=m{1}(50:end,:)*1.1;
 
-for i=1:size(D.S,1);
-for it=1:4;
+sippi_plot_prior(prior,m);
+hold on
+plot_traveltime_sr(forward.sources,forward.receivers);
+hold off
+
+
+for it=1:2;
     forwardi{it}=forward;
     if it==1;
         forwardi{it}.type='fd';
         %forwardi{it}.fa.doPlot=0;
         %forwardi{it}.fa.use_method=2;
+        forwardi{it}.t_shift=0;
         forwardi{it}.freq=0.1;
     elseif it==2
         forwardi{it}.type='eikonal';
@@ -82,19 +90,17 @@ for it=1:4;
         forwardi{it}.freq=0.1;
         %forwardi{it}.linear_m=m{1};
     end
-
+    
     L{it}=forwardi{it}.type;
-for i=1:size(D.S,1);
     [d{it},forwardi{it},prior,data]=sippi_forward_traveltime(m,forwardi{it},prior,data);
     
+    %plot(t_ref,'k-')
+    %L{it+1}='HOM'
+    %hold off
+    %legend(L)
 end
-%plot(t_ref,'k-')
-%L{it+1}='HOM'
-%hold off
-%legend(L)
 
 L{it+1}='HOM';
-
 %%
 figure(3);clf,
 for it=1:length(forwardi);
@@ -106,7 +112,6 @@ hold off
 legend(L)
 
 %%
-for i=1:size(D.S,1);
 figure(4);
 for it=2:length(forwardi);
     dd=d{it}{1}(:)-d{1}{1}(:);
@@ -115,3 +120,14 @@ for it=2:length(forwardi);
     subplot(1,4,it-1);
     hist(d{it}{1}(:)-d{1}{1}(:),-30:.1:30);
 end
+
+
+%% figure(5)
+
+t=forwardi{1}.fd.time*1e+9;
+t_1=d{1}{1};
+it_1=interp1(t,1:length(t),t_1);
+sippi_plot_data_gpr(forwardi{1}.fd.d);
+hold on,
+plot(1:length(it_1),it_1,'*')
+hold off

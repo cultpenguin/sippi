@@ -2,8 +2,8 @@
 %                  overwrites sippi_plot_data plot data in SIPPI
 %
 % Call.
-%    sippi_plot_data(d,data);
-%    sippi_plot_data(d,data,id_arr);
+%    sippi_plot_data_gpr(d,data);
+%    sippi_plot_data_gpr(d,data,id_arr);
 %
 function sippi_plot_data_gpr(d,data,id_arr);
 
