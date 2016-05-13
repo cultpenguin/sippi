@@ -27,9 +27,15 @@ if nargin<4, data{1}.null='';end
 
 if nargin<2, forward.null='';end
 
+
+
 if ~isfield(forward,'fmm');
     forward.fmm.null='';
 end
 
-[d_hist,forward.fmm]=frequency_matching(m{1},forward.fmm);
-d{id}=d_hist(:);
+if ~isfield(forward.fmm,'N');
+    forward.fmm.N=2;
+end
+
+[d_hist,forward.fmm]=frequency_matching(round(m{1}),forward.fmm);
+d{id}=d_hist(:)./sum(d_hist(:));
