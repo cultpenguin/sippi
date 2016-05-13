@@ -39,7 +39,7 @@ if size(S,2)==2;
     end
 elseif size(S,2)==3;
     for i=1:1:size(S,1);
-        plot3([S(i,1) R(i,1)],[S(i,2) R(i,2)],[S(i,3) R(i,3)],'k-');
+        plot3([S(i,1) R(i,1)],[S(i,2) R(i,2)],[S(i,3) R(i,3)],'k-','LineWidth',.1);
     end
     hold off
 end

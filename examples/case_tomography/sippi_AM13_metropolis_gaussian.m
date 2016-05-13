@@ -15,6 +15,10 @@ clear all;close all
 D=load('AM13_data.mat');
 options.txt='AM13_gaussian';
 
+D2=D;
+D.S(352:end,:)=D2.R(352:end,:);
+D.R(352:end,:)=D2.S(352:end,:);
+
 
 %% SETUP DATA, PRIOR and FORWARD
 
@@ -22,7 +26,7 @@ options.txt='AM13_gaussian';
 id=1;
 data{id}.d_obs=D.d_obs;
 data{id}.d_std=D.d_std.*0+0.4;;
-data{id}.i_use=1:20;
+%data{id}.i_use=1:20;
 %data{id}.Ct=1; % Data covariance describing modelization error
 data{id}.Ct=D.Ct; % Correlated noise model according to Cordua et al (2008; 2009)
 options.txt=[options.txt,'_noCt'];
@@ -42,8 +46,6 @@ d_target=[randn(1,100)*.003+0.11 randn(1,100)*.003+0.16];
 prior{im}.d_target=d_target;
 prior{im}.m0=0; %% MAKE SURE sippi_forward_traveltime tests for a non-zero velocity
 
-sippi_plot_prior(prior);
-
 
 %% SETUP THE FORWARD MODEL(S)
 % SETUP THE FORWARD MODEL USED IN INVERSION
@@ -58,13 +60,19 @@ forward.m0=0.10;
 %% TEST THE SETUP 
 % generate a realization from the prior
 [m,prior]=sippi_prior(prior);
+sippi_plot_prior(prior,m);
+hold on
+plot_traveltime_sr(forward.sources,forward.receivers)
+hold off
+
+
 % Compute the forward response related to the realization of the prior model generated above
 [d,forward]=sippi_forward(m,forward,prior,data);
 % Compute the likelihood 
 [logL,L,data]=sippi_likelihood(d,data);
 % plot the forward response and compare it to the observed data
 sippi_plot_data(d,data);
-return
+
 [logL,L,data]=sippi_likelihood(d,data);
 %% SETUP METROPOLIS
 options.mcmc.nite=100000;
