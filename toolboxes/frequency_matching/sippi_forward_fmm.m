@@ -38,4 +38,5 @@ if ~isfield(forward.fmm,'N');
 end
 
 [d_hist,forward.fmm]=frequency_matching(round(m{1}),forward.fmm);
-d{id}=d_hist(:)./sum(d_hist(:));
+d{id}=d_hist(:);
+%d{id}=d_hist(:)./sum(d_hist(:));

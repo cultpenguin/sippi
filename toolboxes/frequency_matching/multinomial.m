@@ -1,36 +1,68 @@
-function logP = multinomial(Htest, Htrain,prior)
-
-% log probability using the dirichlet distribution
-% It becomes the multinomial distribution when prior =0 
-% H has to be coloumn vectors.
-%
-% KC 2016
-%
-if nargin<3
-    prior=0;
+function [loglik,lik] = multinomial(H,Hti,Hprior,type)
+if nargin==0;
+    H=[2 3 5 2 1]*12;
+    Hti=[2 3 5 2 1]*22;
+    Hprior=[1 1 1 1 1].*0;
+end
+if nargin<3;
+    Hprior=1;
 end
 
-index = Htrain(:) > 0 | Htest(:) > 0;
-Htrain = Htrain(index);
-Htest = Htest(index);
+if length(Hprior)==1
+    Hprior=ones(size(H)).*Hprior;
+end
 
-Hprior = prior*ones(size(Htrain));
+if nargin<4
+    type=1;
+end
 
-Nprior = sum(Hprior);
-Ntrain = sum(Htrain);
-Ntest = sum(Htest);
-Nopt = Nprior + Ntrain;
+N=sum(H);
+Nti=sum(Hti);
+Nprior=sum(Hprior);
+Nb=length(H);
 
-Hopt = (Hprior + Htrain);
 
-tmp1 = gammaln(Htest + 1);
-tmp3 = log( Hopt / Nopt );
 
-logP = gammaln(Ntest + 1) - sum(tmp1) + Htest' * tmp3;
 
-%P=exp(P);
+% Cordua et al 2014
 
-%Pprob = factorial(Ntest) / prod(factorial(Htest(:))) * prod((Hopt(:)/Nopt).^Htest(:))
 
-% Ptest = gammaln(Ntest + 1) - sum(gammaln(Htest(:)+1)) + sum(Htest(:).*log(Htrain(:)/Ntest))
 
+if type==1;
+    %% LOG-probability
+    K_top = sum(log(1:N));
+    for i=1:Nb
+        K_bas(i) = sum(log(1:H(i)));
+    end
+    K= K_top - sum(K_bas);
+    
+    
+    for i=1:Nb
+        Li(i)= H(i)*log( (Hti(i) + Hprior(i))/(Nti+Nprior) );
+    end
+    L=NaN;
+    L=sum(Li);
+    loglik=K+L;
+    lik=exp(loglik);
+elseif type==2
+    %% probability
+    P_top = factorial(N);
+    for i=1:Nb
+    P_bas(i) = factorial(H(i));   
+    end
+    P = P_top./prod(P_bas);
+    
+    for i=1:Nb
+        Qi(i)= ( (Hti(i) + Hprior(i))/(Nti+Nprior) )^H(i);
+    end
+    Q=prod(Qi);
+    
+    lik=P*Q;
+    loglik=log(lik);
+end
+
+%%
+%[log(P),K]
+%[log(Q),L]
+%%keyboard
+%[log(lik),loglik]
