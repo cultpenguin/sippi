@@ -1,3 +1,24 @@
+
+%  multinomial: The 'frequency matching model'
+%
+% Call: 
+%    [loglik,lik] = multinomial(H,Hti,Hprior,type)
+%    H: [nH,1] 
+%    Hti: [nH,1] 
+%    Hprior: [nH,1] 
+%
+%    prior: [1]: Fast log-probability (default)
+%           [2]: slower log-probability
+%           [3]: slow probability
+% 
+%
+% Implements equation 9 'The Frequency Matching Model' in 
+%  Cordua et al., 2015 - Improving the Pattern Reproducibility of
+%  Multiple-Point-Based Prior Models Using Frequency Matching.
+%  Mathematical Geosciences 47(3).
+%
+% Thomas Mejer Hansen & Knud Cordua, 2016
+%
 function [loglik,lik] = multinomial(H,Hti,Hprior,type)
 if nargin==0;
     H=[2 3 5 2 1]*12;
@@ -28,7 +49,7 @@ Nb=length(H);
 
 
 
-if type==1;
+if type==2;
     %% LOG-probability
     K_top = sum(log(1:N));
     for i=1:Nb
@@ -44,7 +65,7 @@ if type==1;
     L=sum(Li);
     loglik=K+L;
     lik=exp(loglik);
-elseif type==2
+elseif type==3
     %% probability
     P_top = factorial(N);
     for i=1:Nb
@@ -59,6 +80,26 @@ elseif type==2
     
     lik=P*Q;
     loglik=log(lik);
+elseif type==1
+    %% Fast log probability
+    Nprior = sum(Hprior);
+    Nti = sum(Hti);
+    
+    index = H(:) > 0;
+    Hti = Hti(index);
+    H = H(index);
+    Hprior=Hprior(index);
+    
+    N = sum(H);
+    Nopt = Nprior + Nti;
+    
+    Hopt = (Hprior + Hti);
+    
+    tmp1 = gammaln(H + 1);
+    tmp3 = log( Hopt / Nopt );
+    
+    loglik = gammaln(N + 1) - sum(tmp1) + H' * tmp3;
+    
 end
 
 %%
