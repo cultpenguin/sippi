@@ -15,9 +15,9 @@ clear all;close all
 D=load('AM13_data.mat');
 options.txt='AM13_gaussian';
 
-D2=D;
-D.S(352:end,:)=D2.R(352:end,:);
-D.R(352:end,:)=D2.S(352:end,:);
+%D2=D;
+%D.S(352:end,:)=D2.R(352:end,:);
+%D.R(352:end,:)=D2.S(352:end,:);
 
 
 %% SETUP DATA, PRIOR and FORWARD
@@ -40,11 +40,11 @@ prior{im}.Va='.0003 Sph(6)';
 dx=0.15;
 prior{im}.x=[-1:dx:6];
 prior{im}.y=[0:dx:13];
-prior{im}.cax=[.04 .18];
+prior{im}.cax=[-1 1].*.04+prior{im}.m0;
 
-d_target=[randn(1,100)*.003+0.11 randn(1,100)*.003+0.16];
-prior{im}.d_target=d_target;
-prior{im}.m0=0; %% MAKE SURE sippi_forward_traveltime tests for a non-zero velocity
+%d_target=[randn(1,100)*.003+0.11 randn(1,100)*.003+0.16];
+%prior{im}.d_target=d_target;
+%prior{im}.m0=0; %% MAKE SURE sippi_forward_traveltime tests for a non-zero velocity
 
 
 %% SETUP THE FORWARD MODEL(S)
