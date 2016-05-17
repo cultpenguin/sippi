@@ -12,6 +12,10 @@
 %
 clear all;close all;
 
+useSnesimPrior=1;
+SampleOnlyPrior=0;
+
+
 TI=channels;
 TI=TI(3:3:end,3:3:end);
 dx=0.25;
@@ -19,7 +23,6 @@ x=0:dx:5;
 y=0:dx:12;
 
 %% SETUP PRIOR
-useSnesimPrior=1;
 if useSnesimPrior==1;
     ip=1;
     prior{ip}.type='mps';
@@ -72,7 +75,7 @@ m=sippi_prior(prior);
 [logL]=sippi_likelihood(d,data)
 
 %% MCMC
-options.mcmc.accept_all=0;
+options.mcmc.accept_all=SampleOnlyPrior;
 if (options.mcmc.accept_all==1)
     options.txt=[options.txt,'_OnlyPrior'];
 end
