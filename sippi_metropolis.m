@@ -349,7 +349,7 @@ for i=1:mcmc.nite;
         % Optionally accept all proposed models
         if (mcmc.accept_all==1), C{ic}.Pacc=1; end
 
-        % Aceept move
+        % Accept move
         C{ic}.forward.last_proposed_model_accept=0; %
         if C{ic}.Pacc>rand(1)
             % ACCEPT MODEL
