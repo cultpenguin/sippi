@@ -29,7 +29,8 @@ function [options,data,prior,forward,m_current]=sippi_metropolis(data,prior,forw
 %    options.mcmc.m_init : Manually chosen starting model
 %    options.mcmc.m_ref  : Reference known target model
 %
-%    options_mcmc.accept_only_improvements [0] : Optimization
+%    options.mcmc.accept_only_improvements [0] : Optimization
+%    options.mcmc.accept_all [0]: accepts all proposed models (ignores lilkelihood)
 %
 %    options.txt [string] : string to be used as part of all output file names
 %
