@@ -71,7 +71,7 @@ m=sippi_prior(prior);
 [logL]=sippi_likelihood(d,data)
 
 %% MCMC
-options.mcmc.accept_all==0;
+options.mcmc.accept_all=0;
 if (options.mcmc.accept_all==1)
     options.txt=[options.txt,'_OnlyPrior'];
 end
