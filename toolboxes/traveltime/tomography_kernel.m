@@ -130,9 +130,15 @@ for is=1:ns
     
     dist_to_source=sqrt(sum( (raypath(end,:)-S(is,:)).^2));    
     if (dist_to_source>dx)||(dist_to_source>dy);
-        sippi_verbose(sprintf('%s: Unable to trace the ray to the source point for S=[%g,%g], R=[%g,%g] (%g,%g)',mfilename,S(is,1),S(is,2),start_point(1),start_point(2)),-1)
-        sippi_verbose(sprintf('%s: CHECK OPTIONS FOR ''stream2''',mfilename),-1)
-        return
+        if (dist_to_source<2*dx)&&(dist_to_source<2*dy);
+            sippi_verbose(sprintf('%s: Unstable ratracing: S=[%g,%g], R=[%g,%g] (%g,%g)',mfilename,S(is,1),S(is,2),start_point(1),start_point(2)),-1)
+            sippi_verbose(sprintf('%s: CHECK OPTIONS FOR ''stream2''',mfilename),-1)
+        else
+            sippi_verbose(sprintf('%s: Unable to trace the ray to the source point for S=[%g,%g], R=[%g,%g] (%g,%g)',mfilename,S(is,1),S(is,2),start_point(1),start_point(2)),-1)
+            sippi_verbose(sprintf('%s: CHECK OPTIONS FOR ''stream2''',mfilename),-1)
+            sippi_verbose(sprintf('%s: RESULTS MAY NOT BE USEFUL!!!''',mfilename),-1)
+            
+        end
     end
     
     if isempty(raypath)
