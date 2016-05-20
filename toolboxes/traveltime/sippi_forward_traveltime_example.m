@@ -44,7 +44,7 @@ prior{im}.cax=[.04 .18];
 %d_target=[randn(1,100)*.003+0.11 randn(1,100)*.003+0.16];
 %prior{im}.d_target=d_target;
 prior{im}.Va='.0001 Sph(6,90,.33)';
-prior{im}.Va='.0001 Sph(6,90,.33)';
+prior{im}.Va='.0001 Sph(.1,90,.33)';
 prior{im}.m0=0.10;
 
 %% compute t in hom model

@@ -7,6 +7,20 @@
 %  m{2} reflect the sig field (if not set it is trated as constant).
 % 
 % % Mandatory 
+% forward.sources and forward.receivers contains the position of sources
+%    and receives ising the SAME coordinate systrem as prior{im}
+%
+% forward.sources : [Sx1 Sy1
+%                    Sx2 Sy2
+%                    ..]
+% forward.receivers: [Rx1 Ry1
+%                    Rx2 Ry2
+%                    ..]
+%
+%
+% forward.ant_pos contains the positions in a grid with origin [0,0]
+%               This is computed from forward.sources and forward.receivers
+%               if not set.
 % forward.ant_pos: antenna postions for receivers and recorders
 %                  [Sx1, Sy1, Rx1, Ry1    
 %                   Sx2, Sy2, Rx2, Ry2
@@ -112,6 +126,14 @@ end
 if ~isfield(forward.addpar,'Epsmin');forward.addpar.Epsmin=1;end
 if ~isfield(forward.addpar,'start');forward.addpar.start=1;end
 if ~isfield(forward.addpar,'debug');forward.addpar.debug=-1;end
+
+
+if ~isfield(forward,'ant_pos');
+    min_x=min(prior{1}.x);
+    min_y=min(prior{1}.y);
+    forward.ant_pos=[forward.sources(:,1)-min_x forward.sources(:,2)-min_y forward.receivers(:,1)-min_x forward.receivers(:,2)-min_y];
+end
+
 
 %% run forward
 dx_in=prior{1}.x(2)-prior{1}.x(1);
