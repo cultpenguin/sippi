@@ -111,6 +111,7 @@ end
 plot(t_ref,'k.')
 hold off
 legend(L)
+print('-dpng',sprintf('%s_compare',mfilename));
 
 %%
 figure(4);
