@@ -209,21 +209,24 @@ elseif strcmp(forward.type,'fd');
         [tt_pick(i),t(i)]=pick_first_arrival(wf_data,forward.fa.ref_trace,forward.fa.ref_t0,forward.fa.doPlot,forward.fa.wf_time,forward.fa.use_method);
     end
     t=t*1e+9;
+    
     %% optionally compute time shift to apply to first arrival pick 
     if ~isfield(forward.fa,'t_shift');
-        
+        sippi_verbose(sprintf('%s: computing reference t0 for traveltime picking',mfilename))
         % compute FD in one data set in a homo
         v0=mean(m{1}(:));
         eps0=velocity_to_eps(v0);
         forward.m_fd_0{1}=forward.m_fd{1}.*0+eps0;
+        
         f=forward.fd;
         %f.ant_pos=forward.fd.ant_pos(1,:);
-        [fd_0]=sippi_forward_gpr_fd(forward.m_fd,f,prior);
+        [fd_0]=sippi_forward_gpr_fd(forward.m_fd_0,f,prior);
         forward.fd.d_fd_0=fd_0;
         
         for i=1:size(forward.fd.ant_pos,1);
             wf_data=forward.fd.d_fd_0{i};
             [tt_pick_0(i),t_0(i)]=pick_first_arrival(wf_data,forward.fa.ref_trace,forward.fa.ref_t0,forward.fa.doPlot,forward.fa.wf_time,forward.fa.use_method);
+    
         end
         t_0=t_0*1e+9;
     

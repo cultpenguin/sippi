@@ -35,17 +35,18 @@ data{id}.d_std=D.d_std;
 im=1;
 prior{im}.type='FFTMA';
 prior{im}.name='Velocity (m/ns)';
-prior{im}.Va='.0003 Sph(6,90,.33)';
+prior{im}.Va='.0001 Gau(6,90,.15)';
 prior{im}.m0=0.10;
-dx=0.15;
+dx=0.05;
 prior{im}.x=[-1:dx:6];
 prior{im}.y=[0:dx:13];
 prior{im}.cax=[.04 .18];
-%d_target=[randn(1,100)*.003+0.11 randn(1,100)*.003+0.16];
-%prior{im}.d_target=d_target;
-prior{im}.Va='.0001 Sph(6,90,.33)';
-prior{im}.Va='.0001 Sph(.1,90,.33)';
-prior{im}.m0=0.10;
+d_target=[randn(1,30)*.003+0.06 randn(1,100)*.003+0.11 randn(1,100)*.003+0.16];
+prior{im}.d_target=d_target;
+prior{im}.m0=0;
+
+%prior{im}.Va='.0001 Sph(.1,90,.33)';
+%prior{im}.m0=0.10;
 
 %% compute t in hom model
 for i=1:size(D.S,1);
@@ -61,8 +62,8 @@ forward.forward_function='sippi_forward_traveltime';
 forward.sources=D.S;
 forward.receivers=D.R;
 [m,prior]=sippi_prior(prior);
-m{1}=m{1}.*0+0.1;
-%m{1}(50:end,:)=m{1}(50:end,:)*1.1;
+%m{1}=m{1}.*0+0.1;
+%m{1}(50:end,:)=m{1}(50:end,:)*1.5;
 
 sippi_plot_prior(prior,m);
 hold on
@@ -70,13 +71,13 @@ plot_traveltime_sr(forward.sources,forward.receivers);
 hold off
 
 
-for it=1:2;
+for it=1:1:4;
     forwardi{it}=forward;
     if it==1;
         forwardi{it}.type='fd';
         %forwardi{it}.fa.doPlot=0;
         %forwardi{it}.fa.use_method=2;
-        forwardi{it}.t_shift=0;
+        %forwardi{it}.fa.t_shift=0;        
         forwardi{it}.freq=0.1;
     elseif it==2
         forwardi{it}.type='eikonal';
@@ -107,7 +108,7 @@ for it=1:length(forwardi);
     plot(d{it}{1});
     hold on
 end
-plot(t_ref,'k:')
+plot(t_ref,'k.')
 hold off
 legend(L)
 
@@ -118,7 +119,7 @@ for it=2:length(forwardi);
     md(it)=mean(dd);
     sd(it)=std(dd);
     subplot(1,4,it-1);
-    hist(d{it}{1}(:)-d{1}{1}(:),-30:.1:30);
+    hist(d{it}{1}(:)-d{1}{1}(:),-10:.1:10);
 end
 
 
