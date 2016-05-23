@@ -191,7 +191,7 @@ elseif strcmp(forward.type,'fd');
     %forward.fd.ant_pos=forward.fd.ant_pos(1:1:351,:);
     
     forward.fd.output_it=1; % output every 'output_ti' samples
-    if ~isfield(forward.fd,'t')forward.fd.t=1e-7; end;% SIMULATION TIME
+    if ~isfield(forward.fd,'t');forward.fd.t=1e-7; end;% SIMULATION TIME
     if ~isfield(forward.fd,'sig');forward.fd.sig=3; end;% constant
     if ~isfield(forward.fd,'debug');forward.fd.addpar.debug=-1;end
     %if ~isfield(forward.fd,'sig');forward.fd.addpar.cores=4;end
@@ -230,13 +230,19 @@ elseif strcmp(forward.type,'fd');
         
         f=forward.fd;
         %f.ant_pos=forward.fd.ant_pos(1,:);
+        pause(.5); %sometime necessary
         [fd_0]=sippi_forward_gpr_fd(forward.m_fd_0,f,prior);
         forward.fd.d_fd_0=fd_0;
         
         for i=1:size(forward.fd.ant_pos,1);
-            wf_data=forward.fd.d_fd_0{i};
-            [tt_pick_0(i),t_0(i)]=pick_first_arrival(wf_data,forward.fa.ref_trace,forward.fa.ref_t0,forward.fa.doPlot,forward.fa.wf_time,forward.fa.use_method);
-    
+            try 
+                wf_data=forward.fd.d_fd_0{i};
+                [tt_pick_0(i),t_0(i)]=pick_first_arrival(wf_data,forward.fa.ref_trace,forward.fa.ref_t0,forward.fa.doPlot,forward.fa.wf_time,forward.fa.use_method);
+            catch
+                t_0(i)=0;
+                sippi_verbose(sprintf('%s: something went wrong',mfilename))
+                %keyboard
+            end
         end
         t_0=t_0*1e+9;
     
