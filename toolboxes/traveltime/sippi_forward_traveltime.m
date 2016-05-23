@@ -23,9 +23,17 @@
 %                     Can be eithe a scalar (constant velocity field) or
 %                     the same size as the the velcity model 'm'.
 %
+%   forward.normalize_vertical [1]: Normalize sensitivitykernel by
+%                                   in vertical slices
+%                              [0]: No normalization
+%
+%   forward.alpha [1]: alpha value for munk_fresnel_2d, munk_fresnel_3f
+
 %
 %   forward.freq : [scalar] Signal frequency,m used ot define the width of
 %                  the kernels forward.G
+%
+%   See also: munk_fresnel_2d, munk_fresnel_3d, tomography_kernel, eikonal, eikonal_traveltime
 %
 function [d,forward,prior,data]=sippi_forward_traveltime(m,forward,prior,data,id,im)
 
@@ -59,6 +67,8 @@ if ~isfield(data{id},'i_use');
     data{id}.i_use=1:size(forward.sources,1);
 end
 
+if ~isfield(forward,'normalize_vertical');forward.normalize_vertical=1;;end
+if ~isfield(forward,'alpha');forward.alpha=1;;end
 if ~isfield(forward,'type');forward.type='eikonal';;end
 if ~isfield(forward,'is_slowness');forward.is_slowness=0;;end
 
@@ -101,9 +111,9 @@ elseif (strcmp(forward.type,'ray')|strcmp(forward.type,'fat'));
         end
         
         if forward.is_slowness==1;
-            [K,RAY,Gk,Gray]=tomography_kernel(1./m_use,x,y,z,S(data{id}.i_use,:),R(data{id}.i_use,:),T);
+            [K,RAY,Gk,Gray]=tomography_kernel(1./m_use,x,y,z,S(data{id}.i_use,:),R(data{id}.i_use,:),T,forward.alpha,forward.normalize_vertical);
         else            
-            [K,RAY,Gk,Gray]=tomography_kernel(m_use,x,y,z,S(data{id}.i_use,:),R(data{id}.i_use,:),T);
+            [K,RAY,Gk,Gray]=tomography_kernel(m_use,x,y,z,S(data{id}.i_use,:),R(data{id}.i_use,:),T,forward.alpha,forward.normalize_vertical);
         end
         
         if strcmp(forward.type,'ray')

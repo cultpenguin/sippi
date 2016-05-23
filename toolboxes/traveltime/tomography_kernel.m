@@ -82,6 +82,7 @@ RAY=zeros(size(dt));
 str_options = [.01 50000]; % CONTROL STREAM2 BELOW!!
 [xx,yy]=meshgrid(x,y);
 for is=1:ns
+    
     if ((is/10)==round(is/10))
         progress_txt(is,ns,mfilename);
     end
@@ -195,7 +196,6 @@ for is=1:ns
     K(:,:,is)=raylength_mat(is).*K(:,:,is)./sk;
     
 end
-
 
 % NORMALIZE RAY
 for is=1:ns
