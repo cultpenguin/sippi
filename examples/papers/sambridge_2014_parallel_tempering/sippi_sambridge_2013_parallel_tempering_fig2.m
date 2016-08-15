@@ -117,8 +117,8 @@ options_metro2.mcmc.i_sample=1;
 options_metro2.mcmc.i_plot=1000;
 options_metro2.mcmc.nite=10000;     % maximum number of iterations
 
-options_metro2.mcmc.n_chains=20; % set number of chains (def=1)
-options_metro2.mcmc.T=[1:options.mcmc2.n_chains]*1;      % set temperature of chains [1:n_chains]
+options_metro2.mcmc.n_chains=5; % set number of chains (def=1)
+options_metro2.mcmc.T=1+[0:(options_metro2.mcmc.n_chains-1)]*.5;      % set temperature of chains [1:n_chains]
 options_metro2.mcmc.chain_frequency_jump=0.1; % probability allowing a jump
                                             %  between two chains
 
