@@ -4,8 +4,6 @@
 make validate
 
 
-
-
 # Figure out the version number
 file="version.xml" #the file where you keep your string name
 if [ ! -f $file ]; then
@@ -19,12 +17,14 @@ if [ ! -f $file ]; then
       VERSION=$1;
     fi
 else
-  VERSION=$(cat "$file")
+    VERSION=$(cat "$file")
+
 #  echo $VERSION
 fi
 
-FILENAME=SIPPI_$VERSION.zip;
+FILENAME=SIPPI_${VERSION};
 echo "$0: Creating release $FILENAME"
+
 
 rm -fr SIPPI
 git clone --depth 1 https://github.com/cultpenguin/sippi.git SIPPI
@@ -43,5 +43,5 @@ make dblatex_ubuntu
 mv sippi.pdf SIPPI/doc/.
 
 
-#zip -r $FILENAME.zip SIPPI 
-#tar cvfz $FILENAME.tar.gz SIPPI
+zip -r ${FILENAME}.zip SIPPI 
+tar cfz ${FILENAME}.tar.gz SIPPI

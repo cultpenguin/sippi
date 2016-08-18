@@ -102,7 +102,11 @@ sippi_AM1234_metropolis_gaussian.m : sippi_AM13_metropolis_gaussian.m but for da
   
 ## Releases history
 
-#v1.4 2015-02-01
+#v1.5 2016-08-18
+Notice that V1.3 was packed without mGstat :/
+MPSLIB (https://github.com/ergosimulation/mpslib) added for the first time (MPS based prior sampling, SNESIM and ENESIM type algorithms)
+
+#v1.4 2016-02-01
 Notice that V1.3 was packed without mGstat :/
 So v1.4 is like V1.4 but repackaged properly with mGstat.
 + sippi_prior_plurigaussian added for the first time.
