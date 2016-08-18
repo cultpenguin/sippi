@@ -18,7 +18,7 @@ i=i+1;F{i}=[p,filesep,'misc'];
 i=i+1;F{i}=[p,filesep,'toolboxes',filesep,'fast_marching_kroon'];
 i=i+1;F{i}=[p,filesep,'toolboxes',filesep,'fast_marching_kroon',filesep,'functions'];
 i=i+1;F{i}=[p,filesep,'toolboxes',filesep,'fast_marching_kroon',filesep,'shortestpath'];
-i=i+1;F{i}=[p,filesep,'toolboxes',filesep,'mps',filesep,'matlab'];
+i=i+1;F{i}=[p,filesep,'toolboxes',filesep,'mpslib',filesep,'matlab'];
 i=i+1;F{i}=[p,filesep,'toolboxes',filesep,'frequency_matching'];
 
 % ALSO ADD ALL DIRS IN 'toolboxes' folder not allready specified

@@ -23,7 +23,8 @@
    prior{im}.sill
    prior{im}.nugget_fraction
  
-  See Hansen et al. (201X), A general probabilistic approach for inference of Gaussian model parameters from noisy data of point and volume support. Submitted to Mathematical Geosciences, 2014.
+  See Hansen et al. (2014). A general probabilistic approach for inference of Gaussian model parameters from noisy data of point and volume support. 
+  Mathematical Geosciences 47(7), pp 843-865. published online 09-2014. doi:10.1007/s11004-014-9567-5 
  
   See also: sippi_forward
  

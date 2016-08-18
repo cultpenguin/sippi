@@ -27,6 +27,6 @@ rm -fr SIPPI
 git clone --depth 1 https://github.com/cultpenguin/sippi.git SIPPI
 cd SIPPI/toolboxes
 git clone --depth 1 https://github.com/cultpenguin/mgstat.git mGstat
-git clone --depth 1 https://github.com/ergosimulation/mps.git MPS
+git clone --depth 1 https://github.com/ergosimulation/mpslib.git mpslib
 cd ../..
 zip -r $FILENAME SIPPI

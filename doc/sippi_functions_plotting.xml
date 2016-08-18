@@ -8,6 +8,8 @@
     sippi_colormap(1) - Red Green Black
     sippi_colormap(2) - Red Green Blue Black
     sippi_colormap(3) - Jet
+    sippi_colormap(4) - Parula
+    sippi_colormap(5) - Geosoft
  
 ]]></programlisting></para>
 </sect2>
@@ -208,6 +210,17 @@
     sippi_plot_prior(prior,m,2);
  
   See also sippi_plot_prior, sippi_prior
+]]></programlisting></para>
+</sect2>
+
+<sect2 xml:id="sippi_plot_prior_movie"><title>sippi_plot_prior_movie</title>
+<para><programlisting><![CDATA[  sippi_plot_prior_movie: creates a movie file a random walk in the prior
+  
+  Call:
+     sippi_plot_prior_movie(prior,n_frames,options,im_array);
+ 
+  See also: sippi_plot_movie
+ 
 ]]></programlisting></para>
 </sect2>
 

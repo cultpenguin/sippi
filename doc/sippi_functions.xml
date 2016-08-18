@@ -83,6 +83,66 @@
 ]]></programlisting></para>
 </sect2>
 
+<sect2 xml:id="sippi_forward_linear"><title>sippi_forward_linear</title>
+<para><programlisting><![CDATA[  sippi_forward_linear: 
+ 
+  % options:
+  forward.G : Linear forward operator. such that d[
+              d{id}=forward.G*m{im}(:)
+              if not set, forward.G=eye(prod(size(m{im})));
+ 
+  forward.force_sparse [0]: Use forward.G as is (default)
+                      [1]: force forward.G to be treated as a sparse matrix
+ 
+  %% Examples
+  % Define an example of a prior model
+     forward.forward_function='sippi_forward_linear';
+     im=1;
+     prior{im}.type='FFTMA';
+     prior{im}.x=[0:1:100];
+     prior{im}.m0=0;
+     prior{im}.Va='1 Sph(10)';
+  % Define the use of the linear forward solver
+     forward.forward_function='sippi_forward_linear';
+ 
+  % Example 1: Identity, 
+  %             by default an identity operator is used if the linear
+  %             is not set
+    m=sippi_prior(prior);
+    tic;
+    d=sippi_forward(m,forward);
+    t1=toc;
+    figure(1);
+    subplot(1,2,1);plot(m{1});title('m')
+    subplot(1,2,2);plot(d{1});title('d')
+    suptitle(sprintf('Ex1, Identity, t=%g',t1))
+ 
+  % Example 2: Linear Operator
+    nd=prod(size(m{im}));
+    forward.G=precal_cov_2d(nd,1,1,1,'1 Sph(10)');
+    tic;
+    d=sippi_forward(m,forward);
+    t2=toc;
+    figure(2);
+    subplot(1,2,1);plot(m{1});title('m')
+    subplot(1,2,2);plot(d{1});title('d')
+    suptitle(sprintf('Ex2, t=%g',t2))
+ 
+ 
+   % Example 3: Force forward.G to be sparse
+    forward.force_sparse=1;
+    tic;
+    d=sippi_forward(m,forward);
+    t3=toc;
+    figure(3);
+    subplot(1,2,1);plot(m{1});title('m')
+    subplot(1,2,2);plot(d{1});title('d')
+    suptitle(sprintf('Force sparse, t=%g',t3))
+ 
+  See also: sippi_forward
+]]></programlisting></para>
+</sect2>
+
 <sect2 xml:id="sippi_get_resim_data"><title>sippi_get_resim_data</title>
 <para><programlisting><![CDATA[  sippi_get_resim_data: Get conditional data for resimulation
  
@@ -217,7 +277,8 @@
      options.mcmc.m_init : Manually chosen starting model
      options.mcmc.m_ref  : Reference known target model
  
-     options_mcmc.accept_only_improvements [0] : Optimization
+     options.mcmc.accept_only_improvements [0] : Optimization
+     options.mcmc.accept_all [0]: accepts all proposed models (ignores lilkelihood)
  
      options.txt [string] : string to be used as part of all output file names
  
@@ -230,7 +291,7 @@
  
      % Perturb one a prior type at a time, according to some frequency
      options.mcmc.pert_strategy.i_pert = [1,3]; % only perturb prior 1 and 3
-     options.mcmc.pert_strategy.i_pert = [2 8]; % perturb prior 3 80% of
+     options.mcmc.pert_strategy.i_pert_freq = [2 8]; % perturb prior 3 80% of
                                                 % the time and prior 1 20%
                                                 % of the time
      % the default pertubation strategt is to select one prior model to
@@ -264,7 +325,7 @@
 </sect2>
 
 <sect2 xml:id="sippi_prior"><title>sippi_prior</title>
-<para><programlisting><![CDATA[  sippi_prior A priori models for SIPPI
+<para><programlisting><![CDATA[  sippi_prior: A priori models for SIPPI
  
   To generate a realization of the prior model defined by the prior structure use:
     [m_propose,prior]=sippi_prior(prior);
@@ -464,6 +525,17 @@
      sippi_plot_prior(prior,m)
      figure(1);imagesc(prior{ip}.ti);axis image
  
+ 
+ %  The specific algorithm use for MPS simulation is defined in ytje 'method' field
+     prior{ip}.method='mps_snesim';         % default, same as 'mps_snesim_tree'
+     prior{ip}.method='mps_snesim_tree';
+     prior{ip}.method='mps_snesim_list';
+     prior{ip}.method='mps_enesim_general';
+ 
+     All properties for each algorithm are availale in the prior{ip}.MPS
+     field
+ 
+  See also: sippi_prior, ti, mps_cpp
 ]]></programlisting></para>
 </sect2>
 
@@ -474,21 +546,26 @@
     % PluriGaussian based on one Gaussian model / truncated Gaussian
     ip=1;
     prior{ip}.type='plurigaussian';
-    prior{ip}.x=1:1:80;
-    prior{ip}.y=1:1:80;
+    prior{ip}.x=1:1:100;
+    prior{ip}.y=1:1:100;
     prior{ip}.Cm='1 Gau(10)';
     prior{ip}.pg_map=[0 0 0 0 1 1 0 0 2 2 2];
+ 
     % PluriGaussian based on two Gaussian models 
     ip=ip+1;
     prior{ip}.type='plurigaussian';
-    prior{ip}.x=1:1:80;
-    prior{ip}.y=1:1:80;
+    prior{ip}.x=1:1:100;
+    prior{ip}.y=1:1:100;
     prior{ip}.pg_prior{1}.Cm=' 1 Gau(10)';
     prior{ip}.pg_prior{2}.Cm=' 1 Sph(10,90,.4)';
     prior{ip}.pg_map=[0 0 0 1 1; 1 2 0 1 1; 1 1 1 1 1];
  
     [m,prior]=sippi_prior(prior);
     sippi_plot_prior(prior,m);
+ 
+    sippi_plot_prior_sample(prior,1,5);
+    sippi_plot_prior_sample(prior,2,5);
+ 
  
  % Sequential Gibbs sampling
     prior{1}.seq_gibbs.step=.01;
@@ -649,6 +726,16 @@
      sippi_plot_prior(prior,m)
      figure(1);imagesc(prior{ip}.ti);axis image
  
+ % Hard data
+    % hard data are given using either matrix of 4 columns (x,y,z,val)
+    % or as a 4 column EAS file (x,y,z,val)
+    d_hard=[1 1 0 0; 1 2 0 0; 2 2 0 1 ];
+    prior{ip}.hard_data=d_hard;
+ 
+    write_eas('snesim_hard.dat',d_hard);
+    sgems_write_pointset('snesim_hard.sgems',d_hard);
+    prior{ip}.hard_data='snesim_hard.sgems';
+ 
  % Example: scaling and rotation
      ip=1;
      prior{ip}.type='snesim_std';
@@ -764,19 +851,31 @@
  % TARGET DISTRIBUTION
   clear prior
   d_target=[7 8 9 10 11 11 12];
+  d_target=[7 8 9 10 14 15 20];
  
   ip=1;
   prior{ip}.type='visim';
+  prior{ip}.method='sgsim';
+  % prior{ip}.method='dssim';
   prior{ip}.d_target=d_target;
   prior{ip}.cax=[min(d_target) max(d_target)];
   prior{ip}.x=1:1:80;
   prior{ip}.y=1:1:80;
   prior{ip}.Cm=sprintf('%g Gau(20)',var(d_target));
+  prior{ip}.Cm=sprintf('%g Gau(20)',1);
   [m,prior]=sippi_prior(prior);
   sippi_plot_prior(prior,m);
  
+  prior{ip}.seq_gibbs.step=16;
+  prior{ip}.seq_gibbs.type=1;
+  for i=1:10;
+     [m,prior]=sippi_prior(prior,m);
+     sippi_plot_prior(prior,m);
+     drawnow
+  end
  
-  See also: sippi_prior, visim
+ 
+  See also: sippi_prior, visim, nscore, inscore
  
 ]]></programlisting></para>
 </sect2>

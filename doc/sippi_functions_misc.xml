@@ -85,6 +85,14 @@
 ]]></programlisting></para>
 </sect2>
 
+<sect2 xml:id="pg_plot"><title>pg_plot</title>
+<para><programlisting><![CDATA[  pg_plot: plot plurigaussian transfer function
+ 
+  See also: pg_transform
+ 
+]]></programlisting></para>
+</sect2>
+
 <sect2 xml:id="pg_transform"><title>pg_transform</title>
 <para><programlisting><![CDATA[  pg_transform: plurigaussian transformation
  
@@ -98,7 +106,7 @@
   
   See also: sippi_prior_plurigaussian, prior_reals_plurigaussian
  
-  Example
+  See also: pg_plot
  
 ]]></programlisting></para>
 </sect2>
