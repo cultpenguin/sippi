@@ -19,7 +19,7 @@ dblatex_ubuntu:
 
 pandoc:
 	find ./ -name '*.xml' -exec sh -c 'pandoc --from docbook --to markdown -i $1 -o $1.md' _ {} \;
-	
+
 xalan:
 	java -jar /usr/share/java/xalan2-2.7.1.jar -in sippi.xml -xsl xsl/sippi.xsl -out sippi.html
 
@@ -77,5 +77,5 @@ all:
 	./updateSF
 
 help:
-	# USAGE
-	# make linkbook: Use booklayout 
+        # USAGE
+        # make linkbook: Use booklayout 

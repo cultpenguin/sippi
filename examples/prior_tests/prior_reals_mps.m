@@ -27,6 +27,23 @@ print_mul(sprintf('prior_reals_%ss',prior{1}.type));
 s=suptitle(sprintf('Independent realizations from a %s (%s) type prior',upper(prior{1}.type),prior{1}.method))
 set(s,'interpreter','none')
 
+%% MULITPLE GRIDS
+prior{ip}.type='mps';
+prior{ip}.method='mps_snesim';
+prior{ip}.x=0:.1:10;
+prior{ip}.y=0:.1:20;
+[m,prior]=sippi_prior(prior);
+i=0;
+for n_mul_grids=[0:1:4];
+    prior{ip}.MPS.rseed=1;
+    prior{ip}.MPS.n_multiple_grids=n_mul_grids;
+    [m,prior]=sippi_prior(prior);
+    i=i+1;subplot(1,5,i);
+    imagesc(prior{1}.x,prior{1}.y,m{1});axis image
+    title(sprintf('NMG = %d',n_mul_grids));
+end
+
+
 %% CONDITIONAL TO HARD DATA
 
 %% CONDITIONAL TO SOFT DATA

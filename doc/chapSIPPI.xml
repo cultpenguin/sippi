@@ -536,21 +536,36 @@ print_mul('prior_example_2d_plurigaussian_2_pgmap')
 -->
 <sect3 xml:id="prior_mps"><title>MPS</title>
 <para>
-The 'MPS' type prior make use of the <link xlink:href="https://github.com/cultpenguin/mps">&mps; library</link> for mulitple-point based simulation. For compilation and installation help see <link linkend="InstallSippi">Install &sippi;</link>. &mps; implements the SNESIM (using both a search tree and a list to stor conditional statistics), and the generalized ENESIM algoritm. The type of multiple-point algorithm is define in the method field
+  The 'MPS' type prior make use of the <link xlink:href="https://github.com/ergosimulation/mpslib">&mps; library</link> for mulitple-point based simulation. For compilation and installation help see <link linkend="InstallSippi">Install &sippi;</link>. &mps; implements the SNESIM (using both a search tree and a list to stor conditional statistics), and the generalized ENESIM algoritm. The type of multiple-point algorithm is define in the method field.
+</para>
+<para>
+To use the MPS type prior at least the type, dimension, as well as a training image must be provided:  
+</para>
 <screen>
 ip=1; 
 prior{ip}.type='mps';
-prior{ip}.method='mps_snesim';
-% prior{ip}.method='mps_snesim_tree';
-% prior{ip}.method='mps_snesim_list';
-% prior{ip}.method='mps_enesim_general';
 prior{ip}.x=1:1:80;
 prior{ip}.y=1:1:80;
+</screen>
+<para>
+  A trainin imag emust be set in the 'ti' field, as 1D, 2D, or 3D matrix. If not set, the classical training image from Strebelle is used, equivalent to:
+</para>
+<screen>
 prior{ip}.ti=channels;
 </screen>
+<para>
+More examples of traning images are located in the 'mGstat/ti' folder.
 </para>
 <para>
-
+&mps; provides three different simulation aglrithms, which canbe chosen in the 'method' field as:
+</para>
+<screen>
+prior{ip}.method='mps_snesim_tree';
+prior{ip}.method='mps_snesim_list';
+prior{ip}.method='mps_genesim';
+</screen>
+<para>
+'mps_snesim_tree' is the simulation method selected by default if it is not specified.
 </para>
 <sect4 xml:id="prior_mps_options"><title>options for &mps;</title>
 <para>
@@ -574,6 +589,9 @@ for n_mul_grids=[0:1:4];
     imagesc(prior{1}.x,prior{1}.y,m{1});axis image
     title(sprintf('NMG = %d',n_mul_grids));
 end
+</screen>
+<screen>
+More details on the use of &mps; can be found in the  <link xlink:href="https://www.authorea.com/users/30338/articles/82347/">SoftwareX manuscript</link> that describes &mps;.
 </screen>
 </para>
 </sect4>

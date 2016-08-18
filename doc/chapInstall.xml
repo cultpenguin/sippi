@@ -1,7 +1,10 @@
 <sect1 xml:id="InstallSippi"><title>Install &sippi;</title>
 <para>
-The latest stable version  (v &sippi-version;) of &sippi; can be downloaded from <link xlink:href="http://sippi.sourceforge.net">http://sippi.sourceforge.net</link> as <link xlink:href="https://sourceforge.net/projects/sippi/files/latest/download?source=fileshttps://sourceforge.net/projects/sippi/files/latest/download?source=files">SIPPI.zip</link>. This version includes &mgstat;, SNESIM, VISIM and &mps;.
-<!-- and &mps;. -->
+The latest stable version  (v &sippi-version;) of &sippi; can be downloaded from <link xlink:href="http://sippi.sourceforge.net">http://sippi.sourceforge.net</link> as <link xlink:href="https://sourceforge.net/projects/sippi/files/latest/download?source=fileshttps://sourceforge.net/projects/sippi/files/latest/download?source=files">SIPPI.zip</link>. This version includes
+<link xlink:href="http://github.com/cultpenghin/mgstat/">&mgstat;</link>, VISIM,
+<link xlink:href="https://github.com/SCRFpublic/snesim-standalone">SNESIM</link>, and
+<link xlink:href="http://github.com/ergosimulation/mpslib/">&mps;</link>.
+
 </para>
 
 <para>
@@ -28,11 +31,8 @@ setenv('DYLD_LIBRARY_PATH', '/usr/local/bin');
 
 <sect2 xml:id="SippiGithub"><title>Install &sippi; manually from github</title>
 <para>
-The current development version  of &sippi; (less stable and documented) is hosted on github. SIPPI also makes makes use of
-<!--
-and
-<link xlink:href="http://github.com/cultpenguin/mps/">&mps;</link>.-->
-These projects can be downloaded using git:
+The current development version  of &sippi; (less stable and documented) is hosted on github and can be downloaded (including  &mgstat;, SNESIM, VISIM and &mps;) 
+using git:
 <screen>
 cd INSTALL_DIR
 git clone  https://github.com/cultpenguin/sippi.git SIPPI
@@ -91,11 +91,11 @@ The source code for &mps; is available from <link xlink:href="https://github.com
 To dowload and compile &mps; use for example
 <screen>
 cd INSTALL_DIR
-git clone  https://github.com/cultpenguin/mps.git MPS
+git clone  https://github.com/ergosimulation/mpslib.git MPSLIB
 cd MPS
 make all
 </screen>
-Matlabs path should be updated to include <varname>INSTALL_DIR/MPS/matlab</varname>.
+Matlabs path should be updated to include <varname>INSTALL_DIR/MPSLIB/matlab</varname>.
 </para>
 <para>
 </para>

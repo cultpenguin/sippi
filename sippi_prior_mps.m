@@ -1,7 +1,7 @@
 % sippi_prior_mps : prior based on MPS
 %
 %                      Using SNESIM/ENESIM FROM 
-%                      https://github.com/cultpenguin/mps
+%                      https://github.com/ergosimulation/mpslib
 % 
 %% Example:
 %    ip=1;
@@ -21,7 +21,7 @@
 %    prior{ip}.method='mps_snesim';         % default, same as 'mps_snesim_tree'
 %    prior{ip}.method='mps_snesim_tree';
 %    prior{ip}.method='mps_snesim_list';
-%    prior{ip}.method='mps_enesim_general';
+%    prior{ip}.method='mps_genesim';
 %
 %    All properties for each algorithm are availale in the prior{ip}.MPS
 %    field

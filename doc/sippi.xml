@@ -6,7 +6,7 @@ book SYSTEM "docbook.dtd"
 <!ENTITY company "Niels Bohr Institute">
 <!ENTITY sippi "SIPPI">
 <!ENTITY mgstat "mGstat">
-<!ENTITY mps "MPS(C++)">
+<!ENTITY mps "MPSlib(C++)">
 <!ENTITY matlab "Matlab">
 <!ENTITY octave "Octave">
 <!ENTITY gslib "GSLIB">

@@ -86,7 +86,7 @@ suptitle(sprintf('FFT-MA with varying Matern type covariance properties\n Sequen
 
 
 %% Show movie of a random walk in the prior (using sequential Gibbs sampling)
-save_movie=1;
+save_movie=0;
 
 fclose all;
 close all

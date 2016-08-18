@@ -3,6 +3,9 @@
 # First run make to create version number form sippi.xml into version.xml
 make validate
 
+
+
+
 # Figure out the version number
 file="version.xml" #the file where you keep your string name
 if [ ! -f $file ]; then
@@ -28,5 +31,17 @@ git clone --depth 1 https://github.com/cultpenguin/sippi.git SIPPI
 cd SIPPI/toolboxes
 git clone --depth 1 https://github.com/cultpenguin/mgstat.git mGstat
 git clone --depth 1 https://github.com/ergosimulation/mpslib.git mpslib
+cd mpslib
+make all
+make cleano
+cd ..
 cd ../..
-zip -r $FILENAME SIPPI
+
+make html
+mv htmldoc SIPPI/doc/.
+make dblatex_ubuntu
+mv sippi.pdf SIPPI/doc/.
+
+
+#zip -r $FILENAME.zip SIPPI 
+#tar cvfz $FILENAME.tar.gz SIPPI
