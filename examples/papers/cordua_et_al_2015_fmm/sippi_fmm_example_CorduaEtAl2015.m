@@ -1,4 +1,13 @@
-% CorduaEtAl2015 Figure 4, and Figure 6
+% sippi_fmm_example_CorduaEtAl2015: CorduaEtAl2015 Figure 4, and Figure 6
+%
+% Example replicating the example in section 3 in 
+%  "
+%  Cordua et al., 2015 - Improving the Pattern Reproducibility of
+%  Multiple-Point-Based Prior Models Using Frequency Matching.
+%  Mathematical Geosciences 47(3).
+% "
+%
+% See also: sippi_forward_fmm, sippi_likelihood_fmm, multinomial
 %
 clear all;close all
 options.txt='CorduaEtAl2015'; % string to append to output files
@@ -64,9 +73,9 @@ prior{1}.seq_gibbs.step=2000;
 prior{1}.seq_gibbs.step_min=2;
 prior{1}.seq_gibbs.step_max=2000;;
 
-options.mcmc.nite=1000000;   % [1] : Number if iterations
-options.mcmc.i_sample=10000; % : Number of iterations between saving model to disk
-options.mcmc.i_plot=2500;  % [1]: Number of iterations between updating plots
+options.mcmc.nite=10000;   % [1] : Number if iterations
+options.mcmc.i_sample=ceil(options.mcmc.nite/100); % : Number of iterations between saving model to disk
+options.mcmc.i_plot=1000;  % [1]: Number of iterations between updating plots
 profile off
 t_start=now;
 [options,data,prior,forward,m_current]=sippi_metropolis(data,prior,forward,options);
