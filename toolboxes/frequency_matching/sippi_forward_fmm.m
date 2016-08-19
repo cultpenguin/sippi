@@ -1,4 +1,4 @@
-% sippi_forward_fmm: reutrn frequency distribution
+% sippi_forward_fmm: return frequency distribution
 %
 % Call :
 %  [d,forward,prior,data]=sippi_forward_fmm(m,forward,prior,data,id,im)
@@ -18,7 +18,12 @@
 %     forward.forward_function='sippi_forward_fmm';
 %     [d,forward]=sippi_forward(m,forward)
 % 
+% Lange et al., 2012. A Frequency Matching Method: Solving Inverse Problems by Use of Geologically Realistic Prior Information. 
+% Mathematical Geosciences, 44(7), 783-803, 2012. doi:10.1007/s11004-012-9417-2.
 %
+% See also: sippi_likelihood_fmm, frequency_matching
+%
+
 function [d,forward,prior,data]=sippi_forward_fmm(m,forward,prior,data,id,im)
 
 if nargin<6, im=1;end
