@@ -34,6 +34,7 @@ book SYSTEM "docbook.dtd"
 <!ENTITY funcSIPPI SYSTEM "sippi_functions.xml">
 <!ENTITY funcSIPPIplotting SYSTEM "sippi_functions_plotting.xml">
 <!ENTITY funcTRAVELTIME SYSTEM "sippi_functions_toolboxes_traveltime.xml">
+<!ENTITY funcGPRFD SYSTEM "sippi_functions_toolboxes_gpr_fd.xml">
 <!ENTITY funcCOVARIANCE SYSTEM "sippi_functions_toolboxes_covariance_inference.xml">
 <!ENTITY % xinclude SYSTEM "xinclude.mod">
 %xinclude;
@@ -139,6 +140,10 @@ book SYSTEM "docbook.dtd"
   <sect1><title>SIPPI toolbox: Traveltime tomography</title>
   <para></para>
   &funcTRAVELTIME;
+  </sect1>
+  <sect1><title>SIPPI toolbox: 2D Full Waveform GPR modeling</title>
+  <para></para>
+  &funcGPRFD;
   </sect1>
   <sect1><title>SIPPI toolbox: Covariance inference</title>
   <para></para>

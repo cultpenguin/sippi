@@ -1,5 +1,7 @@
 i=0;
 i=i+1;f{i}='.';
+i=i+1;f{i}=['toolboxes',filesep,'gpr_fd'];
+i=i+1;f{i}=['toolboxes',filesep,'frequency_matching'];
 i=i+1;f{i}=['toolboxes',filesep,'traveltime'];
 i=i+1;f{i}=['toolboxes',filesep,'covariance_inference'];
 i=i+1;f{i}=['plotting'];

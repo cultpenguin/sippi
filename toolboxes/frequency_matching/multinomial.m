@@ -1,5 +1,4 @@
-
-%  multinomial: The 'frequency matching model'
+%  multinomial: Compare two distributions using the multinomial function
 %
 % Call: 
 %    [loglik,lik] = multinomial(H,Hti,Hprior,type)

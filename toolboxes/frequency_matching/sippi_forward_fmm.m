@@ -1,4 +1,4 @@
-% sippi_forward_fmm: return frequency distribution
+% sippi_forward_fmm: return frequency distribution from a 1D/2D model
 %
 % Call :
 %  [d,forward,prior,data]=sippi_forward_fmm(m,forward,prior,data,id,im)
