@@ -59,9 +59,23 @@ end
 S=forward.sources;
 R=forward.receivers;
 
-x=prior{im}.x;
-y=prior{im}.y;
-z=prior{im}.z;
+
+if isfield(forward,'x');
+    x=forward.x;
+else
+    x=prior{im}.x;
+end
+if isfield(forward,'y');
+    y=forward.y;
+else
+    y=prior{im}.y;
+end
+if isfield(forward,'z');
+    z=forward.z;
+else
+    z=prior{im}.z;
+end
+
 if ~isfield(data{id},'i_use');
     %data{id}.i_use=1:size(data{id}.d_obs,1);
     data{id}.i_use=1:size(forward.sources,1);
@@ -81,10 +95,10 @@ if strcmp(forward.type,'eikonal')
     end
     if forward.is_slowness==1;
         % SLOWNESS
-        d{id}=eikonal_traveltime(prior{im}.x,prior{im}.y,prior{im}.z,1./m{im},forward.sources,forward.receivers,data{id}.i_use,forward.eikonal_type);
+        d{id}=eikonal_traveltime(x,y,z,1./m{im},forward.sources,forward.receivers,data{id}.i_use,forward.eikonal_type);
     else
         % VELOCITY
-        d{id}=eikonal_traveltime(prior{im}.x,prior{im}.y,prior{im}.z,m{im},forward.sources,forward.receivers,data{id}.i_use,forward.eikonal_type);
+        d{id}=eikonal_traveltime(x,y,z,m{im},forward.sources,forward.receivers,data{id}.i_use,forward.eikonal_type);
     end
 elseif (strcmp(forward.type,'ray')|strcmp(forward.type,'fat'));
     % RAY APPROXIMATION
@@ -96,11 +110,7 @@ elseif (strcmp(forward.type,'ray')|strcmp(forward.type,'fat'));
         
         if ~isfield(forward,'linear_m'),
             if ~isfield(forward,'m0'),
-                %if isfield(prior{im},'m0')
-                %    forward.m0=prior{im}.m0;
-                %else
-                    forward.m0=mean(m{im}(:));
-                %end
+                forward.m0=mean(m{im}(:));
             end
             forward.linear_m = m{im}.*0+forward.m0;
         end
@@ -141,7 +151,10 @@ elseif strcmp(forward.type,'born');
     % LIU ET AL (2009) for seismic waves
     % Buursink et al () for electromagnetic waves
     if ~isfield(forward,'linear_m'),
-        forward.linear_m = m{im}.*0+prior{im}.m0;
+          if ~isfield(forward,'m0'),
+              forward.m0=mean(m{im}(:));
+          end
+        forward.linear_m = m{im}.*0+forward.m0;
     end
     if ~isfield(forward,'linear'),forward.linear=1;end
     if ~isfield(forward,'freq');

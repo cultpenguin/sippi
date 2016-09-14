@@ -132,7 +132,7 @@ else
     
     % GET ITERATION NUMBER AFTER SEQ GIBBS HAS FINISHED, i1
     try
-        i1_post=prior{im}.seq_gibbs.i_update_step_max./options.mcmc.i_sample;
+        i1_post=ceil(prior{im}.seq_gibbs.i_update_step_max./options.mcmc.i_sample);
     catch
         i1_post=1;
     end
@@ -149,7 +149,7 @@ else
     % all posterior sampels
     ii_post_reals=i1_post:1:n_reals_all;
     ni_post_reals=ii_post_reals*options.mcmc.i_sample;
-    
+   
     reals=reals(ii_post_reals,:);
     nr=size(reals,1);
     

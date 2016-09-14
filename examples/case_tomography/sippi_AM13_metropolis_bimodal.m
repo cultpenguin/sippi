@@ -57,7 +57,7 @@ forward.freq=0.1;
 forward.forward_function='sippi_forward_traveltime';
 
 m=sippi_prior(prior);
-d=sippi_forward(m,forward,prior,data);
+[d,forward]=sippi_forward(m,forward,prior,data);
 
 comp_model_error=0;
 if comp_model_error==1;
@@ -78,17 +78,19 @@ if comp_model_error==1;
         data{id}.Ct=Ct{id};
     end
 end
-doTempering=0;
+doTempering=1;
 if doTempering==1;
     options.mcmc.n_chains=4; % set number of chains (def=1)
     options.mcmc.T=[1 1.5 2 3]; % set number of chains (def=1)
 end
 
+
+
 %% SETUP METROPOLIS
 
 options.mcmc.nite=100000;
 options.mcmc.i_plot=1000;
-options.mcmc.i_sample=500;
+options.mcmc.i_sample=250;
 
 options=sippi_metropolis(data,prior,forward,options);
 
