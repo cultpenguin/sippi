@@ -476,9 +476,10 @@ for im=im_arr;
         disp(sprintf('%s : could not plot acceptance rate for prior{%d}',mfilename,im));        
         cd(cwd);
     end
-    %% PLOT CORRELATION COEFFICIENT / FIND NITE PER INDEPENDANT POST REAL
     
+    %% PLOT CORRELATION COEFFICIENT / FIND NITE PER INDEPENDANT POST REAL
     try
+        
         if ndim==0
             %% autocorrelation analysis... to come
             fn=(im-1)*10+6;
@@ -523,7 +524,7 @@ for im=im_arr;
             figure_focus(fn);set_paper('landscape');clf;
             set(gca,'FontSize',options.plot.axis.fontsize)
             nr=size(reals_all,1);
-            it=[1:1:nr].*mcmc.i_sample;
+            it=[1:1:nr].*options.mcmc.i_sample;
             for i=1:nr;
                 c=corrcoef(reals_all(i,:),reals_all(nr,:));
                 cc(i)=c(2);

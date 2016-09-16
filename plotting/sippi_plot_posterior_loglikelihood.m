@@ -49,12 +49,13 @@ if nargin<5
 end
 
 
-if ~isfield(options.mcmc,'logL')
+ic=1;
+if ~isfield(options.C{ic}.mcmc,'logL')
     disp(sprintf('%s : log-likelihood data not available in mcmc or options.mcmc data structure',mfilename));
     return;
 end
 
-mcmc=options.mcmc;
+mcmc=options.C{1}.mcmc;
 
 % SET DFAULT PLOTTING SETTINGS
 options=sippi_plot_defaults(options);
@@ -123,6 +124,7 @@ set(gca,'xscale','linear')
 
 %% autocorrelation
 if i1<length(mcmc.logL);
+    
     % Only make the autocorr analysis, if the posterior has been been
     % sampled. i1>=length(mcmc.logL) indicated annealing. 
     figure(6);clf;set_paper('landscape');
@@ -147,7 +149,6 @@ if i1<length(mcmc.logL);
     
     xlabel('iteration #')
     ylabel('autocorrelation of logL')
-    set(gca,'FontSize',options.plot.axis.fontsize)
     print_mul(sprintf('%s_logL_autocorr',fname),options.plot.hardcopy_types)
 end
 

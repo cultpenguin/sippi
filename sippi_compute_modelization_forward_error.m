@@ -38,7 +38,7 @@ t0=now;
 %% Solve the forward problem N times for both choices of forward models
 for i=1:N
     %progress_txt(i,N,'estimating forward response');
-    progress_txt(i,N,sprintf('%s(%s)',mfilename,t_end_txt));
+    if (i/100)==round(i/100);progress_txt(i,N,sprintf('%s(%s)',mfilename,t_end_txt));end
     if i==2,
         t0=now;
     end
