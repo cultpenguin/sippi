@@ -15,7 +15,18 @@
 %  Accounting for imperfect forward modeling in geophysical inverse problems - exemplified for cross hole tomography.
 %  Geophsyics, 79(3) H1-H21, 2014. doi:10.1190/geo2013-0215.1
 %
-function [Ct,dt,dd,dfull]=sippi_compute_modelization_forward_error(forward_full,forward_app,prior,N,d);
+function [Ct,dt,dd,d_full,d_app]=sippi_compute_modelization_forward_error(forward_full,forward_app,prior,N,d);
+
+
+N_app = length(forward_app);
+
+if N_app==1;
+    if isstruct(forward_app);
+        f_temp=forward_app;
+        clear forward_app;
+        forward_app{1}=f_temp;
+    end
+end
 
 
 if nargin<4,
@@ -23,10 +34,15 @@ if nargin<4,
 end
 if nargin<5
     m=sippi_prior(prior);
-    [d,forward_app]=sippi_forward(m,forward_app,prior);
+    %if N_app==1;
+    %    [d,forward_app]=sippi_forward(m,forward_app,prior);
+    %else
+    for i=1:N_app
+        [d{i},forward_app{i}]=sippi_forward(m,forward_app{i},prior);
+    end
+    %end
 end
 
-N_app = length(forward_app);
 
 try
     fname=sprintf('Ct_%s_N%d',forward_full.type,N);
@@ -34,99 +50,121 @@ catch
     fname=sprintf('Ct_N%d',N);
 end
 t_end_txt='';
+time_per_step=1e-19;
 t0=now;
 %% Solve the forward problem N times for both choices of forward models
-for i=1:N
-    %progress_txt(i,N,'estimating forward response');
-    if (i/100)==round(i/100);progress_txt(i,N,sprintf('%s(%s)',mfilename,t_end_txt));end
-    if i==2,
-        t0=now;
+% PRE ALLOCATE
+
+ND=length(d{1}{1});
+if nargout>3; d_full{1}=zeros(ND,N); end
+if nargout>4;
+    for j=1:N_app;
+        d_app{j}=zeros(ND,N);
     end
-    if i==1;
-        % PRE ALLOCATE
-        for j=1:length(d);
-            try
-                dd{j}=zeros(length(d{j}),N);
-                dfull{j}=zeros(length(d{j}),N);
-            catch
-                dd{j}=zeros(length(d{j}),N);
-                dfull{j}=zeros(length(d{j}),N);
+end
+for j=1:N_app;
+    dd{j}=zeros(ND,N);
+end
+
+n_retry=0;
+i=0;
+while i<N
+    i=i+1;
+
+    try
+        
+        % display progress
+        txt=sprintf('%s(end->%s)',mfilename,t_end_txt);
+        if (time_per_step>.5);
+            disp(sprintf('%03d/%03d: %s',i,N,txt));
+        else
+            if (i/25)==round(i/25);
+                progress_txt(i,N,txt);
             end
-        end    
-    end
-    
-    
-    m=sippi_prior(prior);
-    
-    [d_1,forward_full,prior]=sippi_forward(m,forward_full,prior);
-    if N_app==1;
-        [d_2{1},forward_app,prior]=sippi_forward(m,forward_app,prior);
-    else
+        end
+        
+        % generate realization from prior
+        m=sippi_prior(prior);
+        
+        % solve FULL forward problem
+        [d_1,forward_full,prior]=sippi_forward(m,forward_full,prior);
+        
+        % SIMULATE AN ERROR / ONLY FOR TESTING
+        %if rand(1)>.8;
+        %    d_1{1}=d_1{1}(1:10);
+        %end
+        
+        
+        % solve APPROXIMATE forward problem(s)
         for na=1:N_app;
             [d_2{na},forward_app{na},prior]=sippi_forward(m,forward_app{na},prior);
         end
-    end
-    
-    
-    
-    for j=1:length(d_1);
+        
+        % compute and store realization of modeling error
+        if nargout>3
+            d_full{1}(:,i)=d_1{1};
+        end
         for na=1:N_app
-            dd{j}(:,i,na)=d_1{j}-d_2{na}{j};
-            dfull{j}(:,i,na)=d_1{j};
-        end
-    end
-    
-    if find(isnan(dd{j}(:,i,na))); keyboard;end
-    
-    if i>2
-        t_end_txt = time_loop_end(t0,i-1,N-1);
-    else
-        t_end_txt = '';
-    end
-    
-    
-    txt_out=sprintf('%04d/%04d ESTIMATED TIME FOR COMPLETION : %s',i,N,t_end_txt);
-    
-    if (round(i/100)==(i/100))
-        try
-            if i==1;
-                fid=fopen('ct_progress.txt','w');
-            else
-                fid=fopen('ct_progress.txt','a+');
+            dd{na}(:,i)=d_1{1}-d_2{na}{1};
+            if nargout>4
+                d_app{na}(:,i)=d_2{na}{1};
             end
-            fprintf(fid,'%s\n',txt_out);
-            fclose(fid);
         end
-        %    save(sprintf('%s_%d',fname,i));
+        
+        % compute time to end of loop
+        if i>1
+            t_end_txt = time_loop_end(t0,i-1,N-1);
+        end
+        
+        % write estimated time for end of simulat
+        txt_out=sprintf('%04d/%04d ESTIMATED TIME FOR COMPLETION : %s',i,N,t_end_txt);
+        if (round(i/100)==(i/100))
+            % solve FULL forward problem
+            try
+                if (i/100)==1;
+                    fid=fopen('ct_progress.txt','w');
+                else
+                    fid=fopen('ct_progress.txt','a+');
+                end
+                fprintf(fid,'%s\n',txt_out);
+                fclose(fid);
+            end
+        end
+        
+        n_retry=0;
+    
+    catch
+        
+        n_retry_max=10;
+        n_retry=n_retry+1;
+        
+        if n_retry>=n_retry_max;
+            disp(sprintf('%s: Something went wrong - %d TIMES - STOPPING ',mfilename,n_retry));
+            return
+        end
+        
+        disp(sprintf('%s: Something went wrong - trying again (%02d/%d) ',mfilename,n_retry,n_retry_max));
+        %i_old=i;
+        i=max([1 i-1]);
+        %disp(sprintf('%d -> %d',i_old,i))
     end
     
+    time_per_step=((now-t0)*3600*24)/i;
     
 end
 
 %% estimate modelization covariance models
-for i=1:length(d_1);
+for na=1:N_app
     
-    for na=1:N_app
-        
-        dt{na}{i}=nanmean(dd{i}(:,:,na)')';
-        if nargout<2
-            dt{na}{i}=dt{na}{i}.*0;
-        end
-        dd{i}(:,:,na)=dd{i}(:,:,na)-repmat(dt{na}{i},1,N);
-        
-        Ct{na}{i}=(1/N).*(dd{i}(:,:,na)*dd{i}(:,:,na)');
+    dt{na}=nanmean(dd{na}')';
+    
+    % optionally force dt=0;
+    if nargout<2
+        dt{na}=dt{na}.*0;
     end
-end
-
-%% RESHAPE OF N_app=1;
-if N_app==1,
-    Ct_org=Ct;
-    dt_org=dt;
-    clear Ct dt;
-    for i=1:length(d_1);
-        dt{i}=dt_org{1}{i};
-        Ct{i}=Ct_org{1}{i};
-    end
+    dd{na}=dd{na}-repmat(dt{na},1,N);
+    
+    Ct{na}=(1/N).*(dd{na}*dd{na}');
 end
 
 
