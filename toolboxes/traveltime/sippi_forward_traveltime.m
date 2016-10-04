@@ -164,6 +164,9 @@ elseif strcmp(forward.type,'ray_2d');
     
     if (~isfield(forward,'G'));
     
+    if ~isfield(prior{im},'ndim');
+        prior=sippi_prior_init(prior);
+    end
     if prior{im}.ndim~=2
         sippi_verbose(sprintf('%s: ''%s'' only works in 2D',mfilename,forward.type));
         return
@@ -190,7 +193,7 @@ elseif strcmp(forward.type,'ray_2d');
     if forward.is_slowness==1
         d{id}=forward.G(ig,:)*m{im}(:);
     else
-        s=1./m{im}(:);
+        s=1./m{im}(:);      
         d{id}=forward.G(ig,:)*s;
     end
     

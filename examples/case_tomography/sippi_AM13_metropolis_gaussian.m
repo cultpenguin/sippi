@@ -38,7 +38,7 @@ prior{im}.type='FFTMA';
 prior{im}.name='Velocity (m/ns)';
 prior{im}.m0=0.145;
 prior{im}.Va='.0003 Sph(6)';
-dx=1;
+dx=.2;
 prior{im}.x=[-1:dx:6];
 prior{im}.y=[0:dx:13];
 prior{im}.cax=[-1 1].*.04+prior{im}.m0;
@@ -84,7 +84,8 @@ sippi_plot_data(d,data);
 %% SETUP METROPOLIS
 options.mcmc.nite=100000;
 options.mcmc.i_plot=2000;
-options.mcmc.i_sample=50;
+n_reals_out=200;
+options.mcmc.i_sample=options.mcmc.nite/n_reals_out;
 randn('seed',2);rand('seed',2);
 
 % ANNEALING 
@@ -121,4 +122,4 @@ sippi_plot_prior_sample(options.txt);
 sippi_plot_posterior(options.txt);
 
 %% PLOT PRIOR AND POSTERIO MOVIE 
-sippi_plot_movie(options.txt)
+%sippi_plot_movie(options.txt)
