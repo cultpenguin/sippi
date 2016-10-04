@@ -43,7 +43,8 @@ for it=1:nt;
     %if nt>1;        progress_txt(it,nt);    end
     
     if use_method==1;
-        parfor i=1:(ns-ns_ref);
+        
+        for i=1:(ns-ns_ref);
             cc=corrcoef(wf_data(i:(i+ns_ref-1),it),ref_trace);
             c(i)=cc(2);
         end
@@ -63,18 +64,31 @@ for it=1:nt;
         % SIMPLE METHOD FINDING THE FA LOCATING FIRST VALUE ABOVE
         % A CERTAIN THRESHOLD. ONLY GOOD FOR NOISE FREE DATA
         % AN IN CASES VERE THE POLARITY OF THE FA CHANGES A LOT
-        k=find(abs(wf_data(:,it))>(.003.*max(abs(wf_data(:,it)))));
+        mA=.003.*max(abs(wf_data(:,it)));
+        k=find(abs(wf_data(:,it))>mA);
         try
             ipick=k(1);
         catch
             ipick=NaN;
         end
+        
+        
+        do_interp=1;
+        if do_interp
+            try
+                ix=[ipick-1:1:ipick+1]';
+                d=abs(wf_data(ix,it));
+                ipick=interp1(d,ix,mA,'linear');
+            catch
+                % keyboard
+            end
+        end
         tt_pick(it)=ipick;
+    
+        
+    
     end
     
-    % Interpolate to find more precise time
-        
-        
     
 end
 

@@ -31,7 +31,7 @@
 %
 %
 % Optional settings
-% forward.T=100*10^-9; % Frequecy of source wavelet
+% forward.t=100*10^-9; % Frequecy of source wavelet
 % forward.sig=3; % If not set it is set as a constant field
 % forward.output_type='shot'; % each shot gather is output as individual data structures
 % forward.output_type='trace'; % each trace is output as individual data structures
@@ -123,6 +123,7 @@ if ~isfield(forward.addpar,'Tg');
     forward.addpar.Tg=100*10^6;
   end
 end
+
 if ~isfield(forward.addpar,'Epsmin');forward.addpar.Epsmin=1;end
 if ~isfield(forward.addpar,'start');forward.addpar.start=1;end
 if ~isfield(forward.addpar,'debug');forward.addpar.debug=-1;end
