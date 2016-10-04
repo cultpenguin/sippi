@@ -32,6 +32,7 @@ if isfield(forward,'forward_function');
     elseif nargin==3
         [d,forward,prior]=feval(forward.forward_function,m,forward,prior);
     elseif nargin==4
+
         [d,forward,prior,data]=feval(forward.forward_function,m,forward,prior,data);
     elseif nargin==5
         [d,forward,prior,data,options]=feval(forward.forward_function,m,forward,prior,data,options);
