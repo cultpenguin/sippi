@@ -15,6 +15,9 @@ clear all;close all;
 rng('default');rng(1);
 D=load('AM13_data.mat');
 options.txt='AM13_gaussian';
+%D2=D;
+%D.S(352:end,:)=D2.R(352:end,:);
+%D.R(352:end,:)=D2.S(352:end,:);
 
 %% SETUP DATA, PRIOR and FORWARD
 
@@ -48,7 +51,7 @@ forward.receivers=D.R;
 %forward.type='ray';
 forward.type='ray_2d';forward.r=2;
 %forward.type='eikonal';
-forward.m0=0.13;
+%forward.type='fd';
 
 
 %% TEST THE SETUP 
@@ -70,8 +73,7 @@ sippi_plot_traveltime_kernel(forward,prior,m);
 % plot the forward response and compare it to the observed data
 sippi_plot_data(d,data);
 
-[logL,L,data]=sippi_likelihood(d,data);
-return
+
 %% SETUP METROPOLIS
 options.mcmc.nite=100000;
 options.mcmc.i_plot=2000;

@@ -11,6 +11,7 @@ clear all;close all
 D=load('AM13_data.mat');
 options.txt='AM13_bimodal';
 
+
 %% SETUP DATA, PRIOR and FORWARD
 
 %% SETUP DATA

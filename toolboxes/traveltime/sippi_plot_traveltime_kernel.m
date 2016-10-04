@@ -32,6 +32,10 @@ if isfield(forward,'G');
     figure_focus(fn+1);
     subplot(1,2,1);
     imagesc(prior{1}.x,prior{1}.y,reshape(forward.G(1,:), length(prior{1}.y), length(prior{1}.x) ))
+    hold on
+    plot(forward.sources(1,1),forward.sources(1,2),'r*')
+    plot(forward.receivers(1,1),forward.receivers(1,2),'ko')
+    hold off
     xlabel('X');ylabel('Y')
     axis image;
     title('kernel 1')
