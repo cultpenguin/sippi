@@ -11,7 +11,8 @@
 
 
 %% Load the travel time data set from ARRENAES
-clear all;close all
+clear all;close all;
+rng('default');rng(1);
 D=load('AM13_data.mat');
 options.txt='AM13_gaussian';
 
@@ -37,7 +38,7 @@ prior{im}.type='FFTMA';
 prior{im}.name='Velocity (m/ns)';
 prior{im}.m0=0.145;
 prior{im}.Va='.0003 Sph(6)';
-dx=0.15;
+dx=1;
 prior{im}.x=[-1:dx:6];
 prior{im}.y=[0:dx:13];
 prior{im}.cax=[-1 1].*.04+prior{im}.m0;
@@ -52,31 +53,37 @@ prior{im}.cax=[-1 1].*.04+prior{im}.m0;
 forward.forward_function='sippi_forward_traveltime';
 forward.sources=D.S;
 forward.receivers=D.R;
-forward.type='fat';forward.linear=1;forward.freq=0.1;
+%forward.type='fat';forward.linear=1;forward.freq=0.1;
+%forward.type='ray';
+forward.type='ray_2d';forward.r=2;
 %forward.type='eikonal';
-forward.m0=0.10;
+forward.m0=prior{im}.m0;
 
 
 %% TEST THE SETUP 
 % generate a realization from the prior
 [m,prior]=sippi_prior(prior);
-sippi_plot_prior(prior,m);
-hold on
-plot_traveltime_sr(forward.sources,forward.receivers)
-hold off
-
 
 % Compute the forward response related to the realization of the prior model generated above
 [d,forward]=sippi_forward(m,forward,prior,data);
+try;
+    forward.G=sparse(forward.G);
+end
+
+% plot the geomoetry
+sippi_plot_traveltime_kernel(forward,prior,m);
+
+
 % Compute the likelihood 
 [logL,L,data]=sippi_likelihood(d,data);
 % plot the forward response and compare it to the observed data
 sippi_plot_data(d,data);
 
 [logL,L,data]=sippi_likelihood(d,data);
+
 %% SETUP METROPOLIS
 options.mcmc.nite=100000;
-options.mcmc.i_plot=500;
+options.mcmc.i_plot=2000;
 options.mcmc.i_sample=50;
 randn('seed',2);rand('seed',2);
 
@@ -84,7 +91,7 @@ randn('seed',2);rand('seed',2);
 % example of starting with a high temperature, that allow higher
 % exploration. The temperature is lowered to T=1, after which the 
 % algorithm proceeds as a usual Metropolis sampler 
-doAnneal=1;
+doAnneal=0;
 if doAnneal==1;
     i_stop_anneal=1000;
     for im=1:length(prior);
@@ -98,7 +105,7 @@ end
     
 % TEMPERING
 % example of using parallel tempering (Sambridge, 2013)
-doTempering=1;
+doTempering=0;
 if doTempering==1;
     options.mcmc.n_chains=4; % set number of chains (def=1)
     options.mcmc.T=[1 1.5 2 3]; % set number of chains (def=1)

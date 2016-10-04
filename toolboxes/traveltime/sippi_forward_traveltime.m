@@ -4,19 +4,24 @@
 %   [d,forward,prior,data]=sippi_forward_traveltime(m,forward,prior,data)
 %
 %   forward.type determines the method used to compute travel times
-%   forward.type='ray';
-%   forward.type='fat';
-%   forward.type='eikonal';
-%   forward.type='born';
-%   forward.type='fd';
+%   forward.type='ray_2d';    % raytracing 2D linear forward
+%   forward.type='ray';       % ray (obtained using 'eikonal')
+%   forward.type='fat';       % fat ray (obtained using 'eikonal')
+%   forward.type='eikonal';   % The Eikonal solution 
+%   forward.type='born';      % The Born approximation
+%   forward.type='fd';        % Full waveform modeling
 %
 %   forward.sources [ndata,ndim]: Source locations
 %   forward.receivers [ndata,ndim]: Receiver locations
 %
-%   % the following options does not apply to 'eikonal' type modeling
+%   -->[only related to kernels 'ray' and 'fat']
 %   forward.linear : [0] a linear kernel is computed, based on the current velocity model
-%                    [1] a linear kenrel is computed only once, based on
+%                    [1] a linear kernel is computed only once, based on
 %                    the velocity field defined in forward.linear_m;
+%
+%   forward.freq : [scalar] Signal frequency,m used to define the width of
+%                  the kernels forward.G (only kernels based on 'eikonal'
+%                  type kernels)
 %
 %   forward.linear_m: the reference velocity field, for a linear forward
 %                     operator (forward.G) will be computed.
@@ -28,12 +33,15 @@
 %                              [0]: No normalization
 %
 %   forward.alpha [1]: alpha value for munk_fresnel_2d, munk_fresnel_3f
-
 %
-%   forward.freq : [scalar] Signal frequency,m used ot define the width of
-%                  the kernels forward.G
+%   -->[only related to kernels 'ray_2d']
+%     forward.r=1; % Refinement factor
+%     forward.norm=0; % normalize sum of each row to 1
+%     (see also: ray_kernel_2d.m)
 %
-%   See also: munk_fresnel_2d, munk_fresnel_3d, tomography_kernel, eikonal, eikonal_traveltime
+%
+%   See also: munk_fresnel_2d, munk_fresnel_3d, tomography_kernel, eikonal,
+%   eikonal_traveltime, ray_kernel_2d
 %
 function [d,forward,prior,data]=sippi_forward_traveltime(m,forward,prior,data,id,im)
 
@@ -131,6 +139,47 @@ elseif (strcmp(forward.type,'ray')|strcmp(forward.type,'fat'));
         else
             forward.G=Gk;
         end
+    end
+    
+    if length(data{id}.i_use)==size(forward.G,1)
+        ig=1:size(forward.G,1);
+    else
+        ig=data{id}.i_use;       
+    end
+    if forward.is_slowness==1
+        d{id}=forward.G(ig,:)*m{im}(:);
+    else
+        s=1./m{im}(:);
+        d{id}=forward.G(ig,:)*s;
+    end
+elseif strcmp(forward.type,'ray_2d');
+    % Straight ray approximation using ray_kernel_2d
+    
+    if ~isfield(forward,'r');
+        forward.r=1; % Refinement factor
+    end
+    if ~isfield(forward,'norm');
+        forward.norm=0; % normalize
+    end
+    
+    if (~isfield(forward,'G'));
+    
+    if prior{im}.ndim~=2
+        sippi_verbose(sprintf('%s: ''%s'' only works in 2D',mfilename,forward.type));
+        return
+    end    
+    dx=prior{im}.x(2)-prior{im}.x(1);
+    dy=prior{im}.y(2)-prior{im}.y(1);
+    if ((dx-dy)./dx)>1e-15
+        sippi_verbose(sprintf('%s: ''%s'' only works in case dx=dy (%g=%g)',mfilename,forward.type,dx,dy));
+        return
+    end
+    ant_pos=[forward.sources forward.receivers];
+    ant_pos(:,1)=ant_pos(:,1)-prior{im}.x(1)+dx/2;
+    ant_pos(:,3)=ant_pos(:,3)-prior{im}.x(1)+dx/2;
+    ant_pos(:,2)=ant_pos(:,2)-prior{im}.y(1)+dx/2;
+    ant_pos(:,4)=ant_pos(:,4)-prior{im}.y(1)+dx/2;
+    forward.G=ray_kernel_2d(ant_pos,length(prior{im}.y),length(prior{im}.x),dx,forward.r,forward.norm);
     end
     
     if length(data{id}.i_use)==size(forward.G,1)
