@@ -24,8 +24,8 @@ dim=cell/r;
 Nz=Nz*r;
 Nx=Nx*r;
 shotrec=antpos./dim;
-if r~=1, disp('Remember to move the antennae positions to the midle of the refined cells'),
-    disp(sprintf('%s %d','The refined cell size is',dim))
+if r~=1, disp([mfilename,': Remember to move the antennae positions to the midle of the refined cells']),
+    disp(sprintf('%s: %s %d',mfilename,'The refined cell size is',dim))
 end
 
 fig_num=gcf;

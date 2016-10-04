@@ -16,11 +16,6 @@ rng('default');rng(1);
 D=load('AM13_data.mat');
 options.txt='AM13_gaussian';
 
-%D2=D;
-%D.S(352:end,:)=D2.R(352:end,:);
-%D.R(352:end,:)=D2.S(352:end,:);
-
-
 %% SETUP DATA, PRIOR and FORWARD
 
 %% SETUP DATA
@@ -41,11 +36,7 @@ prior{im}.Va='.0003 Sph(6)';
 dx=.2;
 prior{im}.x=[-1:dx:6];
 prior{im}.y=[0:dx:13];
-prior{im}.cax=[-1 1].*.04+prior{im}.m0;
-
-%d_target=[randn(1,100)*.003+0.11 randn(1,100)*.003+0.16];
-%prior{im}.d_target=d_target;
-%prior{im}.m0=0; %% MAKE SURE sippi_forward_traveltime tests for a non-zero velocity
+prior{im}.cax=[.10 .17];
 
 
 %% SETUP THE FORWARD MODEL(S)
@@ -57,7 +48,7 @@ forward.receivers=D.R;
 %forward.type='ray';
 forward.type='ray_2d';forward.r=2;
 %forward.type='eikonal';
-forward.m0=prior{im}.m0;
+forward.m0=0.13;
 
 
 %% TEST THE SETUP 
@@ -80,7 +71,7 @@ sippi_plot_traveltime_kernel(forward,prior,m);
 sippi_plot_data(d,data);
 
 [logL,L,data]=sippi_likelihood(d,data);
-
+return
 %% SETUP METROPOLIS
 options.mcmc.nite=100000;
 options.mcmc.i_plot=2000;
