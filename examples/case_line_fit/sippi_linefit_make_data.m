@@ -18,41 +18,45 @@
 
 %%
 clear all;close all;
-rand('seed',1);randn('seed',1);
+%rand('seed',1);randn('seed',1);
+rng('default');rng(1);
 
 %% Select reference model
 m_ref{1}=-30;
-m_ref{2}=2;
-m_ref{3}=0; 
+m_ref{2}=4;
+m_ref{3}=-.15; 
 
 %% Setup the forward model in the 'forward' structure
-nd=40;
-forward.x=linspace(1,20,nd);
+nd=11;
+x=linspace(0,20,nd)';
+forward.x=x;
 forward.forward_function='sippi_forward_linefit';
 
 %% Compute a reference set of observed data
 
-x=linspace(1,20,nd)';
 d=sippi_forward(m_ref,forward);
-d_obs=d{1};
-d_std=10;
-d_obs=d_obs+randn(size(d_obs)).*d_std;
+d_ref=d{1};
+d_std=zeros(size(d_ref))+10;
+d_noise=randn(size(d_ref)).*d_std;
+d_obs=d_ref+d_noise;
 
-data{1}.d_obs=d_obs;
-data{1}.d_std=d_std;
+%data{1}.d_obs=d_obs;
+%data{1}.d_std=d_std;
 
-save sippi_linefit_data forward data m_ref;
+%save sippi_linefit_data forward data m_ref;
+save sippi_linefit_data x d_obs d_std m_ref d_ref
 
 %%
-plot(forward.x,data{1}.d_obs,'k*')
+figure(1);clf;
+plot(x,d_obs,'k*')
 hold on
-e=errorbar(forward.x,data{1}.d_obs,data{1}.d_std.*ones(size(data{1}.d_obs)),'k')
+e=errorbar(x,d_obs,d_std,'k');
 set(e,'LineStyle','none')
 hold off
 xlabel('x')
-ylabel('y')
+ylabel('d')
 box on
 grid on
-axis([0 21 -70 40])
-ppp(8,8,12,2,2)
+axis([-1 21 -60 40])
+ppp(10,7,12,2,2)
 print_mul(sprintf('sippi_linefit_data_%d',nd));

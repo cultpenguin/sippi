@@ -1,12 +1,30 @@
 % sippi_linefit: Fiting line using SIPPI
 clear all;close all
-rand('seed',1);randn('seed',1);
-
+rng(1);
 %% LOAD DATA
 load('sippi_linefit_data');
 
-%% Setting up the prior model
+figure(1);clf;
+e=errorbar(x,d_obs,d_std,'k*');
+set(e,'LineStyle','none')
+xlabel('x')
+ylabel('d')
+box on
+grid on
+axis([-1 21 -60 40])
+ppp(10,4,12,2,2)
+print_mul(sprintf('sippi_linefit_data_%d',length(d_obs)));
 
+%% setup the data
+data{1}.d_obs=d_obs;
+data{1}.d_std=d_std;
+
+%% setup the forward
+forward.x=x;
+forward.forward_function='sippi_forward_linefit';
+
+
+%% setup the prior model
 % the intercept
 im=1;
 prior{im}.type='gaussian';
@@ -24,20 +42,83 @@ prior{im}.std=4;
 prior{im}.norm=80;
 prior{im}.m_true=m_ref{2};
 
+% 2ndst order
+im=3;
+prior{im}.type='uniform';
+prior{im}.name='2nd';
+prior{im}.min=-.3;
+prior{im}.max=.3;
+prior{im}.m_true=m_ref{3};
+
 
 %% TEST SETUP
 m=sippi_prior(prior);
 [d,forward,prior,data]=sippi_forward(m,forward,prior,data);
 [logL]=sippi_likelihood(d,data);
 
-%% Perform extended Metropolis sampling 
-% set some MCMC options.
-options.mcmc.nite=40000
-options.mcmc.i_sample=100;
-options.mcmc.i_plot=2500
-options.mcmc.m_ref=m_ref;
-options.txt='case_line_fit_1st_order';
+%%
+figure(1);clf;
+e=errorbar(x,d_obs,d_std,'k*');
+hold on
+plot(forward.x,d{1},'r*')
+hold off
+set(e,'LineStyle','none')
+xlabel('x')
+ylabel('d')
+box on
+grid on
+axis([-1 21 -60 40])
+ppp(10,4,12,2,2)
+print_mul(sprintf('sippi_linefit_data_%d_prior',length(d_obs)));
 
-[options]=sippi_metropolis(data,prior,forward,options);
-sippi_plot_prior_sample(options.txt);
-sippi_plot_posterior(options.txt);
+
+
+%% Sample the posterior
+
+% Perform extended Metropolis sampling 
+options.mcmc.nite=40000;  % Run for 40000 iterations
+options.mcmc.i_sample=100; % Save every 100th visited model to disc
+options.mcmc.i_plot=5000; % Plot the progress information for every 2500 iterations
+options.txt='case_line_fit_2nd_order'; % descriptive name for the output folder
+
+[options_metropolis]=sippi_metropolis(data,prior,forward,options);
+sippi_plot_prior_sample(options_metropolis.txt);
+sippi_plot_posterior(options_metropolis.txt);
+
+% rejection
+[options_rejection]=sippi_rejection(data,prior,forward,options);
+sippi_plot_prior_sample(options_rejection.txt);
+sippi_plot_posterior(options_rejection.txt);
+
+
+%% Plot 1D histograms
+for i=1:3;
+    [reals,etype_mean,etype_var,reals_all,reals_ite]=sippi_get_sample(options_metropolis.txt,i);
+    m_post(:,i)=reals_all;
+end
+figure(2);clf;
+e=errorbar(x,d_obs,d_std,'k*');
+hold on
+for i=1:size(m_post,1);
+    m{1}=m_post(i,1);
+    m{2}=m_post(i,2);
+    m{3}=m_post(i,3);
+    [d,forward,prior,data]=sippi_forward(m,forward,prior,data);
+    plot(x,d{1},'k-','color',[1 1 1].*.8);
+end
+[d,forward,prior,data]=sippi_forward(m_ref,forward,prior,data);
+plot(x,d{1},'g-','LineWidth',3);
+e=errorbar(x,d_obs,d_std,'k*');
+hold off
+
+set(e,'LineStyle','none')
+xlabel('x')
+ylabel('d')
+box on
+grid on
+axis([-1 21 -60 40])
+ppp(10,4,12,2,2)
+print_mul(sprintf('sippi_linefit_data_%d_post',length(d_obs)));
+
+
+

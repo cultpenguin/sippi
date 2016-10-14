@@ -39,7 +39,7 @@ function y = quantile(x, p, dim)
 %   URL:         http://home.online.no/~pjacklam
 
    nargsin = nargin;
-   error(nargchk(2, 3, nargsin));
+   narginchk(2, 3);
 
    sx = size(x);                % size of `x'
    dx = ndims(x);               % number of dimensions in `x'

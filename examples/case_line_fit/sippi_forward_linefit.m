@@ -6,7 +6,7 @@
 function [d,forward,prior,data]=sippi_forward_linefit(m,forward,prior,data);
 
 if length(m)==1;
-    d{1}=m{1};
+    d{1}=forward.x.*0 + m{1};
 elseif length(m)==2;
     d{1}=forward.x*m{2}+m{1};
 else
