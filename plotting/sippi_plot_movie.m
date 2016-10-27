@@ -156,7 +156,11 @@ for im=im_array
                     text(.02,.02,sprintf('#%05d, posterior',i),'units','normalized')
                     drawnow;
                     frame = getframe(gcf);
-                    writeVideo(writerObj,frame);
+                    try
+                        writeVideo(writerObj,frame);
+                    catch
+                        disp(sprintf('%s: problems writing %s',mfilename,fname));
+                    end
                 end
             end
             close(writerObj);

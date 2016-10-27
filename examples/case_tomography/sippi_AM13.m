@@ -21,9 +21,9 @@
 
 
 %% Load the travel time data set from ARRENAES
-rng('default');rng(1);
 
-%% Make some choices
+
+%% Mke some choices
 if ~exist('use_prior','var')
     % use_prior=1; % Gaussian
     % use_prior=2; % Gaussian with bimodal target distribution
@@ -49,8 +49,16 @@ if ~exist('use_rejection','var')
     use_rejection=0;
 end
 
+if ~exist('use_reference','var')
+    use_reference=0;
+end
+
+
 if ~exist('n_ite','var')
     n_ite=200000;
+end
+if ~exist('rseed','var')
+    rseed=round(rand*1000000);
 end
 if ~exist('n_reals_out','var')
     n_reals_out=200;
@@ -65,6 +73,23 @@ end
 if ~exist('dx','var')
     dx=0.2;
 end
+
+
+if exist('plot_posterior','var');    
+    plot_posterior_sample=plot_posterior;
+    plot_posterior_data=plot_posterior;
+    plot_posterior_loglikelihood=plot_posterior;
+    plot_posterior_2d_marg=plot_posterior;
+end
+
+if ~exist('plot_posterior_sample','var');    plot_posterior_sample=1;end
+if ~exist('plot_posterior_data','var');    plot_posterior_data=1;end
+if ~exist('plot_posterior_loglikelihood','var');    plot_posterior_loglikelihood=1;end
+if ~exist('plot_posterior_2d_marg','var');    plot_posterior_2d_marg=1;end
+
+    
+
+
 
 
 
@@ -96,9 +121,10 @@ m0=0.145;
 Va='.0003 Sph(6,90,.3)';
 
 % some parameters needed by all a priori types
+np=2;
 prior_ref{1}.name='Velocity (m/ns)';
-prior_ref{1}.x=[-1:dx:6];
-prior_ref{1}.y=[0:dx:13];
+prior_ref{1}.x=[(0-np*dx):dx:(5+np*dx)];
+prior_ref{1}.y=[(1-np*dx):dx:(12+np*dx)];
 prior_ref{1}.cax=[.10 .17];
 
 % define a number of a priori models
@@ -311,15 +337,32 @@ end
 sippi_plot_data(d,data);
 
 
-%%
+
+%% SET NAME OF SIMULATION
 options.txt=sprintf('AM13_I%d',use_prior);
 options.txt=sprintf('%s_DX%d',options.txt,1000*dx);
 options.txt=[options.txt,'_',forward.name];
 
+%% MAKE REFERENCE MODEL
+if use_reference==1;
+    rng(1);
+    m_ref=sippi_prior(prior);
+    [d,forward]=sippi_forward(m_ref,forward,prior,data);
+    [logL,L,data]=sippi_likelihood(d,data);
+    
+    d_obs=d{1};
+    d_noise=gaussian_simulation_cholesky(0,data{1}.CD,1);
+    data{1}.d_obs=d_obs+d_noise;
+    
+    options.mcmc.m_ref=m_ref;    
+    
+    options.txt=[options.txt,'_ref'];    
+end
+
 %% SETUP METROPOLIS
 if use_metropolis==1
     rng('default');
-    rng(1);
+    rng(rseed);
     
     options.mcmc.nite=n_ite;
     options.mcmc.i_plot=max([500 ceil(n_ite/100)]);
@@ -346,7 +389,7 @@ if use_metropolis==1
     if doTempering==1;
         options.txt=[options.txt,'_','temper'];
         options.mcmc.n_chains=4; % set number of chains (def=1)
-        options.mcmc.T=[1 1.5 2 3]; % set number of chains (def=1)
+        options.mcmc.T=[1 1.25 1.5 1.75]; % set number of chains (def=1)
     end
     
     options=sippi_metropolis(data,prior,forward,options);
@@ -355,7 +398,12 @@ if use_metropolis==1
     % PLOT SAMPLE FROM PRIOR
     sippi_plot_prior_sample(options.txt);
     % PLOT SAMPLE AND STATS FROM POSTERIOR
-    sippi_plot_posterior(options.txt);
+    if plot_posterior_sample==1;  sippi_plot_posterior_sample(options.txt);end
+    if plot_posterior_data==1;    sippi_plot_posterior_data(options.txt);end
+    if plot_posterior_loglikelihood==1;    sippi_plot_posterior_loglikelihood(options.txt);end
+    if plot_posterior_2d_marg==1;    sippi_plot_posterior_2d_marg(options.txt);end
+
+    
     %% PLOT PRIOR AND POSTERIO MOVIE
     % sippi_plot_movie(options.txt)
     
@@ -376,9 +424,10 @@ if use_rejection==1;
     % PLOT SAMPLE FROM PRIOR
     sippi_plot_prior_sample(options.txt);
     % PLOT SAMPLE AND STATS FROM POSTERIOR
-    sippi_plot_posterior(options.txt);
-    %% PLOT PRIOR AND POSTERIO MOVIE
-    % sippi_plot_movie(options.txt)
+    if ~exist('plot_posterior_sample','var');  sippi_plot_posterior_sample(options.txt);end
+    if ~exist('plot_posterior_data','var');    sippi_plot_posterior_data(options.txt);end
+    if ~exist('plot_posterior_loglikelihood','var');    sippi_plot_posterior_loglikelihood(options.txt);end
+    if ~exist('plot_posterior_2d_marg','var');    sippi_plot_posterior_2d_marg(options.txt);end
     
     
     
