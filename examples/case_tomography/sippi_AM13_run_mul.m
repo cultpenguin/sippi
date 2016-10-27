@@ -3,8 +3,8 @@ clear all;close all
 
 for i=[1,2,3,4];%1:6;
     for j=[1];
-        for k=[0 1];
-        for l=[0];
+        for an=[0 1];
+        for pt=[0 1];
         close all;
         clear prior* options* use* do*;
         use_prior=i;
@@ -13,8 +13,8 @@ for i=[1,2,3,4];%1:6;
         use_rejection=0;
         n_ite=200000;
         n_reals_out=100;
-        doAnneal=k;
-        doTempering=l;
+        doAnneal=an;
+        doTempering=pt;
         sippi_AM13;
         end
         end

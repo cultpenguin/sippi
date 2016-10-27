@@ -313,7 +313,7 @@ sippi_plot_data(d,data);
 
 %%
 options.txt=sprintf('AM13_I%d',use_prior);
-options.txt=sprinf('%s_DX%d',options.txt,1000*dx);
+options.txt=sprintf('%s_DX%d',options.txt,1000*dx);
 options.txt=[options.txt,'_',forward.name];
 
 %% SETUP METROPOLIS
