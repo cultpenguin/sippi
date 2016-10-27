@@ -66,7 +66,8 @@ end
 
 % plot the geomoetry
 sippi_plot_traveltime_kernel(forward,prior,m);
-
+figure(1);print_mul('AM13_SourceReceiverLoc');
+figure(2);print_mul('AM13_Kernel');
 
 % Compute the likelihood 
 [logL,L,data]=sippi_likelihood(d,data);
@@ -75,8 +76,8 @@ sippi_plot_data(d,data);
 
 
 %% SETUP METROPOLIS
-options.mcmc.nite=100000;
-options.mcmc.i_plot=2000;
+options.mcmc.nite=1000000;
+options.mcmc.i_plot=20000;
 n_reals_out=200;
 options.mcmc.i_sample=options.mcmc.nite/n_reals_out;
 randn('seed',2);rand('seed',2);

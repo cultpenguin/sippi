@@ -52,7 +52,8 @@ forward.linear_m=0.14; % Needed when m0 is set to 0 (using target distribution, 
 forward.sources=D.S;
 forward.receivers=D.R;
 %forward.type='eikonal';
-forward.type='fat';
+forward.type='ray_2d';forward.r=2;
+%forward.type='fat';
 forward.linear=1;
 forward.freq=0.1;
 forward.forward_function='sippi_forward_traveltime';
@@ -88,10 +89,12 @@ end
 
 
 %% SETUP METROPOLIS
+options.mcmc.nite=1000000;
+options.mcmc.i_plot=20000;
+n_reals_out=200;
+options.mcmc.i_sample=options.mcmc.nite/n_reals_out;
+randn('seed',2);rand('seed',2);
 
-options.mcmc.nite=100000;
-options.mcmc.i_plot=1000;
-options.mcmc.i_sample=250;
 
 options=sippi_metropolis(data,prior,forward,options);
 

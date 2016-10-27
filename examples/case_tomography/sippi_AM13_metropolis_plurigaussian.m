@@ -46,7 +46,8 @@ prior{im}.cax=[.1 .18];
 forward.forward_function='sippi_forward_traveltime';
 forward.sources=D.S;
 forward.receivers=D.R;
-forward.type='fat';forward.linear=1;forward.freq=0.1;
+%forward.type='fat';forward.linear=1;forward.freq=0.1;
+forward.type='ray_2d';forward.r=2;
 
 
 %% TEST THE SETUP 
@@ -61,9 +62,10 @@ sippi_plot_data(d,data);
 
 [logL,L,data]=sippi_likelihood(d,data);
 %% SETUP METROPOLIS
-options.mcmc.nite=100000;
-options.mcmc.i_plot=500;
-options.mcmc.i_sample=50;
+n_reals_out=200;
+options.mcmc.nite=1000000;
+options.mcmc.i_plot=20000;
+options.mcmc.i_sample=options.mcmc.nite/n_reals_out;
 randn('seed',2);rand('seed',2);
 
 % ANNEALING 
