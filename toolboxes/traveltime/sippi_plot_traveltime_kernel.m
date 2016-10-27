@@ -22,9 +22,9 @@ str=get(get(gca,'title'),'string');
 title([str,' - Source-Receiver locations'])
 hold on
 if isfield(forward,'sources');
+    plot(forward.receivers(:,1),forward.receivers(:,2),'k.','MarkerSize',18)
     plot(forward.sources(:,1),forward.sources(:,2),'r*')
-    plot(forward.receivers(:,1),forward.receivers(:,2),'ko')
-    plot([forward.sources(:,1) forward.receivers(:,1)]',[forward.sources(:,2) forward.receivers(:,2)]','k-')
+    plot([forward.sources(:,1) forward.receivers(:,1)]',[forward.sources(:,2) forward.receivers(:,2)]','k-','LineWidth',.1)
 end
 hold off
 
