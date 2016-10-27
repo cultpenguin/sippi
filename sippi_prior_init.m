@@ -357,8 +357,16 @@ for im=im_array
     if isfield(prior{im},'d_target')
         if ~isfield(prior{im},'o_nscore');
             [d_nscore,prior{im}.o_nscore]=nscore(prior{im}.d_target,1,1);
-            sippi_verbose(sprintf('%s : performed normal score transformation of prior{%d}.d_target to prior{%d}.o_nscore',mfilename,im,im));
+            sippi_verbose(sprintf('%s: performed normal score transformation of prior{%d}.d_target to prior{%d}.o_nscore',mfilename,im,im));
         end
+        if isfield(prior{im},'m0')
+            if prior{im}.m0~=0
+                sippi_verbose(sprintf('%s: Prior #%d, Both d_target and m0(>0, %g) have been set. Perhaps m0 should really be 0?',mfilename,im,prior{im}.m0))
+                sippi_verbose(sprintf('%s: Prior #%d, -- This implies that the a prior mean is prior{%d}.m0+mean(prior{%d}.d_target)=%g',mfilename,im,im,im,prior{im}.m0+mean(prior{im}.d_target)))
+                sippi_verbose(sprintf('%s: Prior #%d, Perhaps m0 should not be set, or be prior{%d}.m0=0; ',mfilename,im,im))
+            end
+        end
+        
     end
    
     
