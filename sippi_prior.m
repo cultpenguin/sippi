@@ -346,7 +346,9 @@ for im=im_fftma_array;
     if (strcmp(upper(prior{im}.type),'FFTMA'))
         %% FFTMA
         % update VA structure from range/ang/sill if possible
-        if ~isstruct(prior{im}.Va); prior{im}.Va=deformat_variogram(prior{im}.Va);end
+        if ~isstruct(prior{im}.Va); 
+            prior{im}.Va=deformat_variogram(prior{im}.Va);
+        end
         
         % UPDATE COVARIANCE PARAMETERS IF THE HAVE BEEN DEFINED
         %[range,rot,sill,Va]=Va2RangeRot(prior{im}.Va);
@@ -355,7 +357,6 @@ for im=im_fftma_array;
         % run thorugh the priors that have been updated
         im2_arr=im_array(1:(find(im_array==im)-1));
         im2_arr=1:length(prior);
-        
         for j=im2_arr;
             
             update_master=0;
@@ -368,11 +369,10 @@ for im=im_fftma_array;
             end
             
             %if nargin==1, update_master=0;end
-            if update_master==1
-                
+            if update_master==1                
                 % THIS IM IS A MASTER SO WE CAN UPDATE THE COVARIANCE MODEL
                 % IF CHOSEN
-                if strcmp(prior{j}.name,'m0');
+                if strcmp(prior{j}.name,'m0');                    
                     prior{im}.m0=m_propose{j};
                     prior{im}.fftma_options.constant_C=0;
                 elseif strcmp(prior{j}.name,'sill');
