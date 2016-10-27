@@ -50,7 +50,7 @@ if ~exist('use_rejection','var')
 end
 
 if ~exist('n_ite','var')
-    n_ite=100000;
+    n_ite=200000;
 end
 if ~exist('n_reals_out','var')
     n_reals_out=200;
@@ -61,6 +61,9 @@ if ~exist('doAnneal','var')
 end
 if ~exist('doTempering','var')
     doTempering=0;
+end
+if ~exist('dx','var')
+    dx=0.2;
 end
 
 
@@ -91,7 +94,6 @@ options.txt=[options.txt,'_noCt'];
 % define some standard values
 m0=0.145;
 Va='.0003 Sph(6,90,.3)';
-dx=.2;
 
 % some parameters needed by all a priori types
 prior_ref{1}.name='Velocity (m/ns)';
@@ -311,6 +313,7 @@ sippi_plot_data(d,data);
 
 %%
 options.txt=sprintf('AM13_I%d',use_prior);
+options.txt=sprinf('%s_DX%d',options.txt,1000*dx);
 options.txt=[options.txt,'_',forward.name];
 
 %% SETUP METROPOLIS
