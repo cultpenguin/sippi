@@ -328,7 +328,7 @@ if use_metropolis==1
     % algorithm proceeds as a usual Metropolis sampler
     if doAnneal==1;
         options.txt=[options.txt,'_','anneal'];
-        i_stop_anneal=max([1000 ceil(n_ite/21)]);
+        i_stop_anneal=max([1000 ceil(n_ite/10)]);
         for im=1:length(prior);
             prior{im}.seq_gibbs.i_update_step_max=2*i_stop_anneal;
         end
