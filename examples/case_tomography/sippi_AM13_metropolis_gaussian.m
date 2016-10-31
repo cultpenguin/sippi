@@ -31,15 +31,15 @@ data{id}.Ct=D.Ct; % Correlated noise model according to Cordua et al (2008; 2009
 options.txt=[options.txt,'_noCt'];
 
 %% SETUP PRIOR
+dx=.15;
 im=1;
 prior{im}.type='FFTMA';
 prior{im}.name='Velocity (m/ns)';
 prior{im}.m0=0.145;
 prior{im}.Va='.0003 Sph(6)';
-dx=.2;
 prior{im}.x=[-1:dx:6];
 prior{im}.y=[0:dx:13];
-prior{im}.cax=[.10 .17];
+prior{im}.cax=[-1 1].*.035+prior{im}.m0;
 
 
 %% SETUP THE FORWARD MODEL(S)
@@ -73,14 +73,15 @@ figure(2);print_mul('AM13_Kernel');
 [logL,L,data]=sippi_likelihood(d,data);
 % plot the forward response and compare it to the observed data
 sippi_plot_data(d,data);
+print_mul('AM13_data');
 
 
 %% SETUP METROPOLIS
-options.mcmc.nite=1000000;
-options.mcmc.i_plot=20000;
+options.mcmc.nite=500000;
+options.mcmc.i_plot=10000;
 n_reals_out=200;
 options.mcmc.i_sample=options.mcmc.nite/n_reals_out;
-randn('seed',2);rand('seed',2);
+rng(1);
 
 % ANNEALING 
 % example of starting with a high temperature, that allow higher
@@ -107,6 +108,11 @@ if doTempering==1;
 end
 
 options=sippi_metropolis(data,prior,forward,options);
+figure(3);print_mul('AM13_logLprogress');
+figure(21);print_mul('AM13_lastData');
+
+
+
 options.mcmc.time_elapsed_in_seconds
 
 %% PLOT SAMPLE FROM PRIOR
