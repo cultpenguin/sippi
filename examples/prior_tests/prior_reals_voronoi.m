@@ -5,10 +5,11 @@ rng('default')
 
 %% Define a 2D a priori model based on 10 VORONOIS CELLS
 cells_N_max=50;
-prior{1}.type='voronoi';
-prior{1}.x=1:.1:20;prior{1}.y=1:.1:20;
-prior{1}.cells_N=cells_N_max; % SET NUMBER OF CELLS
-prior{1}.cax=[1 prior{1}.cells_N];
+ip=1;
+prior{ip}.type='voronoi';
+prior{ip}.x=1:.04:20;prior{1}.y=1:.04:20;
+prior{ip}.cells_N=cells_N_max; % SET NUMBER OF CELLS
+prior{ip}.cax=[1 prior{1}.cells_N];
 [m,prior]=sippi_prior(prior);
 sippi_plot_prior(prior,m);
 
@@ -27,11 +28,11 @@ colorbar_shift;
 drawnow;
 print_mul(mfilename)
 %suptitle(sprintf('voronois'))
-
+return
 
 %% Define a 2D a priori model based on 10-30 VORONOI CELLS
 
-ip=2;
+ip=ip+1;
 prior{ip}.type='uniform';
 prior{ip}.name='cells_N';
 prior{ip}.min=5;
@@ -45,7 +46,6 @@ prior{ip}.name='cells_x';
 prior{ip}.x=[1:cells_N_max];
 prior{ip}.min=min(prior{1}.x);
 prior{ip}.max=max(prior{1}.x);
-prior{ip}.cax=[prior{ip}.min prior{ip}.max];
 prior{ip}.prior_master=1;
 
 ip=ip+1;
@@ -54,11 +54,16 @@ prior{ip}.name='cells_y';
 prior{ip}.x=[1:cells_N_max];
 prior{ip}.min=min(prior{1}.y);
 prior{ip}.max=max(prior{1}.y);
-prior{ip}.cax=[prior{ip}.min prior{ip}.max];
 prior{ip}.prior_master=1;
 
-
-
+ip=ip+1;
+prior{ip}.type='uniform';
+prior{ip}.name='cells_value';
+prior{ip}.x=[1:cells_N_max];
+prior{ip}.min=5;
+prior{ip}.max=15;
+prior{ip}.prior_master=1;
+prior{1}.cax=[5 15];
 
 rng(1);
 figure(11);clf
@@ -75,17 +80,14 @@ colorbar_shift;
 drawnow;
 print_mul([mfilename,'_cells_N'])
 
-
 %% Show movie of a random walk in the prior (using sequential Gibbs sampling)
 save_movie=1;
 randn('seed',1);
 figure(11+j);clf
 if save_movie==1;set(gcf,'units','normalized','outerposition',[0 0 1 1]);end
-prior{1}.seq_gibbs.step=0.02;
-prior{2}.seq_gibbs.step=0.05;
-prior{3}.seq_gibbs.step=0.02;
-prior{4}.seq_gibbs.step=0.02;
-
+for ip=1:length(prior)
+    prior{ip}.seq_gibbs.step=0.02;
+end
 if (save_movie==1)
     if isunix==1
         fname=[mfilename,'_target','.avi'];
