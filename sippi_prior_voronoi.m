@@ -27,8 +27,15 @@ end
 if ~isfield(prior{ip},'cells_N_min');prior{ip}.cells_N_min=10;end
 if ~isfield(prior{ip},'cells_N_max');prior{ip}.cells_N_max=10;end
 if ~isfield(prior{ip},'cells_N')
-    prior{ip}.cells_N=ceil(rand(1)*(prior{ip}.cells_N_max-prior{ip}.cells_N_min)+prior{ip}.cells_N_min);
+    if isfield(prior{ip},'cells_N_max')&&isfield(prior{ip},'cells_N_min')
+        prior{ip}.cells_N=ceil(rand(1)*(prior{ip}.cells_N_max-prior{ip}.cells_N_min)+prior{ip}.cells_N_min);
+    else
+        prior{ip}.cells_N=10;
+    end   
 end
+if prior{ip}.cells_N_min>prior{ip}.cells_N;  prior{ip}.cells_N_min=prior{ip}.cells_N; end
+if prior{ip}.cells_N_max<prior{ip}.cells_N;  prior{ip}.cells_N_max=prior{ip}.cells_N; end
+
 
 if ~isfield(prior{ip},'cells_use');
     prior{ip}.cells_use=randomsample(prior{ip}.cells_N_max,prior{ip}.cells_N);
