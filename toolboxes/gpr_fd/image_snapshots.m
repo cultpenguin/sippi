@@ -24,7 +24,7 @@ function [data time_vector]=image_snapshots(sample_rate,Nplot,Ntrn,Nrow,gain,dx,
 %
 %--------------------------------------------------------------------------
 
-do_plot=0;
+do_plot=1;
 
 if nargin==3
     Nrow=8;

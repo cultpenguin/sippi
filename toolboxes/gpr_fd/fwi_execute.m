@@ -240,18 +240,23 @@ for i=1:ceil(Ntrn/Ncores_applied)
                 fclose(Fid);
                 %ex=exist(sprintf('%s%s',fpath,'\trace_out000.dat'),'file');
                 % Delete the file after use:
-                if Fid~=-1 %&& ex==2
-                try
-                  delete(sprintf('%s%s%s',fpath,filesep,'trace_out000.dat'))
-                catch
-                  keyboard
-                end
-                wait=0;
+                if nrec(j)==size(Trace_Ez,2)
+                        wait=0;
+%                     end
+%                 if Fid~=-1 %&& ex==2
+                    %try
+                        delete(sprintf('%s%s%s',fpath,filesep,'trace_out000.dat'))
+                    %catch
+                    %    keyboard
+                    %end
                 end
             catch
                 pause(0.001)
             end
-        end
+%             if nrec(j)~=size(Trace_Ez,2)
+%                 keyboard
+%             end
+       end
        
         clear Trace_Hphi
         fclose all;
