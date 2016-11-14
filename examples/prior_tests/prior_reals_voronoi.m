@@ -28,7 +28,7 @@ colorbar_shift;
 drawnow;
 print_mul(mfilename)
 %suptitle(sprintf('voronois'))
-return
+
 
 %% Define a 2D a priori model based on 10-30 VORONOI CELLS
 

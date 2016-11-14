@@ -50,7 +50,7 @@
 % forward.addpar.cores=4;%
 %
 %
-% See also FDTD_fwi
+% See also FDTD_fwi for more settings
 %
 %
 function [d,forward,prior,data]=sippi_forward_gpr_fd(m,forward,prior,data,id,im)

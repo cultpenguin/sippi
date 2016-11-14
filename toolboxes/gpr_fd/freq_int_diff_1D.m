@@ -1,8 +1,10 @@
 function odata=freq_int_diff_1D(idata,order,dt)
 
 % Call: [odata opwr]=freq_int_diff_1D(idata,order,dt); 
+% Outputs:
 % * "odata" is the output data
 % * "opwr" is the log power spectrum of the output data
+% Inputs:
 % * "idata" is the input data given as a matrix
 % * "order" A positive value N results in a differentialtion of order N. A
 %    negative value N results in an integration of order N. (e.g. for N=1/2 the array is half differentiated. N = -2 results in a double integration)
@@ -14,7 +16,7 @@ function odata=freq_int_diff_1D(idata,order,dt)
 % the grid then a half-integrated (order = -0.5) Ricker pulse has to be
 % used as source pulse.
 %
-% Knud Cordua 2010
+% Knud S. Cordua 2010
 
 if order<0
     if abs(order)==round(abs(order))
@@ -29,8 +31,8 @@ else
     n_diff=order;
 end
 
-%N=2^nextpow2(length(idata));
-N=length(idata);
+N=2^nextpow2(length(idata));
+%N=length(idata);
 
 % Differentiation
 wf=fft(idata,N);
