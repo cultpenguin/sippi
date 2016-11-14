@@ -25,10 +25,10 @@ options.txt='AM13_gaussian_noise';
 id=1;
 data{id}.d_obs=D.d_obs;
 data{id}.d_std=D.d_std.*0+0.4;;
-%data{id}.i_use=1:20;
-%data{id}.Ct=1; % Data covariance describing modelization error
-%data{id}.Ct=D.Ct; % Correlated noise model according to Cordua et al (2008; 2009)
-%options.txt=[options.txt,'_noCt'];
+data{id}.Ct=D.Ct; % Correlated noise model according to Cordua et al (2008; 2009)
+% If data{id}.Ct, then the magniatude of an uncorrelated Gaussian noise, on
+% top of the modeling error is inferrred
+
 
 %% SETUP PRIOR
 dx=.15;
@@ -43,11 +43,13 @@ prior{im}.cax=[-1 1].*.035+prior{im}.m0;
 
 inferNoise=1;
 if inferNoise==1;
+    % in order to infer the the magnitude of uncorrelated measurement noise
+    % define a 1D prior with name 'd_std' (or 'd_var'), and set  prior{im}.perturb_noise=1;
+    % as for example in the case below:
     im=im+1;
     prior{im}.type='uniform';
     prior{im}.name='d_std';
-    %prior{im}.name='d_var';
-    prior{im}.perturb_noise=1;
+    prior{im}.perturb_noise=1; % 
     %prior{im}.perturb_noise_i_data=1; %def=1
     prior{im}.min=.1;
     prior{im}.max=4;
@@ -64,9 +66,9 @@ end
 forward.forward_function='sippi_forward_traveltime';
 forward.sources=D.S;
 forward.receivers=D.R;
-forward.type='fat';forward.linear=1;forward.freq=0.1;
+%forward.type='fat';forward.linear=1;forward.freq=0.1;
 %forward.type='ray';
-%forward.type='ray_2d';forward.r=2;
+forward.type='ray_2d';forward.r=2;
 %forward.type='eikonal';
 %forward.type='fd';
 
@@ -128,13 +130,8 @@ options.mcmc.pert_strategy.i_pert = [1,2]; % Perturb both prior 1 and 2
 options.mcmc.pert_strategy.i_pert_freq = [9 1]; % Perturb prior 1 90% of the time
 
 
-options.mcmc.nite=50000;
-options.mcmc.i_plot=1000;
 
 options=sippi_metropolis(data,prior,forward,options);
-return
-figure(3);print_mul('AM13_logLprogress');
-figure(21);print_mul('AM13_lastData');
 
 options.mcmc.time_elapsed_in_seconds
 
