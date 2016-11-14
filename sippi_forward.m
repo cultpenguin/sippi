@@ -54,7 +54,7 @@ if nargin>=4
         
         % adjust uncorrelated noise
         if ( (strcmp(lower(prior{im}.name),'d_std')||strcmp(lower(prior{im}.name),'d_var')) && (prior{im}.is_perturbed==1));
-            disp(1)
+            
             if  ~isfield(prior{im},'perturb_noise');
                 prior{im}.perturb_noise=0;
             end
