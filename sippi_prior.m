@@ -121,11 +121,14 @@ end
 im_array=[];
 for im=1:nm
     tic;
+    prior{im}.is_perturbed=0;
     if isfield(prior{im},'perturb'),
         if prior{im}.perturb==1;
             im_array=[im_array im];
+            prior{im}.is_perturbed=1;
         end
     else
+        prior{im}.is_perturbed=1;
         im_array=[im_array im];
     end
     
