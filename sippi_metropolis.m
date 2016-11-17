@@ -75,6 +75,15 @@ function [options,data,prior,forward,m_current]=sippi_metropolis(data,prior,forw
 %
 
 options.null='';
+
+if isfield(options,'nruns');
+    if options.nruns>1
+        [o_all,data,prior,forward]=sippi_metropolis_mulrun(data,prior,forward,options);
+        options=o_all;
+        return
+    end
+end
+
 if ~isfield(options,'txt');options.txt='';end
 if ~isempty(options.txt)
     options.txt=sprintf('%s_sippi_metropolis_%s',datestr(now,'YYYYmmdd_HHMM'),options.txt);
