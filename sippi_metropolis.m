@@ -70,6 +70,13 @@ function [options,data,prior,forward,m_current]=sippi_metropolis(data,prior,forw
 %    setenv('SIPPI_VERBOSE_LEVEL','-2'); % indication of stop and start
 %    setenv('SIPPI_VERBOSE_LEVEL','-3'); % none
 %
+%    %% MULTIPLE RUNS (IN PARALLEL)
+%    % In case the matlab parallel toolbox is installed, then a selected
+%    % number of indenpendent Metropolis chains can be run in parallel
+%    % using (see also sippi_metropolis_mulrun.m):
+%    options.nruns = 4; % to run 4 independent runs
+%
+%
 % See also sippi_metropolis_mulrun, sippi_rejection
 %
 %
