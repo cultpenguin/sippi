@@ -1,81 +1,16 @@
 function [options,data,prior,forward,m_current]=sippi_metropolis_parfor(data,prior,forward,options)
-% sippi_metropolis_parfor Extended Metropolis sampling in SIPPI uisng
-% Matlab Parallel Toolbox to distribute each chain in a parallel tempering 
+% sippi_metropolis_parfor: Extended Metropolis sampling in SIPPI using MTP
+% (Matlab Parallel Toolbox) to distribute each chain in a parallel tempering 
 % run, into seperate threads. 
-% Useful if the forward problem ia CPU intensitive (Otherwise, it may slow
+% Useful if the forward problem and/or prior sampling is CPU intensitive (Otherwise, it may slow
 % down simulation)!
 %
-% Metropolis sampling.
-%   See e.g.
-%     Hansen, T. M., Cordua, K. S., and Mosegaard, K., 2012.
-%     Inverse problems with non-trivial priors - Efficient solution through Sequential Gibbs Sampling.
-%     Computational Geosciences. doi:10.1007/s10596-011-9271-1.
-%
-%     Sambridge, M., 2013 - A Parallel Tempering algorithm for
-%     probabilistic sampling and multi-modal optimization.
-%
-% Call :
-%    [options,data,prior,forward,m_current]=sippi_metropolis(data,prior,forward,options)
-% Input :
-%    data : sippi data structure
-%    prior : sippi prior structure
-%    forward : sippi forward structure
-%
-% options :
-%
-%    options.mcmc.nite=30000;   % [1] : Number if iterations
-%    options.mcmc.i_sample=100; % : Number of iterations between saving model to disk
-%    options.mcmc.i_plot=50;  % [1]: Number of iterations between updating plots
-%    options.mcmc.i_save_workspace=10000;  % [1]: Number of iterations between
-%                                            saving the complete workspace
-%    options.mcmc.i_sample=100; % : Number of iterations between saving model to disk
-%
-%    options.mcmc.m_init : Manually chosen starting model
-%    options.mcmc.m_ref  : Reference known target model
-%
-%    options.mcmc.accept_only_improvements [0] : Optimization
-%    options.mcmc.accept_all [0]: accepts all proposed models (ignores lilkelihood)
-%
-%    options.txt [string] : string to be used as part of all output file names
-%
-%    %% PERTURBATION STRATEGY
-%    % Perturb all model parameter all the time
-%    options.mcmc.pert_strategy.perturb_all=1; % Perturb all priors in each
-%                                              % iteration. def =[0]
-%    options.mcmc.pert_strategy.perturb_all=2; % Perturb a random selection of 
-%                                              % all priors in each iteration. def =[0]
-%
-%    % Perturb one a prior type at a time, according to some frequency
-%    options.mcmc.pert_strategy.i_pert = [1,3]; % only perturb prior 1 and 3
-%    options.mcmc.pert_strategy.i_pert_freq = [2 8]; % perturb prior 3 80% of
-%                                               % the time and prior 1 20%
-%                                               % of the time
-%    % the default pertubation strategt is to select one prior model to
-%    % perturb at tandom for each iteration
-%
-%
 %    %% TEMPERING
-%    options.mcmc.n_chains=1; % set number of chains (def=1)
-%    options.mcmc.T=1;      % set temperature of chains [1:n_chains]
+%    options.mcmc.n_chains=8; % set number of chains (def=1)
+%    options.mcmc.T=[1 2 3 4 5 6 7 8];      % set temperature of chains [1:n_chains]
 %    options.mcmc.chain_frequency_jump=0.1; % probability allowing a jump
-%                                           %  between two chains
-%    %% ANNEALING (TEMPERATURE AS A FUNCTION OF ITERATION NUMBER)
-%    options.mcmc.anneal.i_begin=1; % default, iteration number when annealing begins
-%    options.mcmc.anneal.i_end=100000; %  iteration number when annealing stops
-%    options.mcmc.anneal.T_begin=5; % Start temperature for annealing
-%    options.mcmc.anneal.T_end=1; % End temperature for annealing
-%
-%    %% VERBOSITY
-%    The amount of text info displayed at the prompt, can be controlled by
-%    setenv('SIPPI_VERBOSE_LEVEL','2') % all: information on chain swapping
-%    setenv('SIPPI_VERBOSE_LEVEL','1') % information about seq-gibbs step update
-%    setenv('SIPPI_VERBOSE_LEVEL','0'); % [def] frequent update
-%    setenv('SIPPI_VERBOSE_LEVEL','-1'); % rare update om finish time
-%    setenv('SIPPI_VERBOSE_LEVEL','-2'); % indication of stop and start
-%    setenv('SIPPI_VERBOSE_LEVEL','-3'); % none
-%
-% See also sippi_rejection
-%
+%  
+% See also sippi_metropolis
 %
 
 options.null='';

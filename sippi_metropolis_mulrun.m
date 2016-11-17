@@ -11,6 +11,13 @@
 %   [options_mul]=sippi_metropolis_mulrun(data,prior,forward,options);
 %
 %
+% To manually set the 'local' cluster profile to allow using 4 threads
+% use e.g.:
+%    myCluster = parcluster('local');
+%    myCluster.NumWorkers = 4;  % 'Modified' property now TRUE
+%    saveProfile(myCluster);    % 'local' profile now updated,
+%                               % 'Modified' property now FALSE   
+%
 % See also: sippi_metropolis
 %
 function [options_mul]=sippi_metropolis_mulrun(data,prior,forward,options)
