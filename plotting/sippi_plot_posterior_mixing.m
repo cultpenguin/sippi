@@ -12,42 +12,54 @@
 % 2. call sippi_plot_posterio_mixing
 % sippi_plot_posterior_mixing(o),
 %
+% NOTE: Only works to high dimensional prior models....
+%
 % See also sippi_metropolis, sippi_metropolis_mulruns
 %
-function sippi_plot_posterior_mixing(o,txt,io_arr);
+function [cc_mix]=sippi_plot_posterior_mixing(o,txt,Nplot);
 
 %% CHECK INPUT
+Nc=length(o);
 if nargin<2,
     txt=sprintf('test_mixing');
 end
 if nargin<3,
-    io_arr=1:length(o);
+    Nplot=Nc;
 end
+io_arr=1:Nplot;
 
 %% LOAD DATA
 skip_seq_gibbs=0;
-for io=1:length(o);
+for io=1:Nc;
     [reals{io},etype_mean{io},etype_var{io},reals_all{io},reals_ite{io}]=sippi_get_sample(o{io}.txt,1,15,skip_seq_gibbs);
 end
-%load(sprintf('%s%s%s',o{1}.txt,filesep,o{1}.txt),'options');
+load(sprintf('%s%s%s',o{1}.txt,filesep,o{1}.txt),'options');
 options.mcmc.null='';
 load(sprintf('%s%s%s',o{1}.txt,filesep,o{1}.txt),'prior');
 
-%% IMAGE ETYPE + REF
-figure(2);clf;
-N=length(o);
-j=0;
 if isfield(options.mcmc,'m_ref')
+    is_m_ref=1;
+else
+    is_m_ref=0
+end
+    
+
+%% IMAGE ETYPE + REF
+figure(1);clf;
+j=0;
+Ny=ceil((Nc+is_m_ref)/5);
+Nx=ceil((Nc+is_m_ref)/Ny);
+if (is_m_ref)    
     N=length(o)+1;
-    j=j+1;subplot(1,N,1);
+    j=j+1;subplot(Ny,Nx,1);
     imagesc(prior{1}.x,prior{1}.y,options.mcmc.m_ref{1});
     axis image
     caxis(prior{1}.cax)
     title('Ref')
 end
 
-for io=1:length(o);
-    j=j+1;subplot(1,N,j);
+for io=1:Nc;
+    j=j+1;subplot(Ny,Nx,j);
     imagesc(prior{1}.x,prior{1}.y,etype_mean{io});
     axis image
     caxis(prior{1}.cax)    
@@ -74,28 +86,20 @@ for io=io_arr%;:length(o);;
     j=0;
     for i=ii
         j=j+1;
-        if isfield(options.mcmc,'m_ref')
-            cc=corrcoef(options.mcmc.m_ref{1}(:),reals_all{io}(j,:)');
+        if (is_m_ref);
+            cc=corrcoef(options.mcmc.m_ref{1}(:),reals_all{io}(i,:)');
             cc_ref{io}(j)=cc(2);
         end
         
         % i_use=ceil(nr/3);
         i_use=nr;
-        for io_end=1:length(o);;
-            cc=corrcoef(reals_all{io_end}(i_use,:),reals_all{io}(j,:)');
+        for io_end=1:Nc
+            cc=corrcoef(reals_all{io_end}(i_use,:),reals_all{io}(i,:)');
             cc_mix{io}{io_end}(j)=cc(2);
         end
     end
     
-    if isfield(options.mcmc,'m_ref')
-        figure_focus(10+io);subplot(2,1,1);
-    
-        p=plot(i_ax,cc_ref{io},'k-','LineWidth',2);
-        try;set(p,'color',col{io});end
-        ih=ih+1;leg{ih}=sprintf('Ref_%d',io);
-        if ih==1; hold on; end
-    end
-    for io_end=1:length(o);;
+    for io_end=1:Nc;
         if io_end==io; 
             lw=3;
             col='r';
@@ -105,36 +109,54 @@ for io=io_arr%;:length(o);;
         end
         figure_focus(10+io);subplot(2,1,1);
     
-        p2=plot(i_ax,cc_mix{io}{io_end},'k-','LineWidth',lw);
+        p2(io_end)=plot(i_ax,cc_mix{io}{io_end},'k-','LineWidth',lw);
         try;set(p2,'color',col);end
-        ih=ih+1;leg{ih}=sprintf('mix_{%d,%d}',io,io_end);
+        ih=ih+1;leg{ih}=sprintf('CC_{%d,%d}',io,io_end);
         if ih==1; hold on; end
         
         hx=linspace(-1,1,21);
         [h(io_end,:)]=hist(cc_mix{io}{io_end},hx);
         
+    end
+    if (is_m_ref)
+        figure_focus(10+io);subplot(2,1,1);
+    
+        p=plot(i_ax,cc_ref{io},'r-','LineWidth',2);
+        ih=ih+1;leg{ih}=sprintf('CC_{%d,ref}',io);
+        if ih==1; hold on; end
+        
+        [h(Nc+1,:)]=hist(cc_ref{io},hx);
         
     end
 
-    
+
     figure_focus(10+io);
     subplot(2,1,1);
     hold off
-    legend(leg,'Location','NorthEastOutside')
+    legend([p2,p],leg,'Location','NorthEastOutside')
     title(sprintf('%s - Chain %02d vs others',txt,io),'Interpreter','None')
     ylabel(sprintf('Correlation coefficient to Last model of chain %02d',io))
     xlabel('Iteration number')
     
     arr1=io;
-    arr2=setxor(1:length(o),io);
+    arr2=[setxor(1:Nc,io)];
+    %if (is_m_ref)
+    %    arr2=[arr2,Nc+1]
+    %end
     
     subplot(2,1,2);
     %    figure_focus(200+io);
     b1=bar(hx,h(arr1,:),'k');
     hold on
     b2=plot(hx,h(arr2,:)');
+    if (is_m_ref)
+        b3=bar(hx,h(Nc,:)','w');   
+        set(get(b3,'Children'),'FaceAlpha',0.3)
+        legend([b1;b2;b3],leg{[arr1,arr2,Nc+1]},'Location','NorthEastOutside')
+    else
+        legend([b1;b2],leg{[arr1,arr2]},'Location','NorthEastOutside')
+    end
     hold off
-    legend([b1;b2],leg{[arr1,arr2]},'Location','NorthEastOutside')
     xlabel(sprintf('Correlation coefficient\n(Last model of chain %02d to posterior realization of all other chains)',io))
     ylabel('Relative frequency')
     drawnow;
