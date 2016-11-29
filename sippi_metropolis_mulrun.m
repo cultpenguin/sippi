@@ -20,7 +20,7 @@
 %
 % See also: sippi_metropolis
 %
-function [options_mul]=sippi_metropolis_mulrun(data,prior,forward,options)
+function [options_mul,data,prior,forward]=sippi_metropolis_mulrun(data,prior,forward,options)
 if nargin<3, 
     help(mfilename);
     options_mul='';
@@ -31,8 +31,10 @@ if nargin<4, options.nruns=2;end
 
 if ~isfield(options,'nruns')
     options.nruns=2;
+    sippi_verbose(sprintf('%s: setting options.nruns=%d', mfilename,options.nruns),-1);
 end
 
+sippi_verbose(sprintf('%s: Runnning sippi_metropolis %d times (as independent chains)', mfilename,options.nruns),-1);
 parfor i=1:options.nruns
     o=options;
     
@@ -41,8 +43,8 @@ parfor i=1:options.nruns
     else
         o.txt=sprintf('r%02d',i);
     end
-    
+    o.nruns=1; % Needed to avoid recursive call to sippi_metropolis_mulrun
     % sippi_metropolis Extended Metropolis sampling in SIPPI
+    
     [options_mul{i}]=sippi_metropolis(data,prior,forward,o);
 end
-        
