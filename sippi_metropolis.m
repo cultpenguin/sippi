@@ -51,8 +51,8 @@ function [options,data,prior,forward,m_current]=sippi_metropolis(data,prior,forw
 %
 %
 %    %% TEMPERING
-%    options.mcmc.n_chains=1; % set number of chains (def=1)
-%    options.mcmc.T=1;      % set temperature of chains [1:n_chains]
+%    options.mcmc.n_chains=3; % set number of chains (def=1)
+%    options.mcmc.T=[1 1.1 1.2];      % set temperature of chains [1:n_chains]
 %    options.mcmc.chain_frequency_jump=0.1; % probability allowing a jump
 %                                           %  between two chains
 %    %% ANNEALING (TEMPERATURE AS A FUNCTION OF ITERATION NUMBER)
@@ -344,7 +344,6 @@ for i=1:mcmc.nite;
 
         %%  MOVE?
         % Accept probability
-
 
         % set temperature
         if do_anneal==1;

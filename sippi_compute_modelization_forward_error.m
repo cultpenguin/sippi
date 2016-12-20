@@ -162,9 +162,9 @@ for na=1:N_app
     if nargout<2
         dt{na}=dt{na}.*0;
     end
-    dd{na}=dd{na}-repmat(dt{na},1,N);
+    dd_ct{na}=dd{na}-repmat(dt{na},1,N);
     
-    Ct{na}=(1/N).*(dd{na}*dd{na}');
+    Ct{na}=(1/N).*(dd_ct{na}*dd_ct{na}');
 end
 
 
