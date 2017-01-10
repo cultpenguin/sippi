@@ -145,6 +145,7 @@ for im=im_arr;
     
     
     %% PLOT REFERENCE MODEL
+    try
     fn=101;
     figure_focus(fn);clf;
     if isfield(options.mcmc,'m_ref');
@@ -154,6 +155,11 @@ for im=im_arr;
             print_mul(sprintf('%s_m%d_ref_model',fname,im),options.plot.hardcopy_types);
         end
     end  
+    catch
+        try;close(fn);end
+        disp(sprintf('%s : could not plot reference model',mfilename));
+        cd(cwd);
+    end
     
     %% PLOT POSTERIOR REALS
     f_id=(im)*10+1;
@@ -168,7 +174,11 @@ for im=im_arr;
         try
             figure_focus(im*10+3);
             set_paper('landscape');clf;
-            ii=[1:1:length(reals_all)].*options.mcmc.i_sample;
+            try
+                ii=[1:1:length(reals_all)].*options.mcmc.i_sample;
+            catch
+                ii=[1:1:length(reals_all)];
+            end
             plot(ii(:),reals_all);
             
             ylim=get(gca,'ylim');
@@ -296,7 +306,8 @@ for im=im_arr;
         hold off
         
         % PLOT REFERENCE IF IT EXISTS
-        if isfield(options.mcmc,'m_ref');
+        try
+            if isfield(options.mcmc,'m_ref');
             hold on
             try
                 plot(prior{im}.x,options.mcmc.m_ref{im},'b-','MarkerSize',11,'LineWidth',3);
@@ -304,6 +315,7 @@ for im=im_arr;
                 sippi_verbose(sprintf('cannot plot m_ref'));
             end
             hold off
+            end
         end
         xlabel('X')
         ylabel(prior{im}.name)
@@ -328,6 +340,7 @@ for im=im_arr;
         end
         
         % PLOT REFERENCE IF IT EXISTS
+        try
         if isfield(options.mcmc,'m_ref');
             hold on
             try
@@ -337,7 +350,7 @@ for im=im_arr;
             end
             hold off
         end
-        
+        end
         
     else
         if ax_lscape==1;

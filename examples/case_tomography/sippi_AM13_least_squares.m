@@ -19,8 +19,8 @@ txt='AM13';
 id=1;
 data{id}.d_obs=D.d_obs;
 data{id}.d_std=D.d_std;
-data{id}.Ct=0; % modelization error
-data{id}.Ct=D.Ct; % modelization error in style of Cordua et al (2008; 2009)
+%data{id}.Ct=0; % modelization error
+%data{id}.Ct=D.Ct; % modelization error in style of Cordua et al (2008; 2009)
 
 %% THE PRIOR
 im=1;
@@ -28,20 +28,19 @@ prior{im}.type='FFTMA';
 prior{im}.name='Velocity (m/ns)';
 prior{im}.m0=0.145;
 prior{im}.Va='.0003 Sph(6)';
+prior{im}.Va='.00001 Sph(6)';
 dx=0.2;
 prior{im}.x=[-1:dx:6];
 prior{im}.y=[0:dx:13];
 prior{im}.cax=[0.12 0.16];
-prior=sippi_prior_init(prior);
 
 %% FORWARD MODEL
 D=load('AM13_data.mat');
 forward.sources=D.S;
 forward.receivers=D.R;
-
-%% CONVERT MODEL TO SLOWNESS
 forward.is_slowness=1; % WE USE SLOWNESS PARAMETERIZAtiON
 
+%% CONVERT PRIOR MODEL TO SLOWNESS
 if forward.is_slowness==1
     if isstr(prior{im}.Va);
         prior{im}.Va=deformat_variogram(prior{im}.Va);
@@ -61,39 +60,41 @@ if forward.is_slowness==1
 end
 
 %% SOLVE LEAST SQUARES OPTIONS
-lsq_type='lsq';
+options.lsq.type='lsq';
 %lsq_type='visim';
 %lsq_type='error_sim';
 
 % set number of realization
-n_reals=15;
+options.lsq.n_reals=50;
 
 % select a subset of data to consider
-%data{1}.i_use=1:5:702;
+%data{1}.i_use=1:20:702;
 
 %% STRAIGHT RAY FORWARD
 forward.forward_function='sippi_forward_traveltime';
 forward.type='ray';
 forward.linear=1;
 options.txt=[txt,'_',forward.type];
-[m_reals_1,m_est_1,Cm_est_1,options_1,f_1]=sippi_least_squares(data,prior,forward,n_reals,lsq_type,1,1,options);
-%sippi_plot_posterior(options_1.txt)
 
+[options_1,data_1,prior_1,forward_1,m_reals_1,m_est_1,Cm_est_1]=sippi_least_squares(data,prior,forward,options);
+sippi_plot_posterior_sample(options_1.txt)
 %% LINEAR FAT FORWARD
+try; forward=rmfield(forward,'G');end
 forward.type='fat';
 forward.linear=1;
 options.txt=[txt,'_',forward.type];
 forward.freq=.1;
-[m_reals_2,m_est_2,Cm_est_2,options_2,f_2]=sippi_least_squares(data,prior,forward,n_reals,lsq_type,1,1,options);
-% sippi_plot_posterior(options_2.txt)
+[options_2,data_2,prior_2,forward_2,m_reals_2,m_est_2,Cm_est_2]=sippi_least_squares(data,prior,forward,options);
+sippi_plot_posterior_sample(options_2.txt)
 
 %% LINEAR BORN FORWARD
+try; forward=rmfield(forward,'G');end
 forward.type='born';
 forward.linear=1;
 options.txt=[txt,'_',forward.type];
 forward.freq=.1;
-[m_reals_3,m_est_3,Cm_est_3,options_3,f_3]=sippi_least_squares(data,prior,forward,n_reals,lsq_type,1,1,options);
-%sippi_plot_posterior(options_3.txt)
+[options_3,data_3,prior_3,forward_3,m_reals_3,m_est_3,Cm_est_3]=sippi_least_squares(data,prior,forward,options);
+sippi_plot_posterior_sample(options_3.txt)
 
 %%
 cax=fliplr(1./prior{1}.cax);
@@ -111,6 +112,7 @@ title('a) Born kernel')
 print_mul(sprintf('%s_compare_est',txt));
 
 %%
+prior=sippi_prior_init(prior);
 figure(4);clf,set_paper('landscape')
 nx=prior{1}.dim(1);
 ny=prior{1}.dim(2);
@@ -130,6 +132,6 @@ for i=1:5;
     
 end
 subplot(3,5,10);colorbar_shift;
-print_mul(sprintf('%s_compare_reals',txt));
+print_mul(sprintf('%s_compare_reals_nd%d',txt,length(data{1}.i_use)));
 
 

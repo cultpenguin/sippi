@@ -76,7 +76,9 @@ for im=im_array;
         if nargin<5
             figure_focus(99+im);
         else
+            try
             figure_focus(fhandle);
+            end
         end
         
         if ndim==3;
