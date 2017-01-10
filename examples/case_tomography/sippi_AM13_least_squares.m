@@ -32,7 +32,7 @@ prior{im}.Va='.00001 Sph(6)';
 dx=0.2;
 prior{im}.x=[-1:dx:6];
 prior{im}.y=[0:dx:13];
-prior{im}.cax=[0.12 0.16];
+prior{im}.cax=[-1 1].*.02+prior{im}.m0;
 
 %% FORWARD MODEL
 D=load('AM13_data.mat');
@@ -132,6 +132,11 @@ for i=1:5;
     
 end
 subplot(3,5,10);colorbar_shift;
-print_mul(sprintf('%s_compare_reals_nd%d',txt,length(data{1}.i_use)));
+try
+    n_use=length(data{1}.i_use);
+catch
+    n_use=length(data{1}.d_obs);
+end
+print_mul(sprintf('%s_compare_reals_nd%d',txt,n_use));
 
 
