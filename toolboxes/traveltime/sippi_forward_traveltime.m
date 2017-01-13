@@ -19,6 +19,12 @@
 %                    [1] a linear kernel is computed only once, based on
 %                    the velocity field defined in forward.linear_m;
 %
+%
+%   forward.is_slowness: [0] Assumes prior on model parameters are defined
+%                            in VELOCITY  domain (default)
+%   forward.is_slowness: [1] Assumes prior on model parameters are defined
+%                            in slowness domain
+%
 %   forward.freq : [scalar] Signal frequency,m used to define the width of
 %                  the kernels forward.G (only kernels based on 'eikonal'
 %                  type kernels)

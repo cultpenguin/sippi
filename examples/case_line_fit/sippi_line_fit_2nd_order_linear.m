@@ -29,6 +29,16 @@ forward.G(:,3)=x.^2;
 data{1}.d_obs=d_obs;
 data{1}.d_std=d_std;
 
+
+options.txt='case_line_fit_2nd_order_linear';
+%% LEAST SQUARES
+options_lsq=options;
+options_lsq.lsq.save_data=1;
+options_lsq.lsq.m_reals=1;
+options_lsq.lsq.n_reals=50;
+
+[m_est,Cm_est,m_reals,options_lsq]=sippi_least_squares(data,prior,forward,options_lsq);
+
 %% Perform extended Metropolis sampling 
 options.plot.hardcopy_types=0; % NO HARDCOPY 
 % set some MCMC options.
@@ -36,18 +46,13 @@ options.mcmc.nite=40000;
 options.mcmc.i_sample=50;
 options.mcmc.i_plot=2500;
 options.mcmc.m_ref=m_ref;
-options.txt='case_line_fit_2nd_order_linear';
 options_metro=options;
 [options_metro]=sippi_metropolis(data,prior,forward,options_metro);
-sippi_plot_prior(options_metro.txt);
-sippi_plot_posterior(options_metro.txt);
+%sippi_plot_prior(options_metro.txt);
+%sippi_plot_posterior(options_metro.txt);
 
-%% LEAST SQUARES
-options_lsq=options;
-options_lsq.n_reals=50;
 
-[options_lsq]=sippi_least_squares(data,prior,forward,options_lsq);
-
+%%
 sample_1=sippi_get_sample(options_metro.txt);
 sample_2=sippi_get_sample(options_lsq.txt);
 figure(1);clf,
