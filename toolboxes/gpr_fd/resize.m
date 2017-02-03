@@ -8,7 +8,7 @@ function A_out=resize(A_in,factor,mode)
 %
 % KSC (2009)
 
-[y x]=size(A_in);
+[y,x]=size(A_in);
 
 if nargin<3
     mode=1;
@@ -26,7 +26,7 @@ try
 
     % Coarsen:
     if factor < 1
-        [y x]=size(ones(round(y*factor),round(x*factor)));
+        [y,x]=size(ones(round(y*factor),round(x*factor)));
         bin=round(1/factor);
         for i=1:y
             for j=1:x
