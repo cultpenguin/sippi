@@ -44,4 +44,5 @@ end
 
 [d_hist,forward.fmm]=frequency_matching(round(m{1}),forward.fmm);
 d{id}=d_hist(:);
+%d{id}=d_hist(1:forward.fmm.N);
 %d{id}=d_hist(:)./sum(d_hist(:));
