@@ -13,8 +13,37 @@ end
 
 if prior{ip}.seq_gibbs.type==1;
     % BOX TYPE
+    
+    
     i_resim=[];
-    sippi_verbose(sprintf('%s: BOX type resim not implemented',mfilename))
+    
+    step = prior{ip}.seq_gibbs.step;
+    
+    if ~isfield(prior{ip}.seq_gibbs,'n_ite');
+        prior{ip}.seq_gibbs.n_ite=1;
+    end
+    n_ite=prior{ip}.seq_gibbs.n_ite;
+    
+    if length(step)<2, step(2:3)=step(1);end
+    if length(step)<3, step(3)=step(2);end
+  
+    ih=[];
+    used=prior{ip}.xx.*0+1;
+    for j=1:n_ite
+        % 
+        pos(1)=min(prior{ip}.x)+rand(1)*(max(prior{ip}.x)-min(prior{ip}.x));
+        pos(2)=min(prior{ip}.y)+rand(1)*(max(prior{ip}.y)-min(prior{ip}.y));
+        pos(3)=min(prior{ip}.z)+rand(1)*(max(prior{ip}.z)-min(prior{ip}.z));
+
+        used(find( (abs(prior{ip}.xx-pos(1))<step(1)) & (abs(prior{ip}.yy-pos(2))<step(2)) ))=0;
+    end
+    i_resim=find(1-used);
+
+    
+    
+    
+    
+    %sippi_verbose(sprintf('%s: BOX type resim not implemented',mfilename))
     
 elseif prior{ip}.seq_gibbs.type==2; 
     % RANDOM MODEL PARAMETERS
