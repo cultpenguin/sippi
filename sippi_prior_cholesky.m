@@ -73,8 +73,11 @@ if nargin>1
         n_resim = min([n_resim n_all]);
 
         ii=randomsample(n_all,n_resim);
+        
+        ii = sippi_sequential_gibbs_resim(prior,ip);
+        
         z_cur(ii)=randn(size(z_cur(ii)));
-
+        
     end
     
     %% linear combinartion of the perturbed paramaters
