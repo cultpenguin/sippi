@@ -35,7 +35,9 @@
 % forward.sig=3; % If not set it is set as a constant field
 % forward.output_type='shot'; % each shot gather is output as individual data structures
 % forward.output_type='trace'; % each trace is output as individual data structures
-% forward.output_it=10; % only output every 'output_it' time sample
+% forward.output_it=10; % only output every 'output_it' time sample. If
+% output_it is non-interger, this value vil define the new sample interval
+% (in sectopns) of the output trace (e.g. output_it=0.4*10^-9).
 %
 %
 % forward.dx_forward % the spatial sampling used for FDTD modeling
@@ -166,7 +168,14 @@ for id=1:forward.Nsources
     keyboard
   end
   d_sim=Trace_Ez';
-  d_sim=d_sim(forward.output_it:forward.output_it:end,:);
+  if mod(forward.output_it,1)==0
+    d_sim=d_sim(forward.output_it:forward.output_it:end,:);
+  else
+      % Resample the trace to a certain sample interval:
+      [P,Q] = rat(forward.dt/forward.output_it); % ratio of integers. Input for resample
+      d_sim= resample(d_sim,P,Q);
+  end
+  
   if strcmp(forward.output_type,'shot')
     d{id}=d_sim(:);
   elseif strcmp(forward.output_type,'trace')
