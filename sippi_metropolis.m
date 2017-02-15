@@ -47,7 +47,7 @@ function [options,data,prior,forward,m_current]=sippi_metropolis(data,prior,forw
 %                                               % the time and prior 1 20%
 %                                               % of the time
 %    % the default pertubation strategt is to select one prior model to
-%    % perturb at tandom for each iteration
+%    % perturb at random for each iteration
 %
 %
 %    %% TEMPERING
@@ -467,6 +467,7 @@ for i=1:mcmc.nite;
         if vlevel>0, NC_end=NC; else NC_end=1; end
         for ic=1:NC_end
             sippi_verbose(sprintf('%06d/%06d (%10s): C%02d acc %5g %5g  T=%5.2f',mcmc.i,mcmc.nite,t_end_txt,ic,C{ic}.logL_current,C{ic}.logL_propose,C{ic}.T*T_fac),-1);
+            sippi_verbose(sprintf('Pacc = %1.3f in prior #%d, total accepts in priors: %d %d',C{ic}.Pacc,im_perturb,sum(C{ic}.mcmc.acc,2)),-1); %Proposed output, KSC
         end
     end
 
