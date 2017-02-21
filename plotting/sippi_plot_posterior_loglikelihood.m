@@ -74,42 +74,37 @@ try
 end
 
 %% PLOT log-likelihood
+sippi_plot_loglikelihood(mcmc.logL);
+y2=max(max(mcmc.logL));
 try
-    sippi_plot_loglikelihood(mcmc.logL);
-    y1=max(max(mcmc.logL));
-    try
-        y2=min(min(mcmc.logL(:,i1)));
-    catch
-        y2=min(min(mcmc.logL));
-    end
+    y1=(min(mcmc.logL(:,i1:end)));
 catch
-    sippi_plot_loglikelihood(mcmc.logL);
-    y1=max(max(mcmc.logL));
-    try
-        y2=(min(mcmc.logL(:,i1:end)));
-    catch
-        y2=(min(mcmc.logL));
-    end
+    y1=(min(mcmc.logL));
 end
+xlim=get(gca,'xlim');
+
+% indicate logL = -N/2 +- sqrt(N/2)
 try
-    xlim=get(gca,'xlim');
-    % GET TOTAL NUMBER OF DATA
-    N=0;for id=1:length(data);N=N+length(data{id}.d_obs);end;
-    hold on
-    plot(xlim,[1 1].*(-N/2),'r-')
-    plot(xlim,[1 1].*(-N/2-2*sqrt(N/2)),'r--')
-    plot(xlim,[1 1].*(-N/2+2*sqrt(N/2)),'r--')
-    hold off
-    if y2>(-N/2-4*sqrt(N/2)), y2=(-N/2-4.1*sqrt(N/2));end
-    if y1<(-N/2+4*sqrt(N/2)), y1=(-N/2+4.1*sqrt(N/2));end
+    if data{id}.nois_uncorr==1;
+        % GET TOTAL NUMBER OF DATA
+        N=0;for id=1:length(data);N=N+length(data{id}.d_obs);end;
+        hold on
+        plot(xlim,[1 1].*(-N/2),'r-')
+        plot(xlim,[1 1].*(-N/2-2*sqrt(N/2)),'r--')
+        plot(xlim,[1 1].*(-N/2+2*sqrt(N/2)),'r--')
+        hold off
+        if y1>(-N/2-4*sqrt(N/2)), y1=(-N/2-4.1*sqrt(N/2));end
+        if y2<(-N/2+4*sqrt(N/2)), y2=(-N/2+4.1*sqrt(N/2));end
+    end
     
 end
+
 try
-    set(gca,'ylim',[y2 y1])
+    set(gca,'ylim',[y1 y2])
 end
 set(gca,'FontSize',options.plot.axis.fontsize)
 
-%xlim=get(gca,'xlim');
+
 
 set(gca,'xlim',[xlim(1) xlim(2)/20]);
 print_mul(sprintf('%s_logL_start',fname),options.plot.hardcopy_types);

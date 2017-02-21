@@ -113,12 +113,9 @@ end
 sippi_verbose(sprintf('%s : STARTING rejection sampler in %s',mfilename,options.txt),-2)
 for i=1:mcmc.nite
     
+    
     m_propose = sippi_prior(prior);
-    if isfield(forward,'forward_function');
-        [d,forward,prior,data]=feval(forward.forward_function,m_propose,forward,prior,data);
-    else
-        [d,forward,prior,data]=sippi_forward(m_propose,forward,prior,data);
-    end
+    [d,forward,prior]=sippi_forward(m_propose,forward,prior);
     [logL,L,data]=sippi_likelihood(d,data);
     
     

@@ -3,7 +3,6 @@
 % Call : 
 %    acc=sippi_plot_loglikelihood(logL,i_acc,N,itext)
 %
-
 function acc=sippi_plot_loglikelihood(logL,i_acc,N,itext);
 
 acc=NaN;
@@ -35,35 +34,29 @@ for ip=1:length(p);
 end
 %semilogy(i_acc,logL,'k-')
 set(gca,'xlim',xlim)
+grid on
 
-%% FORMAT Y TICK
-%Yt=get(gca,'Ytick')';
-%for i=1:length(Yt)
-%    Yl{i}=sprintf('%4.1f',Yt(i));
-%end
-%set(gca,'YtickLabel',Yl);
-
+%% logL=-N/2 +- sqrt(N/2)
 if nargin>2
     hold on
     plot(xlim,[-1 -1].*N/2,'r-','linewidth',2)
     plot(xlim,[-1 -1].*N/2+2*sqrt(N/2),'r--')
-    plot(xlim,[-1 -1].*N/2-2*sqrt(N/2),'r--')
-    
+    plot(xlim,[-1 -1].*N/2-2*sqrt(N/2),'r--')    
     hold off
-end
-
-% SCALE Y_AXIS
-n_int=100;
-i1=(max([1,length(logL)-n_int]));
-y_min=min(logL(i1:end));
+    % SCALE Y_AXIS
+    n_int=100;
+    i1=(max([1,length(logL)-n_int]));
+    y_min=min(logL(i1:end));
 try
     y_min=y_min-sqrt(N/2);
 end
 ylim=get(gca,'ylim');ylim(1)=y_min*2;set(gca,'ylim',ylim);
+else
+    return
+end
 
-grid on
+
      
-
 %% Perhaps add text that indicates acceptance rate ?
 
 % ylim=get(gca,'ylim');
@@ -85,7 +78,5 @@ grid on
 %     end
 % end
 
-xlabel('Iteration');
-ylabel('log(L)');
 %set(gca,'xlim',xlim)
 %set(gca,'ylim',ylim)
