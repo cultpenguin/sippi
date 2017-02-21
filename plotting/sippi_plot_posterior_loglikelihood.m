@@ -66,7 +66,7 @@ set(gca,'FontSize',options.plot.axis.fontsize);
 
 
 % Get index ot first logL value to plot
-i1=1;
+i1=1;    
 try
     for i=1:length(prior);
         i1 = max([prior{i}.seq_gibbs.i_update_step_max i1]);
@@ -77,10 +77,11 @@ end
 sippi_plot_loglikelihood(mcmc.logL);
 y2=max(max(mcmc.logL));
 try
-    y1=(min(mcmc.logL(:,i1:end)));
+    y1=min(min(mcmc.logL(:,i1:end)));
 catch
-    y1=(min(mcmc.logL));
+    y1=min(min(mcmc.logL(:)));
 end
+y1_1=min(min(mcmc.logL(:)));
 xlim=get(gca,'xlim');
 
 % indicate logL = -N/2 +- sqrt(N/2)
@@ -99,18 +100,16 @@ try
     
 end
 
-try
-    set(gca,'ylim',[y1 y2])
-end
+set(gca,'ylim',[y1 y2])
 set(gca,'FontSize',options.plot.axis.fontsize)
-
-
 
 set(gca,'xlim',[xlim(1) xlim(2)/20]);
 print_mul(sprintf('%s_logL_start',fname),options.plot.hardcopy_types);
 
 set(gca,'xlim',[xlim(1) xlim(2)]);
 print_mul(sprintf('%s_logL',fname),options.plot.hardcopy_types);
+set(gca,'ylim',[y1_1 y2])
+print_mul(sprintf('%s_logL_1',fname),options.plot.hardcopy_types);
 
 set(gca,'xscale','log')
 print_mul(sprintf('%s_logL_logN',fname),options.plot.hardcopy_types);
