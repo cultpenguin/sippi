@@ -115,6 +115,10 @@ setenv('SIPPI_VERBOSE_LEVEL','0'); % [def] frequent update
 %setenv('SIPPI_VERBOSE_LEVEL','-2'); % indication of stop and start
 %setenv('SIPPI_VERBOSE_LEVEL','-3'); % none
 
+
+
+%% Run the Metropolis sampler
+options.mcmc.i_save_workspace=10000;
 options=sippi_metropolis(data,prior,forward,options);
 figure(3);print_mul('AM13_logLprogress');
 figure(21);print_mul('AM13_lastData');
