@@ -266,7 +266,7 @@ for im=im_array;
         run_fftma=[run_fftma im];
 
     elseif (strcmp(upper(prior{im}.type),'VORONOI'))
-        %% THE FFTMA PRIOR (Handled later)
+        %% THE VORONOI PRIOR (Handled later)
         run_voronoi=[run_voronoi im];
         
     else

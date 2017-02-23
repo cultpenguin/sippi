@@ -28,7 +28,7 @@
 %  nd X nd size covariance matrix.
 %  (it is computed the first the sippi_prior_cholesky is called)
 %
-% See also: gaussian_simulation_cholesky
+% See also: gaussian_simulation_cholesky, sippi_sequential_gibbs_resim
 %
 function [m_propose,prior]=sippi_prior_cholesky(prior,m_current,ip);
 
@@ -55,34 +55,21 @@ end
 
 %% Sequential Gibbs?
 if nargin>1
+    
     z_cur=prior{ip}.z_rand;
     z_init=z_cur;
     z_new=randn(size(z_cur));
-
-    if prior{ip}.seq_gibbs.type==1
-        disp(sprintf('%s : Box type resimulation not implemented for CHOL type prior',mfilename));
-    elseif prior{ip}.seq_gibbs.type==2
-        n_all=prod(size(z_cur));
-        if prior{ip}.seq_gibbs.step<=1
-            % use n_resim as a proportion of all random deviates
-            n_resim=prior{ip}.seq_gibbs.step.*n_all;
-        else
-            n_resim=prior{ip}.seq_gibbs.step;
-        end
-        n_resim=ceil(n_resim);
-        n_resim = min([n_resim n_all]);
-
-        ii=randomsample(n_all,n_resim);
-        z_cur(ii)=randn(size(z_cur(ii)));
-
-    end
+    
+    i_resim = sippi_sequential_gibbs_resim(prior,ip);
+    
+    z_cur(i_resim)=randn(size(z_cur(i_resim)));
     
     %% linear combinartion of the perturbed paramaters
-    if (isfield(prior{ip},'gradual'))
-        if prior{ip}.gradual<1
+    if (isfield(prior{ip}.seq_gibbs,'gradual'))
+        if prior{ip}.seq_gibbs.gradual<1
             if exist('gaussian_linear_combine','file')
-                i_perturbed=ii;%find((z_init-z_cur)~=0);
-                z_cur(i_perturbed) = gaussian_linear_combine(z_init(i_perturbed),z_cur(i_perturbed),prior{ip}.gradual,0);
+                i_perturbed=i_resim;%find((z_init-z_cur)~=0);
+                z_cur(i_perturbed) = gaussian_linear_combine(z_init(i_perturbed),z_cur(i_perturbed),prior{ip}.seq_gibbs.gradual,0);
             end
         end
     end

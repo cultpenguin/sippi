@@ -26,7 +26,7 @@
 %    All properties for each algorithm are availale in the prior{ip}.MPS
 %    field
 %
-% See also: sippi_prior, ti, mps_cpp
+% See also: sippi_prior, ti, mps_cpp, sippi_sequential_gibbs_resim
 
 %% Sequential Gibbs sampling type 1 (box selection of pixels)
 %    prior{ip}.seq_gibbs.type=1;%    

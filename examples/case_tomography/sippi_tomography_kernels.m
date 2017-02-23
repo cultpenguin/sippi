@@ -50,32 +50,32 @@ j=0;
 forward.freq=.1;
 
 j=j+1;forward.type='ray';forward.linear=1;
-[d{j},forward_mul{j}]=sippi_forward(m,forward,prior,data,id,im);
+[d{j},forward_mul{j}]=sippi_forward(m,forward,prior,data);
 K{j} = reshape(sum(forward_mul{j}.G(:,:)),prior{1}.dim(2),prior{1}.dim(1));
 txt{j}='Straight ray';
 
 j=j+1;forward.type='ray';forward.linear=0;
-[d{j},forward_mul{j}]=sippi_forward(m,forward,prior,data,id,im);
+[d{j},forward_mul{j}]=sippi_forward(m,forward,prior,data);
 K{j} = reshape(sum(forward_mul{j}.G(:,:)),prior{1}.dim(2),prior{1}.dim(1));
 txt{j}='Bended ray';
 
 j=j+1;forward.type='fat';forward.linear=1;
-[d{j},forward_mul{j}]=sippi_forward(m,forward,prior,data,id,im);
+[d{j},forward_mul{j}]=sippi_forward(m,forward,prior,data);
 K{j} = reshape(sum(forward_mul{j}.G(:,:)),prior{1}.dim(2),prior{1}.dim(1));
 txt{j}='Straight fat beam';
 
 j=j+1;forward.type='fat';forward.linear=0;
-[d{j},forward_mul{j}]=sippi_forward(m,forward,prior,data,id,im);
+[d{j},forward_mul{j}]=sippi_forward(m,forward,prior,data);
 K{j} = reshape(sum(forward_mul{j}.G(:,:)),prior{1}.dim(2),prior{1}.dim(1));
 txt{j}='Bended fat beam';
 
 j=j+1;forward.type='born';forward.linear=1;
-[d{j},forward_mul{j}]=sippi_forward(m,forward,prior,data,id,im);
+[d{j},forward_mul{j}]=sippi_forward(m,forward,prior,data);
 K{j} = reshape(sum(forward_mul{j}.G(:,:)),prior{1}.dim(2),prior{1}.dim(1));
 txt{j}='Linear Born kernel'; 
  
 j=j+1;forward.type='born';forward.linear=0;
-[d{j},forward_mul{j}]=sippi_forward_traveltime(m,forward,prior,data,id,im);
+[d{j},forward_mul{j}]=sippi_forward_traveltime(m,forward,prior,data);
 K{j} = reshape(sum(forward_mul{j}.G(:,:)),prior{1}.dim(2),prior{1}.dim(1));
 txt{j}='Non-linear Born kernel';
 
