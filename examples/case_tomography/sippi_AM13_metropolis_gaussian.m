@@ -78,7 +78,7 @@ print_mul('AM13_data');
 
 %% SETUP METROPOLIS
 options.mcmc.nite=500000;
-options.mcmc.i_plot=10000;
+options.mcmc.i_plot=2500;
 n_reals_out=200;
 options.mcmc.i_sample=options.mcmc.nite/n_reals_out;
 rng(1);
@@ -101,11 +101,19 @@ end
     
 % TEMPERING
 % example of using parallel tempering (Sambridge, 2013)
-doTempering=0;
+doTempering=1;
 if doTempering==1;
-    options.mcmc.n_chains=4; % set number of chains (def=1)
+    options.mcmc.n_chains=2; % set number of chains (def=1)
     options.mcmc.T=[1 1.5 2 3]; % set number of chains (def=1)
 end
+
+%% Deciding how much information is printed to screen during simulation
+%setenv('SIPPI_VERBOSE_LEVEL','2') % all: information on chain swapping
+setenv('SIPPI_VERBOSE_LEVEL','1') % information about seq-gibbs step update
+%setenv('SIPPI_VERBOSE_LEVEL','0'); % [def] frequent update
+%setenv('SIPPI_VERBOSE_LEVEL','-1'); % rare update om finish time
+%setenv('SIPPI_VERBOSE_LEVEL','-2'); % indication of stop and start
+%setenv('SIPPI_VERBOSE_LEVEL','-3'); % none
 
 options=sippi_metropolis(data,prior,forward,options);
 figure(3);print_mul('AM13_logLprogress');
