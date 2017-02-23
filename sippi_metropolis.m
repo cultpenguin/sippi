@@ -189,7 +189,7 @@ end
 for ic=1:NC
     if isfield(mcmc,'m_init');
         C{ic}.m_current=mcmc.m_init;
-        sippi_verbose(sprintf('Using supplied model as starting model',mfilename));
+        sippi_verbose(sprintf('%s: Using supplied model as starting model',mfilename));
     else
         [C{ic}.m_current,C{ic}.prior] = sippi_prior(C{ic}.prior);
     end
@@ -228,10 +228,15 @@ t_per_ite=sum(t_data)+sum(t_prior);
 % on the of one forward evaluation (t_data), if not alloready set
 if isfield(options,'i_update_txt');
     i_update_txt=options.i_update_txt;
-else
+else    
     vlevel=sippi_verbose;
-    if vlevel<0, t_up=50; else, t_up=5; end
-
+    if vlevel<0, 
+        % less txt updates when vlevel<0
+        t_up=100; 
+    else
+        % more txt updates when vlevel>0
+        t_up=20; 
+    end
     i_update_txt=max([1 ceil(t_up./(t_per_ite))]);
 end
 
@@ -276,10 +281,10 @@ filename_mat=[options.txt,'.mat'];
 options=sippi_plot_defaults(options);
 
 %% START THE METROPOLIS ALGORITHM
-sippi_verbose(sprintf('%s : Starting extended Metropolis sampler in %s',mfilename,options.txt),-2);
+sippi_verbose(sprintf('%s: Starting extended Metropolis sampler in %s',mfilename,options.txt),-2);
 if NC>1
-    T_str=sprintf('%3.1f ',mcmc.T);
-    sippi_verbose(sprintf('%s : Using %d chains at temperatures: %s',mfilename,NC,T_str),-2);
+    T_str=sprintf('%3.1f ',mcmc.T(1:NC));
+    sippi_verbose(sprintf('%s: Using %d chains at temperatures: %s',mfilename,NC,T_str),-2);
 end
 mcmc.t_start=now;
 for i=1:mcmc.nite;
@@ -455,7 +460,7 @@ for i=1:mcmc.nite;
         try
             save(filename_mat,'-v7.3')
         catch
-            disp(sprintf('%s : failed to save data to %s',mfilename,filename_mat))
+            disp(sprintf('%s: failed to save data to %s',mfilename,filename_mat))
         end
     end
 
@@ -466,8 +471,21 @@ for i=1:mcmc.nite;
         vlevel=sippi_verbose;
         if vlevel>0, NC_end=NC; else NC_end=1; end
         for ic=1:NC_end
-            sippi_verbose(sprintf('%06d/%06d (%10s): C%02d acc %5g %5g  T=%5.2f',mcmc.i,mcmc.nite,t_end_txt,ic,C{ic}.logL_current,C{ic}.logL_propose,C{ic}.T*T_fac),-1);
-            sippi_verbose(sprintf('Pacc = %1.3f in prior #%d, total accepts in priors: %d %d',C{ic}.Pacc,im_perturb,sum(C{ic}.mcmc.acc,2)),-1); %Proposed output, KSC
+            txt=sprintf('%06d/%06d (%10s): C%02d acc %5g %5g  T=%5.2f',mcmc.i,mcmc.nite,t_end_txt,ic,C{ic}.logL_current,C{ic}.logL_propose,C{ic}.T*T_fac);
+            
+            % MORE information at higher verbose level
+            vlevel_pacc=1;
+            if vlevel>=vlevel_pacc
+                i_perturb=find(C{ic}.mcmc.perturb(im,:));
+                N=min([i 100]);
+                %[P_cur, N_acc, N] = sippi_compute_acceptance_rate(C{ic}.mcmc.acc(im,i_perturb),C{ic}.prior{im}.seq_gibbs.n_update_history);
+                [P_cur, N_acc, N] = sippi_compute_acceptance_rate(C{ic}.mcmc.acc(im,i_perturb),N);
+                txt2=sprintf('P_Acc=%3.1f%% (%d/%d)',100*P_cur,N_acc,N);
+                txt=[txt,', ',txt2];
+            end
+            
+            sippi_verbose(sprintf('%s: %s',mfilename,txt),-1);
+            
         end
     end
 
@@ -477,7 +495,7 @@ for i=1:mcmc.nite;
             C{1}.mcmc.i=mcmc.i;           
             sippi_plot_current_model(C{1}.mcmc,C{1}.data,C{1}.d_current,C{1}.m_current,C{1}.prior_current,options);
         catch            
-            sippi_verbose(sprintf('%s : Could not plot current model info',mfilename),0);            
+            sippi_verbose(sprintf('%s: Could not plot current model info',mfilename),0);            
         end
         %%
         if NC>1
@@ -524,7 +542,7 @@ mcmc.m_current=m_current;
 options.C=C; % PERHAPS TOO MEMORY INTENSIVE
 options.mcmc=mcmc; % PERHAPS TOO MEMORY INTENSIVE
 save(filename_mat,'-v7.3')
-sippi_verbose(sprintf('%s : DONE McMC in %5.2f hours (%g minutes), %s',mfilename,mcmc.time_elapsed_in_seconds/3600,mcmc.time_elapsed_in_seconds/60,options.txt),-2);
+sippi_verbose(sprintf('%s: DONE McMC in %5.2f hours (%g minutes), %s',mfilename,mcmc.time_elapsed_in_seconds/3600,mcmc.time_elapsed_in_seconds/60,options.txt),-2);
 
 %%
 cd(start_dir);
