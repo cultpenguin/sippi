@@ -1,5 +1,6 @@
 % sippi_linefit: Fiting line using SIPPI
 clear all;close all
+rng('default')
 rng(1);
 %% LOAD DATA
 load('sippi_linefit_data');

@@ -97,11 +97,6 @@ if ~isempty(options.txt)
 else
     options.txt=sprintf('%s_sippi_metropolis',datestr(now,'YYYYmmdd_HHMM'));
 end
-try
-    options.txt=sprintf('%s_%s',options.txt,forward.type);
-catch
-    % No forward.type
-end
 
 start_dir=pwd;
 %% MAKE OUTPUT DIR
@@ -471,15 +466,15 @@ for i=1:mcmc.nite;
         vlevel=sippi_verbose;
         if vlevel>0, NC_end=NC; else NC_end=1; end
         for ic=1:NC_end
-            txt=sprintf('%06d/%06d (%10s): C%02d acc %5g %5g  T=%5.2f',mcmc.i,mcmc.nite,t_end_txt,ic,C{ic}.logL_current,C{ic}.logL_propose,C{ic}.T*T_fac);
+            txt=sprintf('%06d/%06d (%10s): C%02d logL_c=%5.2fs(%5.2f), T=%5.2f',mcmc.i,mcmc.nite,t_end_txt,ic,C{ic}.logL_current,C{ic}.logL_propose,C{ic}.T*T_fac);
             
             % MORE information at higher verbose level
             vlevel_pacc=1;
             if vlevel>=vlevel_pacc
                 i_perturb=find(C{ic}.mcmc.perturb(im,:));
                 N=min([i 100]);
-                %[P_cur, N_acc, N] = sippi_compute_acceptance_rate(C{ic}.mcmc.acc(im,i_perturb),C{ic}.prior{im}.seq_gibbs.n_update_history);
-                [P_cur, N_acc, N] = sippi_compute_acceptance_rate(C{ic}.mcmc.acc(im,i_perturb),N);
+                [P_cur, N_acc, N] = sippi_compute_acceptance_rate(C{ic}.mcmc.acc(im,i_perturb),C{ic}.prior{im}.seq_gibbs.n_update_history);
+                %[P_cur, N_acc, N] = sippi_compute_acceptance_rate(C{ic}.mcmc.acc(im,i_perturb),N);
                 txt2=sprintf('P_Acc=%3.1f%% (%d/%d)',100*P_cur,N_acc,N);
                 txt=[txt,', ',txt2];
             end

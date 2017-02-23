@@ -109,8 +109,8 @@ end
 
 %% Deciding how much information is printed to screen during simulation
 %setenv('SIPPI_VERBOSE_LEVEL','2') % all: information on chain swapping
-setenv('SIPPI_VERBOSE_LEVEL','1') % information about seq-gibbs step update
-%setenv('SIPPI_VERBOSE_LEVEL','0'); % [def] frequent update
+%setenv('SIPPI_VERBOSE_LEVEL','1') % information about seq-gibbs step update
+setenv('SIPPI_VERBOSE_LEVEL','0'); % [def] frequent update
 %setenv('SIPPI_VERBOSE_LEVEL','-1'); % rare update om finish time
 %setenv('SIPPI_VERBOSE_LEVEL','-2'); % indication of stop and start
 %setenv('SIPPI_VERBOSE_LEVEL','-3'); % none
@@ -118,8 +118,6 @@ setenv('SIPPI_VERBOSE_LEVEL','1') % information about seq-gibbs step update
 options=sippi_metropolis(data,prior,forward,options);
 figure(3);print_mul('AM13_logLprogress');
 figure(21);print_mul('AM13_lastData');
-
-
 
 options.mcmc.time_elapsed_in_seconds
 
