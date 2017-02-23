@@ -53,18 +53,11 @@ for ix=1:prior{ip}.dim(1);
             m_p{1}(iy,ix,iz)=m_p{ip}(iy,ix,iz)+dm;
             d_p=sippi_forward(m_p,forward,prior);
             
-            
             J(iy,ix,iz)=(d{1}(used)-d_p{id}(used))./dm;
-            
             
         end
         
     end
-    if prior{1}.ndim==2
-            imagesc(J);
-            axis image
-            drawnow,
-        end
 end
 
 
