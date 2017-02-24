@@ -83,11 +83,12 @@ options.mcmc.i_sample=100; % Save every 100th visited model to disc
 options.mcmc.i_plot=5000; % Plot the progress information for every 2500 iterations
 options.txt='case_line_fit_2nd_order'; % descriptive name for the output folder
 
+%% metropolis
 [options_metropolis]=sippi_metropolis(data,prior,forward,options);
 sippi_plot_prior_sample(options_metropolis.txt);
 sippi_plot_posterior(options_metropolis.txt);
 
-% rejection
+%% rejection
 options.mcmc.adaptive_rejection=1;
 [options_rejection]=sippi_rejection(data,prior,forward,options);
 sippi_plot_prior_sample(options_rejection.txt);

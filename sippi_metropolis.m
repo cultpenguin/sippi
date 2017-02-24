@@ -526,19 +526,20 @@ while i<=mcmc.nite;
         if vlevel>0, NC_end=NC; else NC_end=1; end
         for ic=1:NC_end
             txt=sprintf('%06d/%06d (%10s): C%02d logL_c=%5.2fs(%5.2f), T=%5.2f',mcmc.i,mcmc.nite,t_end_txt,ic,C{ic}.logL_current,C{ic}.logL_propose,C{ic}.T*T_fac);
-            
+            sippi_verbose(sprintf('%s: %s',mfilename,txt),-1);
             % MORE information at higher verbose level
             vlevel_pacc=1;
             if vlevel>=vlevel_pacc
-                i_perturb=find(C{ic}.mcmc.perturb(im,:));
-                N=min([i 100]);
-                [P_cur, N_acc, N] = sippi_compute_acceptance_rate(C{ic}.mcmc.acc(im,i_perturb),C{ic}.prior{im}.seq_gibbs.n_update_history);
-                %[P_cur, N_acc, N] = sippi_compute_acceptance_rate(C{ic}.mcmc.acc(im,i_perturb),N);
-                txt2=sprintf('P_Acc=%3.1f%% (%d/%d)',100*P_cur,N_acc,N);
-                txt=[txt,', ',txt2];
+                for im=1:length(prior);
+                    i_perturb=find(C{ic}.mcmc.perturb(im,:));
+                    N=min([i 100]);
+                    [P_cur, N_acc, N] = sippi_compute_acceptance_rate(C{ic}.mcmc.acc(im,i_perturb),C{ic}.prior{im}.seq_gibbs.n_update_history);
+                    %[P_cur, N_acc, N] = sippi_compute_acceptance_rate(C{ic}.mcmc.acc(im,i_perturb),N);
+                    txt2=sprintf(' -- im=%d, P_Acc=%3.1f%% (%d/%d)',im, 100*P_cur,N_acc,N);
+                    sippi_verbose(sprintf('%s: %s',mfilename,txt2),vlevel_pacc);
+                end
             end
             
-            sippi_verbose(sprintf('%s: %s',mfilename,txt),-1);
             
         end
     end
