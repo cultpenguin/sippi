@@ -75,6 +75,11 @@ j=0;
 %% GET REALS
 clear reals*;
 skip_seq_gibbs=options.plot.skip_seq_gibbs;
+if isfield(options.mcmc,'adaptive_rejection');
+    % use all realizations using sippi_rejection*
+    skip_seq_gibbs=0;
+end   
+
 for k=1:(length(im_onedim))
     [reals1,etype_mean1,etype_var1,reals_all1]=sippi_get_sample('.',im_onedim(k),100000,skip_seq_gibbs);
     reals_all(:,k)=reals1(:);

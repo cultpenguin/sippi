@@ -101,9 +101,9 @@ end
     
 % TEMPERING
 % example of using parallel tempering (Sambridge, 2013)
-doTempering=1;
+doTempering=0;
 if doTempering==1;
-    options.mcmc.n_chains=2; % set number of chains (def=1)
+    options.mcmc.n_chains=4; % set number of chains (def=1)
     options.mcmc.T=[1 1.5 2 3]; % set number of chains (def=1)
 end
 

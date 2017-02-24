@@ -71,12 +71,15 @@ if ~isfield(options,'mcmc');
 end
 
 if ~isfield(options.mcmc,'i_sample');
-    % when using sippi_rejections
+    % use all realizations using sippi_rejection*
     options.mcmc.i_sample=1;
     skip_seq_gibbs=0;
 end
 
-
+if isfield(options.mcmc,'adaptive_rejection');
+    % use all realizations using sippi_rejection*
+    skip_seq_gibbs=0;
+end   
 
 if ~exist('skip_seq_gibbs','var');
     skip_seq_gibbs=1; % only consider posterior realization AFTER seq gibbs has finished
