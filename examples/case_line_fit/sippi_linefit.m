@@ -3,7 +3,8 @@ clear all;close all
 rng('default')
 rng(1);
 %% LOAD DATA
-load('sippi_linefit_data');
+% nd=11; sippi_linefit_make_data;
+load('sippi_linefit_data_11');
 
 figure(1);clf;
 e=errorbar(x,d_obs,d_std,'k*');
@@ -12,7 +13,7 @@ xlabel('x')
 ylabel('d')
 box on
 grid on
-axis([-1 21 -60 40])
+axis([min(x)-1 max(x)+1 min(d_obs)-20 max(d_obs)+20])
 ppp(10,4,12,2,2)
 print_mul(sprintf('sippi_linefit_data_%d',length(d_obs)));
 
@@ -79,7 +80,7 @@ print_mul(sprintf('sippi_linefit_data_%d_prior',length(d_obs)));
 % Perform extended Metropolis sampling 
 options.mcmc.nite=40000;  % Run for 40000 iterations
 options.mcmc.i_sample=100; % Save every 100th visited model to disc
-options.mcmc.i_plot=1000; % Plot the progress information for every 2500 iterations
+options.mcmc.i_plot=5000; % Plot the progress information for every 2500 iterations
 options.txt='case_line_fit_2nd_order'; % descriptive name for the output folder
 
 [options_metropolis]=sippi_metropolis(data,prior,forward,options);
