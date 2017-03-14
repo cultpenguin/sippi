@@ -9,7 +9,7 @@
 %    m=sippi_prior(prior);
 %    sippi_plot_prior(prior,m)
 %
-%    % optionally a specific random seed can be set using
+%    % optionally a specific random can be set using
 %    prior{ip}.seed=1;
 %
 %% Sequential Gibbs sampling type 1 (box selection of pixels)
@@ -166,7 +166,7 @@ if isfield(prior{ip},'d_target')
         %% SGSIM
         % setup normal score transform
         %if (isfield(prior{ip},'d_target'))&(~isfield(prior{ip},'o_nscore'))
-        if (isfield(prior{ip},'d_target'));
+        if (~isfield(prior{ip},'o_nscore'))&&(isfield(prior{ip},'d_target'));
             % UPDATE PRIOR STRUCTURE TO USE TARGET DISTRIBUTION
             d_min=min(prior{ip}.d_target);
             d_max=max(prior{ip}.d_target);
@@ -206,18 +206,14 @@ if nargin>1
     m=m_current{ip};
     
     % if using SGSIM methods and using target distribution, then perform
-    % forward normal score
+    % forward normal score! Thius will add some uncertainty
     if (strcmp(prior{ip}.method,'sgsim'))&(isfield(prior{ip},'o_nscore'))
-        m=nscore(m,prior{ip}.o_nscore);
         
-        if ~isstruct(prior{ip}.Va);
-            prior{ip}.Va=deformat_variogram(prior{ip}.Va);
-        end
-        Va_par=prior{ip}.Va;
-        gvar=sum([Va_par.par1]);
- 
-        m=m;%.*gvar;
-        
+        %if isfield(prior{ip}.V,'D');
+        %    m=prior{ip}.V.D';
+        %else
+            m=nscore(m,prior{ip}.o_nscore);
+        %end
     end
     
     [prior{ip}.V, i_resim]=visim_set_resim_data(prior{ip}.V,m,prior{ip}.seq_gibbs.step,[],[],prior{ip}.seq_gibbs.type);
