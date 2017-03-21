@@ -1,7 +1,7 @@
 % sippi_likelihood_multinomial: Compute likelihood using the multinomial function
 %
 % Call:
-%   [logL,L,data]=sippi_likelihood_multinomial(d,data);
+%   [logL,L,data]=sippi_likelihood_fmm(d,data);
 %
 % Input parameter:
 %    d{id}; Frequency distribution to be evaluated. 
