@@ -200,6 +200,11 @@ end
 
 %% SEQUENTIAL GIBBS
 if nargin>1
+    
+    if ~isfield(prior{ip}.seq_gibbs,'pos')
+        prior{ip}.seq_gibbs.pos=[];
+    end
+    
     % SEQUENTIAL GIBBS
     mgstat_verbose(sprintf('%s : Sequential Gibbs',mfilename),2)
     
@@ -216,7 +221,8 @@ if nargin>1
         %end
     end
     
-    [prior{ip}.V, i_resim]=visim_set_resim_data(prior{ip}.V,m,prior{ip}.seq_gibbs.step,[],[],prior{ip}.seq_gibbs.type);
+    %[prior{ip}.V, i_resim]=visim_set_resim_data(prior{ip}.V,m,prior{ip}.seq_gibbs.step,[],[],prior{ip}.seq_gibbs.type);
+    [prior{ip}.V, i_resim]=visim_set_resim_data(prior{ip}.V,m,prior{ip}.seq_gibbs.step,prior{ip}.seq_gibbs.pos,[],prior{ip}.seq_gibbs.type);
     prior{ip}.seq_gibbs.used=i_resim;
     if isempty(i_resim)
         prior{ip}.V.cond_sim=0;

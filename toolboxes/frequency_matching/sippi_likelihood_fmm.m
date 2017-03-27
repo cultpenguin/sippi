@@ -24,11 +24,25 @@ function [logL,logL_all,data]=sippi_likelihood_fmm(d,data,id_array)
 if  nargin<3
     LL=length(d);
     id_array=1:LL;
+else
+    LL=length(length(id_arry));
 end
 
-logL_all=zeros(1,L);
+
+
+logL_all=zeros(1,LL);
 for id=id_array
     
+    [~,X]=size(d{id});
+    if X>1
+        disp('d{id} has to be a column vector')
+        return
+    end
+    [~,X]=size(data{id}.d_obs);
+    if X>1
+        disp('data{id}.d_obs has to be a column vector')
+        return
+    end
     %logL_all(id)=0;
 
     if ~isfield(data{id},'nprior');
