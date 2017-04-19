@@ -232,7 +232,7 @@ end
 %     if forward.Va(2).par2(3)==0;forward.Va(2).par2(3)=1;end
 % end
 
-
+sippi_verbose(sprintf('%s: forward.Va=%s',mfilename,format_variogram(forward.Va)),1)
 %%
 % make sure CD is recomputed each time
 data{1}.recomputeCD=1;

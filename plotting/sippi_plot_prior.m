@@ -152,9 +152,15 @@ for im=im_array;
             end            
             
         elseif ndim==1
+            
             try
-                plot(x,m{im},'k-*')
-                xlabel('X');
+                if length(x)>length(y);
+                    plot(x,m{im},'k-*')
+                    xlabel('X');
+                else
+                    plot(y,m{im},'k-*')
+                    xlabel('Y');
+                end
                 ylabel(prior{im}.name)
                 try;set(gca,'ylim',cax);end
             catch

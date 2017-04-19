@@ -70,7 +70,7 @@ forward.Cm=sprintf('%3.1f Sph(2)',var(d));
 %[m,prior]=sippi_prior(prior);
 %d=sippi_forward(m,forward,prior);
 %L=sippi_likelihood(d,data);
-
+return
 %% METROPOLIS SAMPLING
 for ip=1:length(prior);
     prior{ip}.seq_gibbs.i_update_step_max=3000;
@@ -100,9 +100,9 @@ hold off
 
 %% TEST Forward model
 m=sippi_prior(prior);
-m{1}=1;
+m{1}=2;
 [d,forward,prior,data]=sippi_forward(m,forward,prior,data);
-[logL,L,data]=sippi_likelihood(d,data);
+[logL,L,data]=sippi_likelihood(d,data)
 
 %%
 r1=linspace(prior{1}.min,prior{1}.max,51);

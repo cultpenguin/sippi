@@ -59,7 +59,7 @@ if (length(id_arr)>options.plot.plot_data_max_data)
 end
 
 for id=id_arr;
-    
+   
     figure_focus(20+id);
     
     if ~isfield(data{id},'i_use')
