@@ -4,8 +4,8 @@ clear all,close all;
 %% Define an FFTMA type a priori model
 im=1;
 prior{im}.type='FFTMA';
-prior{im}.x=[0:.1:10]; % X array
-prior{im}.y=[0:.1:20]; % Y array
+prior{im}.x=[0:.1:10];
+prior{im}.y=[0:.1:20];
 prior{im}.m0=10;
 prior{im}.Va='1 Sph(10,90,.25)';
 prior{im}.fftma_options.constant_C=0;
