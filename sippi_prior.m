@@ -459,6 +459,8 @@ end
 if ~isempty(run_voronoi);
      for i_master=run_voronoi;
          % update parameters if master is set for any priors...
+         
+         % SET NUMBER OF CELLS -- ONSOLETE? PART OF MAIN VORONOI PRIOR
          for im=setxor(1:nm,i_master); % loop over priors
              if isfield(prior{im},'prior_master');
                  if prior{im}.prior_master==i_master
@@ -473,13 +475,12 @@ if ~isempty(run_voronoi);
              if isfield(prior{im},'prior_master');
                  if prior{im}.prior_master==i_master
                      %cells_N=prior{i_master}.cells_N;
-                     
                      % we have a 'child' of the current 'master'
                      if strcmp(lower(prior{im}.name),'cells_x')
                          prior{i_master}.cells_center(:,1)=m_propose{im};
                      end
                      if strcmp(lower(prior{im}.name),'cells_y')
-                         prior{i_master}.cells_center(:,2)=m_propose{im};
+                         prior{i_master}.cells_center(:,2)=m_propose{im};                         
                      end
                      if strcmp(lower(prior{im}.name),'cells_z')
                          prior{i_master}.cells_center(:,3)=m_propose{im};
