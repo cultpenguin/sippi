@@ -146,9 +146,11 @@ if start_from_mat_file==0;
     %%
     if ~isfield(options,'txt');options.txt='';end
     if ~isempty(options.txt)
-        options.txt=sprintf('%s_sippi_metropolis_%s',datestr(now,'YYYYmmdd_HHMM'),options.txt);
+        %options.txt=sprintf('%s_sippi_metropolis_%s',datestr(now,'YYYYmmdd_HHMM'),options.txt);
+        options.txt=sprintf('sm_%s_%s',datestr(now,'YYYYmmdd_HHMM'),options.txt);
     else
-        options.txt=sprintf('%s_sippi_metropolis',datestr(now,'YYYYmmdd_HHMM'));
+        %options.txt=sprintf('%s_sippi_metropolis',datestr(now,'YYYYmmdd_HHMM'));
+        options.txt=sprintf('sm_%s',datestr(now,'YYYYmmdd_HHMM'));
     end
     
     start_dir=pwd;
