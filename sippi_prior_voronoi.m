@@ -2,15 +2,19 @@
 %
 % TMH/2014
 %
-% Ex: 
-%   prior{1}.type='voronoi';
-%   prior{1}.x=1:1:20;
-%   prior{1}.y=1:1:20;
-%   prior{1}.cells_N_min=2;
-%   prior{1}.cells_N_max=100;
-%   prior{1}.cells_N=10;
-%   [m,prior]=sippi_prior(prior);
-%   sippi_plot_prior(prior,m);
+% Example:
+%
+%   cells_N_max=5;
+%   dx=0.5;    
+%   ip=1;
+%   prior{ip}.type='voronoi';    
+%   prior{ip}.x=1:dx:20;
+%   prior{ip}.y=1:dx:20;    
+%   prior{ip}.cells_N=cells_N_max; % SET NUMBER OF CELLS    
+%   prior{ip}.cells_N_min=3;
+%   prior{ip}.cells_N_max=cells_N_max;
+%   sippi_plot_prior_sample(prior);
+%
 %
 % See also: sippi_prior_init, sippi_prior
 %
