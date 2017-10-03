@@ -82,11 +82,11 @@ if ~isfield(prior{ip}.MPS,'parameter_filename')
 end
 
 if prior{ip}.ndim==1;
-    SIM=zeros(prior{ip}.dim(1));    
+    SIM=NaN.*ones(prior{ip}.dim(1));    
 elseif prior{ip}.ndim==1;
-    SIM=zeros(prior{ip}.dim(2),prior{ip}.dim(1));    
+    SIM=NaN.*ones(prior{ip}.dim(2),prior{ip}.dim(1));    
 else
-    SIM=zeros(prior{ip}.dim(2),prior{ip}.dim(1),prior{ip}.dim(3));    
+    SIM=NaN.*ones(prior{ip}.dim(2),prior{ip}.dim(1),prior{ip}.dim(3));    
 end
 
 % initialize prior and set the x,y,z dimensions
@@ -142,10 +142,15 @@ if isfield(prior{ip},'hard_data');
         end
     end
 else
-    if exist('mps_hard_data_dummy.dat','file');
-        try;delete('mps_hard_data_dummy.dat');end
+    f_hard_data_dummy='mps_hard_data_dummy.dat';
+    if exist(f_hard_data_dummy,'file');
+        try;           
+            delete(f_hard_data_dummy);
+        catch
+            disp(sprintf('%s: Could not delete %s',mfilename,f_hard_data_dummy))
+        end
     end
-    prior{ip}.MPS.hard_data_filename=['mps_hard_data_dummy.dat'];
+    prior{ip}.MPS.hard_data_filename=f_hard_data_dummy;
 end
 
 %% soft data?
@@ -196,10 +201,6 @@ else
     end
     prior{ip}.MPS.soft_data_filename=['mps_soft_data_dummy.dat'];
 end
-
-
-
-
 
 %% RUN FORWARD
 [m_propose{ip},prior{ip}.MPS]=mps_cpp(prior{ip}.ti,SIM,prior{ip}.MPS);
