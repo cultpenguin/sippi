@@ -18,8 +18,8 @@ prior{ip}.name='eps';
 prior{ip}.x=[1:nx].*dx;
 prior{ip}.y=[1:ny].*dx;
 
-use_target=1;
-d_target=[ones(1,1801).*3,ones(1,4432).*4];
+use_target=0;
+d_target=[ones(1,1801).*2.5,ones(1,4432).*4.5];
 if use_target==0;
   prior{ip}.m0=mean(d_target);
   v0=var(d_target);
@@ -60,7 +60,9 @@ forward.sig=3; % constant
 forward.output_type='trace'; % 'trace' or 'gather' 
 forward.output_it=10; % output every 'output_ti' samples
 forward.t=1e-7; % SIMULATION TIME
-
+forward.sources=ant_pos(:,1:2);
+forward.receivers=ant_pos(:,3:4);
+    
 
 % options for forward modelerreturn
 forward.addpar.debug=-1;
@@ -69,6 +71,14 @@ forward.addpar.Tg=100*10^6;
 %forward.addpar.executable='/path/to/executable';
 %forward.addpar.work_dir='/path/to/working_directory';
 
+
+[m_ref,prior]=sippi_prior(prior);
+sippi_plot_prior(prior,m_ref);
+[d,forward,prior]=sippi_forward_gpr_fd(m_ref,forward,prior);
+sippi_plot_data_gpr(d);
+return
+
+
 %% TEST FORWARD / MAKE REFERENCE DATA
 [m_ref,prior]=sippi_prior(prior);
 sippi_plot_prior(prior,m_ref);
@@ -76,8 +86,10 @@ sippi_plot_prior(prior,m_ref);
 
 
 
-forward_t.type='fd';
-[d,forward,prior]=sippi_forward_traveltime(m_ref,forward_t,prior);
+return
+forward_t=forward;
+forward_t.type='eikonal';
+[d_t,forward_t,prior]=sippi_forward_traveltime(m_ref,forward_t,prior);
 
 
 for id=1:length(d);

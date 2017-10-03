@@ -95,10 +95,11 @@ end
 for k=1:(length(im_onedim)-1)
     for l=(k+1):(length(im_onedim))
         
-        
+                
         if pl_marg2d_scatter==1;
             figure_focus(50+j);clf;set_paper('landscape');
             plot(reals_all(:,k),reals_all(:,l),'k.')
+            scatter(reals_all(:,k),reals_all(:,l),1,1:size(reals_all,1))           
             try;xlabel(prior{im_onedim(k)}.name);end
             try;ylabel(prior{im_onedim(l)}.name);end
             
@@ -227,6 +228,7 @@ end
 
 %% 2d marginals (scatter) on one plot
 if (pl_marg2d_scatter_combined==1)&(length(im_onedim)>0);
+    FS = max([12-n,6]);
     fn=figure_focus(72);clf;set_paper('landscape');
     for j=1:(n-1)
         for k=((1)+j):n
@@ -235,13 +237,15 @@ if (pl_marg2d_scatter_combined==1)&(length(im_onedim)>0);
             r2=reals_all(:,k);
             isp=(j-1)*(n-1)+(k-1);
             subplot(n-1,n-1,isp);
+            set(gca,'FontSize',FS)
             set(gca,'ydir','normal');
-            plot(reals_all(:,j),reals_all(:,k),'k.','MarkerSize',3)
+            %plot(reals_all(:,j),reals_all(:,k),'k.','MarkerSize',3)
+            scatter(reals_all(:,j),reals_all(:,k),3,1:size(reals_all,1),'filled')           
+            set(gca,'FontSize',FS)
             %xlabel(prior{im_onedim(j)}.name,'interp','none')
             %ylabel(prior{im_onedim(k)}.name,'interp','none')
-            xlabel(prior{im_onedim(j)}.name)
-            ylabel(prior{im_onedim(k)}.name)
-            
+            xlabel(prior{im_onedim(j)}.name,'FontSize',FS)
+            ylabel(prior{im_onedim(k)}.name,'FontSize',FS)
             try
                 if isfield(options.mcmc,'m_ref');
                     hold on
@@ -249,10 +253,10 @@ if (pl_marg2d_scatter_combined==1)&(length(im_onedim)>0);
                     hold off
                 end
             end
-            
+            box on
             set(gca,'xlim',cax(j,:));
             set(gca,'ylim',cax(k,:));
-            colormap(1-gray);
+            %colormap(1-gray);
         end
     end
     print_mul(sprintf('%s_post_marg2d_scatter_combined',fname),options.plot.hardcopy_types)
