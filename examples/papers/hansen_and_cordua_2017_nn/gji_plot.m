@@ -4,21 +4,21 @@ if loadData==1;
     clear all;close all;
     
     try   
-        load('grl_ReferenceModel','m_ref');
-        load('grl_ReferenceModel','prior');
-        load('grl_ReferenceModel','forward');
-        load('grl_ReferenceModel','data');
+        load('gji_ReferenceModel','m_ref');
+        load('gji_ReferenceModel','prior');
+        load('gji_ReferenceModel','forward');
+        load('gji_ReferenceModel','data');
     catch
-        load('grl_ReferenceModel_t0','m_ref');
-        load('grl_ReferenceModel_t0','prior');
-        load('grl_ReferenceModel_t0','forward');
-        load('grl_ReferenceModel_t0','data');
+        load('gji_ReferenceModel_t0','m_ref');
+        load('gji_ReferenceModel_t0','prior');
+        load('gji_ReferenceModel_t0','forward');
+        load('gji_ReferenceModel_t0','data');
     end
     %load grl_NM2376_DX20_fd_NT40000_SD3_NH80_modelerr;
     %load grl_NM2376_DX20_fd_NT40000_SD3_NH80_inverted;
     txt='grl';
     
-    d_txt=dir('grl_*_inverted.mat');
+    d_txt=dir('gji_*_inverted.mat');
     disp(sprintf('loading data: %s',d_txt(1).name));
     load(d_txt(1).name);
     

@@ -3,8 +3,8 @@ clear all;close all
 
 useTargetDist=0;
 
-createTrainingSet=1;
-createReferenceModel=1;
+createTrainingSet=0;
+createReferenceModel=0;
 
 try
 system(['rm -fr run00*  obs*.mat']);
@@ -259,7 +259,7 @@ for i=1:(length(f_mul));
         options.txt=txt;
     end
     t_start=now;
-    [o]=sippi_metropolis(data_mul{i},prior,f_mul{i},options);
+    [options_out{i}]=sippi_metropolis(data_mul{i},prior,f_mul{i},options);
     %sippi_plot_posterior_sample(options_out{i}.txt);
     sim_minutes(i)=(now-t_start)*60*24;
 end
