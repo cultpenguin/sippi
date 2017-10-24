@@ -1,10 +1,9 @@
 % grl_nn 
 clear all;close all
 
-useTargetDist=0;
-
-createTrainingSet=0;
-createReferenceModel=0;
+useTargetDist=1;
+createTrainingSet=1;
+createReferenceModel=1;
 
 try
 system(['rm -fr run00*  obs*.mat']);
@@ -15,17 +14,10 @@ Nr_modeling=6000; %size of sample for modeling error
 TrainSizes=[1000 5000 10000 20000 40000]; % size of subset to consider for neural net
 splitData=3; % split data into smaller sections
 
-%Ntrain=5000; % size sample for neural network
-%Nr_modeling=1000; %size of sample for modeling error
-%TrainSizes=[1000 5000]; % size of subset to consider for neural net
-%splitData=3; % split data into smaller sections
-
-
-% neural network seeting
+% neural network setting
 epochs=30000; % number of iterations optizing the neural networl
 hiddenLayerSize=80; % number for hidden layers in nerual network
 nite=1000000; % number of iterations in Monte Carlo sampler
-
 
 
 %% LOAD DATA AND CONFIGURATION
@@ -264,7 +256,7 @@ for i=1:(length(f_mul));
     sim_minutes(i)=(now-t_start)*60*24;
 end
 
-save(sprintf('%s_inverted',txt))
+save(sprintf('%s_inverted',txt),'-v7.3')
 
 %% plot some results..
 gji_plot;
