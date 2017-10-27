@@ -2,7 +2,7 @@ loadData=1;
 if loadData==1;
     
     clear all;close all;
-    useTargetDist=0;
+    useTargetDist=1;
     if useTargetDist==1;
         matfile='gji_NM2376_DX20_fd_NT40000_SD3_NH80_t1_inverted.mat';
         matfile_ref='gji_ReferenceModel_t1.mat';
