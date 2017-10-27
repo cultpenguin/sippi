@@ -1,7 +1,7 @@
 % grl_nn 
 clear all;close all
 
-useTargetDist=1;
+useTargetDist=0;
 createTrainingSet=1;
 createReferenceModel=1;
 
