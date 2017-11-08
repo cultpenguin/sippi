@@ -61,6 +61,12 @@ function [options,data,prior,forward,m_current]=sippi_metropolis_gibbs(data,prio
 %    options.mcmc.anneal.T_begin=5; % Start temperature for annealing
 %    options.mcmc.anneal.T_end=1; % End temperature for annealing
 %
+%    %% GIBBS SAMPLING of 1D prior TYPES AT SOME ITERATIONS
+%    options.mcmc.gibbs.N_bins=31; % number random 1d realizations
+%    options.mcmc.gibbs.i_gibbs = 10; % Use Gibbs sampling for every i_gibbs
+%                            iterations
+%
+%
 %    %% VERBOSITY
 %    The amount of text info displayed at the prompt, can be controlled by
 %    setenv('SIPPI_VERBOSE_LEVEL','2') % all: information on chain swapping
@@ -69,6 +75,7 @@ function [options,data,prior,forward,m_current]=sippi_metropolis_gibbs(data,prio
 %    setenv('SIPPI_VERBOSE_LEVEL','-1'); % rare update om finish time
 %    setenv('SIPPI_VERBOSE_LEVEL','-2'); % indication of stop and start
 %    setenv('SIPPI_VERBOSE_LEVEL','-3'); % none
+%
 %
 %    %% MULTIPLE RUNS (IN PARALLEL)
 %    % In case the matlab parallel toolbox is installed, then a selected
@@ -179,6 +186,10 @@ if start_from_mat_file==0;
     options=sippi_mcmc_init(options,prior);
     if ~isfield(options,'mcmc'); options.mcmc.null='';end
     if ~isfield(options.mcmc,'n_chains'); options.mcmc.n_chains=1;end
+    options.mcmc.gibbs.null='';
+    if ~isfield(options.mcmc.gibbs,'i_gibbs'); options.mcmc.gibbs.i_gibbs=1e+9;end
+    if ~isfield(options.mcmc.gibbs,'N_bins'); options.mcmc.gibbs.N_bins=41;end
+   
     
     mcmc=options.mcmc;
     
@@ -350,7 +361,7 @@ while i<=mcmc.nite;
     
     %% SEELECT SAMPLING METHOD
     
-    useMetropolis = min([mod(i,2),1]);
+    useMetropolis = min([mod(i,mcmc.gibbs.i_gibbs),1]);
     useGibbs=1-useMetropolis;
     
     % Use extenden Metropolis sampler

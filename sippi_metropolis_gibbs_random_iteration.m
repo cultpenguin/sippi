@@ -3,7 +3,7 @@ function [C,mcmc]=sippi_metropolis_gibbs_random_iteration(C,mcmc,i);
         
 mcmc.gibbs.null='';
 if ~isfield(mcmc.gibbs,'N_bins')
-    mcmc.N_bins=31;
+    mcmc.gibbs.N_bins=31;
 end
 
 NC=length(C);
@@ -19,8 +19,8 @@ for ic=1:NC;
     
     if length(usep)>0
         ip=ceil(rand(1)*length(usep));
+        sippi_verbose(sprintf('%s: Running Gibbs sampling of im=%d at iteration %d',mfilename,ip,mcmc.i),1)
         
-        mcmc.N_bins = 151;
         prior = C{ic}.prior_current;
         m = C{ic}.m_current;
         
@@ -35,10 +35,10 @@ for ic=1:NC;
             end
         end
         
-        m_arr=zeros(1,mcmc.N_bins);
-        logL=zeros(1,mcmc.N_bins);
-        pPrior=zeros(1,mcmc.N_bins);
-        for im=1:mcmc.N_bins;
+        m_arr=zeros(1,mcmc.gibbs.N_bins);
+        logL=zeros(1,mcmc.gibbs.N_bins);
+        pPrior=zeros(1,mcmc.gibbs.N_bins);
+        for im=1:mcmc.gibbs.N_bins;
             [m_test{im},prior_test{im}]=sippi_prior(prior,m);            
             [d_test{im},forward]=sippi_forward(m_test{im},C{ic}.forward,prior_test{im},C{ic}.data);
             [logL(im)]=sippi_likelihood(d_test{im},C{ic}.data);
@@ -49,7 +49,7 @@ for ic=1:NC;
         end
         %compute prior
         if (strcmp(lower(C{ic}.prior_current{ip}.type),'uniform'))
-            logPrior=ones(1,mcmc.N_bins)./mcmc.N_bins;
+            logPrior=ones(1,mcmc.gibbs.N_bins)./mcmc.gibbs.N_bins;
         elseif (strcmp(lower(C{ic}.prior_current{ip}.type),'gaussian'))
             logPrior =  log(normpdf(m_arr,C{ic}.prior_current{ip}.m0,C{ic}.prior_current{ip}.std));
         end
