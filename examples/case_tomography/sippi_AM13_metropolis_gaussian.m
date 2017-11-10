@@ -1,3 +1,4 @@
+
 % sippi_AM13_gaussian 2D inversion using the extended Metropolis sampler (Gaussian prior) 
 %
 % Example of inverting 2D Arrenaes tomographic data (AM13)
@@ -78,8 +79,8 @@ print_mul('AM13_data');
 
 %% SETUP METROPOLIS
 options.mcmc.nite=500000;
-options.mcmc.i_plot=2500;
-n_reals_out=200;
+options.mcmc.i_plot=25000;
+n_reals_out=50;
 options.mcmc.i_sample=options.mcmc.nite/n_reals_out;
 rng(1);
 
@@ -118,7 +119,7 @@ setenv('SIPPI_VERBOSE_LEVEL','0'); % [def] frequent update
 
 
 %% Run the Metropolis sampler
-options.mcmc.i_save_workspace=10000;
+options.mcmc.i_save_workspace=100000;
 options=sippi_metropolis(data,prior,forward,options);
 figure(3);print_mul('AM13_logLprogress');
 figure(21);print_mul('AM13_lastData');

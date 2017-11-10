@@ -2,119 +2,40 @@ loadData=1;
 if loadData==1;
     
     clear all;close all;
-    
-    try   
-        load('grl_ReferenceModel','m_ref');
-        load('grl_ReferenceModel','prior');
-        load('grl_ReferenceModel','forward');
-        load('grl_ReferenceModel','data');
-    catch
-        load('grl_ReferenceModel_t0','m_ref');
-        load('grl_ReferenceModel_t0','prior');
-        load('grl_ReferenceModel_t0','forward');
-        load('grl_ReferenceModel_t0','data');
+    useTargetDist=0;
+    if useTargetDist==1;
+        matfile='gji_NM2376_DX20_fd_NT40000_SD3_NH80_t1_inverted.mat';
+        matfile_ref='gji_ReferenceModel_t1.mat';
+    else
+        matfile='gji_NM2376_DX20_fd_NT40000_SD3_NH80_t0_inverted.mat'
+        matfile_ref='gji_ReferenceModel_t0.mat';
     end
-    %load grl_NM2376_DX20_fd_NT40000_SD3_NH80_modelerr;
-    %load grl_NM2376_DX20_fd_NT40000_SD3_NH80_inverted;
-    txt='grl';
     
-    d_txt=dir('grl_*_inverted.mat');
-    disp(sprintf('loading data: %s',d_txt(1).name));
-    load(d_txt(1).name);
+    load(matfile_ref,'m_ref');
+    load(matfile_ref,'prior');
+    load(matfile_ref,'forward');
+    load(matfile_ref,'data');
     
-    clear tit o 
+    
+    %load(matfile,'options_out');
+    load(matfile)
+    
+    clear tit o
     % SETUP tit and o
-    if exist('f_mul');
-        for io=1:length(f_mul);
-            o{io}=options_out{io}.txt;
-            if strcmp(f_mul{io}.forward_function,'sippi_forward_mynn')
-                tit{io}=sprintf('g_{%d}',size(f_mul{io}.ATTS,2));                
-            elseif strcmp(f_mul{io}.forward_function,'sippi_forward_traveltime')
-                tit{io}=sprintf('g_{%s}',f_mul{io}.type(1:3));
-            else
-                tit{io}=sprintf('g_{%d}',io);
-            end
+    for io=1:length(options_out);
+        f_mul{io}=options_out{io}.C{1}.forward;
+        o{io}=options_out{io}.txt;
+        if strcmp(options_out{io}.C{1}.forward.forward_function,'sippi_forward_mynn')
+            tit{io}=sprintf('g_{%d}',size(options_out{io}.C{1}.forward.ATTS,2));
+        elseif strcmp(options_out{io}.C{1}.forward.forward_function,'sippi_forward_traveltime')
+            tit{io}=sprintf('g_{%s}',options_out{io}.C{1}.forward.type(1:3));
+        else
+            tit{io}=sprintf('g_{%d}',io);
         end
     end
     
     
-    
-    %i=i+1;o{i}='20161211_2025_sippi_metropolis_grl_NM2376_DX20_fd_NT1000_SD3_NH80';Nf_arr(i)=1000;tit{i}='1000';
-    %i=i+1;o{i}='20161211_2037_sippi_metropolis_grl_NM2376_DX20_fd_NT5000_SD3_NH80';Nf_arr(i)=5000;;tit{i}='5000';
-    %i=i+1;o{i}='20161211_2050_sippi_metropolis_grl_NM2376_DX20_fd_NT10000_SD3_NH80';Nf_arr(i)=10000;tit{i}='10000';
-    %i=i+1;o{i}='20161211_2103_sippi_metrop
-    
-    %i=i+1;o{i}='20161211_2025_sippi_metropolis_grl_NM2376_DX20_fd_NT1000_SD3_NH80';Nf_arr(i)=1000;tit{i}='1000';
-    %i=i+1;o{i}='20161211_2037_sippi_metropolis_grl_NM2376_DX20_fd_NT5000_SD3_NH80';Nf_arr(i)=5000;;tit{i}='5000';
-    %i=i+1;o{i}='20161211_2050_sippi_metropolis_grl_NM2376_DX20_fd_NT10000_SD3_NH80';Nf_arr(i)=10000;tit{i}='10000';
-    %i=i+1;o{i}='20161211_2103_sippi_metropolis_grl_NM2376_DX20_fd_NT20000_SD3_NH80';Nf_arr(i)=20000;tit{i}='20000';
-    %i=i+1;o{i}='20161211_2117_sippi_metropolis_grl_NM2376_DX20_fd_NT40000_SD3_NH80';Nf_arr(i)=40000;tit{i}='40000';
-    %i=i+1;o{i}='20161211_2133_sippi_metropolis_grl_NM2376_DX20_fd_NT40000_SD3_NH80_eikonal';Nf_arr(i)=0;tit{i}='eik';
-    %i=i+1;o{i}='20161211_2237_sippi_metropolis_grl_NM2376_DX20_fd_NT40000_SD3_NH80_ray_2d';Nf_arr(i)=0;tit{i}='g_{ray}';
-    
-    % LONG RUN nCt=6000
-    %i=i+1;o{i}='20161213_1524_sippi_metropolis_grl_NM2376_DX20_fd_NT1000_SD3_NH80';Nf_arr(i)=1000;tit{i}='g_{1000}';
-    %i=i+1;o{i}='20161213_1718_sippi_metropolis_grl_NM2376_DX20_fd_NT5000_SD3_NH80';Nf_arr(i)=5000;;tit{i}='g_{5000}';
-    %i=i+1;o{i}='20161213_1917_sippi_metropolis_grl_NM2376_DX20_fd_NT10000_SD3_NH80';Nf_arr(i)=10000;tit{i}='g_{10000}';
-    %i=i+1;o{i}='20161213_2157_sippi_metropoolis_grl_NM2376_DX20_fd_NT20000_SD3_NH80';Nf_arr(i)=20000;tit{i}='20000';
-    %i=i+1;o{i}='20161211_2117_sippi_metropolis_grl_NM2376_DX20_fd_NT40000_SD3_NH80';Nf_arr(i)=40000;tit{i}='40000';
-    %i=i+1;o{i}='20161211_2133_sippi_metropolis_grl_NM2376_DX20_fd_NT40000_SD3_NH80_eikonal';Nf_arr(i)=0;tit{i}='eik';
-    %i=i+1;o{i}='20161211_2237_sippi_metropolis_grl_NM2376_DX20_fd_NT40000_SD3_NH80_ray_2d';Nf_arr(i)=0;tit{i}='g_{ray}';
-    
-    % LONG RUN nCt=6000
-    %i=i+1;o{i}='20161213_1524_sippi_metropolis_grl_NM2376_DX20_fd_NT1000_SD3_NH80';Nf_arr(i)=1000;tit{i}='g_{1000}';
-    %i=i+1;o{i}='20161213_1718_sippi_metropolis_grl_NM2376_DX20_fd_NT5000_SD3_NH80';Nf_arr(i)=5000;;tit{i}='g_{5000}';
-    %i=i+1;o{i}='20161213_1917_sippi_metropolis_grl_NM2376_DX20_fd_NT10000_SD3_NH80';Nf_arr(i)=10000;tit{i}='g_{10000}';
-    %i=i+1;o{i}='20161213_2157_sippi_metropolis_grl_NM2376_DX20_fd_NT20000_SD3_NH80';Nf_arr(i)=20000;tit{i}='g_{20000}';
-    %i=i+1;o{i}='20161214_0023_sippi_metropolis_grl_NM2376_DX20_fd_NT40000_SD3_NH80';Nf_arr(i)=40000;tit{i}='g_{40000}';
-    %i=i+1;o{i}='20161214_0315_sippi_metropolis_grl_NM2376_DX20_fd_NT40000_SD3_NH80_eikonal';Nf_arr(i)=0;tit{i}='g_{eik}';
-    %i=i+1;o{i}='20161214_2128_sippi_metropolis_grl_NM2376_DX20_fd_NT40000_SD3_NH80_ray_2d';Nf_arr(i)=0;tit{i}='g_{ray}';
-    
-    %     %LONGEPOCH
-    %     i=0;
-    %     i=i+1;o{i}='20161215_2324_sippi_metropolis_grl_NM2376_DX20_fd_NT1000_SD3_NH80';Nf_arr(i)=1000;tit{i}='g_{1000}';
-    %     i=i+1;o{i}='20161216_0029_sippi_metropolis_grl_NM2376_DX20_fd_NT5000_SD3_NH80';Nf_arr(i)=1000;tit{i}='g_{5000}';
-    %     i=i+1;o{i}='20161216_0135_sippi_metropolis_grl_NM2376_DX20_fd_NT10000_SD3_NH80';Nf_arr(i)=1000;tit{i}='g_{10000}';
-    %     i=i+1;o{i}='20161216_0240_sippi_metropolis_grl_NM2376_DX20_fd_NT20000_SD3_NH80';Nf_arr(i)=1000;tit{i}='g_{20000}';
-    %     i=i+1;o{i}='20161216_0352_sippi_metropolis_grl_NM2376_DX20_fd_NT40000_SD3_NH80';Nf_arr(i)=1000;tit{i}='g_{40000}';
-    %     i=i+1;o{i}='20161216_0510_sippi_metropolis_grl_NM2376_DX20_fd_NT40000_SD3_NH80_eikonal';Nf_arr(i)=1000;tit{i}='g_{eik}';
-    %     i=i+1;o{i}='20161216_1219_sippi_metropolis_grl_NM2376_DX20_fd_NT40000_SD3_NH80_ray_2d';Nf_arr(i)=1000;tit{i}='g_{ray}';
-    %
-    %     d_dir=dir('*sippi_metropolis_grl*');
-    %     clear o;
-    %     for i=1:length(d_dir)
-    %         o{i}= d_dir(i).name;
-    %
-    %     end
-    %
-    %
-    
-    
-    
-    % LONG RUN
-    %     i=i+1;o{i}='20161211_2242_sippi_metropolis_grl_NM2376_DX20_fd_NT1000_SD3_NH80';Nf_arr(i)=1000;tit{i}='g_{1000}';
-    %     i=i+1;o{i}='20161212_0259_sippi_metropolis_grl_NM2376_DX20_fd_NT5000_SD3_NH80';Nf_arr(i)=5000;;tit{i}='g_{5000}';
-    %     i=i+1;o{i}='20161212_0710_sippi_metropolis_grl_NM2376_DX20_fd_NT10000_SD3_NH80';Nf_arr(i)=10000;tit{i}='g_{10000}';
-    %     i=i+1;o{i}='20161212_1135_sippi_metropolis_grl_NM2376_DX20_fd_NT20000_SD3_NH80';Nf_arr(i)=20000;tit{i}='g_{20000}';
-    %     i=i+1;o{i}='20161212_1554_sippi_metropolis_grl_NM2376_DX20_fd_NT40000_SD3_NH80';Nf_arr(i)=40000;tit{i}='g_{40000}';
-    %     i=i+1;o{i}='20161212_2044_sippi_metropolis_grl_NM2376_DX20_fd_NT40000_SD3_NH80_eikonal';Nf_arr(i)=0;tit{i}='g_{eik}';
-    %    i=i+1;o{i}='20161213_1924_sippi_metropolis_grl_NM2376_DX20_fd_NT40000_SD3_NH80_ray_2d';Nf_arr(i)=0;tit{i}='g_{ray}';
-    %
-    
-    % EX TEST40000_6000_NH40
-    %load grl_NM2376_DX20_fd_NT40000_SD3_NH40_inverted.mat
-    
-    % EX Long Epoch
-    % load grl_NM2376_DX20_fd_NT40000_SD3_NH80_inverted.mat
-    
-    %%TEST40000_6000
-    %load grl_NM2376_DX20_fd_NT40000_SD3_NH80_inverted.mat
-    
-    % TEST 4000 (1000)
-    %load TEST40000/grl_NM2376_DX20_fd_NT40000_SD3_NH80_inverted.mat
-    
-    
-    
+    %%
     % READ DATA
     for io=1:length(o);
         

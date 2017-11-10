@@ -2,9 +2,9 @@
 clear all;close all
 
 useTargetDist=0;
-
 createTrainingSet=1;
 createReferenceModel=1;
+
 try
 system(['rm -fr run00*  obs*.mat']);
 end
@@ -14,26 +14,11 @@ Nr_modeling=6000; %size of sample for modeling error
 TrainSizes=[1000 5000 10000 20000 40000]; % size of subset to consider for neural net
 splitData=3; % split data into smaller sections
 
-Ntrain=5000; % size sample for neural network
-Nr_modeling=1000; %size of sample for modeling error
-TrainSizes=[1000 5000]; % size of subset to consider for neural net
-splitData=3; % split data into smaller sections
-
-
-
+% neural network setting
 epochs=30000; % number of iterations optizing the neural networl
 hiddenLayerSize=80; % number for hidden layers in nerual network
-    
 nite=1000000; % number of iterations in Monte Carlo sampler
 
-
-
-
-%%FOR TESTING
-%Ntrain=1000;
-createTrainingSet=1;
-createReferenceModel=1;
-%Nr_modeling=600;
 
 %% LOAD DATA AND CONFIGURATION
 D=load('AM13_data.mat');
@@ -109,7 +94,9 @@ if createReferenceModel==1
     
     save(sprintf('gji_ReferenceModel_t%d',useTargetDist)) 
 else
+    cTS=createTrainingSet;
     load(sprintf('gji_ReferenceModel_t%d',useTargetDist)) 
+    createTrainingSet=cTS;
 end
 
 %% D: Create M-D training data set for forward model
@@ -135,8 +122,8 @@ if createTrainingSet==1
     end
     save(sprintf('gji_%s_NM%d_NT%d_t%d',forward.type,NM,Ntrain,useTargetDist));
 else
-    load gji_fd_NM2376_NT40000
-    splitData=11;
+    load(sprintf('gji_%s_NM%d_NT%d_t%d',forward.type,NM,Ntrain,useTargetDist));
+    %load gji_fd_NM2376_NT5000_t0    
 end
 
 
@@ -264,12 +251,12 @@ for i=1:(length(f_mul));
         options.txt=txt;
     end
     t_start=now;
-    [o]=sippi_metropolis(data_mul{i},prior,f_mul{i},options);
+    [options_out{i}]=sippi_metropolis(data_mul{i},prior,f_mul{i},options);
     %sippi_plot_posterior_sample(options_out{i}.txt);
     sim_minutes(i)=(now-t_start)*60*24;
 end
 
-save(sprintf('%s_inverted',txt))
+save(sprintf('%s_inverted',txt),'-v7.3')
 
 %% plot some results..
 gji_plot;
