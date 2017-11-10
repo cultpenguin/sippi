@@ -14,7 +14,7 @@ Nr_modeling=6000; %size of sample for modeling error
 TrainSizes=[1000 5000 10000 20000 40000]; % size of subset to consider for neural net
 splitData=3; % split data into smaller sections
 
-Ntrain=50000; % size sample for neural network
+Ntrain=5000; % size sample for neural network
 Nr_modeling=1000; %size of sample for modeling error
 TrainSizes=[1000 5000]; % size of subset to consider for neural net
 splitData=3; % split data into smaller sections
