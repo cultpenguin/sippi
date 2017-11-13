@@ -40,7 +40,7 @@ load(sprintf('%s%s%s',o{1}.txt,filesep,o{1}.txt),'prior');
 if isfield(options.mcmc,'m_ref')
     is_m_ref=1;
 else
-    is_m_ref=0
+    is_m_ref=0;
 end
     
 
@@ -110,14 +110,15 @@ for io=io_arr%;:length(o);;
         figure_focus(10+io);subplot(2,1,1);
     
         p2(io_end)=plot(i_ax,cc_mix{io}{io_end},'k-','LineWidth',lw);
-        try;set(p2,'color',col);end
+        set(p2(io_end),'color',col);
         ih=ih+1;leg{ih}=sprintf('CC_{%d,%d}',io,io_end);
         if ih==1; hold on; end
         
-        hx=linspace(-1,1,21);
+        hx=linspace(-1,1,41);
         [h(io_end,:)]=hist(cc_mix{io}{io_end},hx);
         
     end
+    p_all=p2;
     if (is_m_ref)
         figure_focus(10+io);subplot(2,1,1);
     
@@ -127,13 +128,16 @@ for io=io_arr%;:length(o);;
         
         [h(Nc+1,:)]=hist(cc_ref{io},hx);
         
+        p_all= [p_all p];
+        
+        
     end
 
 
     figure_focus(10+io);
     subplot(2,1,1);
     hold off
-    legend([p2,p],leg,'Location','NorthEastOutside')
+    legend([p_all],leg,'Location','NorthEastOutside')
     title(sprintf('%s - Chain %02d vs others',txt,io),'Interpreter','None')
     ylabel(sprintf('Correlation coefficient to Last model of chain %02d',io))
     xlabel('Iteration number')

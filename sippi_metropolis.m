@@ -346,7 +346,6 @@ while i<=mcmc.nite;
         % LOAD STATE FROM MATLAB
         load(mat_file);
     end
-    
     for ic=1:NC
         
         %% set seed / necessary?
@@ -392,7 +391,6 @@ while i<=mcmc.nite;
             C{ic}.prior_current{im_perturb(k)}.perturb=1;
             C{ic}.mcmc.perturb(im_perturb(k),i)=1;
         end
-        
         % SAMPLE PRIOR
         [C{ic}.m_propose,C{ic}.prior_propose] = sippi_prior(C{ic}.prior_current,C{ic}.m_current);
         
