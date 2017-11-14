@@ -372,7 +372,8 @@ while i<=mcmc.nite;
     %useGibbs=1;
     if useGibbs
         %C=sippi_metropolis_gibbs_iteration(C,mcmc,i);
-        [C,mcmc]=sippi_metropolis_gibbs_random_iteration(C,mcmc,i);
+        %[C,mcmc]=sippi_metropolis_gibbs_random_iteration(C,mcmc,i);
+        [C,mcmc]=sippi_metropolis_gibbs_random_iteration_2d(C,mcmc,i);
     end
     
     
