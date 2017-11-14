@@ -533,6 +533,7 @@ for im=im_arr;
             
         elseif ndim>=1
             
+            %% Ananlysis based on correlation coefficient
             fn=(im-1)*10+6;
             figure_focus(fn);set_paper('landscape');clf;
             set(gca,'FontSize',options.plot.axis.fontsize)
@@ -565,6 +566,18 @@ for im=im_arr;
             try;title(sprintf('m%d : %s',im,prior{im}.name),'interp','none');end
             print_mul(sprintf('%s_m%d_corrcoeff',fname,im),options.plot.hardcopy_types)
             
+            
+            %% ANALYSIS BASED ON ESS, TAU, AUTOCORRELATION
+            try
+                fn=(im-1)*10+7;
+                figure_focus(fn);set_paper('landscape');clf;
+                [e,ni]=ESS(reals_all(:,:),400,1,options.mcmc.i_sample);
+                disp(sprintf('%s: prior{%d}, Number of independent realizations: %d',mfilename,im,floor(min(e))))
+                print_mul(sprintf('%s_m%d_autocorr_ess',fname,im),options.plot.hardcopy_types);
+                
+            catch
+                disp(sptinf('%s: Could not perform ESS analysis',mfilename))
+            end
         end
         
     catch
