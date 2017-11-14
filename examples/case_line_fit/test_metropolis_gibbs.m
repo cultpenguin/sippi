@@ -80,7 +80,7 @@ print_mul(sprintf('sippi_linefit_data_%d_prior',length(d_obs)));
 options.mcmc.nite=4000;  % Run for 40000 iterations
 options.mcmc.i_sample=10; % Save every 100th visited model to disc
 options.mcmc.i_plot=1000; % Plot the progress information for every 2500 iterations
-options.mcmc.i_plot=1;
+options.mcmc.i_plot=10;
 %options.mcmc.anneal.i_begin=1; % default, iteration number when annealing begins
 %options.mcmc.anneal.i_end=options.mcmc.nite; %  iteration number when annealing stops
 %options.mcmc.anneal.T_begin=15; % Start temperature for annealing
