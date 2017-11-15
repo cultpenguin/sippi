@@ -22,7 +22,7 @@ if n_use>nr
     disp(sprintf('%s: n_use=%d',mfilename,n_use))
 end
 if nargin<3, doPlot=0;end
-if nargin<3, iLag=1;end
+if nargin<4, iLag=1;end
 
 
 for im=1:nm;
