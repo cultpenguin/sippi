@@ -62,7 +62,7 @@ function [options,data,prior,forward,m_current]=sippi_metropolis_gibbs(data,prio
 %    options.mcmc.anneal.T_end=1; % End temperature for annealing
 %
 %    %% GIBBS SAMPLING of 1D prior TYPES AT SOME ITERATIONS
-%    options.mcmc.gibbs.N_bins=31; % number random 1d realizations
+%    options.mcmc.gibbs.Nm=31; % number random 1d realizations
 %    options.mcmc.gibbs.i_gibbs = 10; % Use Gibbs sampling for every i_gibbs
 %                            iterations
 %
@@ -187,10 +187,16 @@ if start_from_mat_file==0;
     if ~isfield(options,'mcmc'); options.mcmc.null='';end
     if ~isfield(options.mcmc,'n_chains'); options.mcmc.n_chains=1;end
     options.mcmc.gibbs.null='';
+    if ~isfield(options.mcmc.gibbs,'usedim'); options.mcmc.gibbs.usedim=1;end
     if ~isfield(options.mcmc.gibbs,'i_gibbs'); options.mcmc.gibbs.i_gibbs=1e+9;end
-    if ~isfield(options.mcmc.gibbs,'N_bins'); options.mcmc.gibbs.N_bins=41;end
+    if ~isfield(options.mcmc.gibbs,'Nm'); 
+        if (options.mcmc.gibbs.usedim==1);
+            options.mcmc.gibbs.N_bins=41;
+        else
+            options.mcmc.gibbs.N_bins=300;
+        end
+    end
    
-    
     mcmc=options.mcmc;
     
     %% INITIALIZE prior
@@ -360,20 +366,27 @@ while i<=mcmc.nite;
     end
     
     %% SEELECT SAMPLING METHOD
-    
-    useMetropolis = min([mod(i,mcmc.gibbs.i_gibbs),1]);
+    if (mcmc.gibbs.i_gibbs>0)
+        useMetropolis = min([mod(i,mcmc.gibbs.i_gibbs),1]);
+    else
+        % always use Metropolos
+        useMetropolis = 1;
+    end    
     useGibbs=1-useMetropolis;
     
     % Use extenden Metropolis sampler
-    %useMetropolis=1;
     if useMetropolis        
         [C,mcmc]=sippi_metropolis_iteration(C,mcmc,i);
     end
     %useGibbs=1;
     if useGibbs
-        %C=sippi_metropolis_gibbs_iteration(C,mcmc,i);
-        %[C,mcmc]=sippi_metropolis_gibbs_random_iteration(C,mcmc,i);
-        [C,mcmc]=sippi_metropolis_gibbs_random_iteration_2d(C,mcmc,i);
+        if mcmc.gibbs.usedim==1
+            % 1D GIBBS SAMPLING
+            [C,mcmc]=sippi_metropolis_gibbs_random_iteration(C,mcmc,i);
+        else
+            % 2D GIBBS SAMPLING
+            [C,mcmc]=sippi_metropolis_gibbs_random_iteration_2d(C,mcmc,i);
+        end
     end
     
     

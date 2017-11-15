@@ -87,8 +87,6 @@ options.mcmc.i_plot=10;
 %options.mcmc.anneal.T_end=.01; % End temperature for annealing
 for ip=1:length(prior);prior{ip}.seq_gibbs.i_update_step_max=1000;end
 
-%options.mcmc.gibbs.N_bins=11;
-options.mcmc.gibbs.i_gibbs=25;
 
 %% TEMPERING
 %options.mcmc.n_chains=3; % set number of chains (def=1)
@@ -98,6 +96,18 @@ options.mcmc.gibbs.i_gibbs=25;
 
 options.txt='case_line_fit_2nd_order'; % descriptive name for the output folder
 
+
+%% PERTUBATION STRAT
+options.mcmc.pert_strategy.i_pert = [1]; % only perturb prior 1
+%options.mcmc.pert_strategy.i_pert_freq = [1]; % only perturb prior 1
+
+options.mcmc.gibbs.usedim = 2; % use 1D or 2D gibbs sampling
+options.mcmc.gibbs.i_pert = [2 3]; % select the prior ids to use for Gibbs sampling (must be 1D)
+options.mcmc.gibbs.i_gibbs = 50; % perform gibbs sampling for eevery i_gibbs iterations!options.mcmc.gibbs.Nn2=11;;
+
+
+options.mcmc.gibbs.Nn1=51;;
+options.mcmc.gibbs.Nn2=51;;
 %% metropolis
 [options_metropolis]=sippi_metropolis_gibbs(data,prior,forward,options);
 %[options_metropolis]=sippi_metropolis(data,prior,forward,options);

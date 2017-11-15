@@ -26,7 +26,8 @@ if nargin>1
         options.mcmc.pert_strategy.i_pert=1:1:length(prior);
     end
     if ~isfield(options.mcmc.pert_strategy,'i_pert_freq');
-        options.mcmc.pert_strategy.i_pert_freq=ones(1,length(prior))./length(prior);
+        np=length(options.mcmc.pert_strategy.i_pert);
+        options.mcmc.pert_strategy.i_pert_freq=ones(1,np)./np;
     end
     
     if ~isfield(options.mcmc.pert_strategy,'perturb_all');

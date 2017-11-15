@@ -40,7 +40,7 @@ for ic=1:NC
         i_pert=mcmc.pert_strategy.i_pert;
         pert_freq=cumsum(mcmc.pert_strategy.i_pert_freq);
         pert_freq=pert_freq./max(pert_freq);
-        im_perturb=i_pert(min(find(rand(1)<pert_freq)));
+        im_perturb=i_pert(min(find(rand(1)<pert_freq)));       
     end
     for k=1:length(im_perturb);
         C{ic}.prior_current{im_perturb(k)}.perturb=1;

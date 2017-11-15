@@ -1,6 +1,6 @@
 function [C,mcmc]=sippi_metropolis_gibbs_random_iteration(C,mcmc,i);
 
-        
+
 mcmc.gibbs.null='';
 if ~isfield(mcmc.gibbs,'N_bins')
     mcmc.gibbs.N_bins=31;
@@ -10,13 +10,16 @@ NC=length(C);
 for ic=1:NC;
     
     % CHECK NUMBER OF 1D PRIORS
-    usep=[];
-    for ip=1:length(C{ic}.prior_current)
-        if (C{ic}.prior_current{ip}.ndim==0)
-            usep=[usep ip];
+    if isfield(mcmc.gibbs,'i_pert');
+        usep = mcmc.gibbs.i_pert;
+    else
+        usep=[];
+        for ip=1:length(C{ic}.prior_current)
+            if (C{ic}.prior_current{ip}.ndim==0)
+                usep=[usep ip];
+            end
         end
     end
-    
     if length(usep)>0
         ip=ceil(rand(1)*length(usep));
         sippi_verbose(sprintf('%s: Running Gibbs sampling of im=%d at iteration %d',mfilename,ip,mcmc.i),1)
@@ -39,7 +42,7 @@ for ic=1:NC;
         logL=zeros(1,mcmc.gibbs.N_bins);
         pPrior=zeros(1,mcmc.gibbs.N_bins);
         for im=1:mcmc.gibbs.N_bins;
-            [m_test{im},prior_test{im}]=sippi_prior(prior,m);            
+            [m_test{im},prior_test{im}]=sippi_prior(prior,m);
             [d_test{im},forward]=sippi_forward(m_test{im},C{ic}.forward,prior_test{im},C{ic}.data);
             [logL(im)]=sippi_likelihood(d_test{im},C{ic}.data);
             
@@ -53,7 +56,7 @@ for ic=1:NC;
         elseif (strcmp(lower(C{ic}.prior_current{ip}.type),'gaussian'))
             logPrior =  log(normpdf(m_arr,C{ic}.prior_current{ip}.m0,C{ic}.prior_current{ip}.std));
         end
-
+        
         logPost = logL + logPrior;
         pPost=exp(logPost-max(logPost));
         
@@ -72,11 +75,17 @@ for ic=1:NC;
         im_use = find(m_sim==m_arr);
         
         
-         % move to current model
+        % move to current model
+        prior_ref=C{ic}.prior_current;
         C{ic}.prior_current=prior_test{im_use}; % NEEDED FOR GAUSSIAN TYPE PRIOR
+        % keep step length (all pars in seq Gibbs)
+        for im=1:length(prior_ref);
+            C{ic}.prior_current{im}.seq_gibbs=prior_ref{im}.seq_gibbs;
+        end
+        
         C{ic}.m_current=m_test{im_use};
         C{ic}.d_current=d_test{im_use};
-        C{ic}.logL_current=logL(im_use);        
+        C{ic}.logL_current=logL(im_use);
         C{ic}.L_current=logL(im_use);
         C{ic}.iacc=C{ic}.iacc+1;
         %C{ic}.mcmc.logL(C{ic}.iacc)=C{ic}.logL_current;
@@ -85,24 +94,26 @@ for ic=1:NC;
         
         %% plot
         if (i/mcmc.i_plot)==round(i/mcmc.i_plot)
-        figure_focus(63);
-        subplot(1,3,1);        
-        plot(m_arr,[logL;logPrior;logPost],'.')
-        xlabel(sprintf('m_%d',ip))
-        ylabel(sprintf('f(m_%d | f_{not %d})',ip,ip))
-        subplot(1,3,2);
-        plot(m_arr,pPost,'.',s_m_arr,s_pPost,'r-')
-        subplot(1,3,3);
-        plot(s_m_arr,s_cpdf,'k.','MarkerSize',30)
-        hold on
-        plot(m_sim,s_cpdf(i_sim),'r.','MarkerSize',30)
-        
-        hold off
-        
-        drawnow;
+            figure_focus(63);
+            subplot(1,3,1);
+            plot(m_arr,[logL;logPrior;logPost],'.')
+            xlabel(sprintf('m_%d',ip))
+            ylabel(sprintf('f(m_%d | f_{not %d})',ip,ip))
+            subplot(1,3,2);
+            plot(m_arr,pPost,'.',s_m_arr,s_pPost,'r-')
+            title(sprintf('f(m_%d | not m_%d), #ite=%d',ip,ip,mcmc.i))
+            
+            subplot(1,3,3);
+            plot(s_m_arr,s_cpdf,'k.','MarkerSize',30)
+            hold on
+            plot(m_sim,s_cpdf(i_sim),'r.','MarkerSize',30)
+            
+            hold off
+            
+            drawnow;
         end
     else
-            sippi_verbose(sprintf('%s: cannot perfomr Gibbs sampling on selected priors',mfilename));
+        sippi_verbose(sprintf('%s: cannot perfomr Gibbs sampling on selected priors',mfilename));
     end
     
     
