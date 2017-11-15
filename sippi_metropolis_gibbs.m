@@ -62,10 +62,20 @@ function [options,data,prior,forward,m_current]=sippi_metropolis_gibbs(data,prio
 %    options.mcmc.anneal.T_end=1; % End temperature for annealing
 %
 %    %% GIBBS SAMPLING of 1D prior TYPES AT SOME ITERATIONS
-%    options.mcmc.gibbs.Nm=31; % number random 1d realizations
-%    options.mcmc.gibbs.i_gibbs = 10; % Use Gibbs sampling for every i_gibbs
-%                            iterations
-%
+%    options.mcmc.gibbs.i_gibbs = 10; % Use Gibbs sampling for every i_gibbs iterations
+%                                       [-1]: no Gibbs sampling
+%    options.mcmc.gibbs.usedim=2; % determines whether Gibbs sampling is 
+%                                   performed on 1D[1] or 2D[2] conditional 
+%    options.mcmc.gibbs.i_pert = [1 2 3]% select the prior ids to use for Gibbs sampling (must be 1D)
+%                                       % if not set all 1D priors are
+%                                       % considered
+%    options.mcmc.gibbs.Nm=31; % number random realizaitions from the prior
+%                              % used to estimate the 1D/2D marginal
+%    
+
+
+options.mcmc.gibbs.i_pert = [im_gibbs]; % select the prior ids to use for Gibbs sampling (must be 1D)
+options.mcmc.gibbs.i_gibbs = 50
 %
 %    %% VERBOSITY
 %    The amount of text info displayed at the prompt, can be controlled by
