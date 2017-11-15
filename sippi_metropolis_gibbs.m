@@ -71,11 +71,6 @@ function [options,data,prior,forward,m_current]=sippi_metropolis_gibbs(data,prio
 %                                       % considered
 %    options.mcmc.gibbs.Nm=31; % number random realizaitions from the prior
 %                              % used to estimate the 1D/2D marginal
-%    
-
-
-options.mcmc.gibbs.i_pert = [im_gibbs]; % select the prior ids to use for Gibbs sampling (must be 1D)
-options.mcmc.gibbs.i_gibbs = 50
 %
 %    %% VERBOSITY
 %    The amount of text info displayed at the prompt, can be controlled by
