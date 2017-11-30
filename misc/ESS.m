@@ -4,6 +4,13 @@
 %   [ess,tau]=ESS(sample,n_use,doPlot,iLag)
 % 
 %   sample [nr,nm], nr:number of realizations, nm:number of model parameters
+%   n_use: The number of data point used to compute tau 
+%          if n_use = 0, n_use os copmuted as 4 times the index of the
+%          first negative value
+%   doPlot [0/1]: Plot the autocorelation and Tau
+%   iLag: The number of iteration between each realization, def=0;
+%
+%   if n_use=size(sample,1), then tau will tend be 0, and ess infinity
 %
 %  See also: multiESS
 function [ess,tau]=ESS(sample,n_use,doPlot,iLag)
@@ -12,10 +19,7 @@ function [ess,tau]=ESS(sample,n_use,doPlot,iLag)
 [nr,nm]=size(sample);
 
 if nargin<2
-    n_use = ceil(nr/4);
-end
-if isempty(n_use)
-    n_use = ceil(nr/4);
+    n_use = 0;
 end
 if n_use>nr
     n_use=nr-1;
@@ -29,7 +33,16 @@ for im=1:nm;
     % if nm>10, progress_txt(im,nm), end
     s=sample(:,im);
     ac=autocorrelation(s);
-    ac=ac(1:n_use); % do not use the whole time series
+    if n_use == 0;
+        i_neg=find(ac<0);       
+        if ~isempty(i_neg)
+            n_use = i_neg(1)*4;
+        else
+            n_use = length(ac);
+        end        
+    end
+    
+    ac=ac(2:n_use); % do not use the whole time series, and do not use autocorrelation at lag=0;
     
     tau(im) = (1+2*sum(ac)); 
     ess(im)=nr/tau(im);    
