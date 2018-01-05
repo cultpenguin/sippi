@@ -20,6 +20,7 @@ forward.is_slowness=1; % use slowness parameterization
 id=1;
 data{id}.d_obs=D.d_obs;
 data{id}.d_std=D.d_std;
+%data{id}.Ct=D.Ct;
 %data{id}.i_use=10:10:702;
 
 %% THE PRIOR
@@ -45,7 +46,6 @@ else
     prior{im}.cax=[-1 1].*.02+prior{im}.m0;
 end
 %% FORWARD MODEL
-D=load('AM13_data.mat');
 forward.sources=D.S;
 forward.receivers=D.R;
 %forward.is_slowness=1; % WE USE SLOWNESS PARAMETERIZAtiON
@@ -62,12 +62,12 @@ options.lsq.n_reals=50;
 %data{1}.i_use=1:20:702;
 
 %% FORWARD
-i_forward = 2;
+i_forward = 1;
 forward.forward_function='sippi_forward_traveltime';
 if i_forward==1;
     % STRAIGHT RAY FORWARD
     try; forward=rmfield(forward,'G');end
-    forward.type='fat';
+    forward.type='ray_2d';
     forward.linear=1;
     options.txt=[txt,'_',forward.type];
     
@@ -78,8 +78,7 @@ elseif i_forward==2;
     forward.linear=1;
     options.txt=[txt,'_',forward.type];
     forward.freq=.1;
-    [m_est_2,Cm_est_2,m_reals_2,options_2,data_2,prior_2,forward_2]=sippi_least_squares(data,prior,forward,options);
-    
+   
 elseif i_forward==3;
     % LINEAR BORN FORWARD
     try; forward=rmfield(forward,'G');end
@@ -91,7 +90,18 @@ end
 
 %% LEAST SQUARES
 [m_est,Cm_est,m_reals,options,data,prior,forward]=sippi_least_squares(data,prior,forward,options);
+figure(10);subfigure(1,1,1);clf;
+subplot(1,7,1)
+imagesc(prior{1}.x,prior{1}.y,reshape(m_est{1},length(prior{1}.y),length(prior{1}.x)));
+axis image
+try;caxis(prior{1}.cax);end
+print_mul(sprintf('%s_mest_lsq',options.txt))
 
 %% THIKONOV
-sippi_thikonov(data,prior,forward)
+for i=1:4;
+    close all;
+    options.lsq.tikhonov=i;
+    options.lsq.interactive = 1;
+    [m_est_tik,options_lsq]=sippi_tikhonov(data,prior,forward,options);   
+end
 

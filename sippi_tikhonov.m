@@ -19,7 +19,7 @@
 %              'error_sim', simulation through error simulation
 %              'visim', simulation through SGSIM of DSSIM
 %
-function [m_est,Cm_est,m_reals,options,data,prior,forward]=sippi_thikonov(data,prior,forward,options);
+function [m_est_out,options,data,prior,forward]=sippi_tikhonov(data,prior,forward,options);
 
 id=1;
 im=1;
@@ -35,6 +35,10 @@ if ~isfield(options.lsq,'save_data')
     options.lsq.save_data=1;
 end
 
+% interactive?
+if ~isfield(options.lsq,'interactive')
+    options.lsq.interactive=0;
+end
 
 % plot?
 if ~isfield(options.lsq,'plot')
@@ -84,7 +88,7 @@ else
     end
 end
 
-%if ~isfield(options.lsq,'Cd');
+if ~isfield(options.lsq,'Cd');
 % No correlated noise is set...
 if isfield(data{id},'d_std');
     if length(data{id}.d_std)==1;
@@ -100,7 +104,7 @@ if isfield(data{id},'d_var');
         options.lsq.Cd=diag(data{1}.d_var);
     end
 end
-%end
+end
 
 
 if ~isfield(options.lsq,'Cd');
@@ -158,6 +162,10 @@ sippi_verbose(sprintf('%s: setting options.lsq.d_obs=data{%d}.d_obs',mfilename,i
 
 
 %% THIKONOV
+if ~isfield(options.lsq,'tikhonov');options.lsq.tikhonov=4;end
+options.txt=[options.txt,'_',num2str(options.lsq.tikhonov)];
+    
+
 x = prior{1}.x;nx=length(x);
 y = prior{1}.y;ny=length(y);
 
@@ -168,119 +176,126 @@ e_min = -3;
 e_max = 3;
 e_array = logspace(e_min,e_max, e_N);
 for i=1:length(e_array);
+    progress_txt(i,e_N,mfilename)
     e = e_array(i);
     
-    % classical
-    %m_est = inv(options.lsq.G'*options.lsq.G + e.*I)*options.lsq.G'*(options.lsq.d_obs(:));
-    % general, m0
-    %m_est = options.lsq.m0 + inv(options.lsq.G'*options.lsq.G + e^2.*I)*options.lsq.G'*(options.lsq.d_obs(:)-options.lsq.G*options.lsq.m0);
+    if options.lsq.tikhonov==1
+        % classical
+        options.lsq.m0=0;
+        m_est{i} = inv(options.lsq.G'*options.lsq.G + e.*I)*options.lsq.G'*(options.lsq.d_obs(:));
+    elseif options.lsq.tikhonov==2
+        % general, m0
+        m_est{i} = options.lsq.m0 + inv(options.lsq.G'*options.lsq.G + e^2.*I)*options.lsq.G'*(options.lsq.d_obs(:)-options.lsq.G*options.lsq.m0);
+    elseif options.lsq.tikhonov==3
+        % general, m0, Cd, weigthed
+        m_est{i} = options.lsq.m0 + inv(options.lsq.G'*options.lsq.Cd*options.lsq.G + e^2.*I)*options.lsq.G'*options.lsq.Cd*(options.lsq.d_obs(:)-options.lsq.G*options.lsq.m0);
+    elseif options.lsq.tikhonov==4
+        % general, m0, Cd, Cm
+        m_est{i} = options.lsq.m0 + inv(options.lsq.G'*options.lsq.Cd*options.lsq.G + e^2.*inv(options.lsq.Cm))*options.lsq.G'*options.lsq.Cd*(options.lsq.d_obs(:)-options.lsq.G*options.lsq.m0);   
+    end
     
-    % general, m0, Cm
-    %m_est = options.lsq.m0 + inv(options.lsq.G'*options.lsq.G + e^2.*I)*options.lsq.G'*(options.lsq.d_obs(:)-options.lsq.G*options.lsq.m0);
-    
-    % Generalized w. PROPER weight matrices
-    m_est = options.lsq.m0 + inv(options.lsq.G'*options.lsq.Cd*options.lsq.G + e^2.*inv(options.lsq.Cm))*options.lsq.G'*options.lsq.Cd*(options.lsq.d_obs(:)-options.lsq.G*options.lsq.m0);
-    %m_est = options.lsq.m0 + inv(options.lsq.G'*options.lsq.Cd*options.lsq.G + e^2.*I)*options.lsq.G'*options.lsq.Cd*(options.lsq.d_obs(:)-options.lsq.G*options.lsq.m0);
-    
-    
-    m_norm(i) = norm(m_est - options.lsq.m0);
-    d_norm(i) = norm(options.lsq.d_obs - options.lsq.G*m_est);
-    
-    
-    figure(1);
-    subplot(2,ceil(e_N/2),i);
-    imagesc(x,y,reshape(m_est,ny,nx));
-    try;caxis(prior{1}.cax);end
-    axis image;
-    colorbar
-    drawnow;
-    
-    
-     
-    
+    m_norm(i) = norm(m_est{i} - options.lsq.m0);
+    d_norm(i) = norm(options.lsq.d_obs - options.lsq.G*m_est{i});
     
 end
+
+%% PLOT
+figure(3);
+plot(m_norm,d_norm,'k-*')
+xlabel('||m-m0||')
+ylabel('||d-Gm||')
+
+% FIND OPTIMAL E
+if options.lsq.interactive == 1;
+    figure(3);
+    pos=ginput(1);
+    dd=abs(d_norm-pos(2));
+    ic=find(dd==min(dd));
+    e_opt = e_array(ic)
+    
+else
+    % find max curvuature
+    c=abs(curvuature_2d(m_norm,d_norm));
+    ic=find(c==max(c));ic=ic(1);
+    e_opt = e_array(ic)
+    %figure(1);clf
+    %semilogx(e_array,c);
+end
+% find best e using noise level
+norm_noise = sqrt(length(data{1}.d_obs))*data{1}.d_std(1);
+dd_norm = abs(norm_noise-d_norm);
+ic_noise=find(dd_norm==min(dd_norm));ic_noise=ic_noise(1);
+e_opt_noise =  e_array(ic_noise)
+
+
+figure(3);
+hold on
+plot(m_norm(ic),d_norm(ic),'r*','MarkerSize',12)
+text(m_norm(ic)*1.05,d_norm(ic)*1.01,sprintf('e = %3.1e',e_array(ic)))
+hold off
+print_mul(sprintf('%s_Lcurve',options.txt))
+
+hold on
+norm_noise = sqrt(length(data{1}.d_obs))*data{1}.d_std(1);
+xl=xlim;
+plot(xl,[1 1].*norm_noise,'b--');
+hold off
+print_mul(sprintf('%s_Lcurve_N',options.txt))
+
+
 
 %%
-figure(3);
-plot(m_norm,d_norm,'-*')
-xlabel('||m-m0||')
-ylabel('||d-Gm||')
-    
+
+m_est_out{1} = m_est{ic};
+
+%%
+figure(2);subfigure(1,1,1);clf;
+N_plot=5;
+i_plot=ceil(linspace(1,e_N,N_plot));
+for j=1:N_plot;
+    i=i_plot(j);
+    subplot(1,N_plot+2,j)
+    imagesc(x,y,reshape(m_est{i},ny,nx));
+    axis image
+    try;caxis(prior{1}.cax);end
+    title(sprintf('e=%3.1e',e_array(i)))
+end
+figure(2);
+subplot(1,N_plot+2,N_plot+1)
+imagesc(x,y,reshape(m_est{ic},ny,nx));
+axis image
+try;caxis(prior{1}.cax);end
+title(sprintf('Optimal L \n e=%3.1e',e_opt))
+
+subplot(1,N_plot+2,N_plot+2)
+imagesc(x,y,reshape(m_est{ic_noise},ny,nx));
+axis image
+try;caxis(prior{1}.cax);end
+title(sprintf('Optimal (noise)\n e=%3.1e',e_opt))
+
+
+print_mul(sprintf('%s_mest',options.txt))
+
+
+% ALSO PLOT THE MODEL THAT MATCH THE NOISEåååååå
+
+%%
+
+
+
+%% LOG LOG
+%% find max curvuature
+c2=curvuature_2d(log10(m_norm),log10(d_norm));
+ic2=find(c2==max(c2));ic2=ic2(1);
+e_opt2 = e_array(ic2);
 figure(4);
 loglog(m_norm,d_norm,'-*')
+hold on
+plot(m_norm(ic2),d_norm(ic2),'r*','MarkerSize',12)
+text(m_norm(ic2)*1.05,d_norm(ic2)*1.01,sprintf('e = %3.1e',e_array(ic2)))
+hold off
 xlabel('||m-m0||')
 ylabel('||d-Gm||')
-    
+print_mul(sprintf('%s_logLcurve',options.txt))    
 
-
-return
-
-
-
-%% SCALE M_EST
-x=prior{im}.x;y=prior{im}.y;z=prior{im}.z;
-if prior{im}.dim(3)>1
-    % 3D
-    m_est{im}=reshape(m_est{im},length(y),length(x),length(z));
-    
-elseif prior{im}.dim(2)>1
-    % 2D
-    m_est{im}=reshape(m_est{im},length(y),length(x));
-    Cm_est_diag = reshape(diag(Cm_est{im}),length(y),length(x));    
-else
-    % 1D
-    Cm_est_diag = diag(Cm_est{im});
-end
-
-
-%% EXPORT REALIZATIONS TO DISK
-if (options.lsq.save_data==1)
-    
-    options.cwd=pwd;
-    try;
-        mkdir(options.txt);
-    end
-    % REALS
-    filename_asc{im}=sprintf('%s%s%s_m%d%s',options.txt,filesep,options.txt,im,'.asc');
-    fid=fopen(filename_asc{im},'w');
-    for i=1:options.lsq.n_reals
-        fprintf(fid,' %10.7g ',m_reals(:,i));
-        fprintf(fid,'\n');
-    end
-    fclose(fid);
-    
-    
-    filename_m_est{im}=sprintf('%s%s%s_m%d_mest%s',options.txt,filesep,options.txt,im,'.asc');
-    sippi_verbose(sprintf('%s: Writing m_est to %s',mfilename,filename_m_est{im}),1);
-    %fid=fopen(filename_m_est{im},'w');fprintf(fid,' %10.7g ',m_est(:));fclose(fid);
-    
-    filename_Cm_est{im}=sprintf('%s%s%s_m%d_Cmest%s',options.txt,filesep,options.txt,im,'.asc');
-    sippi_verbose(sprintf('%s: Writing Cm_est to %s',mfilename,filename_Cm_est{im}),1);
-    %fid=fopen(filename_Cm_est{im},'w');fprintf(fid,' %10.7g ',Cm_est(:));fclose(fid);
-    
-    filename_mat=sprintf('%s%s%s.mat',options.txt,filesep,options.txt);
-    sippi_verbose(sprintf('%s: Writing %s',mfilename,filename_mat),1);
-    save(filename_mat);
-end
-%% PLOT
-if options.lsq.plot==1;
-    figure(71);clf;
-    subplot(1,2,1);
-    m{1}=m_est;
-    sippi_plot_prior(prior,m,im,0,gca);
-    colorbar
-    subplot(1,2,2);
-    m{1}=Cm_est_diag;
-    sippi_plot_prior(prior,m,im,0,gca);
-    if isfield(prior{im},'cax_var');
-        caxis(prior{im}.cax_var);
-    else
-        caxis([0 max(m{1}(:))])
-    end
-    colorbar
-    filename_png=sprintf('%s%s%s_mEst_CmEst.mat',options.txt,filesep,options.txt);
-    print_mul(filename_png);
-end
-
-
+save T
