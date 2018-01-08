@@ -230,8 +230,8 @@ e_opt_noise =  e_array(ic_noise)
 
 figure(3);
 hold on
-plot(m_norm(ic),d_norm(ic),'r*','MarkerSize',12)
-text(m_norm(ic)*1.05,d_norm(ic)*1.01,sprintf('e = %3.1e',e_array(ic)))
+plot(m_norm(ic),d_norm(ic),'r.','MarkerSize',32)
+text(m_norm(ic)*1.15,d_norm(ic)*1.15,sprintf('e = %3.1e',e_array(ic)))
 hold off
 print_mul(sprintf('%s_Lcurve',options.txt))
 
@@ -277,7 +277,7 @@ title(sprintf('Optimal (noise)\n e=%3.1e',e_opt))
 print_mul(sprintf('%s_mest',options.txt))
 
 
-% ALSO PLOT THE MODEL THAT MATCH THE NOISEåååååå
+% ALSO PLOT THE MODEL THAT MATCH THE NOISEï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
 
 %%
 

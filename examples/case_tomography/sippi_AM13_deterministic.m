@@ -93,9 +93,15 @@ end
 figure(10);subfigure(1,1,1);clf;
 subplot(1,7,1)
 imagesc(prior{1}.x,prior{1}.y,reshape(m_est{1},length(prior{1}.y),length(prior{1}.x)));
-axis image
-try;caxis(prior{1}.cax);end
+axis image;try;caxis(prior{1}.cax);end
 print_mul(sprintf('%s_mest_lsq',options.txt))
+
+for i=2:7;
+    subplot(1,7,i)
+    imagesc(prior{1}.x,prior{1}.y,reshape(m_reals(:,i),length(prior{1}.y),length(prior{1}.x)));
+    axis image;try;caxis(prior{1}.cax);end
+end
+print_mul(sprintf('%s_mest_lsq_reals',options.txt))
 
 %% THIKONOV
 for i=2;
