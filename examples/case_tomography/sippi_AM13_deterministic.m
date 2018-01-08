@@ -1,6 +1,6 @@
 % sippi_AM13_least_squares 2D least squares inversion  
 %
-% Example of inverting 2D Arrenæs tomographic data (AM13)
+% Example of inverting 2D Arrenï¿½s tomographic data (AM13)
 % using least squares inversion
 %
 % See http://dx.doi.org/10.1016/j.cageo.2012.10.001
@@ -62,7 +62,7 @@ options.lsq.n_reals=50;
 %data{1}.i_use=1:20:702;
 
 %% FORWARD
-i_forward = 1;
+i_forward = 2;
 forward.forward_function='sippi_forward_traveltime';
 if i_forward==1;
     % STRAIGHT RAY FORWARD
@@ -98,7 +98,7 @@ try;caxis(prior{1}.cax);end
 print_mul(sprintf('%s_mest_lsq',options.txt))
 
 %% THIKONOV
-for i=1:4;
+for i=2;
     close all;
     options.lsq.tikhonov=i;
     options.lsq.interactive = 1;
