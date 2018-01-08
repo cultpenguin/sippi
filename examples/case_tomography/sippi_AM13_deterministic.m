@@ -62,7 +62,7 @@ options.lsq.n_reals=50;
 %data{1}.i_use=1:20:702;
 
 %% FORWARD
-i_forward = 1;
+i_forward = 2;
 forward.forward_function='sippi_forward_traveltime';
 if i_forward==1;
     % STRAIGHT RAY FORWARD
