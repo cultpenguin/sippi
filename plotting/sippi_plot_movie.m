@@ -84,6 +84,8 @@ options.height=10;
 options.w0=2;
 options.h0=2;
 
+FrameRate = 30;
+Quality = 95;
 %%
 for im=im_array
     
