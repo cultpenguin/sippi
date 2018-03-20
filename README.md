@@ -21,21 +21,37 @@ Then start Matlab and add the appropriate paths using
 Please go to (http://sippi.sourceforge.net) for examples and details on how to use SIPPI.	
 
 #### Installation from github
-The latest version of SIPPI can be downloaded from github. This is the version the developers use. The documentation is usually slightly outdated compared to the github version.
+The latest version of SIPPI can be downloaded from github. This is the version the developers use. The documentation is usually slightly outdated compared to the github version. The latest copy of SIPPI, including mGstat and MPSLIB, can be downloaded using (most users of SIPPI would need this):
 
-SIPPI makes use of the mGstat toolbox. To download and use both SIPPI and mGstat first download the latest versions of both from github:
+     cd INSTALL_DIR
+     git clone --recursive https://github.com/cultpenguin/sippi.git SIPPI
 
-      cd INSTALL_DIR
-      git clone  https://github.com/cultpenguin/sippi.git SIPPI
-      git clone  https://github.com/cultpenguin/mgstat.git mGstat
+Then add a path to SIPPI
 
-Then add a path to both SIPPI, mGstat in Matlab using:
-
-     >> addpath INSTALL_DIR/mGstat
      >> addpath INSTALL_DIR/SIPPI
      >> sippi_set_path
 
-See also http://sippi.sourceforge.net/htmldoc/Installation.html for more details in manual installation.
+To update SIPPI, including submodules (mGstat and MPSLIB) use
+
+     git pull --recurse-submodules
+
+     
+SIPPI, mGstat and MPSLIB can also be downloaded seperately (a develope weould probably prefer this) from github using 
+
+      cd INSTALL_DIR
+      git clone --depth 1 https://github.com/cultpenguin/sippi.git SIPPI
+      git clone --depth 1 https://github.com/cultpenguin/mgstat.git SIPPI/toolboxes/mGstat
+      git clone --depth 1 https://github.com/ergosimulation/mpslib.git SIPPI/toolboxes/MPSLIB
+     
+
+Then add a path to both SIPPI, mGstat in Matlab using:
+
+     >> addpath INSTALL_DIR/SIPPI
+     >> addpath INSTALL_DIR/mGstat
+     >> addpath INSTALL_DIR/MPSLIB/matlab
+     >> sippi_set_path
+
+See also https://www.gitbook.com/book/cultpenguin/sippi for more details on manual installation.
 
 ### DIRECTORIES :
 
@@ -54,7 +70,9 @@ See also http://sippi.sourceforge.net/htmldoc/Installation.html for more details
          http://www.mathworks.com/matlabcentral/fileexchange/24531-accurate-fast-marching
 
 +'mGstat' -> geostatistical toolbox for Matlab, by Thomas M Hansen and Knud S Cordua
-         http://mgstat.sourceforge.net
+         http://github.com/cultpenguin/mgstat
+
++'MPSLIB' --> Multiple Point Statistics C++ library, https://github.com/ergosimulation/mpslib
 
 +'tomography' -> A few m-files realated to the cross hole tomographic examples
 
