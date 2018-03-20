@@ -1,12 +1,12 @@
-% grl_nn 
+% grl_nn
 clear all;close all
 
-useTargetDist=0;
-createTrainingSet=1;
-createReferenceModel=1;
+useTargetDist=1;
+createTrainingSet=0;
+createReferenceModel=0;
 
 try
-system(['rm -fr run00*  obs*.mat']);
+    system(['rm -fr run00*  obs*.mat']);
 end
 
 Ntrain=40000; % size sample for neural network
@@ -15,7 +15,7 @@ TrainSizes=[1000 5000 10000 20000 40000]; % size of subset to consider for neura
 splitData=3; % split data into smaller sections
 
 % neural network setting
-epochs=30000; % number of iterations optizing the neural networl
+epochs=30000; % number of iterations optizing the neural network
 hiddenLayerSize=80; % number for hidden layers in nerual network
 nite=1000000; % number of iterations in Monte Carlo sampler
 
@@ -57,14 +57,14 @@ prior{im}.x=[-.5:dx:6.5];
 prior{im}.x=[0:dx:7];
 prior{im}.y=[0:dx:13];
 prior{im}.cax=[-1 1].*.03+prior{im}.m0;
- prior{1}.m0_use=prior{1}.m0;
+prior{1}.m0_use=prior{1}.m0;
 
 if useTargetDist==1;
     d_target=[randn(1,100)*.003-0.01 randn(1,100)*.003+0.02]+prior{im}.m0;
     prior{im}.d_target=d_target;
     prior{im}.m0=0; %% MAKE SURE sippi_forward_traveltime tests for a non-zero velocity
     prior{im}.m0_use=mean(d_target);
-
+    
 end
 
 
@@ -76,12 +76,12 @@ if createReferenceModel==1
     NM=prod(size(m_ref{1}));
     % reference data
     [d_ref,forward]=sippi_forward(m_ref,forward,prior);
-
-    % data    
+    
+    % data
     data{1}.d_ref=d_ref{1};
     data{1}.d_noise=randn(size(d_ref{1})).*data{1}.d_std;
     data{1}.d_obs=data{1}.d_ref+data{1}.d_noise;
-
+    
     
     
     % compute reference data in m0
@@ -92,10 +92,10 @@ if createReferenceModel==1
     [d_ref0,forward0]=sippi_forward(m_ref0,forward,prior);
     d0=d_ref0{1};
     
-    save(sprintf('gji_ReferenceModel_t%d',useTargetDist)) 
+    save(sprintf('gji_ReferenceModel_t%d',useTargetDist))
 else
     cTS=createTrainingSet;
-    load(sprintf('gji_ReferenceModel_t%d',useTargetDist)) 
+    load(sprintf('gji_ReferenceModel_t%d',useTargetDist))
     createTrainingSet=cTS;
 end
 
@@ -103,7 +103,7 @@ end
 if createTrainingSet==1
     ATTS=zeros(length(m_ref{1}(:)),Ntrain);
     DATA=zeros(length(d_ref{1}(:)),Ntrain);
-
+    
     iplot=1;
     t0=now;
     for i=1:Ntrain;
@@ -123,19 +123,19 @@ if createTrainingSet==1
     save(sprintf('gji_%s_NM%d_NT%d_t%d',forward.type,NM,Ntrain,useTargetDist));
 else
     load(sprintf('gji_%s_NM%d_NT%d_t%d',forward.type,NM,Ntrain,useTargetDist));
-    %load gji_fd_NM2376_NT5000_t0    
+    %load gji_fd_NM2376_NT5000_t0
 end
 
 
 %% E: SETUP MULTIPLE FORWARD MODELS
 
-if ~exist('splitData'); 
+if ~exist('splitData');
     splitData=3; % SPLIT DATA FOR NN
 end
-if ~exist('epochs'); 
-    epochs=100000; %   
+if ~exist('epochs');
+    epochs=100000; %
 end
-if ~exist('hiddenLayerSize'); 
+if ~exist('hiddenLayerSize');
     hiddenLayerSize=80;
 end
 
@@ -147,7 +147,7 @@ forward_nn.DATA=DATA;
 forward_nn.d0=d0;
 clear DATA ATTS
 forward_nn.splitData=splitData;
-forward_nn.epochs=epochs;;  
+forward_nn.epochs=epochs;;
 forward_nn.hiddenLayerSize=hiddenLayerSize;
 forward_nn.max_nm=1e+10;
 txt=sprintf('gji_NM%d_DX%d_%s_NT%d_SD%0d_NH%d_t%d',NM,dx*100,forward.type,Ntrain,forward_nn.splitData,forward_nn.hiddenLayerSize,useTargetDist);
@@ -156,7 +156,7 @@ disp(sprintf('%s: setting name ''%s''',mfilename,txt));
 
 % setup all forward models
 i_forward=0;
-if ~exist('TrainSizes'); 
+if ~exist('TrainSizes');
     TrainSizes=[100 200];
 end
 for n_use=TrainSizes;
@@ -164,8 +164,8 @@ for n_use=TrainSizes;
         i_forward=i_forward+1;
         f_mul{i_forward}=forward_nn;
         f_mul{i_forward}.ATTS=forward_nn.ATTS(:,1:n_use);
-        f_mul{i_forward}.DATA=forward_nn.DATA(:,1:n_use);       
-        txt_use=sprintf('gji_NM%d_DX%d_%s_NT%d_SD%d_NH%d',NM,dx*100,forward.type,n_use,forward_nn.splitData,forward_nn.hiddenLayerSize);
+        f_mul{i_forward}.DATA=forward_nn.DATA(:,1:n_use);
+        txt_use=sprintf('gji_NM%d_DX%d_%s_NT%d_SD%d_NH%d_t%d',NM,dx*100,forward.type,n_use,forward_nn.splitData,forward_nn.hiddenLayerSize,useTargetDist);
         f_mul{i_forward}.mfunc_string=txt_use;
     end
 end
@@ -184,7 +184,6 @@ f_mul{i_forward}.freq=0.1;
 f_mul{i_forward}.r=2;
 f_mul{i_forward}.normalize_vertical=0;
 
-
 %% F: EVALUATE forward models once to setup NN and Linear operators
 for i=1:length(f_mul);
     t1=now;
@@ -195,14 +194,15 @@ for i=1:length(f_mul);
 end
 save(sprintf('%s_forward',txt))
 
+
 %% G: Estimate modeling errors
-if ~exist('Nr_modeling'); 
+if ~exist('Nr_modeling');
     Nr_modeling=6000;
 end
 [Ct,dt,dd,d_full,d_app]=sippi_compute_modelization_forward_error(forward,f_mul,prior,Nr_modeling);
 
 %% H: Setup one data structure per forward model, with the correct modeling error
-for i=1:length(f_mul);    
+for i=1:length(f_mul);
     %s=sum(abs(dd{5}));
     %ii=find(s<180);
     data_mul{i}=data;
@@ -214,8 +214,8 @@ save(sprintf('%s_modelerr',txt))
 
 
 %% I: Perform probabilistic inversion using extended Metropolis sampling
-if ~exist('nite'); 
-    nite=1000000; % 
+if ~exist('nite');
+    nite=1000000; %
 end
 options.mcmc.m_ref=m_ref;
 options.mcmc.nite=nite;   % [1] : Number if iterations
@@ -243,7 +243,7 @@ for i=1:(length(f_mul));
             else
                 options.txt=f_mul{i}.mfunc;
             end
-                
+            
         else
             options.txt=sprintf('%s_%s',txt,f_mul{i}.type);
         end
@@ -257,6 +257,12 @@ for i=1:(length(f_mul));
 end
 
 save(sprintf('%s_inverted',txt),'-v7.3')
+
+%% clean up
+try
+    system(['rm -fr run00*  obs*.mat']);
+end
+
 
 %% plot some results..
 gji_plot;

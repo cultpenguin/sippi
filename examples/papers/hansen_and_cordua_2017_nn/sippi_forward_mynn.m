@@ -35,11 +35,20 @@ if ~isfield(forward,'hiddenLayerSize');
     forward.hiddenLayerSize=10;;
 end
 
-if size(forward.ATTS,2)<25000
-    useGPU=1;
-else
+
+%% CHECK FOR ENOUGH MEMORY ON GPU
+try 
+   gi=gpuDevice;
+   if (gi.AvailableMemory/prod(size(forward.ATTS)))>50
+       useGPU=1;
+   else
+       useGPU=0;
+   end
+  
+catch
     useGPU=0;
 end
+
 trainParam.epochs=forward.epochs;
                 
 

@@ -116,7 +116,10 @@ for im=im_array
                     delete(vname);
                 end
             end
-            
+
+	    FrameRate = 30;
+            Quality = 95;
+		
             writerObj = VideoWriter(vname);
             %writerObj = VideoWriter(vname,'MPEG-4'); % Awful quality ?
             writerObj.FrameRate=FrameRate;
