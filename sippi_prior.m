@@ -268,7 +268,9 @@ for im=im_array;
     elseif (strcmp(upper(prior{im}.type),'VORONOI'))
         %% THE VORONOI PRIOR (Handled later)
         run_voronoi=[run_voronoi im];
-        
+   
+    elseif (strcmp(upper(prior{im}.type),'CONVERT'))
+        %% WILL BE HANDLED AT THE VERY END!!
     else
         %% OTHER TYPES OF PRIORS ('GAUSSAIN', 'CHOLESKY', 'VISIM'
         % available as sippi_prior_TYPE
@@ -285,7 +287,6 @@ for im=im_array;
             end
             m_propose{im}=m_p{1};
             prior{im}=p{1};
-            
         else
             disp(sprintf('%s : ''%s'' type prior model not supported',mfilename,prior{im}.type));
         end
@@ -537,3 +538,24 @@ for im=im_array;
     end
 end
 
+% CHECK FOR CONVERTED TYPE PRIOR
+% This allow calling an m-file that combines a number of prior models into
+% a unique type of prior...
+for im=1; % ONLY FOR FIRST PRIOR TYPE
+    if (strcmp(lower(prior{im}.type),'convert'))
+        if isfield(prior{im},'m_file')
+            m_file = prior{im}.m_file;
+            m_propose=feval(m_file,prior,m_propose);
+        end
+    else
+        disp(sprintf('%s: Could not use ''convert'' type prior'))
+    end
+end
+
+
+
+
+    
+    
+    
+    

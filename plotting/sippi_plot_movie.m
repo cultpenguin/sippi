@@ -84,9 +84,8 @@ options.height=10;
 options.w0=2;
 options.h0=2;
 
-FrameRate=10;
-Quality=90;
-
+FrameRate = 30;
+Quality = 95;
 %%
 for im=im_array
     
@@ -119,6 +118,9 @@ for im=im_array
                     delete(vname);
                 end
             end
+            
+            FrameRate = 25;
+            Quality = 95;
             
             writerObj = VideoWriter(vname);
             %writerObj = VideoWriter(vname,'MPEG-4'); % Awful quality ?
