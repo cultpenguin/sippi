@@ -230,8 +230,8 @@ e_opt_noise =  e_array(ic_noise)
 
 figure(3);
 hold on
-plot(m_norm(ic),d_norm(ic),'r*','MarkerSize',12)
-text(m_norm(ic)*1.05,d_norm(ic)*1.01,sprintf('e = %3.1e',e_array(ic)))
+plot(m_norm(ic),d_norm(ic),'k.','MarkerSize',42)
+text(m_norm(ic)*1.15,d_norm(ic)*1.15,sprintf('\\alpha = %3.1e',e_array(ic)))
 hold off
 print_mul(sprintf('%s_Lcurve',options.txt))
 
@@ -258,7 +258,7 @@ for j=1:N_plot;
     imagesc(x,y,reshape(m_est{i},ny,nx));
     axis image
     try;caxis(prior{1}.cax);end
-    title(sprintf('e=%3.1e',e_array(i)))
+    title(sprintf('\\alpha=%3.1e',e_array(i)))
 end
 figure(2);
 subplot(1,N_plot+2,N_plot+1)
@@ -271,13 +271,13 @@ subplot(1,N_plot+2,N_plot+2)
 imagesc(x,y,reshape(m_est{ic_noise},ny,nx));
 axis image
 try;caxis(prior{1}.cax);end
-title(sprintf('Optimal (noise)\n e=%3.1e',e_opt))
+title(sprintf('Optimal (noise)\n e=%3.1e',e_opt_noise))
 
 
 print_mul(sprintf('%s_mest',options.txt))
 
 
-% ALSO PLOT THE MODEL THAT MATCH THE NOISEåååååå
+% ALSO PLOT THE MODEL THAT MATCH THE NOISEï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
 
 %%
 
@@ -289,10 +289,10 @@ c2=curvuature_2d(log10(m_norm),log10(d_norm));
 ic2=find(c2==max(c2));ic2=ic2(1);
 e_opt2 = e_array(ic2);
 figure(4);
-loglog(m_norm,d_norm,'-*')
+semilogx(m_norm,d_norm,'-*')
 hold on
-plot(m_norm(ic2),d_norm(ic2),'r*','MarkerSize',12)
-text(m_norm(ic2)*1.05,d_norm(ic2)*1.01,sprintf('e = %3.1e',e_array(ic2)))
+plot(m_norm(ic2),d_norm(ic2),'k.','MarkerSize',42)
+text(m_norm(ic2)*1.05,d_norm(ic2)*1.01,sprintf('\\alpha = %3.1e',e_array(ic2)))
 hold off
 xlabel('||m-m0||')
 ylabel('||d-Gm||')

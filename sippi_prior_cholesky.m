@@ -107,8 +107,6 @@ else
     else
         [z,D,prior{ip}.L,prior{ip}.z_rand]=gaussian_simulation_cholesky(0,prior{ip}.Cmat,nsim,is_chol);
     end
-
-
 end
 
 % return data to m_propose
