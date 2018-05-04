@@ -30,7 +30,11 @@ if nargin>3
         try
         for ip=1:length(prior);
             sippi_plot_prior(prior,options.mcmc.m_ref,ip,1,20+ip-1); 
-            title(sprintf('Reference Prior #%d',ip))
+            try
+                title(sprintf('Reference Prior %s (%d)',prior{ip}.name,ip))            
+            catch
+                title(sprintf('Reference Prior #%d',ip))
+            end
         end
         catch
             keyboard

@@ -168,6 +168,7 @@ for k=1:(length(im_onedim)-1)
 end
 
 %% 2d marginals (image) on one plot
+try
 if (pl_marg2d_image_combined==1)&(length(im_onedim)>0);
     fn=figure_focus(71);clf;set_paper('landscape');
     for j=1:(n-1)
@@ -180,7 +181,7 @@ if (pl_marg2d_image_combined==1)&(length(im_onedim)>0);
             
             try
                 [Z,x_arr,y_arr] = hist2(r1(:),r2(:),x_arr,y_arr);
-            catch
+            catch                
                 [Z,x_arr,y_arr] = hist2(r1(:),r2(:));
             end
             isp=(j-1)*(n-1)+(k-1);
@@ -225,7 +226,7 @@ if (pl_marg2d_image_combined==1)&(length(im_onedim)>0);
     end
     print_mul(sprintf(figure_name,fname),options.plot.hardcopy_types)
 end
-
+end
 %% 2d marginals (scatter) on one plot
 if (pl_marg2d_scatter_combined==1)&(length(im_onedim)>0);
     FS = max([12-n,6]);
@@ -254,8 +255,8 @@ if (pl_marg2d_scatter_combined==1)&(length(im_onedim)>0);
                 end
             end
             box on
-            set(gca,'xlim',cax(j,:));
-            set(gca,'ylim',cax(k,:));
+            try;set(gca,'xlim',cax(j,:));end
+            try,set(gca,'ylim',cax(k,:));end
             %colormap(1-gray);
         end
     end

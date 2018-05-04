@@ -66,7 +66,6 @@ forward.forward_function='sippi_forward_traveltime';
 forward.type='ray';
 forward.linear=1;
 options.txt=[txt,'_',forward.type];
-
 [m_est_1,Cm_est_1,m_reals_1,options_1,data_1,prior_1,forward_1]=sippi_least_squares(data,prior,forward,options);
 
 %% LINEAR FAT FORWARD

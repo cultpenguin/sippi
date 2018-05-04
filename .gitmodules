@@ -1,3 +1,6 @@
 [submodule "toolboxes/mGstat"]
 	path = toolboxes/mGstat
-	url = https://github.com/cultpenguin/mGstat
+	url = https://github.com/cultpenguin/mgstat
+[submodule "toolboxes/MPSLIB"]
+	path = toolboxes/MPSLIB
+	url = https://github.com/ergosimulation/mpslib

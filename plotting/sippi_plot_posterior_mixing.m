@@ -22,6 +22,7 @@ function [cc_mix]=sippi_plot_posterior_mixing(o,txt,Nplot);
 Nc=length(o);
 if nargin<2,
     txt=sprintf('test_mixing');
+    txt=[o{1}.txt,'_mixing']
 end
 if nargin<3,
     Nplot=Nc;
@@ -30,6 +31,7 @@ io_arr=1:Nplot;
 
 %% LOAD DATA
 skip_seq_gibbs=0;
+disp(sprintf('%s: reading data ...',mfilename))
 for io=1:Nc;
     [reals{io},etype_mean{io},etype_var{io},reals_all{io},reals_ite{io}]=sippi_get_sample(o{io}.txt,1,15,skip_seq_gibbs);
 end
@@ -40,9 +42,10 @@ load(sprintf('%s%s%s',o{1}.txt,filesep,o{1}.txt),'prior');
 if isfield(options.mcmc,'m_ref')
     is_m_ref=1;
 else
-    is_m_ref=0
+    is_m_ref=0;
 end
     
+
 
 %% IMAGE ETYPE + REF
 figure(1);clf;
@@ -63,10 +66,27 @@ for io=1:Nc;
     imagesc(prior{1}.x,prior{1}.y,etype_mean{io});
     axis image
     caxis(prior{1}.cax)    
-    title(sprintf('RUN #%02d',io))
+    title(sprintf('Chain #%02d',io))
 end
 axis image
 print_mul(sprintf('%s_etype',txt))   
+grid on
+
+%% logL
+figure(3);clf;
+for io=1:Nc;
+    load([o{io}.txt,filesep,o{io}.txt,'.mat'],'C')    
+    h(io)=plot(C{1}.mcmc.logL,'-');
+    %sippi_plot_loglikelihood(C{1}.mcmc.logL)
+    hold on
+    L{io}=sprintf('Chain %d',io);
+end
+hold off
+legend(L,'Location','NorthEastOutside')
+xlabel('Iteration number')
+ylabel('log-likelihood')
+print_mul(sprintf('%s_logL',txt))   
+
 
 %% COMPUTE CC
 clear c* h*
@@ -110,14 +130,15 @@ for io=io_arr%;:length(o);;
         figure_focus(10+io);subplot(2,1,1);
     
         p2(io_end)=plot(i_ax,cc_mix{io}{io_end},'k-','LineWidth',lw);
-        try;set(p2,'color',col);end
+        set(p2(io_end),'color',col);
         ih=ih+1;leg{ih}=sprintf('CC_{%d,%d}',io,io_end);
         if ih==1; hold on; end
         
-        hx=linspace(-1,1,21);
+        hx=linspace(-1,1,41);
         [h(io_end,:)]=hist(cc_mix{io}{io_end},hx);
         
     end
+    p_all=p2;
     if (is_m_ref)
         figure_focus(10+io);subplot(2,1,1);
     
@@ -127,13 +148,16 @@ for io=io_arr%;:length(o);;
         
         [h(Nc+1,:)]=hist(cc_ref{io},hx);
         
+        p_all= [p_all p];
+        
+        
     end
 
 
     figure_focus(10+io);
     subplot(2,1,1);
     hold off
-    legend([p2,p],leg,'Location','NorthEastOutside')
+    legend([p_all],leg,'Location','NorthEastOutside')
     title(sprintf('%s - Chain %02d vs others',txt,io),'Interpreter','None')
     ylabel(sprintf('Correlation coefficient to Last model of chain %02d',io))
     xlabel('Iteration number')
