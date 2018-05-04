@@ -43,6 +43,8 @@ if nargin>3
         sippi_verbose(sprintf('%s : Using ''%s'' instead of sippi_plot_data',mfilename,options.sippi_plot_data_function),1);
         if nargin==1;
             feval(options.sippi_plot_data_function,d);
+        elseif nargin==4
+            feval(options.sippi_plot_data_function,d,data,id_arr,options);
         else
             feval(options.sippi_plot_data_function,d,data,id_arr);
         end
@@ -60,7 +62,7 @@ end
 
 for id=id_arr;
    
-    figure_focus(20+id);
+    figure_focus(30+id);
     
     if ~isfield(data{id},'i_use')
         data{id}.i_use=1:1:length(data{id}.d_obs);
