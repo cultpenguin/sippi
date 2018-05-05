@@ -315,9 +315,15 @@ end
             colormap(1-gray)
             colormap(hot)
             if exist('quantile','file')
-                plot(x,quantile(squeeze(reals)',.025),'g--','linewidth',2);
-                plot(x,quantile(squeeze(reals)',.5),'g-','linewidth',2);
-                plot(x,quantile(squeeze(reals)',.975),'g--','linewidth',2);
+                try
+                    plot(x,quantile(squeeze(reals)',.025),'g--','linewidth',2);
+                    plot(x,quantile(squeeze(reals)',.5),'g-','linewidth',2);
+                    plot(x,quantile(squeeze(reals)',.975),'g--','linewidth',2);
+                catch
+                    plot(quantile(squeeze(reals)',.025),'g--','linewidth',2);
+                    plot(quantile(squeeze(reals)',.5),'g-','linewidth',2);
+                    plot(quantile(squeeze(reals)',.975),'g--','linewidth',2);    
+                end
             end
             hold off
             
@@ -328,7 +334,8 @@ end
                     try
                         plot(prior{im}.x,options.mcmc.m_ref{im},'b-','MarkerSize',11,'LineWidth',3);
                     catch
-                        sippi_verbose(sprintf('cannot plot m_ref'));
+                        plot(options.mcmc.m_ref{im},'b-','MarkerSize',11,'LineWidth',3);
+                        %    sippi_verbose(sprintf('cannot plot m_ref'));
                     end
                     hold off
                 end
@@ -339,13 +346,23 @@ end
             
             %%
             figure_focus(f_id);
-            plot(x,reals,'k-','linewidth',.1);
+            try
+                plot(x,reals,'k-','linewidth',.1);
+            catch
+                plot(reals,'k-','linewidth',.1);
+            end
             hold on
             %plot(prior{im}.x,etype_mean,'r-','linewidth',2);
             if exist('quantile','file')
-                plot(x,quantile(reals',.025),'r--','linewidth',2);
-                plot(x,quantile(reals',.5),'r-','linewidth',2);
-                plot(x,quantile(reals',.975),'r--','linewidth',2);
+                try
+                    plot(x,quantile(reals',.025),'r--','linewidth',2);
+                    plot(x,quantile(reals',.5),'r-','linewidth',2);
+                    plot(x,quantile(reals',.975),'r--','linewidth',2);
+                catch
+                    plot(quantile(reals',.025),'r--','linewidth',2);
+                    plot(quantile(reals',.5),'r-','linewidth',2);
+                    plot(quantile(reals',.975),'r--','linewidth',2);
+                end    
             end
             hold off
             xlabel('X')
@@ -360,9 +377,10 @@ end
                 if isfield(options.mcmc,'m_ref');
                     hold on
                     try
-                        plot(prior{im}.x,options.mcmc.m_ref{im},'g.','MarkerSize',11,'LineWidth',3);
+                        plot(prior{im}.x,options.mcmc.m_ref{im},'g-','MarkerSize',11,'LineWidth',3);
                     catch
-                        sippi_verbose(sprintf('cannot plot m_ref'));
+                        plot(options.mcmc.m_ref{im},'g-','MarkerSize',11,'LineWidth',3);
+                        %sippi_verbose(sprintf('cannot plot m_ref'));
                     end
                     hold off
                 end
