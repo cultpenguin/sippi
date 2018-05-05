@@ -152,11 +152,15 @@ for im=im_array;
             end            
             
         elseif ndim==1
-            
             try
                 if length(x)>length(y);
-                    plot(x,m{im},'k-*')
-                    xlabel('X');
+                    try
+                        plot(x,m{im},'k-*')
+                        xlabel('X');
+                    catch
+                        plot(m{im},'k-*')
+                        xlabel('X [#]');                        
+                    end
                 else
                     plot(y,m{im},'k-*')
                     xlabel('Y');
@@ -164,7 +168,7 @@ for im=im_array;
                 ylabel(prior{im}.name)
                 try;set(gca,'ylim',cax);end
             catch
-                sippi_verbose(sprintf('%s could not plot model #%d',mfilename,im),2)
+                sippi_verbose(sprintf('%s could not plot model #%d',mfilename,im),1)
             end
         end
         
