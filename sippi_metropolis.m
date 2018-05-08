@@ -244,7 +244,7 @@ if start_from_mat_file==0;
     if isfield(options.mcmc,'m_ref');
         try
             options.mcmc.d_ref=sippi_forward(options.mcmc.m_ref,forward,prior,data);
-            options.mcmc.logL_ref=sippi_likelihood(options.mcmc.d_ref,data)
+            options.mcmc.logL_ref=sippi_likelihood(options.mcmc.d_ref,data);
         end
     end
     
