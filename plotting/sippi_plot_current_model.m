@@ -73,6 +73,12 @@ try
         end
     end
     sippi_plot_loglikelihood(mcmc.logL(1:mcmc.i),mcmc.acc(1:mcmc.i),N);
+    if isfield(options.mcmc,'logL_ref');
+        hold on
+        plot(xlim,[1 1].*options.mcmc.logL_ref,'b--','LineWidth',2)
+        hold off
+    end
+    
 catch
     sippi_verbose(sprintf('%s: failed to plot log likelihood curve',mfilename))
 end

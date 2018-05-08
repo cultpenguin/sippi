@@ -240,15 +240,20 @@ if start_from_mat_file==0;
         end
     end
     
+    %% REFERENCE LIKELIHOOD?
+    if isfield(options.mcmc,'m_ref');
+        try
+            options.mcmc.d_ref=sippi_forward(options.mcmc.m_ref,forward,prior,data);
+            options.mcmc.logL_ref=sippi_likelihood(options.mcmc.d_ref,data)
+        end
+    end
+    
     %% INITIAL LIKELIHOODS
     for ic=1:NC
         [C{ic}.d_current,C{ic}.forward,C{ic}.prior,C{ic}.data]=sippi_forward(C{ic}.m_current,C{ic}.forward,C{ic}.prior,C{ic}.data);
-        
         C{ic}.data_current=C{ic}.data;
         [C{ic}.logL_current,C{ic}.L_current]=sippi_likelihood(C{ic}.d_current,C{ic}.data_current);
-        
         C{ic}.prior_current=C{ic}.prior;
-        
     end
     
     %% COMPUTE TIME PER ITERATION
@@ -500,9 +505,11 @@ while i<=mcmc.nite;
                 C{ic_j}.m_current=C_i.m_current;
                 
                 % Keep step length constant within chains
-                for k=1:NC;for im=1:length(C{k}.prior_current);
+                for k=1:NC;
+                    for im=1:length(C{k}.prior_current);
                         C{k}.prior_current{im}.seq_gibbs.step=C{k}.mcmc.step(im,i);
-                    end;end
+                    end;
+                end
                 sippi_verbose(sprintf('%s: at i=%05d SWAP chains [%d<->%d]',mfilename,i,ic_i,ic_j),2);
             end
         end
