@@ -333,12 +333,14 @@ end
                     hold on
                     try
                         plot(prior{im}.x,options.mcmc.m_ref{im},'b-','MarkerSize',11,'LineWidth',3);
-                    catch
+                    catch                        
                         plot(options.mcmc.m_ref{im},'b-','MarkerSize',11,'LineWidth',3);
                         %    sippi_verbose(sprintf('cannot plot m_ref'));
                     end
                     hold off
                 end
+            catch
+                keyboard
             end
             xlabel('X')
             ylabel(prior{im}.name)
