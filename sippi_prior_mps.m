@@ -122,6 +122,14 @@ end
    
 
 %% hard data?
+if nargin<2
+    % for unconditional simulation force
+    % removal of hard data
+    if isfield(prior{ip},'hard_data');
+        prior{ip}=rmfield(prior{ip},'hard_data');
+    end
+end
+    
 if isfield(prior{ip},'hard_data');
     if ischar(prior{ip}.hard_data)
         % Hard data is provided in file
@@ -133,7 +141,7 @@ if isfield(prior{ip},'hard_data');
         end
         filename_hard=prior{ip}.MPS.hard_data_filename;
         if isempty(prior{ip}.hard_data)
-            if exist(filename_hard,'file');
+            if exist([pwd,filesep,filename_hard],'file');
                 delete(filename_hard);
             end
         else
@@ -205,5 +213,7 @@ end
 %% RUN FORWARD
 [m_propose{ip},prior{ip}.MPS]=mps_cpp(prior{ip}.ti,SIM,prior{ip}.MPS);
 
+% In next iteration do NOT write the TI to disk!
+prior{ip}.MPS.WriteTI=0;
 
 
