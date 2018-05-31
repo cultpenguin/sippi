@@ -132,7 +132,7 @@ for im=im_array;
             zlabel('Z');
         
         elseif ndim==2
-            imagesc(x,y,m{im});
+            imagesc(x,y,squeeze(m{im}));
             %shading interp;
             axis image
             

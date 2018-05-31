@@ -25,7 +25,7 @@ if  nargin<3
     LL=length(d);
     id_array=1:LL;
 else
-    LL=length(length(id_arry));
+    LL=length(length(id_array));
 end
 
 
