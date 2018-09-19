@@ -23,6 +23,11 @@ for ic=1:NC;
             end
         end
     end
+    
+    % get temp, update temp so it works with annealing
+    % C{ic}.T = ....
+    
+    
     if length(usep)>0
         ip=ceil(rand(1)*length(usep));
         sippi_verbose(sprintf('%s: Running Gibbs sampling of im=%d at iteration %d',mfilename,ip,mcmc.i),1)
@@ -117,12 +122,13 @@ for ic=1:NC;
             ylabel(sprintf('f(m_%d | f_{not %d})',ip,ip))
             subplot(1,3,2);
             plot(m_arr,pPost,'.',s_m_arr,s_pPost,'r-');
+            ylim([0 1])
             hold on
             plot([1 1].*m_sim,ylim,'r-')
             plot([1 1].*m{ip},ylim,'g--')
             hold off
             xlabel(prior{ip}.name)
-            title(sprintf('f(m_%d | not m_%d), #ite=%d',ip,ip,mcmc.i))
+            title(sprintf('f(m_%d | not m_%d), #ite=%d, T=%g',ip,ip,mcmc.i,C{ic}.T))
             
            
             subplot(1,3,3);
