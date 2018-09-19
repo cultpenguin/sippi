@@ -5,6 +5,9 @@ mcmc.gibbs.null='';
 if ~isfield(mcmc.gibbs,'N_bins')
     mcmc.gibbs.N_bins=31;
 end
+if isfield(mcmc.gibbs,'Nm')
+    mcmc.gibbs.N_bins=mcmc.gibbs.Nm;
+end
 
 NC=length(C);
 for ic=1:NC;
@@ -42,7 +45,13 @@ for ic=1:NC;
         logL=zeros(1,mcmc.gibbs.N_bins);
         pPrior=zeros(1,mcmc.gibbs.N_bins);
         for im=1:mcmc.gibbs.N_bins;
-            [m_test{im},prior_test{im}]=sippi_prior(prior,m);
+            if im==1;
+                % make sure current model is part of the tested models
+                m_test{im}=C{ic}.m_current;
+                prior_test{im}=C{ic}.prior_current;
+            else
+                [m_test{im},prior_test{im}]=sippi_prior(prior,m);
+            end
             [d_test{im},forward]=sippi_forward(m_test{im},C{ic}.forward,prior_test{im},C{ic}.data);
             [logL(im)]=sippi_likelihood(d_test{im},C{ic}.data);
             
@@ -58,7 +67,9 @@ for ic=1:NC;
         end
         
         logPost = logL + logPrior;
-        pPost=exp(logPost-max(logPost));
+        %pPost=exp(logPost-max(logPost));
+        % anealing type probability
+        pPost=exp(logPost-max(logPost)).^(1/C{ic}.T);
         
         sd=sortrows([m_arr;pPost]',1);
         s_m_arr = sd(:,1);
@@ -73,6 +84,7 @@ for ic=1:NC;
         
         % update and move to the current model
         im_use = find(m_sim==m_arr);
+        im_use=im_use(1); % just in case the prior generates the same realization
         
         
         % move to current model
@@ -86,30 +98,43 @@ for ic=1:NC;
         C{ic}.m_current=m_test{im_use};
         C{ic}.d_current=d_test{im_use};
         C{ic}.logL_current=logL(im_use);
+        C{ic}.logL_propose=logL(im_use);
         C{ic}.L_current=logL(im_use);
         C{ic}.iacc=C{ic}.iacc+1;
         %C{ic}.mcmc.logL(C{ic}.iacc)=C{ic}.logL_current;
         C{ic}.mcmc.acc(ip,mcmc.i)=1;
-        C{ic}.mcmc.logL(mcmc.i)=C{ic}.logL_current;
-        
-        %% plot
+        try
+            C{ic}.mcmc.logL(mcmc.i)=C{ic}.logL_current;
+        catch
+            keyboard
+        end
         if (i/mcmc.i_plot)==round(i/mcmc.i_plot)
+            %% plot
             figure_focus(63);
             subplot(1,3,1);
             plot(m_arr,[logL;logPrior;logPost],'.')
-            xlabel(sprintf('m_%d',ip))
+            xlabel(sprintf('m_%d -%s',ip,prior{ip}.name))
             ylabel(sprintf('f(m_%d | f_{not %d})',ip,ip))
             subplot(1,3,2);
-            plot(m_arr,pPost,'.',s_m_arr,s_pPost,'r-')
+            plot(m_arr,pPost,'.',s_m_arr,s_pPost,'r-');
+            hold on
+            plot([1 1].*m_sim,ylim,'r-')
+            plot([1 1].*m{ip},ylim,'g--')
+            hold off
+            xlabel(prior{ip}.name)
             title(sprintf('f(m_%d | not m_%d), #ite=%d',ip,ip,mcmc.i))
             
+           
             subplot(1,3,3);
-            plot(s_m_arr,s_cpdf,'k.','MarkerSize',30)
+            plot(s_m_arr,s_cpdf,'k.','MarkerSize',4)
             hold on
             plot(m_sim,s_cpdf(i_sim),'r.','MarkerSize',30)
             
+            %plot(s_m_arr,s_cpdf,'-*');
+            grid on;
+            plot(xlim,[1 1].*r);
+            plot([1 1].*m_sim,ylim,'r--')
             hold off
-            
             drawnow;
         end
     else
