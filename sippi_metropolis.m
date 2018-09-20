@@ -410,9 +410,9 @@ while i<=mcmc.nite;
         
         % set temperature
         if do_anneal==1;
-            [T_fac,mcmc]=sippi_anneal_temperature(i,mcmc,C{ic}.prior_current);
+            [C{ic}.T_fac,mcmc]=sippi_anneal_temperature(i,mcmc,C{ic}.prior_current);
         end
-        T=T_fac.*C{ic}.T;
+        T=C{ic}.T_fac.*C{ic}.T;
         
         C{ic}.Pacc = exp((1./T).*(C{ic}.logL_propose-C{ic}.logL_current));
         

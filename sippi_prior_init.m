@@ -167,7 +167,7 @@ for im=im_array
     %% GAUSSIAN TYPE PRIOR SANITY CHECK
     if (strcmp(lower(prior{im}.type),'gaussian'));
         % m0
-        if ~isfield(prior{im},'m0');
+        if ~isfield(prior{im},'m0')&&(~isfield(prior{im},'d_target'))
             if isfield(prior{im},'min')&isfield(prior{im},'max');
                 prior{im}.m0=(prior{im}.max+prior{im}.min)/2;
             else
@@ -177,7 +177,7 @@ for im=im_array
         end
         
         % std
-        if ~isfield(prior{im},'std');
+        if ~isfield(prior{im},'std')&&(~isfield(prior{im},'d_target'))
             if isfield(prior{im},'min')&isfield(prior{im},'max');
                 prior{im}.std=(prior{im}.max-prior{im}.min)/2.300;
             else

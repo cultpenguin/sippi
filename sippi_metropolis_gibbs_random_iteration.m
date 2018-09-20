@@ -24,10 +24,6 @@ for ic=1:NC;
         end
     end
     
-    % get temp, update temp so it works with annealing
-    % C{ic}.T = ....
-    
-    
     if length(usep)>0
         ip=ceil(rand(1)*length(usep));
         sippi_verbose(sprintf('%s: Running Gibbs sampling of im=%d at iteration %d',mfilename,ip,mcmc.i),1)
@@ -71,10 +67,18 @@ for ic=1:NC;
             logPrior =  log(normpdf(m_arr,C{ic}.prior_current{ip}.m0,C{ic}.prior_current{ip}.std));
         end
         
+        % get the posterio marginal
         logPost = logL + logPrior;
-        %pPost=exp(logPost-max(logPost));
         % anealing type probability
-        pPost=exp(logPost-max(logPost)).^(1/C{ic}.T);
+        % if mcmc.do_anneal==1 % faster, bust introdcuces an extra variable
+        if isfield(mcmc,'anneal')
+            [C{ic}.T_fac,mcmc]=sippi_anneal_temperature(i,mcmc,C{ic}.prior_current);
+            T=C{ic}.T_fac.*C{ic}.T;
+        else
+            T=C{ic}.T; % only use the 'base' temperature.
+        end
+        %pPost=exp(logPost-max(logPost)).^(1/T);
+        pPost=exp( (1/T)*(logPost-max(logPost)) );
         
         sd=sortrows([m_arr;pPost]',1);
         s_m_arr = sd(:,1);
@@ -128,7 +132,7 @@ for ic=1:NC;
             plot([1 1].*m{ip},ylim,'g--')
             hold off
             xlabel(prior{ip}.name)
-            title(sprintf('f(m_%d | not m_%d), #ite=%d, T=%g',ip,ip,mcmc.i,C{ic}.T))
+            title(sprintf('f(m_%d | not m_%d), #ite=%d, T=%g',ip,ip,mcmc.i,T))
             
            
             subplot(1,3,3);
