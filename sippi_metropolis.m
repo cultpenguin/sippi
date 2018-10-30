@@ -360,7 +360,7 @@ while i<=mcmc.nite;
         
         %% SELECT IF STEP LENGTH HAS TO BE UPDATED
         for im=1:length(C{ic}.prior_current)
-            if (( (mcmc.i./C{ic}.prior_current{im}.seq_gibbs.i_update_step)==round((mcmc.i./C{ic}.prior_current{im}.seq_gibbs.i_update_step)))&(mcmc.i<C{ic}.prior_current{im}.seq_gibbs.i_update_step_max))
+            if (( (mcmc.i./C{ic}.prior_current{im}.seq_gibbs.i_update_step)==round((mcmc.i./C{ic}.prior_current{im}.seq_gibbs.i_update_step)))&&(mcmc.i<C{ic}.prior_current{im}.seq_gibbs.i_update_step_max))
                 % UPDATE STEP LENGTH
                 C{ic}.prior_current=sippi_prior_set_steplength(C{ic}.prior_current,C{ic}.mcmc,im);
             end
@@ -410,9 +410,9 @@ while i<=mcmc.nite;
         
         % set temperature
         if do_anneal==1;
-            [T_fac,mcmc]=sippi_anneal_temperature(i,mcmc,C{ic}.prior_current);
+            [C{ic}.T_fac,mcmc]=sippi_anneal_temperature(i,mcmc,C{ic}.prior_current);
         end
-        T=T_fac.*C{ic}.T;
+        T=C{ic}.T_fac.*C{ic}.T;
         
         C{ic}.Pacc = exp((1./T).*(C{ic}.logL_propose-C{ic}.logL_current));
         
@@ -461,7 +461,7 @@ while i<=mcmc.nite;
             C{ic}.isample=C{ic}.isample+1;
             %mcmc.i_sample_logL(isample)=logL_current;
             for im=1:nm
-                fid=fopen(C{ic}.filename_asc{im},'a+');
+                C{ic}.fid=fopen(C{ic}.filename_asc{im},'a+');
                 fprintf(C{ic}.fid,' %10.7g ',[C{ic}.m_current{im}(:)]);
                 fprintf(C{ic}.fid,'\n');
                 fclose(C{ic}.fid);
@@ -519,7 +519,11 @@ while i<=mcmc.nite;
     if ((mcmc.i/(mcmc.i_save_workspace))==round( mcmc.i/(mcmc.i_save_workspace) ))
         try
             sippi_verbose(sprintf('%s: i=%d, saving workspace to ''%s''',mfilename,i,filename_mat))
-            save(filename_mat,'-v7.3')
+            if isoctave
+                save(filename_mat)
+            else
+                save(filename_mat,'-v7.3')
+            end
         catch
             sippi_verbose(sprintf('%s: failed to save data to %s',mfilename,filename_mat))
         end
@@ -603,7 +607,13 @@ mcmc.m_current=m_current;
 
 options.C=C; % PERHAPS TOO MEMORY INTENSIVE
 options.mcmc=mcmc; % PERHAPS TOO MEMORY INTENSIVE
-save(filename_mat,'-v7.3')
+
+if isoctave
+    save(filename_mat)
+else
+    save(filename_mat,'-v7.3')
+end
+
 sippi_verbose(sprintf('%s: DONE McMC in %5.2f hours (%g minutes), %s',mfilename,mcmc.time_elapsed_in_seconds/3600,mcmc.time_elapsed_in_seconds/60,options.txt),-2);
 
 %%

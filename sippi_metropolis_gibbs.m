@@ -429,7 +429,12 @@ while i<=mcmc.nite;
         vlevel=sippi_verbose;
         if vlevel>0, NC_end=NC; else NC_end=1; end
         for ic=1:NC_end
-            txt=sprintf('%06d/%06d (%10s): C%02d logL_c=%5.2f(%5.2f), T=%5.2f',mcmc.i,mcmc.nite,t_end_txt,ic,C{ic}.logL_current,C{ic}.logL_propose,C{ic}.T*mcmc.T_fac);
+            try
+                T = C{ic}.T*C{ic}.T_fac;
+            catch
+                T = C{ic}.T*mcmc.T_fac;
+            end
+            txt=sprintf('%06d/%06d (%10s): C%02d logL_c=%5.2f(%5.2f), T=%5.2f',mcmc.i,mcmc.nite,t_end_txt,ic,C{ic}.logL_current,C{ic}.logL_propose,T);
             sippi_verbose(sprintf('%s: %s',mfilename,txt),-1);
             % MORE information at higher verbose level
             vlevel_pacc=1;
