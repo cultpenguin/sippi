@@ -84,6 +84,7 @@ options.mcmc.i_plot=5000; % Plot the progress information for every 2500 iterati
 options.txt='case_line_fit_2nd_order'; % descriptive name for the output folder
 
 %% metropolis
+options.nruns = 4;
 [options_metropolis]=sippi_metropolis(data,prior,forward,options);
 sippi_plot_prior_sample(options_metropolis.txt);
 sippi_plot_posterior(options_metropolis.txt);

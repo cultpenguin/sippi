@@ -122,7 +122,7 @@ else
     fname{4}=sprintf('%s%s%s_m%d_C%d.asc',options.txt,filesep,options.txt,im,ichain);
     for i=1:length(fname);
         if exist(fname{i},'file')
-            disp(sprintf('%s: load data from %s',mfilename,fname{i}))
+            sippi_verbose(sprintf('%s: load data from %s',mfilename,fname{i}))
             reals=load(fname{i});
             break
         end
