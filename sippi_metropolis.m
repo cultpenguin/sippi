@@ -223,11 +223,13 @@ if start_from_mat_file==0;
     end
     
     %% CHECK FOR ANNEALING
+      %% CHECK FOR ANNEALING
     if isfield(mcmc,'anneal');
-        do_anneal=1;
+        mcmc.do_anneal=1;
+        mcmc.T_fac=1;
     else
-        do_anneal=0;
-        T_fac=1;
+        mcmc.do_anneal=0;
+        mcmc.T_fac=1;
     end
     
     %% STARTING  MODEL
@@ -409,10 +411,12 @@ while i<=mcmc.nite;
         % Accept probability
         
         % set temperature
-        if do_anneal==1;
+        if mcmc.do_anneal==1;
             [C{ic}.T_fac,mcmc]=sippi_anneal_temperature(i,mcmc,C{ic}.prior_current);
+            T=C{ic}.T_fac.*C{ic}.T;
+        else
+            T=C{ic}.T; % only use the 'base' temperature.
         end
-        T=C{ic}.T_fac.*C{ic}.T;
         
         C{ic}.Pacc = exp((1./T).*(C{ic}.logL_propose-C{ic}.logL_current));
         
@@ -536,7 +540,7 @@ while i<=mcmc.nite;
         vlevel=sippi_verbose;
         if vlevel>0, NC_end=NC; else NC_end=1; end
         for ic=1:NC_end
-            txt=sprintf('%06d/%06d (%10s): C%02d logL_c=%5.2f(%5.2f), T=%5.2f',mcmc.i,mcmc.nite,t_end_txt,ic,C{ic}.logL_current,C{ic}.logL_propose,C{ic}.T*T_fac);
+            txt=sprintf('%06d/%06d (%10s): C%02d logL_c=%5.2f(%5.2f), T=%5.2f',mcmc.i,mcmc.nite,t_end_txt,ic,C{ic}.logL_current,C{ic}.logL_propose,C{ic}.T);
             sippi_verbose(sprintf('%s: %s',mfilename,txt),-1);
             % MORE information at higher verbose level
             vlevel_pacc=1;
