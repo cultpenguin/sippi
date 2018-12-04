@@ -159,7 +159,6 @@ P{imp}.prior{ip}.min=cells_N_min;
 P{imp}.prior{ip}.max=cells_N_max;
 P{imp}.prior{ip}.prior_master=1;
 
-return
 %% plot all prior model
 
 for imp=1:length(P);
@@ -173,23 +172,7 @@ forward.forward_function='sippi_forward_traveltime';
 forward.sources=D.S;
 forward.receivers=D.R;
 forward.type='fat';forward.linear=1;forward.freq=0.1;forward.linear_m=m0;
-
 %forward.type='eikonal';
-
-
-% %% TEST THE SETUP 
-% % generate a realization from the prior
-% [m,prior]=sippi_prior(prior);
-% sippi_plot_prior(prior,m);figure(100);
-% 
-% % Compute the forward response related to the realization of the prior model generated above
-% [d]=sippi_forward(m,forward,prior,data);
-% % Compute the likelihood 
-% [logL,L,data]=sippi_likelihood(d,data);
-% % plot the forward response and compare it to the observed data
-% sippi_plot_data(d,data);
-% 
-% [logL,L,data]=sippi_likelihood(d,data);
 
 %% SETUP METROPOLIS
 options.mcmc.nite=1000000;
@@ -241,4 +224,5 @@ for imp=1:length(P);
     sippi_plot_prior_sample(O{imp}.txt);
     sippi_plot_posterior(O{imp}.txt);    
 end
+save('AM13_mul')
 
