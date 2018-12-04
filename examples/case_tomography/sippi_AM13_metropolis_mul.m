@@ -75,6 +75,27 @@ P{imp}.prior{im}.max=0.9;
 P{imp}.prior{im}.prior_master=i_master;
 
 
+%% BIMODAL
+imp=imp+1;
+im=1;
+P{imp}.prior{im}.type='FFTMA';
+P{imp}.prior{im}.name='Velocity (m/ns)';
+P{imp}.prior{im}.Va='.0003 Sph(6)';
+P{imp}.prior{im}.x=x;
+P{imp}.prior{im}.y=y;
+P{imp}.prior{im}.cax=cax;
+
+% bimodal distribution
+N=10000;
+prob_chan=0.5;
+dd=.015;
+d1=randn(1,ceil(N*(1-prob_chan)))*.0025+0.145-dd;  %0.1125;
+d2=randn(1,ceil(N*(prob_chan)))*.0025+0.145+dd; %0.155;
+d=[d1(:);d2(:)];
+[d_nscore,o_nscore]=nscore(d,1,1,min(d),max(d),0);
+P{imp}.prior{im}.o_nscore=o_nscore;
+%forward.linear_m=0.14; 
+
 %% PLURIGAUSSIAN
 imp=imp+1;
 im=1;
@@ -138,7 +159,7 @@ P{imp}.prior{ip}.min=cells_N_min;
 P{imp}.prior{ip}.max=cells_N_max;
 P{imp}.prior{ip}.prior_master=1;
 
-
+return
 %% plot all prior model
 
 for imp=1:length(P);
@@ -151,7 +172,8 @@ end
 forward.forward_function='sippi_forward_traveltime';
 forward.sources=D.S;
 forward.receivers=D.R;
-forward.type='fat';forward.linear=1;forward.freq=0.1;
+forward.type='fat';forward.linear=1;forward.freq=0.1;forward.linear_m=m0;
+
 %forward.type='eikonal';
 
 
