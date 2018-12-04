@@ -217,8 +217,6 @@ for imp=1:length(P);
     options.txt=['AM13_P',num2str(imp)];
     O{imp}=sippi_metropolis(data,P{imp}.prior,forward,options);
     sippi_plot_prior_sample(O{imp}.txt);
-    sippi_plot_posterior(O{imp}.txt);
-    sippi_plot_posterior_sample(O{imp}.txt,1,5);
-    print_mul(sprintf('post_%2d_reals',imp))
+    sippi_plot_posterior(O{imp}.txt);    
 end
 
