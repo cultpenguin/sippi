@@ -30,7 +30,7 @@ function sippi_plot_movie(fname,im_array,n_frames,skip_burnin,i_chain);
 if nargin==0;
     [f1,fname]=fileparts(pwd);
 end
-if nargin<3, n_frames=100;end
+if nargin<3, n_frames=400;end
 
 options=sippi_plot_defaults;
 
