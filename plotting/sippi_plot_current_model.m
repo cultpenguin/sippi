@@ -29,11 +29,13 @@ if nargin>3
     if isfield(options.mcmc,'m_ref');
         try
         for ip=1:length(prior);
-            sippi_plot_prior(prior,options.mcmc.m_ref,ip,1,20+ip-1); 
-            try
-                title(sprintf('Reference Prior %s (%d)',prior{ip}.name,ip))            
-            catch
-                title(sprintf('Reference Prior #%d',ip))
+            if prior{ip}.ndim>0;
+                sippi_plot_prior(prior,options.mcmc.m_ref,ip,1,20+ip-1);
+                try
+                    title(sprintf('Reference Prior %s (%d)',prior{ip}.name,ip))
+                catch
+                    title(sprintf('Reference Prior #%d',ip))
+                end
             end
         end
         catch

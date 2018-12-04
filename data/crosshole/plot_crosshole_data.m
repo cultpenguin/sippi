@@ -15,7 +15,7 @@ for id=1:length(D);
 
 load(D{id})
 nd=length(d_obs);
-figure(1);
+figure(id*10+1);
 h=errorbar(1:1:nd,d_obs,d_std,'k*');
 nd=length(d_obs);
 hold on
@@ -28,7 +28,7 @@ title(sprintf('%s',D{id}),'interp','none')
 print_mul(sprintf('%s',D{id}))
 
 %%
-figure(2);clf;set_paper('portrait');
+figure(id*10+2);clf;set_paper('portrait');
 v_min=0.12;
 v_max=0.18;
 for i=1:nd
