@@ -36,17 +36,28 @@ m0=0.145;
 
 imp=0;
 
+
+%% GAUSSIAN
+imp=imp+1;
+im=1;
+P{imp}.prior{im}.type='FFTMA';
+P{imp}.prior{im}.name='Gaussian_small';
+P{imp}.prior{im}.m0=m0
+P{imp}.prior{im}.Va='.0003 Sph(.5)';
+P{imp}.prior{im}.x=x;
+P{imp}.prior{im}.y=y;
+P{imp}.prior{im}.cax=cax;
+
 %% GAUSSIAN
 imp=imp+1;
 im=1;
 P{imp}.prior{im}.type='FFTMA';
 P{imp}.prior{im}.name='Gaussian';
 P{imp}.prior{im}.m0=m0
-P{imp}.prior{im}.Va='.0003 Sph(6)';
+P{imp}.prior{im}.Va='.0003 Sph(6,90,.5)';
 P{imp}.prior{im}.x=x;
 P{imp}.prior{im}.y=y;
 P{imp}.prior{im}.cax=cax;
-
 
 
 %% MATERN
@@ -61,8 +72,8 @@ P{imp}.prior{im}.Va='.0003 Mat(6,90,.3)';
 P{imp}.prior{im}.x=x;
 P{imp}.prior{im}.y=y;
 P{imp}.prior{im}.cax=cax;
-P{imp}.prior{im}.fftma_options.pad_x=150;
-P{imp}.prior{im}.fftma_options.pad_y=150;
+%P{imp}.prior{im}.fftma_options.pad_x=150;
+%P{imp}.prior{im}.fftma_options.pad_y=150;
 i_master=im;
 
 
@@ -80,7 +91,7 @@ imp=imp+1;
 im=1;
 P{imp}.prior{im}.type='FFTMA';
 P{imp}.prior{im}.name='Velocity (m/ns)';
-P{imp}.prior{im}.Va='.0003 Sph(6)';
+P{imp}.prior{im}.Va='.0003 Sph(6,90,.3)';
 P{imp}.prior{im}.x=x;
 P{imp}.prior{im}.y=y;
 P{imp}.prior{im}.cax=cax;
@@ -88,7 +99,7 @@ P{imp}.prior{im}.cax=cax;
 % bimodal distribution
 N=10000;
 prob_chan=0.5;
-dd=.015;
+dd=.02;
 d1=randn(1,ceil(N*(1-prob_chan)))*.0025+0.145-dd;  %0.1125;
 d2=randn(1,ceil(N*(prob_chan)))*.0025+0.145+dd; %0.155;
 d=[d1(:);d2(:)];
@@ -102,7 +113,7 @@ im=1;
 P{imp}.prior{im}.type='plurigaussian';
 %P{imp}.prior{im}.pg_prior{1}.Cm=' 1 Gau(5,90,.5)';
 %P{imp}.prior{im}.pg_map=[0.11 .11 .13 .13 .15 .15 .17 .13 .17];
-P{imp}.prior{im}.pg_prior{1}.Cm=' 1 Gau(5)';
+P{imp}.prior{im}.pg_prior{1}.Cm=' 1 Gau(6,90,.3)';
 P{imp}.prior{im}.pg_prior{2}.Cm=' 1 Sph(5,30,.4)';
 P{imp}.prior{im}.pg_map=[0.11 0.11 0.11 0.13 0.13; 0.13 0.17 0.11 0.13 0.13; 0.13 0.13 0.13 0.15 0.15];
 P{imp}.prior{im}.x=x;
@@ -113,7 +124,7 @@ P{imp}.prior{im}.cax=cax;
 imp=imp+1;
 clear prior
 ip=0;
-cells_N_min=3;
+cells_N_min=10;
 cells_N_max=100;
 
 ip=ip+1;
@@ -122,7 +133,7 @@ P{imp}.prior{im}.name='Voronoi';
 P{imp}.prior{ip}.x=x;
 P{imp}.prior{ip}.y=y;
 P{imp}.prior{ip}.cells_N=cells_N_max;
-P{imp}.prior{ip}.cax=cax
+P{imp}.prior{ip}.cax=cax;
 P{imp}.prior{ip}.m0=m0;
 
 ip=ip+1;
@@ -159,9 +170,13 @@ P{imp}.prior{ip}.min=cells_N_min;
 P{imp}.prior{ip}.max=cells_N_max;
 P{imp}.prior{ip}.prior_master=1;
 
-return
-%% plot all prior model
+%%
+%PP=P;
+%clear P
+%P{1}=PP{3};
 
+
+%% plot all prior model
 for imp=1:length(P);
     sippi_plot_prior_sample(P{imp}.prior,1,5);
     print_mul(sprintf('prior_%2d_reals',imp))
@@ -175,7 +190,7 @@ forward.receivers=D.R;
 forward.type='fat';forward.linear=1;forward.freq=0.1;forward.linear_m=m0;
 
 %forward.type='eikonal';
-
+forward.type='ray_2d';
 
 % %% TEST THE SETUP 
 % % generate a realization from the prior
@@ -192,17 +207,18 @@ forward.type='fat';forward.linear=1;forward.freq=0.1;forward.linear_m=m0;
 % [logL,L,data]=sippi_likelihood(d,data);
 
 %% SETUP METROPOLIS
+n_sample=200;
 options.mcmc.nite=1000000;
 options.mcmc.i_plot=5000;
-options.mcmc.i_sample=500;
 
-options.mcmc.nite=150000;
-options.mcmc.i_plot=1000;
-options.mcmc.i_sample=100;
+options.mcmc.nite=400000;
+options.mcmc.i_plot=10000;
 
-options.mcmc.nite=15000;
-options.mcmc.i_plot=1000;
-options.mcmc.i_sample=100;
+options.mcmc.i_sample=ceil(options.mcmc.nite/n_sample);
+
+%options.mcmc.nite=100000;
+%options.mcmc.i_plot=100;
+%options.mcmc.i_sample=1000;
 
 %options.mcmc.pert_strategy.perturb_all=1;
 
@@ -234,10 +250,15 @@ for imp=1:length(P);
     end
 end
 
-%%
 for imp=1:length(P);
-    options.txt=['AM13_P',num2str(imp)];
-    O{imp}=sippi_metropolis(data,P{imp}.prior,forward,options);
+    O{imp}=options;
+    O{imp}.txt=['AM13_P',num2str(imp)];
+end
+
+%%
+%parfor imp=1:length(P);
+for imp=1:length(P);
+    O{imp}=sippi_metropolis(data,P{imp}.prior,forward,O{imp});
     sippi_plot_prior_sample(O{imp}.txt);
     sippi_plot_posterior(O{imp}.txt);    
 end

@@ -59,7 +59,7 @@ end
             if prior{im_arr(j)}.ndim<2
                 n_reals(j)=10000;
             else
-                n_reals(j)=15;
+                n_reals(j)=5;
             end
         end
     end
