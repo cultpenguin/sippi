@@ -59,6 +59,17 @@ P{imp}.prior{im}.x=x;
 P{imp}.prior{im}.y=y;
 P{imp}.prior{im}.cax=cax;
 
+%% GAUSSIAN - Gau
+imp=imp+1;
+im=1;
+P{imp}.prior{im}.type='FFTMA';
+P{imp}.prior{im}.name='Gaussian - Gau';
+P{imp}.prior{im}.m0=m0
+P{imp}.prior{im}.Va='0.0000001 Nug(0) + .0003 Gau(6,90,.5)';
+P{imp}.prior{im}.x=x;
+P{imp}.prior{im}.y=y;
+P{imp}.prior{im}.cax=cax;
+
 
 %% MATERN
 imp=imp+1;
@@ -188,8 +199,6 @@ forward.forward_function='sippi_forward_traveltime';
 forward.sources=D.S;
 forward.receivers=D.R;
 forward.type='fat';forward.linear=1;forward.freq=0.1;forward.linear_m=m0;
-
-%forward.type='eikonal';
 forward.type='ray_2d';
 
 % %% TEST THE SETUP 
@@ -262,4 +271,5 @@ for imp=1:length(P);
     sippi_plot_prior_sample(O{imp}.txt);
     sippi_plot_posterior(O{imp}.txt);    
 end
+save('AM13_mul')
 
