@@ -198,8 +198,9 @@ end
 forward.forward_function='sippi_forward_traveltime';
 forward.sources=D.S;
 forward.receivers=D.R;
-forward.type='fat';forward.linear=1;forward.freq=0.1;forward.linear_m=m0;
-forward.type='ray_2d';
+%forward.type='fat';forward.linear=1;forward.freq=0.1;forward.linear_m=m0;
+%forward.type='ray_2d';
+forward.type='eikonal';
 
 % %% TEST THE SETUP 
 % % generate a realization from the prior
@@ -220,7 +221,7 @@ n_sample=200;
 options.mcmc.nite=1000000;
 options.mcmc.i_plot=5000;
 
-options.mcmc.nite=400000;
+options.mcmc.nite=100000;
 options.mcmc.i_plot=10000;
 
 options.mcmc.i_sample=ceil(options.mcmc.nite/n_sample);
@@ -265,8 +266,8 @@ for imp=1:length(P);
 end
 
 %%
-%parfor imp=1:length(P);
-for imp=1:length(P);
+parfor imp=1:length(P);
+%for imp=1:length(P);
     O{imp}=sippi_metropolis(data,P{imp}.prior,forward,O{imp});
     sippi_plot_prior_sample(O{imp}.txt);
     sippi_plot_posterior(O{imp}.txt);    
