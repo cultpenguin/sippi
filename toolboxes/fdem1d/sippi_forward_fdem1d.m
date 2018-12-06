@@ -1,4 +1,4 @@
-% sippi_forward_linefit Line fit forward solver for SIPPI
+% sippi_forward_fdem1d: 1D fdem1d forward solver
 %
 %
 % [d,forward,prior,data]=sippi_forward_fdem1d(m,forward,prior,data);
@@ -9,6 +9,15 @@
 % forward.force_one_thread [0], 0:force one thread only ( nor parallellization)
 % forward.nthreads : optionally maually choose the number of seperate
 %                    Matlab workers for parfor
+%
+%
+% From; 
+%  Elwaseif, M., Robinson, J., Day-Lewis, F. D., Ntarlagiannis, D., Slater, L. D., Lane, J. W., ... & Schultz, G. (2017). A matlab-based frequency-domain electromagnetic inversion code (FEMIC) with graphical user interface. Computers & Geosciences, 99, 61-71.
+%  Minsley, B. J. (2011). A trans-dimensional Bayesian Markov chain Monte Carlo algorithm for model assessment using frequency-domain electromagnetic data. Geophysical Journal International, 187(1), 252-272.
+%
+% See also sippi_forward_fdem1d_example.m for an example.
+%
+%
 %
 
 function [d,forward,prior,data]=sippi_forward_fdem1d(m,forward,prior,data);
