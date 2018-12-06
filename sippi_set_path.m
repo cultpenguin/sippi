@@ -20,6 +20,8 @@ i=i+1;F{i}=[p,filesep,'toolboxes',filesep,'fast_marching_kroon',filesep,'functio
 i=i+1;F{i}=[p,filesep,'toolboxes',filesep,'fast_marching_kroon',filesep,'shortestpath'];
 i=i+1;F{i}=[p,filesep,'toolboxes',filesep,'mpslib',filesep,'matlab'];
 i=i+1;F{i}=[p,filesep,'toolboxes',filesep,'frequency_matching'];
+i=i+1;F{i}=[p,filesep,'toolboxes',filesep,'fdem1d'];
+i=i+1;F{i}=[p,filesep,'toolboxes',filesep,'fdem1d',filesep,'fdem1d'];
 
 % ALSO ADD ALL DIRS IN 'toolboxes' folder not allready specified
 toolboxes_dir=[p,filesep,'toolboxes'];
