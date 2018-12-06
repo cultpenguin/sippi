@@ -91,7 +91,7 @@ if (nargin>1)&(prior{ip}.seq_gibbs.step>0)
             try
                 i_cell=randomsample(i_new,step);
             catch
-                keyboard
+                i_cell=[];
             end
         end
         prior{ip}.cells_use=[prior{ip}.cells_use,i_cell];

@@ -85,7 +85,7 @@ forward.sources=D.S;
 forward.receivers=D.R;
 %forward.type='fat';forward.linear=1;forward.freq=0.1;
 forward.type='eikonal';
-
+ forward.type='ray_2d';
 
 %% TEST THE SETUP 
 % generate a realization from the prior
