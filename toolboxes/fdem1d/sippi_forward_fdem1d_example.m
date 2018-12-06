@@ -82,5 +82,7 @@ options.mcmc.m_ref  = m_ref;
 prior{1}.seq_gibbs.i_update_step_max=max([1000 options.mcmc.nite/20]);
 prior{1}.seq_gibbs.step=1;
 
-[options,data,prior,forward,m_current]=sippi_metropolis(data,prior,forward,options)
+[options,data,prior,forward,m_current]=sippi_metropolis(data,prior,forward,options);
+
+sippi_plot_posterior(options.txt)
                                             
