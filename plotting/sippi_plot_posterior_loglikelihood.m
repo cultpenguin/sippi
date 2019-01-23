@@ -50,12 +50,11 @@ end
 
 
 ic=1;
-if ~isfield(options.C{ic}.mcmc,'logL')
-    disp(sprintf('%s : log-likelihood data not available in mcmc or options.mcmc data structure',mfilename));
-    return;
+
+if isfield(options,'C')
+    mcmc=options.C{1}.mcmc;
 end
 
-mcmc=options.C{1}.mcmc;
 
 % SET DFAULT PLOTTING SETTINGS
 options=sippi_plot_defaults(options);
@@ -118,20 +117,24 @@ set(gca,'xscale','linear')
 
 %% autocorrelation
 if i1<length(mcmc.logL);
-    
+    %%
     % Only make the autocorr analysis, if the posterior has been been
     % sampled. i1>=length(mcmc.logL) indicated annealing. 
     figure(6);clf;set_paper('landscape');
     set(gca,'FontSize',options.plot.axis.fontsize);
     
+    max_nii=2000; 
     ii=i1:length(mcmc.logL);
+    dii=ceil(length(ii)/max_nii);
+    ii=ii(1):dii:max(ii);
+    
     % compute cross correlation 
     larr=mcmc.logL(ii)-mean(mcmc.logL(ii));
     c=conv(larr,flip(larr));
     
     c=c(length(ii):end);
     c=c./max(c);
-    xc=[0:1:(length(c))-1];
+    xc=[0:1:(length(c))-1]*dii;
     plot(xc,c,'-');grid on
   
     ic0=find(c<0);ic0=ic0(1);
