@@ -607,8 +607,13 @@ end
                 try
                     fn=(im-1)*10+7;
                     figure_focus(fn);set_paper('landscape');clf;
-                    [e,ni]=ESS(reals_all(:,:),400,1,options.mcmc.i_sample);
+                    %[e,ni]=ESS(reals_all(:,:)',400,1,options.mcmc.i_sample);
+                    
+                    n_max=1000;
+                    di=max([ceil(size(reals_all,2)/n_max),1]);
+                    [e,ni,e_av,ni_av]=ESS(reals_all(:,1:di:end),400,1,options.mcmc.i_sample*di);
                     disp(sprintf('%s: prior{%d}, Number of independent realizations: %d',mfilename,im,floor(min(e))))
+                    disp(sprintf('%s: prior{%d}, tau (average): %5.1f',mfilename,im,e_av))
                     print_mul(sprintf('%s_m%d_autocorr_ess',fname,im),options.plot.hardcopy_types);
                     
                 catch

@@ -13,7 +13,7 @@
 %   if n_use=size(sample,1), then tau will tend be 0, and ess infinity
 %
 %  See also: multiESS
-function [ess,tau]=ESS(sample,n_use,doPlot,iLag)
+function [ess,tau,ess_all,tau_all]=ESS(sample,n_use,doPlot,iLag)
 
 
 [nr,nm]=size(sample);
@@ -28,7 +28,7 @@ end
 if nargin<3, doPlot=0;end
 if nargin<4, iLag=1;end
 
-
+%%
 for im=1:nm;
     % if nm>10, progress_txt(im,nm), end
     s=sample(:,im);
@@ -50,8 +50,19 @@ for im=1:nm;
     if doPlot==1
         plot([1:length(ac)].*iLag,ac,'k-','LineWidth',.1);hold on
     end
-        
+    
+    if im==1;
+        ac_all=ac;
+    else
+        ac_all = ac_all+ac;
+    end
 end
+ac_all=ac_all/nm;
+tau_all = (1+2*sum(ac_all));
+ess_all=nr/tau_all;
+ 
+
+plot([1:length(ac)].*iLag,ac_all,'g-','LineWidth',2);hold on
 if doPlot==1
     grid on
     xl=xlim;
@@ -60,7 +71,13 @@ if doPlot==1
     h_tau=.2*h_tau/max(h_tau(:));
     bar(x_tau,h_tau,'r')
     %bar(x_tau,h_tau,'r-*')
+    plot([1,1].*tau_all*iLag,ylim,'g:')
     hold off
     xlabel('Lag')
     ylabel('Autocorrelation(lag)')
 end
+
+
+tau=tau*iLag;
+tau_all=tau_all*iLag;
+

@@ -15,7 +15,7 @@
 %  Accounting for imperfect forward modeling in geophysical inverse problems - exemplified for cross hole tomography.
 %  Geophsyics, 79(3) H1-H21, 2014. doi:10.1190/geo2013-0215.1
 %
-function [Ct,dt,dd,d_full,d_app]=sippi_compute_modelization_forward_error(forward_full,forward_app,prior,N,d);
+function [Ct,dt,dd,d_full,d_app,o_nscore]=sippi_compute_modelization_forward_error(forward_full,forward_app,prior,N,d,useNormalScore);
 
 
 N_app = length(forward_app);
@@ -27,12 +27,9 @@ if N_app==1;
         forward_app{1}=f_temp;
     end
 end
-
-
-if nargin<4,
-    N=500;
-end
+if nargin<4,N=500;end
 if nargin<5
+    % precalcualte once (to initialize forward structure) 
     m=sippi_prior(prior);
     %if N_app==1;
     %    [d,forward_app]=sippi_forward(m,forward_app,prior);
@@ -42,7 +39,10 @@ if nargin<5
     end
     %end
 end
-
+if nargin<6
+    useNormalScore = 1;
+    o_nscore{1}=[];;
+end
 
 try
     fname=sprintf('Ct_%s_N%d',forward_full.type,N);
@@ -154,17 +154,29 @@ while i<N
 end
 
 %% estimate modelization covariance models
+
 for na=1:N_app
     
-    dt{na}=nanmean(dd{na}')';
     
-    % optionally force dt=0;
-    if nargout<2
-        dt{na}=dt{na}.*0;
+    if useNormalScore
+        keyboard
+        [d_nscore{na},o_nscore{na}]=nscore(dd{na}(:));
+        % make sure data is in proper shape (and test the forward normal
+        % score)!
+        [d_nscore{na},o_nscore{na}]=nscore(dd{na},o_nscore{na});
+        
+        dt{na}=nanmean(d_nscore{na}')';
+        
+    else
+        dt{na}=nanmean(dd{na}')';
+    
+        % optionally force dt=0;
+        if nargout<2
+            dt{na}=dt{na}.*0;
+        end
+        dd_ct{na}=dd{na}-repmat(dt{na},1,N);
+        Ct{na}=(1/N).*(dd_ct{na}*dd_ct{na}');
     end
-    dd_ct{na}=dd{na}-repmat(dt{na},1,N);
-    
-    Ct{na}=(1/N).*(dd_ct{na}*dd_ct{na}');
 end
 
 
