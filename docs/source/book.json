@@ -1,0 +1,13 @@
+{
+    "plugins": ["katex","ga","youtube","copy-code-button", "multipart"],
+    "pluginsConfig": {
+        "ga": {
+            "token": "UA-36177321-1"
+        },
+        "unindent": true,
+        "theme": "monokai"       
+    },
+    "pdf": {
+        "pageNumbers": true
+    }
+}

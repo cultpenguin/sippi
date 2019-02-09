@@ -7,10 +7,17 @@ Welcome to SIPPI's documentation!
 =================================
 
 .. toctree::
-   :maxdepth: 2
+   :maxdepth: 4
    :caption: Contents:
 
-
+   README.rst
+   chapInstall/index
+   chapSIPPI/index
+   chapSampling/index
+   chapExamples/index
+   bibliography
+   
+   
 
 Indices and tables
 ==================
