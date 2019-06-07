@@ -66,11 +66,9 @@ if ~isfield(prior{ip},'ti')
 end
 
 if ~isfield(prior{ip},'method')
-    prior{ip}.method='mps_snesim';
-    % prior{ip}.method='mps_snesim_tree';
+    prior{ip}.method='mps_snesim_tree';
     % prior{ip}.method='mps_snesim_list';
-    % prior{ip}.method='mps_enesim_general';
-    % prior{ip}.method='mps_enesim';
+    % prior{ip}.method='mps_genesim';
 end
 
 prior{ip}.MPS.method=prior{ip}.method;
@@ -91,7 +89,9 @@ end
 
 % initialize prior and set the x,y,z dimensions
 prior=sippi_prior_init(prior,ip);
-prior{ip}.MPS.simulation_grid_size=[length(prior{ip}.x) length(prior{ip}.y) length(prior{ip}.z)];
+if ~isfield(prior{ip}.MPS,'simulation_grid_size')
+    prior{ip}.MPS.simulation_grid_size=[length(prior{ip}.x) length(prior{ip}.y) length(prior{ip}.z)];
+end
 prior{ip}.MPS.origin=[prior{ip}.x(1) prior{ip}.y(1) prior{ip}.z(1)];
 prior{ip}.MPS.grid_cell_size=[1 1 1];
 if prior{ip}.dim(1)>1
@@ -112,6 +112,18 @@ else
     prior{ip}.MPS.rseed=ceil(rand(1).*1e+6);
 end
 
+%% Convert values to indexes
+if nargin>1
+    if isfield(prior{ip},'index_values');
+        m = zeros(size(m_current{ip}))-1;
+        for i=1:length(prior{ip}.index_values)
+            try
+                m(find(m_current{ip}==prior{ip}.m_values(i)))=prior{ip}.index_values(i);
+            end
+        end
+        m_current{ip}=m;
+    end
+end    
 
 %% Sequential gibbs resampling
 if nargin>1
@@ -215,5 +227,12 @@ end
 
 % In next iteration do NOT write the TI to disk!
 prior{ip}.MPS.WriteTI=0;
+
+%% Convert indexes to values
+if isfield(prior{ip},'index_values');
+    for i=1:length(prior{ip}.index_values)
+        m_propose{ip}(find(m_propose{ip}==prior{ip}.index_values(i)))=prior{ip}.m_values(i);
+    end
+end
 
 

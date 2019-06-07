@@ -13,6 +13,7 @@ end
 
 % get index of data to resimulate
 i_resim=sippi_sequential_gibbs_resim(prior,ip);
+%disp(sprintf('N_Resim=%d/%d\n',length(i_resim),prod(size(m_current{ip}))));
 % get index of hard conditional data
 ih=setxor(1:(prod(prior{ip}.dim)),i_resim);
 

@@ -218,7 +218,8 @@ end
 
 %% sequential Gibbs resampling
 if nargin>1
-    % SEQUENTIAL GIBBS
+    
+    % Convert values to indexes
     if isfield(prior{ip},'index_values');
         m = zeros(size(m_current{ip}))-1;
         for i=1:length(prior{ip}.index_values)
@@ -228,9 +229,10 @@ if nargin>1
         end
         m_current{ip}=m;
     end
+    
+    % SEQUENTIAL GIBBS    
     sippi_verbose(sprintf('%s : Sequential Gibbs',mfilename),2)
     %prior{ip}.S=snesim_set_resim_data(prior{ip}.S,prior{ip}.S.D,[10 10]);
-    
     prior{ip}.S=snesim_set_resim_data(prior{ip}.S,m_current{ip},prior{ip}.seq_gibbs.step,prior{ip}.seq_gibbs.type);
     
 end
@@ -239,6 +241,7 @@ end
 prior{ip}.S = snesim(prior{ip}.S,prior{ip}.x,prior{ip}.y,prior{ip}.z);
 m_propose{ip} = prior{ip}.S.D;
 
+%% Convert indexes to values
 if isfield(prior{ip},'index_values');
     for i=1:length(prior{ip}.index_values)
         m_propose{ip}(find(m_propose{ip}==prior{ip}.index_values(i)))=prior{ip}.m_values(i);
