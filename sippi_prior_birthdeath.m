@@ -45,16 +45,16 @@ end
 
 % set z_interface, v_interface
 if ~isfield(prior{im},'z_interface');
-    x0=min(prior{im}.x);
-    wx=max(prior{im}.x)-min(prior{im}.x);
-    prior{im}.z_interface=sort(rand(1,prior{im}.N_layers-1)*wx+x0);
+    y0=min(prior{im}.y);
+    wy=max(prior{im}.y)-min(prior{im}.y);
+    prior{im}.z_interface=sort(rand(1,prior{im}.N_layers-1)*wy+y0);
 end
 
 if ~isfield(prior{im},'val_interface');
     v_min=-1;
     v_max=3;
     wv=v_max-v_min;
-    prior{im}.v_interface=rand(1,prior{im}.N_layers)*wv+x0;
+    prior{im}.v_interface=rand(1,prior{im}.N_layers)*wv+v_min;
 end
 
 %% birth deaths
@@ -85,7 +85,7 @@ end
 %% build model
 m{im}=ones(length(prior{im}.y),1).*prior{im}.v_interface(1);
 for i=1:(prior{im}.N_layers-1);
-    ii=find(prior{im}.x>prior{im}.z_interface(i));
+    ii=find(prior{im}.y>prior{im}.z_interface(i));
     m{im}(ii)=prior{im}.v_interface(i);
 end
 
