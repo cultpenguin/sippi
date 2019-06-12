@@ -19,6 +19,21 @@
 % See also: sippi_prior_init, sippi_prior
 %
 function [m_propose,prior]=sippi_prior_voronoi(prior,m_current,ip);
+if nargin==0;
+    cells_N_max=5;
+    dx=0.5;    
+    ip=1;
+    prior{ip}.type='voronoi';    
+    prior{ip}.x=1:dx:125;
+    %prior{ip}.y=1:dx:20;    
+    prior{ip}.cells_N=cells_N_max; % SET NUMBER OF CELLS    
+    prior{ip}.cells_N_min=1;
+    prior{ip}.cells_N_max=cells_N_max;
+    %sippi_plot_prior_sample(prior);
+    [m_propose,prior]=sippi_prior(prior);
+    return
+end
+
 if nargin<3;
     ip=1;
 end
