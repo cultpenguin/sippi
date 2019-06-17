@@ -3,12 +3,30 @@
 % Call: 
 %     [m,prior]=sippi_prior_birthdeath(prior,m_current,im)
 %
+%
+% prior{im}.type='birthdeath'
+% prior{im}.N_layers_min % min number of layers
+% prior{im}.N_layers_max % max number of layers
+% prior{im}.v_min        % min value in layer
+% prior{im}.v_max        % max value in layer
+% prior{im}.z_interface_step % step in percentage of y-axis range, when
+%                            % moving layer
+%
+% prior{im}.p_lev=[p_birth p_death p_move p_value]
+%                 [1/6 1/6 1/6 1/2];
+%                    p_birth, probability of birth of layer
+%                    p_death, probability of death of layer
+%                    p_move, probability of movement of layer boundary
+%                    p_value, probability of perturbing value in each layer
+%                    (step--> prior{im}.seq_gibbs.step)
+%
+
 function [m,prior]=sippi_prior_birthdeath(prior,m_current,im);
 
 % if nargin == 01
 %     for i=1:100
 %         oimdisp(1)
-%         [m,prior]=sippi_prior_voronoi;
+%         [m,prior]=sippi_prior_birthdeath;
 %         plot(m{1}+i*5,prior{1}.x);
 %         hold on
 %     end
