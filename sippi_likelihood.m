@@ -180,8 +180,10 @@ for id=id_array;
         else
             dd=data{id}.d_obs(data{id}.i_use)-d{id};
         end
+        %data{id}.d_obs(data{id}.i_use)-data{id}.dt(data{id}.i_use)
+        %dd
         
-       
+        
         % Only compute iCD if it is computed only once (i.e.
         % data{id}.recomputeCD==0)
         if (~isfield(data{id},'iCD'))&&(data{id}.recomputeCD==0)
