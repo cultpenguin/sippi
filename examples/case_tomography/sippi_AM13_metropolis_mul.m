@@ -255,7 +255,7 @@ end
 
 for imp=1:length(P);
     for ip=1:length(P{imp}.prior);
-        P{imp}.prior{ip}.seq_gibbs.i_update_step_max=ceil(options.mcmc.nite/10);
+        P{imp}.prior{ip}.seq_gibbs.i_update_step_max=ceil(options.mcmc.nite/10);GOLF
         P{imp}.prior{ip}.seq_gibbs.i_update_step=200;
     end
 end
