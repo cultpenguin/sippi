@@ -82,7 +82,7 @@ if ~isfield(prior{im},'v_interface');
     prior{im}.v_interface=rand(1,prior{im}.N_layers)*wv+prior{im}.v_min;
 end
 
-if ~isfield(prior,'init')
+if ~isfield(prior{im},'init')
     prior=sippi_prior_init(prior);
 end
 
