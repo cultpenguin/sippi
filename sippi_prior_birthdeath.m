@@ -142,6 +142,8 @@ elseif r<pcum(3);
     sippi_verbose('move',2)
     
     N_interfaces = prior{im}.N_layers-1;
+
+    if (N_interfaces)>0
     imove = randi(N_interfaces);
     
     move_step = prior{im}.z_interface_step;
@@ -153,7 +155,8 @@ elseif r<pcum(3);
     if (z_interface(imove)>min(prior{1}.y))&&(z_interface(imove)<max(prior{1}.y))
         prior{im}.z_interface = z_interface;
     end
-    
+
+    end
     
 else
     % resistvity
