@@ -390,7 +390,8 @@ while i<=mcmc.nite;
             [C,mcmc]=sippi_metropolis_gibbs_random_iteration(C,mcmc,i);
         else
             % 2D GIBBS SAMPLING
-            [C,mcmc]=sippi_metropolis_gibbs_random_iteration_2d(C,mcmc,i);
+            %[C,mcmc]=sippi_metropolis_gibbs_random_iteration_2d(C,mcmc,i,1); % plot every time            
+            [C,mcmc]=sippi_metropolis_gibbs_random_iteration_2d(C,mcmc,i);            
         end
     end
     
