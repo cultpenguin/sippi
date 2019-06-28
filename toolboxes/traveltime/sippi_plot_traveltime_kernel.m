@@ -28,6 +28,7 @@ if isfield(forward,'sources');
 end
 hold off
 
+
 if isfield(forward,'G');
     figure_focus(fn+1);
     subplot(1,2,1);
