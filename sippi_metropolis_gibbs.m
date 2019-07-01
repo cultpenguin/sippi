@@ -147,6 +147,7 @@ options.null='';
 if isfield(options,'nruns');
     if options.nruns>1
         [o_all,data,prior,forward]=sippi_metropolis_mulrun(data,prior,forward,options);
+        m_current=[];
         options=o_all;
         return
     end

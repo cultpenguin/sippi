@@ -79,6 +79,7 @@ if isfield(options.mcmc,'adaptive_rejection');
     % use all realizations using sippi_rejection*
     skip_seq_gibbs=0;
 end   
+skip_seq_gibbs=1;
 
 for k=1:(length(im_onedim))
     [reals1,etype_mean1,etype_var1,reals_all1]=sippi_get_sample('.',im_onedim(k),100000,skip_seq_gibbs);
@@ -91,7 +92,7 @@ for k=1:(length(im_onedim))
     end
     
 end
-
+%%
 for k=1:(length(im_onedim)-1)
     for l=(k+1):(length(im_onedim))
         
