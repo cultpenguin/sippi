@@ -413,12 +413,12 @@ while i<=mcmc.nite;
         % set temperature
         if mcmc.do_anneal==1;
             [C{ic}.T_fac,mcmc]=sippi_anneal_temperature(i,mcmc,C{ic}.prior_current);
-            T=C{ic}.T_fac.*C{ic}.T;
+            T(ic)=C{ic}.T_fac.*C{ic}.T;
         else
-            T=C{ic}.T; % only use the 'base' temperature.
+            T(ic)=C{ic}.T; % only use the 'base' temperature.
         end
         
-        C{ic}.Pacc = exp((1./T).*(C{ic}.logL_propose-C{ic}.logL_current));
+        C{ic}.Pacc = exp((1/T(ic)).*(C{ic}.logL_propose-C{ic}.logL_current));
         
         if (mcmc.accept_only_improvements==1)
             % Optimization only?
@@ -482,11 +482,18 @@ while i<=mcmc.nite;
             j_arr=setxor(1:NC,ic_i);
             ic_j=j_arr(ceil((NC-1)*rand(1)));
             
-            Pi=exp(C{ic_j}.logL_current-C{ic_i}.logL_current).^(1./C{ic_i}.T);
-            Pj=exp(C{ic_i}.logL_current-C{ic_j}.logL_current).^(1./C{ic_j}.T);
+            %% Sambridge (2013), Eqn 10
+            %Pi=exp(C{ic_j}.logL_current-C{ic_i}.logL_current).^(1./C{ic_i}.T);
+            %Pj=exp(C{ic_i}.logL_current-C{ic_j}.logL_current).^(1./C{ic_j}.T);
+            %Pacc=Pi*Pj;
+            %if isinf(Pacc); Pacc=0;end
+            %Pacc2=Pacc;
             
-            Pacc=Pi*Pj;
-            if rand(1)<Pacc
+            % Sambridge (2013), Eqn 10, reorganized
+            Pswap = exp((C{ic_j}.logL_current)*(1./C{ic_i}.T - 1./C{ic_j}.T) + ...
+                        (C{ic_i}.logL_current)*(1./C{ic_j}.T - 1./C{ic_i}.T));
+            
+            if rand(1)<Pswap
                 % accept swap
                 n_swap=n_swap+1;
                 
@@ -514,7 +521,7 @@ while i<=mcmc.nite;
                         C{k}.prior_current{im}.seq_gibbs.step=C{k}.mcmc.step(im,i);
                     end;
                 end
-                sippi_verbose(sprintf('%s: at i=%05d SWAP chains [%d<->%d]',mfilename,i,ic_i,ic_j),2);
+                sippi_verbose(sprintf('%s: at i=%05d SWAP chains [%d<->%d], P_swap=%7.3f',mfilename,i,ic_i,ic_j,Pswap),2);
             end
         end
     end
@@ -540,7 +547,7 @@ while i<=mcmc.nite;
         vlevel=sippi_verbose;
         if vlevel>0, NC_end=NC; else NC_end=1; end
         for ic=1:NC_end
-            txt=sprintf('%06d/%06d (%10s): C%02d logL_c=%5.2f(%5.2f), T=%5.2f',mcmc.i,mcmc.nite,t_end_txt,ic,C{ic}.logL_current,C{ic}.logL_propose,T);
+            txt=sprintf('%06d/%06d (%10s): C%02d logL_c=%5.2f(%5.2f), T=%5.2f',mcmc.i,mcmc.nite,t_end_txt,ic,C{ic}.logL_current,C{ic}.logL_propose,T(ic));
             sippi_verbose(sprintf('%s: %s',mfilename,txt),-1);
             % MORE information at higher verbose level
             vlevel_pacc=1;
