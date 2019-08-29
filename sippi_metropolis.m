@@ -521,7 +521,7 @@ while i<=mcmc.nite;
                         C{k}.prior_current{im}.seq_gibbs.step=C{k}.mcmc.step(im,i);
                     end;
                 end
-                sippi_verbose(sprintf('%s: at i=%05d SWAP chains [%d<->%d], P_swap=%7.3f',mfilename,i,ic_i,ic_j,Pswap),2);
+                sippi_verbose(sprintf('%s: at i=%05d SWAP chains [%d<->%d], P_swap=%7.3f',mfilename,i,ic_i,ic_j,Pswap),1);
             end
         end
     end
