@@ -61,8 +61,12 @@ for id=id_array;
     if ~isfield(data{id},'recomputeCD')
         data{id}.recomputeCD=0;
     end
-        
     
+    % check whether to use log of data before comptuting misfit?
+    if ~isfield(data{id},'use_log')
+        data{id}.use_log=0;
+    end
+
     % Check whether to use user supplied noise model.
     if isfield(data{id},'noise_model')
         % next line may be slow...
@@ -102,7 +106,13 @@ for id=id_array;
         
         % dd=data{id}.d_obs-d{id};
         % d_std could be an array of lenth(data{id}.d_obs)...
-        dd=data{id}.d_obs(data{id}.i_use)-d{id};
+        
+        if data{id}.use_log==1;
+            dd=log(data{id}.d_obs(data{id}.i_use))-log(d{id});
+        else
+            dd=data{id}.d_obs(data{id}.i_use)-d{id};
+        end
+        
         if length(data{id}.d_std)==1
             logL(id)=-.5*sum(sum(sum(dd.^2./(data{id}.d_std.^2))));
         else
@@ -178,7 +188,11 @@ for id=id_array;
                 dd=(data{id}.d_obs(data{id}.i_use)-data{id}.dt(data{id}.i_use))-d{id};
             end
         else
-            dd=data{id}.d_obs(data{id}.i_use)-d{id};
+            if data{id}.use_log==1;
+                dd=log(data{id}.d_obs(data{id}.i_use))-log(d{id});                
+            else
+                dd=data{id}.d_obs(data{id}.i_use)-d{id};
+            end
         end
         %data{id}.d_obs(data{id}.i_use)-data{id}.dt(data{id}.i_use)
         %dd
