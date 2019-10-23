@@ -106,6 +106,40 @@ else
     sippi_verbose(sprintf('%s : setting seed (%d)for VISIM',mfilename,prior{ip}.V.rseed),2)
 end
 
+%% CONDITIONAL POINT DATA, d_obs
+if isfield(prior{ip},'d_obs')
+    disp(1)
+    useHardPoint=0;
+    if size(prior{ip}.d_obs,2)==5;
+        % volume data
+        
+        
+        prior{ip}.V.fvolgeom.fname='d_volgeom.eas';
+        prior{ip}.V.fvolsum.fname='d_volsum.eas';
+        
+        clear d_volgeom d_volsum
+        for i=1:size(prior{ip}.d_obs,1)
+            d_volgeom(i,:)=[prior{ip}.d_obs(i,1:3) i 1];
+            d_volsum(i,:)= [i 1 prior{ip}.d_obs(i,4:5)];
+        end
+        write_eas(prior{ip}.V.fvolgeom.fname,d_volgeom);
+        write_eas(prior{ip}.V.fvolsum.fname,d_volsum);
+        if useHardPoint==1
+            prior{ip}.V.cond_sim=1; % hard and soft data
+        else
+            prior{ip}.V.cond_sim=3; % soft data
+        end
+        
+        
+        %prior{ip}.V.volnh.method=0; --> BAD BAD RESULTS
+        prior{ip}.V.densitypr=0;
+        prior{ip}.V.debuglevel=-1;
+        
+        
+    end
+end
+
+
 %% SET TARGET DISTRIBUTION
 if isfield(prior{ip},'d_target')
     if strcmp(prior{ip}.method,'dssim');
