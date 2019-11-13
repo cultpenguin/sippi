@@ -106,6 +106,56 @@ else
     sippi_verbose(sprintf('%s : setting seed (%d)for VISIM',mfilename,prior{ip}.V.rseed),2)
 end
 
+%% CONDITIONAL POINT DATA, d_obs
+if isfield(prior{ip},'d_obs')
+    
+    if size(prior{ip}.d_obs,2)==4
+        prior{ip}.d_obs(:,5)=0;
+    end
+    
+    i_hard=find(prior{ip}.d_obs(:,5)==0);
+    i_soft=find(prior{ip}.d_obs(:,5)~=0);
+    
+    useHardPoint=0;
+    useSoftPoint=0;
+    
+    prior{ip}.V.fconddata.fname='d_obs.eas';
+    if isempty(i_hard)
+        delete(prior{ip}.V.fconddata.fname)
+    else
+        useHardPoint=1;        
+        write_eas(prior{ip}.V.fconddata.fname,prior{ip}.d_obs(i_hard,1:4));
+        prior{ip}.V.cond_sim=2; % only point data
+    
+    end
+    if ~isempty(i_soft)
+        useSoftPoint=1;
+        % volume data
+        
+        prior{ip}.V.fvolgeom.fname='d_volgeom.eas';
+        prior{ip}.V.fvolsum.fname='d_volsum.eas';
+        clear d_volgeom d_volsum
+        for i=1:length(i_soft)
+            d_volgeom(i,:)=[prior{ip}.d_obs(i_soft(i),1:3) i 1];
+            d_volsum(i,:)= [i 1 prior{ip}.d_obs(i_soft(i),4:5)];
+        end
+        write_eas(prior{ip}.V.fvolgeom.fname,d_volgeom);
+        write_eas(prior{ip}.V.fvolsum.fname,d_volsum);
+        if useHardPoint==1
+            prior{ip}.V.cond_sim=1; % hard and soft data
+        else
+            prior{ip}.V.cond_sim=3; % soft data
+        end
+        
+        
+        prior{ip}.V.volnh.method=0; %--> BAD BAD RESULTS
+        prior{ip}.V.densitypr=0;
+        prior{ip}.V.debuglevel=-1;
+        
+    end
+end
+
+
 %% SET TARGET DISTRIBUTION
 if isfield(prior{ip},'d_target')
     if strcmp(prior{ip}.method,'dssim');

@@ -67,15 +67,15 @@ for id=id_array;
         data{id}.use_log=0;
     end
 
-    % Check whether to use user supplied noise model.
-    if isfield(data{id},'noise_model')
-        % next line may be slow...
-        if strfind(data{id}.noise_model,'sippi_likelihood_');
-            [logL,logL_all,data]=feval(data{id}.noise_model,d,data,id);
-            break;
-        end
-    end
-    
+%     % Check whether to use user supplied noise model.
+%     if isfield(data{id},'noise_model')
+%         % next line may be slow...
+%         if strfind(data{id}.noise_model,'sippi_likelihood_');
+%             [logL,logL_all,data]=feval(data{id}.noise_model,d,data,id);
+%             break;
+%         end
+%     end
+%     
     
     if ~isfield(data{id},'noise_model');
         data{id}.noise_model='gaussian';
@@ -108,9 +108,9 @@ for id=id_array;
         % d_std could be an array of lenth(data{id}.d_obs)...
         
         if data{id}.use_log==1;
-            dd=log(data{id}.d_obs(data{id}.i_use))-log(d{id});
+            dd=log(data{id}.d_obs(data{id}.i_use))-log(d{id}(data{id}.i_use));
         else
-            dd=data{id}.d_obs(data{id}.i_use)-d{id};
+            dd=data{id}.d_obs(data{id}.i_use)-d{id}(data{id}.i_use);
         end
         
         if length(data{id}.d_std)==1
@@ -184,26 +184,24 @@ for id=id_array;
         if isfield(data{id},'dt');
             if length(data{id}.dt)==1
                 if data{id}.use_log==1;
-                    dd=(log(data{id}.d_obs(data{id}.i_use))-data{id}.dt)-log(d{id});
+                    dd=(log(data{id}.d_obs(data{id}.i_use))-data{id}.dt)-log(d{id}(data{id}.i_use));
                 else
-                    dd=(data{id}.d_obs(data{id}.i_use)-data{id}.dt)-d{id};
+                    dd=(data{id}.d_obs(data{id}.i_use)-data{id}.dt)-d{id}(data{id}.i_use);
                 end
             else
                 if data{id}.use_log==1;
-                    dd=(log(data{id}.d_obs(data{id}.i_use))-data{id}.dt(data{id}.i_use))-log(d{id});
+                    dd=(log(data{id}.d_obs(data{id}.i_use))-data{id}.dt(data{id}.i_use))-log(d{id}(data{id}.i_use));
                 else
-                    dd=(data{id}.d_obs(data{id}.i_use)-data{id}.dt(data{id}.i_use))-d{id};
+                    dd=(data{id}.d_obs(data{id}.i_use)-data{id}.dt(data{id}.i_use))-d{id}(data{id}.i_use);
                 end
             end
         else
             if data{id}.use_log==1;
-                dd=log(data{id}.d_obs(data{id}.i_use))-log(d{id});                
+                dd=log(data{id}.d_obs(data{id}.i_use))-log(d{id}(data{id}.i_use));                                
             else
-                dd=data{id}.d_obs(data{id}.i_use)-d{id};
+                dd=data{id}.d_obs(data{id}.i_use)-d{id}(data{id}.i_use);
             end
         end
-        %data{id}.d_obs(data{id}.i_use)-data{id}.dt(data{id}.i_use)
-        %dd
         
         
         % Only compute iCD if it is computed only once (i.e.

@@ -540,7 +540,7 @@ while i<=mcmc.nite;
         end
     end
     
-    %% DISPLAY PROGRES AND TIME TO FINISH
+    %% DISPLAY PROGRESS AND TIME TO FINISH
     if ((i/i_update_txt)==round(i/i_update_txt))
         [t_end_txt,t_left_seconds]=time_loop_end(mcmc.t_start,i,mcmc.nite);
         %ic=1;
