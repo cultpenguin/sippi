@@ -25,7 +25,6 @@
 % The sensitivity is the length travelled in each cell.
 % 
 %
-% See also : fast_fd_2d
 %
 % TMH/2006
 %
@@ -49,11 +48,11 @@ function [K,RAY,Gk,Gray,tS,tR,raypath_mat,raylength_mat]=kernel_multiple(Vel,x,y
   dy=y(1)-y(1);
   d1=(dx+dy)/2;
 
-  tS=fast_fd_2d(x,y,Vel,S);
-  tR=fast_fd_2d(x,y,Vel,R);
-  %itype=1;
-  %tS=eikonal(x,y,0,Vel,S,itype);
-  %tR=eikonal(x,y,0,Vel,R,itype);
+  %tS=fast_fd_2d(x,y,Vel,S);
+  %tR=fast_fd_2d(x,y,Vel,R);
+  itype=1;
+  tS=eikonal(x,y,0,Vel,S,itype);
+  tR=eikonal(x,y,0,Vel,R,itype);
 
   if (size(tS,3)==1)*(size(tR,3)>1)
       ttS=tR.*0;
@@ -63,7 +62,7 @@ function [K,RAY,Gk,Gray,tS,tR,raypath_mat,raylength_mat]=kernel_multiple(Vel,x,y
       tS=ttS;
       S=repmat(S,[ns 1]);
   end
-  fast_fd_clean;
+  %fast_fd_clean;
 
   dt=tS+tR;
   K=zeros(size(dt));

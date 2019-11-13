@@ -62,11 +62,11 @@ if nargin>1
     
     i_resim = sippi_sequential_gibbs_resim(prior,ip);
     
-    z_cur(i_resim)=randn(size(z_cur(i_resim)));
-    
+    z_cur(i_resim)=randn(size(z_cur(i_resim)));    
     %% linear combinartion of the perturbed paramaters
     if (isfield(prior{ip}.seq_gibbs,'gradual'))
         if prior{ip}.seq_gibbs.gradual<1
+            
             if exist('gaussian_linear_combine','file')
                 i_perturbed=i_resim;%find((z_init-z_cur)~=0);
                 z_cur(i_perturbed) = gaussian_linear_combine(z_init(i_perturbed),z_cur(i_perturbed),prior{ip}.seq_gibbs.gradual,0);
