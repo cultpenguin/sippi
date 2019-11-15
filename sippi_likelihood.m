@@ -110,7 +110,7 @@ for id=id_array;
         if data{id}.use_log==1;
             dd=log(data{id}.d_obs(data{id}.i_use))-log(d{id}(data{id}.i_use));
         else
-            dd=data{id}.d_obs(data{id}.i_use)-d{id}(data{id}.i_use);
+            dd=data{id}.d_obs(data{id}.i_use)-d{id}(data{id}.i_use);            
         end
         
         if length(data{id}.d_std)==1

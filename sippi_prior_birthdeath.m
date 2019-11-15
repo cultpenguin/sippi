@@ -51,7 +51,7 @@ if nargin<2,
 end
     
 %
-if ~isfield(prior{im},'x');prior{im}.y=0:1:124;end
+if ~isfield(prior{im},'x');prior{im}.x=0:1:124;end
 
 if ~isfield(prior{im},'N_layers_min');prior{im}.N_layers_min=1;end
 if ~isfield(prior{im},'N_layers_max');prior{im}.N_layers_max=5;end
@@ -65,8 +65,8 @@ if ~isfield(prior{im},'v_max');prior{im}.v_max=3;end
 
 % set z_interface, v_interface
 if ~isfield(prior{im},'z_interface');
-    y0=min(prior{im}.y);
-    wy=max(prior{im}.y)-min(prior{im}.y);
+    y0=min(prior{im}.x);
+    wy=max(prior{im}.x)-min(prior{im}.x);
     prior{im}.z_interface=sort(rand(1,prior{im}.N_layers-1)*wy+y0);
 end
 if ~isfield(prior{im},'z_interface_step');
@@ -102,8 +102,8 @@ if r<pcum(1)&&(prior{im}.N_layers<prior{im}.N_layers_max);
     wv=prior{im}.v_max-prior{im}.v_min;
     v_interface_new = rand(1)*wv+prior{im}.v_min;
     
-    y0=min(prior{im}.y);
-    wy=max(prior{im}.y)-min(prior{im}.y);
+    y0=min(prior{im}.x);
+    wy=max(prior{im}.x)-min(prior{im}.x);
     
     z_interface_new = rand(1)*wy+y0;
 
@@ -147,12 +147,12 @@ elseif r<pcum(3);
     imove = randi(N_interfaces);
     
     move_step = prior{im}.z_interface_step;
-    dz = max(prior{1}.y)-min(prior{1}.y);
+    dz = max(prior{1}.x)-min(prior{1}.x);
     
     z_interface = prior{im}.z_interface;   
     z_interface(imove) = z_interface(imove) + randn(1)*move_step*dz;
     
-    if (z_interface(imove)>min(prior{1}.y))&&(z_interface(imove)<max(prior{1}.y))
+    if (z_interface(imove)>min(prior{1}.x))&&(z_interface(imove)<max(prior{1}.x))
         prior{im}.z_interface = z_interface;
     end
 
@@ -176,13 +176,15 @@ sippi_verbose(sprintf('Nl=%d',prior{im}.N_layers),2)
 
 
 %% build model
-m{im}=ones(length(prior{im}.y),1).*prior{im}.v_interface(1);
+m{im}=ones(length(prior{im}.x),1).*prior{im}.v_interface(1);
 for i=1:(prior{im}.N_layers-1);
-    ii=find(prior{im}.y>prior{im}.z_interface(i));
+    ii=find(prior{im}.x>prior{im}.z_interface(i));
     m{im}(ii)=prior{im}.v_interface(i+1);
 end
 
-
+if prior{im}.ndim==1
+    m{im}=m{im}';
+end
 
 %% return proposed model
 
