@@ -81,7 +81,6 @@ function [options,data,prior,forward,m_current]=sippi_metropolis_gibbs(data,prio
 %    setenv('SIPPI_VERBOSE_LEVEL','-2'); % indication of stop and start
 %    setenv('SIPPI_VERBOSE_LEVEL','-3'); % none
 %
-%
 %    %% MULTIPLE RUNS (IN PARALLEL)
 %    % In case the matlab parallel toolbox is installed, then a selected
 %    % number of indenpendent]] Metropolis chains can be run in parallel
@@ -108,7 +107,6 @@ if nargin==0;
     mat_file=[f,filesep,'mat'];
     if exist(mat_file,'file');
         disp('OK')
-        
     else
         d=dir('*.mat');
         if length(d)==0;
@@ -138,9 +136,7 @@ if nargin==0;
         m_current=[];
         return
     end
-    
 end
-
 
 options.null='';
 %% MULTIPLE RUNS IN PARALLEL
@@ -155,14 +151,10 @@ end
 
 if start_from_mat_file==0;
     % ONLY DO THIS IF STARTING FROM SCRATCH
-    
-    %%
     if ~isfield(options,'txt');options.txt='';end
     if ~isempty(options.txt)
-        %options.txt=sprintf('%s_sippi_metropolis_%s',datestr(now,'YYYYmmdd_HHMM'),options.txt);
         options.txt=sprintf('sm_%s_%s',datestr(now,'YYYYmmdd_HHMM'),options.txt);
     else
-        %options.txt=sprintf('%s_sippi_metropolis',datestr(now,'YYYYmmdd_HHMM'));
         options.txt=sprintf('sm_%s',datestr(now,'YYYYmmdd_HHMM'));
     end
     
@@ -190,19 +182,6 @@ if start_from_mat_file==0;
     
     %% INITIALIZE MCMC OPTIONS
     options=sippi_mcmc_init(options,prior);
-    if ~isfield(options,'mcmc'); options.mcmc.null='';end
-    if ~isfield(options.mcmc,'n_chains'); options.mcmc.n_chains=1;end
-    options.mcmc.gibbs.null='';
-    if ~isfield(options.mcmc.gibbs,'usedim'); options.mcmc.gibbs.usedim=1;end
-    if ~isfield(options.mcmc.gibbs,'i_gibbs'); options.mcmc.gibbs.i_gibbs=1e+9;end
-    if ~isfield(options.mcmc.gibbs,'Nm'); 
-        if (options.mcmc.gibbs.usedim==1);
-            options.mcmc.gibbs.N_bins=41;
-        else
-            options.mcmc.gibbs.N_bins=300;
-        end
-    end
-   
     mcmc=options.mcmc;
     
     %% INITIALIZE prior
@@ -220,7 +199,12 @@ if start_from_mat_file==0;
     %% INITIALIZE CHAINS
     NC=options.mcmc.n_chains;
     for ic=1:NC
-        C{ic}.prior=prior;
+        if isfield(options,'prior_chains');
+            sippi_verbose(sprintf('%s: Using mulitple priors from options.prior_chain{%d}',mfilename,ic));
+            C{ic}.prior=options.prior_chains{ic};
+        else
+            C{ic}.prior=prior;
+        end
         C{ic}.data=data;
         C{ic}.forward=forward;
     end
@@ -264,15 +248,20 @@ if start_from_mat_file==0;
         end
     end
     
+    %% REFERENCE LIKELIHOOD?
+    if isfield(options.mcmc,'m_ref');
+        try
+            options.mcmc.d_ref=sippi_forward(options.mcmc.m_ref,forward,prior,data);
+            options.mcmc.logL_ref=sippi_likelihood(options.mcmc.d_ref,data);
+        end
+    end
+    
     %% INITIAL LIKELIHOODS
     for ic=1:NC
         [C{ic}.d_current,C{ic}.forward,C{ic}.prior,C{ic}.data]=sippi_forward(C{ic}.m_current,C{ic}.forward,C{ic}.prior,C{ic}.data);
-        
         C{ic}.data_current=C{ic}.data;
         [C{ic}.logL_current,C{ic}.L_current]=sippi_likelihood(C{ic}.d_current,C{ic}.data_current);
-        
         C{ic}.prior_current=C{ic}.prior;
-        
     end
     
     %% COMPUTE TIME PER ITERATION
@@ -384,7 +373,6 @@ while i<=mcmc.nite;
     if useMetropolis        
         [C,mcmc]=sippi_metropolis_iteration(C,mcmc,i);
     end
-    %useGibbs=1;
     if useGibbs
         if mcmc.gibbs.usedim==1
             % 1D GIBBS SAMPLING
@@ -410,10 +398,6 @@ while i<=mcmc.nite;
         end
     end
     
-
-    
-    
-    
     %% SAVE WORKSPACE
     if ((mcmc.i/(mcmc.i_save_workspace))==round( mcmc.i/(mcmc.i_save_workspace) ))
         try
@@ -424,18 +408,17 @@ while i<=mcmc.nite;
         end
     end
     
-    %% DISPLAY PROGRES AND TIME TO FINISH
+    %% DISPLAY PROGRESS AND TIME TO FINISH
     if ((i/i_update_txt)==round(i/i_update_txt))
-        [t_end_txt,t_left_seconds]=time_loop_end(mcmc.t_start,i,mcmc.nite);
-        %ic=1;
+        [t_end_txt,t_left_seconds]=time_loop_end(mcmc.t_start,i,mcmc.nite);        
         vlevel=sippi_verbose;
         if vlevel>0, NC_end=NC; else NC_end=1; end
         for ic=1:NC_end
-            try
-                T = C{ic}.T*C{ic}.T_fac;
-            catch
-                T = C{ic}.T*mcmc.T_fac;
-            end
+            %try
+            T = C{ic}.T*C{ic}.T_fac;
+            %catch
+            %    T = C{ic}.T*mcmc.T_fac;
+            %end
             txt=sprintf('%06d/%06d (%10s): C%02d logL_c=%5.2f(%5.2f), T=%5.2f',mcmc.i,mcmc.nite,t_end_txt,ic,C{ic}.logL_current,C{ic}.logL_propose,T);
             sippi_verbose(sprintf('%s: %s',mfilename,txt),-1);
             % MORE information at higher verbose level
@@ -450,8 +433,6 @@ while i<=mcmc.nite;
                     sippi_verbose(sprintf('%s: %s',mfilename,txt2),vlevel_pacc);
                 end
             end
-            
-            
         end
     end
     
@@ -460,7 +441,6 @@ while i<=mcmc.nite;
         try
             C{1}.mcmc.i=mcmc.i;
             sippi_plot_current_model(C{1}.mcmc,C{1}.data,C{1}.d_current,C{1}.m_current,C{1}.prior_current,options);
-            
         catch
             sippi_verbose(sprintf('%s: Could not plot current model info',mfilename),0);
         end
@@ -508,7 +488,13 @@ mcmc.m_current=m_current;
 
 options.C=C; % PERHAPS TOO MEMORY INTENSIVE
 options.mcmc=mcmc; % PERHAPS TOO MEMORY INTENSIVE
-save(filename_mat,'-v7.3')
+
+if isoctave
+    save(filename_mat)
+else
+    save(filename_mat,'-v7.3')
+end
+
 sippi_verbose(sprintf('%s: DONE McMC in %5.2f hours (%g minutes), %s',mfilename,mcmc.time_elapsed_in_seconds/3600,mcmc.time_elapsed_in_seconds/60,options.txt),-2);
 
 %%

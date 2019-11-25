@@ -74,10 +74,9 @@ if ~isfield(prior{im},'z_interface_step');
 end
 
 
-
 if ~isfield(prior{im},'v_interface');
-    prior{im}.v_min=-1;
-    prior{im}.v_max=3;
+    %prior{im}.v_min=-1;
+    %prior{im}.v_max=3;
     wv=prior{im}.v_max-prior{im}.v_min;
     prior{im}.v_interface=rand(1,prior{im}.N_layers)*wv+prior{im}.v_min;
 end

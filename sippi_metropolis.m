@@ -96,7 +96,6 @@ if nargin==0;
     mat_file=[f,filesep,'mat'];
     if exist(mat_file,'file');
         disp('OK')
-        
     else
         d=dir('*.mat');
         if length(d)==0;
@@ -126,15 +125,14 @@ if nargin==0;
         m_current=[];
         return
     end
-    
 end
-
 
 options.null='';
 %% MULTIPLE RUNS IN PARALLEL
 if isfield(options,'nruns');
     if options.nruns>1
         [o_all,data,prior,forward]=sippi_metropolis_mulrun(data,prior,forward,options);
+        m_current=[];
         options=o_all;
         return
     end
@@ -142,14 +140,10 @@ end
 
 if start_from_mat_file==0;
     % ONLY DO THIS IF STARTING FROM SCRATCH
-    
-    %%
     if ~isfield(options,'txt');options.txt='';end
     if ~isempty(options.txt)
-        %options.txt=sprintf('%s_sippi_metropolis_%s',datestr(now,'YYYYmmdd_HHMM'),options.txt);
         options.txt=sprintf('sm_%s_%s',datestr(now,'YYYYmmdd_HHMM'),options.txt);
     else
-        %options.txt=sprintf('%s_sippi_metropolis',datestr(now,'YYYYmmdd_HHMM'));
         options.txt=sprintf('sm_%s',datestr(now,'YYYYmmdd_HHMM'));
     end
     
@@ -177,9 +171,6 @@ if start_from_mat_file==0;
     
     %% INITIALIZE MCMC OPTIONS
     options=sippi_mcmc_init(options,prior);
-    if ~isfield(options,'mcmc'); options.mcmc.null='';end
-    if ~isfield(options.mcmc,'n_chains'); options.mcmc.n_chains=1;end
-    
     mcmc=options.mcmc;
     
     %% INITIALIZE prior
@@ -197,7 +188,12 @@ if start_from_mat_file==0;
     %% INITIALIZE CHAINS
     NC=options.mcmc.n_chains;
     for ic=1:NC
-        C{ic}.prior=prior;
+        if isfield(options,'prior_chains');
+            sippi_verbose(sprintf('%s: Using mulitple priors from options.prior_chain{%d}',mfilename,ic));
+            C{ic}.prior=options.prior_chains{ic};
+        else
+            C{ic}.prior=prior;
+        end
         C{ic}.data=data;
         C{ic}.forward=forward;
     end
@@ -223,7 +219,6 @@ if start_from_mat_file==0;
     end
     
     %% CHECK FOR ANNEALING
-      %% CHECK FOR ANNEALING
     if isfield(mcmc,'anneal');
         mcmc.do_anneal=1;
         mcmc.T_fac=1;
@@ -294,7 +289,7 @@ if start_from_mat_file==0;
     %% PRE ALLOCATE ARRAY FOR MCMC OUTPUT
     if NC>1
         mcmc.i_swap=ones(2,mcmc.nite).*NaN;
-        n_swap=0;
+        mcmc.n_swap=0;
     end
     
     for ic=1:NC
@@ -490,15 +485,17 @@ while i<=mcmc.nite;
             %Pacc2=Pacc;
             
             % Sambridge (2013), Eqn 10, reorganized
-            Pswap = exp((C{ic_j}.logL_current)*(1./C{ic_i}.T - 1./C{ic_j}.T) + ...
-                        (C{ic_i}.logL_current)*(1./C{ic_j}.T - 1./C{ic_i}.T));
-            
+            %Pswap = exp((C{ic_j}.logL_current)*(1./C{ic_i}.T - 1./C{ic_j}.T) + ...
+            %            (C{ic_i}.logL_current)*(1./C{ic_j}.T - 1./C{ic_i}.T));
+            Pswap = exp((C{ic_j}.logL_current)*(1./T(ic_i) - 1./T(ic_j)) + ...
+                        (C{ic_i}.logL_current)*(1./T(ic_j) - 1./T(ic_i)) );
+                    
             if rand(1)<Pswap
                 % accept swap
-                n_swap=n_swap+1;
+                mcmc.n_swap=mcmc.n_swap+1;
                 
-                mcmc.i_swap(1,n_swap)=ic_i;
-                mcmc.i_swap(2,n_swap)=ic_j;
+                mcmc.i_swap(1,mcmc.n_swap)=ic_i;
+                mcmc.i_swap(2,mcmc.n_swap)=ic_j;
                 
                 % perform the swap
                 C_i=C{ic_i};
@@ -543,7 +540,6 @@ while i<=mcmc.nite;
     %% DISPLAY PROGRESS AND TIME TO FINISH
     if ((i/i_update_txt)==round(i/i_update_txt))
         [t_end_txt,t_left_seconds]=time_loop_end(mcmc.t_start,i,mcmc.nite);
-        %ic=1;
         vlevel=sippi_verbose;
         if vlevel>0, NC_end=NC; else NC_end=1; end
         for ic=1:NC_end
@@ -561,8 +557,6 @@ while i<=mcmc.nite;
                     sippi_verbose(sprintf('%s: %s',mfilename,txt2),vlevel_pacc);
                 end
             end
-            
-            
         end
     end
     
@@ -607,7 +601,7 @@ while i<=mcmc.nite;
 end
 
 if NC>1
-    mcmc.i_swap = mcmc.i_swap(:,1:n_swap);
+    mcmc.i_swap = mcmc.i_swap(:,1:mcmc.n_swap);
 end
 
 mcmc.t_end=now;

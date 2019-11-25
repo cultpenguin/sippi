@@ -16,6 +16,10 @@ if ~isfield(options.mcmc,'accept_all');options.mcmc.accept_all=0;end
 
 if ~isfield(options.mcmc,'store_all');options.mcmc.store_all=0;end
 
+% chains
+if ~isfield(options,'mcmc'); options.mcmc.null='';end
+if ~isfield(options.mcmc,'n_chains'); options.mcmc.n_chains=1;end
+
 
 % pertubation strategy
 if nargin>1
@@ -34,4 +38,16 @@ if nargin>1
         options.mcmc.pert_strategy.perturb_all=0;
     end
     
+end
+
+% Gibbs type optimization
+options.mcmc.gibbs.null='';
+if ~isfield(options.mcmc.gibbs,'usedim'); options.mcmc.gibbs.usedim=1;end
+if ~isfield(options.mcmc.gibbs,'i_gibbs'); options.mcmc.gibbs.i_gibbs=1e+9;end
+if ~isfield(options.mcmc.gibbs,'Nm');
+    if (options.mcmc.gibbs.usedim==1);
+        options.mcmc.gibbs.N_bins=41;
+    else
+        options.mcmc.gibbs.N_bins=300;
+    end
 end

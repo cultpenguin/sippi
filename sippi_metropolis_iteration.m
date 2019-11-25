@@ -62,12 +62,12 @@ for ic=1:NC
     % set temperature
     if mcmc.do_anneal==1;
         [C{ic}.T_fac,mcmc]=sippi_anneal_temperature(i,mcmc,C{ic}.prior_current);
-        T=C{ic}.T_fac.*C{ic}.T;
+        T(ic)=C{ic}.T_fac.*C{ic}.T;
     else
-        T=C{ic}.T;
+        T(ic)=C{ic}.T;
     end
     
-    C{ic}.Pacc = exp((1./T).*(C{ic}.logL_propose-C{ic}.logL_current));
+    C{ic}.Pacc = exp((1./T(ic)).*(C{ic}.logL_propose-C{ic}.logL_current));
     
     if (mcmc.accept_only_improvements==1)
         % Optimization only?
@@ -130,16 +130,28 @@ if length(C)>1
         j_arr=setxor(1:NC,ic_i);
         ic_j=j_arr(ceil((NC-1)*rand(1)));
         
-        Pi=exp(C{ic_j}.logL_current-C{ic_i}.logL_current).^(1./C{ic_i}.T);
-        Pj=exp(C{ic_i}.logL_current-C{ic_j}.logL_current).^(1./C{ic_j}.T);
+%         % ic_i>ic_j
+%         if ic_j>ic_i
+%             tmp=ic_i;
+%             ic_i=ic_j;
+%             ic_j=ic_i;
+%         end
         
-        Pacc=Pi*Pj;
-        if rand(1)<Pacc
+        Pi=exp(C{ic_j}.logL_current-C{ic_i}.logL_current).^(1./T(ic_i));
+        Pj=exp(C{ic_i}.logL_current-C{ic_j}.logL_current).^(1./T(ic_j));
+        
+        Pswap = exp((C{ic_j}.logL_current)*(1./T(ic_i) - 1./T(ic_j)) + ...
+                    (C{ic_i}.logL_current)*(1./T(ic_j) - 1./T(ic_i)) );
+        
+        %Pacc=Pi*Pj;
+        %if rand(1)<Pacc
+        if rand(1)<Pswap
             % accept swap
+            
             mcmc.n_swap=mcmc.n_swap+1;
             
             mcmc.i_swap(1,mcmc.n_swap)=ic_i;
-            mcmc.i_swap(2,n_swap)=ic_j;
+            mcmc.i_swap(2,mcmc.n_swap)=ic_j;
             
             % perform the swap
             C_i=C{ic_i};
