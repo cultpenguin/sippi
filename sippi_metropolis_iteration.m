@@ -18,8 +18,7 @@ for ic=1:NC
     end
     
     %% Sample prior
-    % SELECT WHICH MODEL PARAMETERS TO PERTURB
-    
+    % SELECT WHICH MODEL PARAMETERS TO PERTURB    
     for im=1:length(C{ic}.prior_current);
         C{ic}.prior_current{im}.perturb=0;
     end
@@ -109,20 +108,9 @@ for ic=1:NC
         end
     end
     
-%     % SAVE CURRENT MODEL
-%     if ((mcmc.i/mcmc.i_sample)==round( mcmc.i/mcmc.i_sample ))
-%         C{ic}.isample=C{ic}.isample+1;
-%         for im=1:length(C{ic}.m_current)
-%             fid=fopen(C{ic}.filename_asc{im},'a+');
-%             fprintf(C{ic}.fid,' %10.7g ',[C{ic}.m_current{im}(:)]);
-%             fprintf(C{ic}.fid,'\n');
-%             fclose(C{ic}.fid);
-%         end
-%     end
-    
 end % END MC CHAIN LOOP
 
-%% TEMPERING
+%% TEMPERING/ORDERING
 if length(C)>1
     if rand(1)<mcmc.chain_frequency_jump; %frequency of swap tests
         % IF TEMPERING
@@ -130,21 +118,9 @@ if length(C)>1
         j_arr=setxor(1:NC,ic_i);
         ic_j=j_arr(ceil((NC-1)*rand(1)));
         
-%         % ic_i>ic_j
-%         if ic_j>ic_i
-%             tmp=ic_i;
-%             ic_i=ic_j;
-%             ic_j=ic_i;
-%         end
-        
-        Pi=exp(C{ic_j}.logL_current-C{ic_i}.logL_current).^(1./T(ic_i));
-        Pj=exp(C{ic_i}.logL_current-C{ic_j}.logL_current).^(1./T(ic_j));
-        
         Pswap = exp((C{ic_j}.logL_current)*(1./T(ic_i) - 1./T(ic_j)) + ...
                     (C{ic_i}.logL_current)*(1./T(ic_j) - 1./T(ic_i)) );
         
-        %Pacc=Pi*Pj;
-        %if rand(1)<Pacc
         if rand(1)<Pswap
             % accept swap
             
@@ -161,12 +137,14 @@ if length(C)>1
             C{ic_i}.data=C{ic_j}.data;
             C{ic_i}.logL_current=C{ic_j}.logL_current;
             C{ic_i}.m_current=C{ic_j}.m_current;
+            C{ic_i}.i_chain=C{ic_j}.i_chain;
             
             C{ic_j}.m_current=C_i.m_current;
             C{ic_j}.prior_current=C_i.prior_current;
             C{ic_j}.data=C_i.data;
             C{ic_j}.logL_current=C_i.logL_current;
             C{ic_j}.m_current=C_i.m_current;
+            C{ic_j}.i_chain=C_i.i_chain;
             
             % Keep step length constant within chains
             for k=1:NC;for im=1:length(C{k}.prior_current);
@@ -175,5 +153,47 @@ if length(C)>1
             sippi_verbose(sprintf('%s: at i=%05d SWAP chains [%d<->%d]',mfilename,i,ic_i,ic_j),2);
         end
     end
+    
+    if (mcmc.order_chains_frequency>0)
+        if (rand(1)<mcmc.order_chains_frequency);
+            for ic=1:NC
+                logL(ic)=C{ic}.logL_current;
+            end
+            
+            % select best chain from likelihood
+            P=exp(logL-max(logL));
+            cP=cumsum(P)/sum(P);
+            i1=find(cP>rand(1));
+            ic_1=i1(1);
+            if ic_1~=1
+                sippi_verbose(sprintf('Ordering chain. Using i_chain=%d',C{ic_1}.i_chain),1)
+                ic_i=1;
+                ic_j=ic_1;
+                
+                % perform the swap
+                C_i=C{ic_i};
+                
+                C{ic_i}.m_current=C{ic_j}.m_current;
+                C{ic_i}.prior_current=C{ic_j}.prior_current;
+                C{ic_i}.data=C{ic_j}.data;
+                C{ic_i}.logL_current=C{ic_j}.logL_current;
+                C{ic_i}.m_current=C{ic_j}.m_current;
+                C{ic_i}.i_chain=C{ic_j}.i_chain;
+                
+                C{ic_j}.m_current=C_i.m_current;
+                C{ic_j}.prior_current=C_i.prior_current;
+                C{ic_j}.data=C_i.data;
+                C{ic_j}.logL_current=C_i.logL_current;
+                C{ic_j}.i_chain=C_i.i_chain;
+                
+            end
+        end
+    end
+    
+    %% store chain id
+    for ic=1:NC
+        mcmc.i_chain(ic,i)=C{ic}.i_chain;
+    end
+    
 end
 

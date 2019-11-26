@@ -196,46 +196,23 @@ if start_from_mat_file==0;
         data{id}.N=length(data{id}.i_use);
     end
     
+    
     %% INITIALIZE CHAINS
     NC=options.mcmc.n_chains;
     for ic=1:NC
-        if isfield(options,'prior_chains');
+        if isfield(options,'prior_mul');
             sippi_verbose(sprintf('%s: Using mulitple priors from options.prior_chain{%d}',mfilename,ic));
-            C{ic}.prior=options.prior_chains{ic};
+            C{ic}.prior=options.prior_mul{ic};
         else
             C{ic}.prior=prior;
         end
         C{ic}.data=data;
         C{ic}.forward=forward;
-    end
-    
-    % set Temperature
-    if ~isfield(mcmc,'T');
-        if ~isfield(mcmc,'T_min');mcmc.T_min=1;end
-        if ~isfield(mcmc,'T_max');mcmc.T_max=NC;end
-        
-        if NC==1;
-            mcmc.T=mcmc.T_min;
-        else
-            mcmc.T=linspace(mcmc.T_min,mcmc.T_max,NC);
-        end
+        C{ic}.i_chain=ic;
     end
     
     for ic=1:NC
         C{ic}.T=mcmc.T(ic);
-    end
-    
-    if ~isfield(mcmc,'chain_frequency_jump');
-        mcmc.chain_frequency_jump=0.1;
-    end
-    
-    %% CHECK FOR ANNEALING
-    if isfield(mcmc,'anneal');
-        mcmc.do_anneal=1;
-        mcmc.T_fac=1;
-    else
-        mcmc.do_anneal=0;
-        mcmc.T_fac=1;
     end
     
     %% STARTING  MODEL
@@ -301,6 +278,7 @@ if start_from_mat_file==0;
     if NC>1
         mcmc.i_swap=ones(2,mcmc.nite).*NaN;
         mcmc.n_swap=0;
+        mcmc.i_chain=zeros(NC,mcmc.nite);
     end
     
     for ic=1:NC
@@ -383,7 +361,6 @@ while i<=mcmc.nite;
             [C,mcmc]=sippi_metropolis_gibbs_random_iteration_2d(C,mcmc,i);            
         end
     end
-    
     
     % SAVE CURRENT MODEL
     if ((mcmc.i/mcmc.i_sample)==round( mcmc.i/mcmc.i_sample ))

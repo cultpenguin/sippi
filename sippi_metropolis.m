@@ -188,44 +188,21 @@ if start_from_mat_file==0;
     %% INITIALIZE CHAINS
     NC=options.mcmc.n_chains;
     for ic=1:NC
-        if isfield(options,'prior_chains');
+        if isfield(options,'prior_mul');
             sippi_verbose(sprintf('%s: Using mulitple priors from options.prior_chain{%d}',mfilename,ic));
-            C{ic}.prior=options.prior_chains{ic};
+            C{ic}.prior=options.prior_mul{ic};
         else
             C{ic}.prior=prior;
         end
         C{ic}.data=data;
         C{ic}.forward=forward;
-    end
-    
-    % set Temperature
-    if ~isfield(mcmc,'T');
-        if ~isfield(mcmc,'T_min');mcmc.T_min=1;end
-        if ~isfield(mcmc,'T_max');mcmc.T_max=NC;end
-        
-        if NC==1;
-            mcmc.T=mcmc.T_min;
-        else
-            mcmc.T=linspace(mcmc.T_min,mcmc.T_max,NC);
-        end
+        C{ic}.i_chain=ic;
     end
     
     for ic=1:NC
         C{ic}.T=mcmc.T(ic);
     end
     
-    if ~isfield(mcmc,'chain_frequency_jump');
-        mcmc.chain_frequency_jump=0.1;
-    end
-    
-    %% CHECK FOR ANNEALING
-    if isfield(mcmc,'anneal');
-        mcmc.do_anneal=1;
-        mcmc.T_fac=1;
-    else
-        mcmc.do_anneal=0;
-        mcmc.T_fac=1;
-    end
     
     %% STARTING  MODEL
     for ic=1:NC
@@ -290,6 +267,7 @@ if start_from_mat_file==0;
     if NC>1
         mcmc.i_swap=ones(2,mcmc.nite).*NaN;
         mcmc.n_swap=0;
+        mcmc.i_chain=zeros(NC,mcmc.nite);        
     end
     
     for ic=1:NC
@@ -478,15 +456,6 @@ while i<=mcmc.nite;
             ic_j=j_arr(ceil((NC-1)*rand(1)));
             
             %% Sambridge (2013), Eqn 10
-            %Pi=exp(C{ic_j}.logL_current-C{ic_i}.logL_current).^(1./C{ic_i}.T);
-            %Pj=exp(C{ic_i}.logL_current-C{ic_j}.logL_current).^(1./C{ic_j}.T);
-            %Pacc=Pi*Pj;
-            %if isinf(Pacc); Pacc=0;end
-            %Pacc2=Pacc;
-            
-            % Sambridge (2013), Eqn 10, reorganized
-            %Pswap = exp((C{ic_j}.logL_current)*(1./C{ic_i}.T - 1./C{ic_j}.T) + ...
-            %            (C{ic_i}.logL_current)*(1./C{ic_j}.T - 1./C{ic_i}.T));
             Pswap = exp((C{ic_j}.logL_current)*(1./T(ic_i) - 1./T(ic_j)) + ...
                         (C{ic_i}.logL_current)*(1./T(ic_j) - 1./T(ic_i)) );
                     
@@ -505,12 +474,13 @@ while i<=mcmc.nite;
                 C{ic_i}.data=C{ic_j}.data;
                 C{ic_i}.logL_current=C{ic_j}.logL_current;
                 C{ic_i}.m_current=C{ic_j}.m_current;
+                C{ic_i}.i_chain=C{ic_j}.i_chain;
                 
                 C{ic_j}.m_current=C_i.m_current;
                 C{ic_j}.prior_current=C_i.prior_current;
                 C{ic_j}.data=C_i.data;
                 C{ic_j}.logL_current=C_i.logL_current;
-                C{ic_j}.m_current=C_i.m_current;
+                C{ic_j}.i_chain=C_i.i_chain;
                 
                 % Keep step length constant within chains
                 for k=1:NC;
@@ -521,7 +491,51 @@ while i<=mcmc.nite;
                 sippi_verbose(sprintf('%s: at i=%05d SWAP chains [%d<->%d], P_swap=%7.3f',mfilename,i,ic_i,ic_j,Pswap),1);
             end
         end
+        
+       
+        if (mcmc.order_chains_frequency>0)
+        if (rand(1)<mcmc.order_chains_frequency);
+            for ic=1:NC
+                logL(ic)=C{ic}.logL_current;
+            end
+            
+            % select best chain from likelihood
+            P=exp(logL-max(logL));
+            cP=cumsum(P)/sum(P);
+            i1=find(cP>rand(1));
+            ic_1=i1(1);
+            if ic_1~=1
+               sippi_verbose(sprintf('Ordering chain. Using i_chain=%d',C{ic_1}.i_chain),1)
+                ic_i=1;
+                ic_j=ic_1;
+                
+                % perform the swap
+                C_i=C{ic_i};
+                
+                C{ic_i}.m_current=C{ic_j}.m_current;
+                C{ic_i}.prior_current=C{ic_j}.prior_current;
+                C{ic_i}.data=C{ic_j}.data;
+                C{ic_i}.logL_current=C{ic_j}.logL_current;
+                C{ic_i}.m_current=C{ic_j}.m_current;
+                C{ic_i}.i_chain=C{ic_j}.i_chain;
+                
+                C{ic_j}.m_current=C_i.m_current;
+                C{ic_j}.prior_current=C_i.prior_current;
+                C{ic_j}.data=C_i.data;
+                C{ic_j}.logL_current=C_i.logL_current;
+                C{ic_j}.i_chain=C_i.i_chain;
+                
+            end
+        end
+        end
+        
+        %% store chain id
+        for ic=1:NC
+            mcmc.i_chain(ic,i)=C{ic}.i_chain;
+        end
+        
     end
+    
     
     %% SAVE WORKSPACE
     if ((mcmc.i/(mcmc.i_save_workspace))==round( mcmc.i/(mcmc.i_save_workspace) ))
