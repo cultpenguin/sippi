@@ -55,9 +55,9 @@ end
 %% set Temperature
 if ~isfield(options.mcmc,'T');
     if ~isfield(options.mcmc,'T_min');options.mcmc.T_min=1;end
-    if ~isfield(options.mcmc,'T_max');options.mcmc.T_max=NC;end
+    if ~isfield(options.mcmc,'T_max');options.mcmc.T_max=options.mcmc.n_chains;end
     
-    if NC==1;
+    if options.mcmc.n_chains==1;
         options.mcmc.T=options.mcmc.T_min;
     else
         options.mcmc.T=linspace(options.mcmc.T_min,options.mcmc.T_max,NC);
