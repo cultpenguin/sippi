@@ -361,8 +361,8 @@ end
 
 %% SETUP METROPOLIS
 if use_metropolis==1
-    rng('default');
-    rng(rseed);
+    %rng('default');
+    %rng(rseed);
     
     options.mcmc.nite=n_ite;
     options.mcmc.i_plot=max([500 ceil(n_ite/100)]);
