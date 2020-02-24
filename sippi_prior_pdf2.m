@@ -63,6 +63,10 @@ ix2=min([length(prior{1}.pdf_x) ix+1]);
 ixx=ix1:ix2;
 try
     x_sim=interp1(CPDF_x(ixx),prior{1}.pdf_x(ixx),prior{1}.p(1));
+    if isnan(x_sim)
+        x_sim=interp1(CPDF_x(ixx),prior{1}.pdf_x(ixx),prior{1}.p(1),'nearest','extrap');
+    end    
+
     %x_sim=interp1(CPDF_x,x,p(1));
 catch
     x_sim=prior{1}.pdf_x(ix);
@@ -77,9 +81,16 @@ iy2=min([length(prior{1}.pdf_y) iy+1]);
 iyy=iy1:iy2;
 try
     y_sim=interp1(CPDF_y(iyy),prior{1}.pdf_y(iyy),prior{1}.p(2));
-    %y_sim=interp1(CPDF_y,y,p(2));
+    if isnan(y_sim)
+        y_sim=interp1(CPDF_y(iyy),prior{1}.pdf_y(iyy),prior{1}.p(2),'nearest','extrap');
+    end    
 catch
     y_sim=prior{1}.pdf_y(iy);
 end
 
 m_propose{1}=[x_sim;y_sim];
+
+if sum(isnan(m_propose{1}))>0
+    keyboard
+end
+
