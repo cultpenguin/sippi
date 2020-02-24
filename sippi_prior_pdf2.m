@@ -90,7 +90,3 @@ end
 
 m_propose{1}=[x_sim;y_sim];
 
-if sum(isnan(m_propose{1}))>0
-    keyboard
-end
-
