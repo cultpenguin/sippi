@@ -318,6 +318,7 @@ i=0;
 while i<=mcmc.nite;
     i=i+1;
     
+    
     mcmc.i=i;
     mcmc.time(i)=now;
     
@@ -327,6 +328,9 @@ while i<=mcmc.nite;
         load(mat_file);
     end
     for ic=1:NC
+        
+        % Store index in forward
+        C{ic}.forward.i=i;
         
         %% set seed / necessary?
         for im=1:length(C{ic}.prior_current)

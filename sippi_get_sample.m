@@ -163,8 +163,13 @@ else
         etype_mean=reshape(etype_mean,length(y),length(x),length(z));
         etype_var=reshape(etype_var,length(y),length(x),length(z));
     elseif prior{im}.dim(2)>1
-        etype_mean=reshape(etype_mean,length(y),length(x));
-        etype_var=reshape(etype_var,length(y),length(x));
+        try
+            etype_mean=reshape(etype_mean,length(y),length(x));
+            etype_var=reshape(etype_var,length(y),length(x));
+        catch
+            etype_mean=[];
+            etype_var=[];
+        end
     end
     
     %% TAKE OUT ONLY n_reals REALIZATION
