@@ -269,7 +269,7 @@ try
     % ========= Plot the models and receiver and transmitter setup ===========%
     try
         if addpar.plot==1
-            figure(1)
+            figure_focus(1)
             Eps0    = 8.85418781762039080*1e-12; %in As/Vm = C^2/(N*m^2)
             subplot(121)
             imagesc(Eps./Eps0);
