@@ -1,6 +1,6 @@
 % sippi_plot_loglikelihood Plot loglikelihood time series
 %
-% Call : 
+% Call :
 %    acc=sippi_plot_loglikelihood(logL,i_acc,N,itext)
 %
 function acc=sippi_plot_loglikelihood(logL,i_acc,N,itext);
@@ -41,22 +41,26 @@ if nargin>2
     hold on
     plot(xlim,[-1 -1].*N/2,'r-','linewidth',2)
     plot(xlim,[-1 -1].*N/2+2*sqrt(N/2),'r--')
-    plot(xlim,[-1 -1].*N/2-2*sqrt(N/2),'r--')    
+    plot(xlim,[-1 -1].*N/2-2*sqrt(N/2),'r--')
     hold off
     % SCALE Y_AXIS
     n_int=100;
     i1=(max([1,length(logL)-n_int]));
     y_min=min(logL(i1:end));
-try
-    y_min=y_min-sqrt(N/2);
-end
-ylim=get(gca,'ylim');ylim(1)=y_min*2;set(gca,'ylim',ylim);
+    try
+        y_min=y_min-sqrt(N/2);
+    end
+    ylim=get(gca,'ylim');
+    if (y_min(1)*2)<ylim(1)
+        ylim(1)=y_min(1)*2;
+    end
+    set(gca,'ylim',ylim);
 else
     return
 end
 
 
-     
+
 %% Perhaps add text that indicates acceptance rate ?
 
 % ylim=get(gca,'ylim');
@@ -69,7 +73,7 @@ end
 % ii=unique(round(linspace(1,length(logL),ntext)));
 % dt=.1.*(ylim(2)-ylim(1));
 % if length(ii)>2;
-%     for i=2:(length(ii))     
+%     for i=2:(length(ii))
 %         j=ii(i);
 %         acc=(ii(i)-ii(i-1)) / (i_acc(ii(i))-i_acc(ii(i-1)));
 %         y=min([logL(j)+dt,ylim(2)]);

@@ -17,7 +17,7 @@ ns_ref=length(ref_trace);
 max_amp=max(abs(wf_data(:)));
 
 if doPlot==1;
-    f1=figure(1);
+    f1=figure_focus(1);
     f1=gcf;
     set(0,'CurrentFigure',f1)
     subplot(1,3,1);
@@ -51,10 +51,16 @@ for it=1:nt;
         
         c_all(it,:)=c;
         ipick=find(c==max(c));ipick=ipick(1);
-
         try
-            P=polyfit(ipick-5:ipick+5,c(ipick-5:ipick+5),2);
-            tt_pick(it)=-P(2)/(2*P(1))+ref_t0-1;
+            % select small snippet in which to estimate the tt
+            np=10;
+            ip1= max([1 ipick-np]);
+            ip2= min([length(c) ipick+np]);
+            
+            t_x = ip1:ip2;
+            t_c = c(ip1:ip2);
+            P=polyfit(t_x,t_c,2);
+            tt_pick(it) = -P(2)/(2*P(1))+ref_t0-1;           
         catch
             tt_pick(it)=ipick+ref_t0-1;
         end
@@ -114,7 +120,12 @@ if doPlot==1;
     hold off
     subplot(1,3,3);
     try
-        imagesc(1:1:nt,1:1:ns,c_all')
+        if nt>1
+            imagesc(1:1:nt,1:1:ns,c_all')
+        else
+            plot(c_all,1:1:length(c_all))
+            set(gca,'ydir','revers')
+        end
         title('Correlation coefficient')
     end
     drawnow;
