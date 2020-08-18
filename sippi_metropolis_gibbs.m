@@ -347,6 +347,8 @@ while i<=mcmc.nite;
     end    
     useGibbs=1-useMetropolis;
     
+    
+    
     % Use extenden Metropolis sampler
     if useMetropolis        
         [C,mcmc]=sippi_metropolis_iteration(C,mcmc,i);
