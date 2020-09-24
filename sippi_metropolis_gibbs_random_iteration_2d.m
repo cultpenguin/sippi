@@ -62,6 +62,9 @@ for ic=1:NC;
             end
         end
         
+        
+        % generate mcmc.gibbs.Nm realizations of the prior, and compute
+        % the corresponding likelihood of each.
         m_arr=zeros(2,mcmc.gibbs.Nm);
         logL=zeros(1,mcmc.gibbs.Nm);
         pPrior=zeros(1,mcmc.gibbs.Nm);
@@ -81,7 +84,8 @@ for ic=1:NC;
             m_arr(:,im) = [m_test{im}{ip}]';
             
         end
-        %compute prior
+        
+        % compute the prior probability 
         for iip=1:length(ip);
             if (strcmp(lower(C{ic}.prior_current{ip(iip)}.type),'uniform'))
                 logPrior(iip,:)=ones(1,mcmc.gibbs.Nm)./mcmc.gibbs.Nm;
@@ -97,6 +101,7 @@ for ic=1:NC;
             T=C{ic}.T; % only use the 'base' temperature.
         end
         logPost = logL + sum(logPrior);
+        logPost = logL;
         logPost_norm = logPost-max(logPost);
         
         
@@ -157,6 +162,10 @@ for ic=1:NC;
         end
         
         
+        % Next line only for debugging        
+        logL_old = C{ic}.logL_current;
+        
+        
         % move to current model
         prior_ref=C{ic}.prior_current;
         C{ic}.prior_current=prior_test{im_use}; % NEEDED FOR GAUSSIAN TYPE PRIOR
@@ -172,6 +181,18 @@ for ic=1:NC;
         %C{ic}.mcmc.logL(C{ic}.iacc)=C{ic}.logL_current;
         C{ic}.mcmc.acc(ip,mcmc.i)=1;
         C{ic}.mcmc.logL(mcmc.i)=C{ic}.logL_current;
+        
+        
+        % Next 6 lines only for debugging        
+        logL_new = C{ic}.logL_current;
+        %P_acc = min([2 exp(logL_new-logL_old)]);
+        %disp(sprintf('logL New/Old  %5.3f/%5.3f, Pacc=%1.11f',logL_new, logL_old,P_acc))
+        %if P_acc<0.00001
+        %    doPlot=1;
+        %    keyboard
+        %end
+        
+        
         
         %% plot
         if mcmc.gibbs.useNN==1
@@ -220,7 +241,9 @@ for ic=1:NC;
                 subplot(1,2,2);
                 plot(m_arr(1,:),m_arr(2,:),'.','MarkerSize',1,'color',[.5 .5 .5]);
                 hold on;;
+                try
                 scatter(m_arr(1,:),m_arr(2,:),P_acc*100+.01,P_acc,'filled');
+                end
                 plot(m_arr(1,im_use),m_arr(2,im_use),'b*');
                 plot(m{ip(1)},m{ip(2)},'g*');
                 hold off

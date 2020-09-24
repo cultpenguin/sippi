@@ -37,23 +37,23 @@ set(gca,'xlim',xlim)
 grid on
 
 %% logL=-N/2 +- sqrt(N/2)
-if nargin>2
+if nargin>2   
     hold on
     plot(xlim,[-1 -1].*N/2,'r-','linewidth',2)
     plot(xlim,[-1 -1].*N/2+2*sqrt(N/2),'r--')
     plot(xlim,[-1 -1].*N/2-2*sqrt(N/2),'r--')
     hold off
     % SCALE Y_AXIS
-    n_int=100;
+    n_int=ceil(0.01*length(logL));
     i1=(max([1,length(logL)-n_int]));
     y_min=min(logL(i1:end));
     try
         y_min=y_min-sqrt(N/2);
     end
     ylim=get(gca,'ylim');
-    if (y_min(1)*2)<ylim(1)
+    %if (y_min(1)*2)<ylim(1)
         ylim(1)=y_min(1)*2;
-    end
+    %end
     set(gca,'ylim',ylim);
 else
     return
