@@ -68,8 +68,9 @@ forward.Cm=sprintf('%3.1f Sph(2)',var(d));
 
 %%
 [m,prior]=sippi_prior(prior);
-[d,forward]=sippi_forward(m,forward,prior,data);
+[d,forward,prior,data]=sippi_forward(m,forward,prior,data);
 [L,tmp,data]=sippi_likelihood(d,data);
+L
 
 %% METROPOLIS SAMPLING
 for ip=1:length(prior);
