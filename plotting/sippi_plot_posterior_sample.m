@@ -288,11 +288,12 @@ end
             %% SAMPLE DENSITY
             
             figure;
+            nbins=21;
             if isfield(prior{im},'cax');
                 lim=prior{im}.cax;
-                h=linspace(lim(1),lim(2),41);
+                h=linspace(lim(1),lim(2),nbins);
             else
-                h=linspace(min(reals(:)),max(reals(:)),41);
+                h=linspace(min(reals(:)),max(reals(:)),nbins);
             end
             nh=length(h);
             
@@ -313,28 +314,28 @@ end
             set(gca,'ydir','normal')
             hold on
             colormap(1-gray)
-            colormap(hot)
+            %colormap(flipud(hot))
             if exist('quantile','file')
+                caxis([0 quantile(probmat(:),.90)])
                 try
-                    plot(x,quantile(squeeze(reals)',.025),'g--','linewidth',2);
+                    plot(x,quantile(squeeze(reals)',.025),'g--','linewidth',1);
                     plot(x,quantile(squeeze(reals)',.5),'g-','linewidth',2);
-                    plot(x,quantile(squeeze(reals)',.975),'g--','linewidth',2);
+                    plot(x,quantile(squeeze(reals)',.975),'g--','linewidth',1);
                 catch
-                    plot(quantile(squeeze(reals)',.025),'g--','linewidth',2);
+                    plot(quantile(squeeze(reals)',.025),'g--','linewidth',1);
                     plot(quantile(squeeze(reals)',.5),'g-','linewidth',2);
-                    plot(quantile(squeeze(reals)',.975),'g--','linewidth',2);    
+                    plot(quantile(squeeze(reals)',.975),'g--','linewidth',1);    
                 end
             end
             hold off
-            
             % PLOT REFERENCE IF IT EXISTS
             try
                 if isfield(options.mcmc,'m_ref');
                     hold on
                     try
-                        plot(prior{im}.x,options.mcmc.m_ref{im},'b-','MarkerSize',11,'LineWidth',3);
+                        plot(prior{im}.x,options.mcmc.m_ref{im},'r-','LineWidth',2);
                     catch                        
-                        plot(options.mcmc.m_ref{im},'b-','MarkerSize',11,'LineWidth',3);
+                        plot(options.mcmc.m_ref{im},'r-','LineWidth',2);
                         %    sippi_verbose(sprintf('cannot plot m_ref'));
                     end
                     hold off
@@ -357,13 +358,13 @@ end
             %plot(prior{im}.x,etype_mean,'r-','linewidth',2);
             if exist('quantile','file')
                 try
-                    plot(x,quantile(reals',.025),'r--','linewidth',2);
-                    plot(x,quantile(reals',.5),'r-','linewidth',2);
-                    plot(x,quantile(reals',.975),'r--','linewidth',2);
+                    plot(x,quantile(reals',.025),'g--','linewidth',1);
+                    plot(x,quantile(reals',.5),'g-','linewidth',2);
+                    plot(x,quantile(reals',.975),'g--','linewidth',1);
                 catch
-                    plot(quantile(reals',.025),'r--','linewidth',2);
-                    plot(quantile(reals',.5),'r-','linewidth',2);
-                    plot(quantile(reals',.975),'r--','linewidth',2);
+                    plot(quantile(reals',.025),'g--','linewidth',1);
+                    plot(quantile(reals',.5),'g-','linewidth',1);
+                    plot(quantile(reals',.975),'g--','linewidth',1);
                 end    
             end
             hold off
@@ -379,9 +380,9 @@ end
                 if isfield(options.mcmc,'m_ref');
                     hold on
                     try
-                        plot(prior{im}.x,options.mcmc.m_ref{im},'g-','MarkerSize',11,'LineWidth',3);
+                        plot(prior{im}.x,options.mcmc.m_ref{im},'r-','MarkerSize',11,'LineWidth',2);
                     catch
-                        plot(options.mcmc.m_ref{im},'g-','MarkerSize',11,'LineWidth',3);
+                        plot(options.mcmc.m_ref{im},'r-','MarkerSize',11,'LineWidth',2);
                         %sippi_verbose(sprintf('cannot plot m_ref'));
                     end
                     hold off
@@ -423,7 +424,7 @@ end
         else
             %title(title_txt)
         end
-        print_mul(sprintf('%s_m%d_',fname,im),options.plot.hardcopy_types)
+        print_mul(sprintf('%s_m%d',fname,im),options.plot.hardcopy_types)
         
         
         %% PLOT ETYPES
