@@ -28,7 +28,7 @@ options.height=10;
 options.w0=2;
 options.h0=2;
 
-FrameRate=10;
+FrameRate=30;
 Quality=90;
 cwd=pwd;
 
@@ -58,7 +58,7 @@ for im=im_array
         open(writerObj);
         
         for i=1:n_frames
-            [m]=sippi_prior(prior);
+            [m,prior]=sippi_prior(prior,m);
             sippi_plot_prior(prior,m,im);
             text(.02,.02,sprintf('#%05d, prior',i),'units','normalized')
             drawnow;

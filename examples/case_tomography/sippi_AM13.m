@@ -115,6 +115,11 @@ data{id}.d_std=D.d_std.*0+0.4;;
 data{id}.Ct=D.Ct; % Correlated noise model according to Cordua et al (2008; 2009)
 options.txt=[options.txt,'_noCt'];
 
+figure(1);
+plot(data{1}.d_obs)
+xlabel('Data #')
+ylabel('Travel time (mus)')
+
 %% SETUP DIFFERENT PRIOR STRUCTURES
 % define some standard values
 m0=0.145;
@@ -279,7 +284,6 @@ if do_plot_prior_mul==1;
     print_mul(sprintf('%s_prior_reals',mfilename))
 end
 
-
 %% SETUP THE FORWARD MODEL(S)
 forward.forward_function='sippi_forward_traveltime';
 forward.sources=D.S;
@@ -316,10 +320,11 @@ elseif use_forward==6;
 end
 
 %% TEST THE SETUP
+use_prior=1;
 prior=prior_all{use_prior};
 % generate a realization from the prior
 [m,prior]=sippi_prior(prior);
-
+sippi_plot_model(prior,m);
 % Compute the forward response related to the realization of the prior model generated above
 [d,forward]=sippi_forward(m,forward,prior,data);
 try;
@@ -332,7 +337,8 @@ end
 % figure(2);print_mul('AM13_Kernel');
 
 % Compute the likelihood
-[logL,L,data]=sippi_likelihood(d,data);
+[logL,L,data]=sippi_likelihood(d,data)
+
 % plot the forward response and compare it to the observed data
 sippi_plot_data(d,data);
 
@@ -409,7 +415,7 @@ if use_metropolis==1
     
     
 end
-
+return
 
 %% REJECTION
 if use_rejection==1;
