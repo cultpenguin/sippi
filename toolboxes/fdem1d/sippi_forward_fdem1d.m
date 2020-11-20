@@ -23,6 +23,7 @@
 function [d,forward,prior,data]=sippi_forward_fdem1d(m,forward,prior,data);
 
 if ~isfield(forward,'force_one_thread'); forward.force_one_thread=0;end
+if ~isfield(forward,'onedim'); forward.onedim=0;end
 if ~isfield(forward,'ds'); forward.ds=0;end
 if ~isfield(forward,'S');
     forward.S = readSystem('hemSystem.txt');
@@ -30,6 +31,17 @@ end
 if ~isfield(forward,'ndata');
     forward.ndata=2*length(forward.S.freq);
 end
+
+if (prior{1}.dim(1)>1)&&(prior{2}.dim(1)==1)
+    % condunctivites  profiles in x direction
+    forward.onedim=1;
+    forward.x=[0];
+else
+    % condunctivites as columns in y direction
+    forward.onedim=0;
+    forward.x=prior{1}.x;    
+end
+    
 
 % find index of dat locations
 %% find location index of forward.x in prior model
@@ -45,14 +57,25 @@ if ~isfield(forward,'ix')
     end
 end
 
+forward.ix;
+
 %%
-forward.model.CON=1./exp10(m{1}(:,forward.ix));
-if (~isfield(forward.model,'X')|~isfield(forward.model,'Z'));
-    [forward.model.X,forward.model.Z]=meshgrid(prior{1}.x(forward.ix),prior{1}.y);
+if forward.onedim==1;
+    forward.model.CON=1./exp10(m{1}(:));
+    if (~isfield(forward.model,'X')|~isfield(forward.model,'Z'));
+        [forward.model.X,forward.model.Z]=meshgrid(prior{1}.x,prior{1}.y);
+        forward.model.Z=prior{1}.x(:);
+        forward.model.X=0.*forward.model.Z;
+    end
+else
+    forward.model.CON=1./exp10(m{1}(:,forward.ix));
+    if (~isfield(forward.model,'X')|~isfield(forward.model,'Z'));
+        [forward.model.X,forward.model.Z]=meshgrid(prior{1}.x(forward.ix),prior{1}.y);
+    end
 end
-if ~isfield(forward.model,'EL')
-    forward.model.EL=repmat(prior{1}.y(:),[1 length(forward.x)]);
-end
+%if ~isfield(forward.model,'EL')
+%    forward.model.EL=repmat(prior{1}.y(:),[1 length(forward.x)]);
+%end
 
 htx=-30;
 
@@ -85,8 +108,6 @@ if isfield(forward,'preferential_forward')
         id_comp=find(dm>.00005);
     end   
 end
-
-
 
 %isOpen=0;
 if (isOpen)

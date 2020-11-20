@@ -541,7 +541,8 @@ end
 % CHECK FOR CONVERTED TYPE PRIOR
 % This allow calling an m-file that combines a number of prior models into
 % a unique type of prior...
-for im=1; % ONLY FOR FIRST PRIOR TYPE
+%for im=1; % ONLY FOR FIRST PRIOR TYPE
+for im=im_array; % 
     if (strcmp(lower(prior{im}.type),'convert'))
         if isfield(prior{im},'m_file')
             m_file = prior{im}.m_file;
