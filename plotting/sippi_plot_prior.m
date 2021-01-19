@@ -85,7 +85,7 @@ for im=im_array;
             %% 3D MAP
             xslice = [max(x) (min(x)+max(x))/2];
             yslice = max(y);
-            zslice = [z(1) (min(z)+max(z))/2 max(z)];
+            zslice = [ (min(z)+max(z))/2 max(z)];
             s=slice(prior{im}.x,prior{im}.y,prior{im}.z,m{im},xslice,yslice,zslice);
             for i=1:length(s)
                 set(s(i),'Edgealpha',0);
