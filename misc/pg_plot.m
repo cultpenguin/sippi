@@ -1,25 +1,25 @@
 % pg_plot: plot plurigaussian transfer function
 %
+% Call: 
+%   [M,x,y]=pg_plot(pg_map,pg_limits);
 % See also: pg_transform
 %
-function [M,x1,y1]=pg_plot(pg_map,pg_limits);
+function [M,x,y]=pg_plot(pg_map,pg_limits,n);
 
 if nargin<2
     pg_limits=[-3 3];
 end
 
+if nargin<3
+    n=41;
+end
+
 [n2,n1]=size(pg_map);
 
-x1=linspace(pg_limits(1),pg_limits(2),n1);
-y1=linspace(pg_limits(1),pg_limits(2),n2);
-[xx1,yy1]=meshgrid(x1,y1);
-
-lim=linspace(pg_limits(1),pg_limits(2),1001);
-[xx,yy]=meshgrid(lim,lim);
-
 if n2==1;
-    M=interp1(x1,pg_map,lim,'next');
-    plot(lim,M,'.');
+    x=linspace(pg_limits(1),pg_limits(2),n);
+    M=pg_transform(x,pg_map,pg_limits);
+    plot(x,M,'.');
     xlabel('Gaussian #1')
     ylabel('index')
     ylim=get(gca,'ylim');
@@ -29,10 +29,17 @@ if n2==1;
     set(gca,'ylim',ylim);
     % 1D
 else
-    % 2D
-    M=griddata(xx1(:),yy1(:),pg_map(:),xx,yy,'nearest');
-
-    imagesc(x1,y1,M);
+    % 2D    
+    x=linspace(pg_limits(1),pg_limits(2),n);
+    y=linspace(pg_limits(1),pg_limits(2),n);
+    [xx,yy]=meshgrid(x,y);
+    D{1}=xx;
+    D{2}=yy;
+    
+    DD{1}=xx;DD{2}=yy;
+    M=pg_transform(DD,pg_map,pg_limits);
+    
+    imagesc(x,y,M);
     xlabel('Gaussian #1')
     ylabel('Gaussian #2')
     axis image

@@ -12,7 +12,7 @@
 %
 % See also: pg_plot
 %
-function [pg_d,pg_limits]=pg_transform(m,pg_map,pg_limits);
+function [pg_d,pg_limits,pg_arr]=pg_transform(m,pg_map,pg_limits);
 
 %% check input data
 if nargin<2
@@ -50,8 +50,11 @@ end
 
 if pg_dim==1;
     %% TRUNCATED GAUSSIAN
-    pg_arr_1=linspace(pg_limits(1),pg_limits(2),pg_size(1));    
-    di_1=interp1(pg_arr_1,1:length(pg_arr_1),m{1},'nearest','extrap');
+    n1=pg_size(1);
+    w1=diff(pg_limits)/n1;
+    pg_arr{1}=pg_limits(1)+w1/2+w1.*(0:1:[n1-1])  ;
+    
+    di_1=interp1(pg_arr{1},1:length(pg_arr{1}),m{1},'nearest','extrap');
     
     % use index to get value for pg_map. must be a faster way
     pg_d=di_1.*NaN;
@@ -68,13 +71,17 @@ if pg_dim==1;
 elseif pg_dim==2
     %% PLURIGAUSSIAN USING TWO GAUSSIANS
     % set the arrays
-    pg_arr_1=linspace(pg_limits(1),pg_limits(2),pg_size(2));
-    pg_arr_2=linspace(pg_limits(1),pg_limits(2),pg_size(1));
-
-    % get the index
-    di_1=interp1(pg_arr_1,1:length(pg_arr_1),m{1},'nearest','extrap');
-    di_2=interp1(pg_arr_2,1:length(pg_arr_2),m{2},'nearest','extrap');
+    n1=pg_size(2);
+    n2=pg_size(1);
     
+    w1=diff(pg_limits)/n1;
+    pg_arr{1}=pg_limits(1)+w1/2+w1.*(0:1:[n1-1])  ;
+    w2=diff(pg_limits)/n2;
+    pg_arr{2}=pg_limits(1)+w2/2+w2.*(0:1:[n2-1])  ;
+    
+    % get the index
+    di_1=interp1(pg_arr{1},1:length(pg_arr{1}),m{1},'nearest','extrap');
+    di_2=interp1(pg_arr{2},1:length(pg_arr{2}),m{2},'nearest','extrap');    
     [ny,nx,nz]=size(di_1);
     for iz=1:nz
         for ix=1:nx
@@ -84,16 +91,23 @@ elseif pg_dim==2
         end
     end
     
-    
 elseif pg_dim==3
     %% PLURIGAUSSIAN USING THREE GAUSSIANS
-    pg_arr_1=linspace(pg_limits(1),pg_limits(2),pg_size(2));
-    pg_arr_2=linspace(pg_limits(1),pg_limits(2),pg_size(1));
-    pg_arr_3=linspace(pg_limits(1),pg_limits(2),pg_size(3));
+    n1=pg_size(2);
+    n2=pg_size(1);
+    n3=pg_size(3);
     
-    di_1=interp1(pg_arr_1,1:length(pg_arr_1),m{1},'nearest','extrap');
-    di_2=interp1(pg_arr_2,1:length(pg_arr_2),m{2},'nearest','extrap');
-    di_3=interp1(pg_arr_3,1:length(pg_arr_3),m{3},'nearest','extrap');
+    
+    w1=diff(pg_limits)/n1;
+    pg_arr{1}=pg_limits(1)+w1/2+w1.*(0:1:[n1-1])  ;
+    w2=diff(pg_limits)/n2;
+    pg_arr{2}=pg_limits(1)+w2/2+w2.*(0:1:[n2-1])  ;
+    w3=diff(pg_limits)/n3;
+    pg_arr{3}=pg_limits(1)+w3/2+w3.*(0:1:[n3-1])  ;
+    
+    di_1=interp1(pg_arr{1},1:length(pg_arr{1}),m{1},'nearest','extrap');
+    di_2=interp1(pg_arr{2},1:length(pg_arr{2}),m{2},'nearest','extrap');
+    di_3=interp1(pg_arr{3},1:length(pg_arr{3}),m{3},'nearest','extrap');
     
     [ny,nx,nz]=size(di_1);
     for iz=1:nz
