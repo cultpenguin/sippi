@@ -37,6 +37,10 @@ function [m,prior]=sippi_prior_birthdeath(prior,m_current,im);
 if nargin<3, im=1; end
 if nargin<1, prior{im}.type='birthdeath';end
 
+if ~isfield(prior{im},'otuput_nl');
+    prior{im}.otuput_nl=0;
+end
+
 % force uncondtional
 if nargin<2,
     if isfield(prior{im},'z_interface');
@@ -185,8 +189,10 @@ if prior{im}.ndim==1
     m{im}=m{im}';
 end
 
-%% return proposed model
-
+if prior{im}.otuput_nl==1;
+    m{im+1}=prior{im}.N_layers;
+end
+    
 
 
     
