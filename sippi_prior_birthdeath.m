@@ -74,7 +74,7 @@ if ~isfield(prior{im},'z_interface');
     prior{im}.z_interface=sort(rand(1,prior{im}.N_layers-1)*wy+y0);
 end
 if ~isfield(prior{im},'z_interface_step');
-    prior{im}.z_interface_step=0.02; % step length moving boundary
+    prior{im}.z_interface_step=1; % step length moving boundary
 end
 
 
@@ -149,7 +149,7 @@ elseif r<pcum(3);
     if (N_interfaces)>0
     imove = randi(N_interfaces);
     
-    move_step = prior{im}.z_interface_step;
+    move_step = prior{im}.z_interface_step.*prior{im}.seq_gibbs.step;
     dz = max(prior{1}.x)-min(prior{1}.x);
     
     z_interface = prior{im}.z_interface;   
