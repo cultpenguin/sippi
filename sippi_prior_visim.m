@@ -151,7 +151,7 @@ if isfield(prior{ip},'d_obs')
         end
         
         
-        prior{ip}.V.volnh.method=1; %--> BAD BAD RESULTS
+        prior{ip}.V.volnh.method=2; %--> BAD BAD RESULTS
         prior{ip}.V.densitypr=0;
         prior{ip}.V.debuglevel=-1;
         
