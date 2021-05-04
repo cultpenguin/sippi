@@ -116,6 +116,9 @@ if isfield(prior{ip},'d_obs')
     i_hard=find(prior{ip}.d_obs(:,5)==0);
     i_soft=find(prior{ip}.d_obs(:,5)~=0);
     
+    sippi_verbose(sprintf('%s: Using %d hard data',mfilename,length(i_hard)),-10);
+    sippi_verbose(sprintf('%s: Using %d soft data',mfilename,length(i_soft)),-10);
+    
     useHardPoint=0;
     useSoftPoint=0;
     
@@ -148,7 +151,7 @@ if isfield(prior{ip},'d_obs')
         end
         
         
-        prior{ip}.V.volnh.method=0; %--> BAD BAD RESULTS
+        prior{ip}.V.volnh.method=1; %--> BAD BAD RESULTS
         prior{ip}.V.densitypr=0;
         prior{ip}.V.debuglevel=-1;
         

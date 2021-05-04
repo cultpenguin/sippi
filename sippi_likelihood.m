@@ -262,7 +262,14 @@ for id=id_array;
             else
                 f3 =  -.5 * dd'*data{id}.iCD*dd;
             end
+            %disp('===')
+            %f3
+            %dd(1:4)
+            %data{id}.iCD(1:4,1:4)
+            %data{id}.CD(1:4,1:4)
+            %disp('===')
             logL(id) = f3;
+            
         end
         
     elseif strcmp(data{id}.noise_model,'laplace')

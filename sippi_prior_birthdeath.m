@@ -79,10 +79,9 @@ end
 
 
 if ~isfield(prior{im},'v_interface');
-    %prior{im}.v_min=-1;
-    %prior{im}.v_max=3;
     wv=prior{im}.v_max-prior{im}.v_min;
     prior{im}.v_interface=rand(1,prior{im}.N_layers)*wv+prior{im}.v_min;
+    %disp(prior{im}.v_interface);
 end
 
 if ~isfield(prior{im},'init')
@@ -98,9 +97,10 @@ prior{im}.p_lev=prior{im}.p_lev./sum(prior{im}.p_lev);
 
 pcum=cumsum(prior{im}.p_lev);
 r=rand(1);
+vlev=2;
 if r<pcum(1)&&(prior{im}.N_layers<prior{im}.N_layers_max);
     % birth
-    sippi_verbose('birth',2)
+    sippi_verbose('birth',vlev)
     
     wv=prior{im}.v_max-prior{im}.v_min;
     v_interface_new = rand(1)*wv+prior{im}.v_min;
@@ -128,7 +128,7 @@ if r<pcum(1)&&(prior{im}.N_layers<prior{im}.N_layers_max);
     
 elseif r<pcum(2)&&(prior{im}.N_layers>prior{im}.N_layers_min);
     % death
-    sippi_verbose('death',2)
+    sippi_verbose('death',vlev)
     
     N_interfaces = prior{im}.N_layers-1;
     idel = randi(N_interfaces);
@@ -142,7 +142,7 @@ elseif r<pcum(2)&&(prior{im}.N_layers>prior{im}.N_layers_min);
     
 elseif r<pcum(3);
     % move
-    sippi_verbose('move',2)
+    sippi_verbose('move',vlev)
     
     N_interfaces = prior{im}.N_layers-1;
 
@@ -163,12 +163,21 @@ elseif r<pcum(3);
     
 else
     % resistvity
-    sippi_verbose('resistivity',2)
+    sippi_verbose('resistivity',vlev)
+    
+    % Next lines leads to a lof of values at the edges...
     prior{im}.v_interface = prior{im}.v_interface + randn(size(prior{im}.v_interface)).*prior{im}.seq_gibbs.step;
     imax=find(prior{im}.v_interface>prior{im}.v_max);
     imin=find(prior{im}.v_interface<prior{im}.v_min);
     prior{im}.v_interface(imin)=prior{im}.v_min;
     prior{im}.v_interface(imax)=prior{im}.v_max;
+    
+    % Next line is better for independent realizations!!!
+    if prior{im}.seq_gibbs.step==1;
+        wv=prior{im}.v_max-prior{im}.v_min;
+        prior{im}.v_interface=rand(1,prior{im}.N_layers)*wv+prior{im}.v_min;
+    end
+    
 end
     
 

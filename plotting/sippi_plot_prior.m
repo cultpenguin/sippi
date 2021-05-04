@@ -110,7 +110,7 @@ for im=im_array;
                 %camlight('left')
                 lighting gouraud
                 %lighting phong
-
+                shading flat
                 
             end
             
