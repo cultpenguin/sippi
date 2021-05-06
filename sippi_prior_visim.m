@@ -286,7 +286,15 @@ if nargin>1
 end
 
 %% RUN VISIM
-prior{ip}.V=visim(prior{ip}.V);
+[prior{ip}.V,status,result]=visim(prior{ip}.V);
+% Check that output has been generated
+if ~isfield(prior{ip}.V,'D')
+    disp(sprintf('%s: Something went running visim on "%s"',mfilename,'visim.par'));
+    disp(result)
+    m_propose{ip}=[];
+    return
+end
+
 m_propose{ip} = prior{ip}.V.D';
 
 %% PERFORM NORMAL SCORE OF NEEDED
