@@ -63,7 +63,6 @@
 % See also: sippi_prior, visim, nscore, inscore
 %
 function [m_propose,prior]=sippi_prior_visim(prior,m_current,ip);
-
 if nargin<3;
     ip=1;
 end
