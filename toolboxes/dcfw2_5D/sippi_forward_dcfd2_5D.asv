@@ -1,0 +1,52 @@
+% sippi_forward_dcfd2_5D
+%
+% Call :
+%   [d,forward,prior,data]=sippi_forward_dcfd2_5D(m,forward,prior,data)
+%
+%
+function [d,forward,prior,data]=sippi_forward_dcfd2_5D(m,forward,prior,data,id,im)
+
+if nargin<2
+    forward.null=[];
+end
+
+if nargin<4;    data{1}.null='';end
+if nargin<5;    id=1;end
+if nargin<6;
+    if isfield(forward,'im')
+        im=forward.im;
+    else
+        im=1;
+    end
+end
+
+
+load srcloc_hvede_unique_e257.mat % shifted laterally -3
+load dxdz_hvede_ai2.mat % final model from inversion, modif on upper cells
+load recloc_hvede_e257.mat % shifted laterally -3
+load srcnum_hvede_e257.mat
+
+if ~isfield(forward,'srcloc')
+    tmp=load('srcloc_hvede_unique_e257.mat');
+    srcloc=tmp.srcloc_hvede_unique;
+end
+
+if ~isfield(forward,'dx_hvede')
+    
+load dxdz_hvede_ai2.mat
+
+
+
+if ~isfield(forward,'Para');
+    forward.Para=make_Para(srcloc_hvede_unique,dx_real_1,dz_real_1,recloc_hvede,srcnum_hvede);
+    
+    forward.Para = get_2_5Dpara(srcloc,dx,dz,BC_cor,num,recloc,srcnum);
+    %Para =    get_2_5Dpara(srcloc_hvede_unique,dx_hvede,dz_hvede,[],4,recloc_hvede,srcnum_hvede);% 
+
+end
+%function Para=make_Para(srcloc_hvede_unique,dx_hvede,dz_hvede,recloc_hvede,srcnum_hvede)
+%Para = get_2_5Dpara(srcloc_hvede_unique,dx_hvede,dz_hvede,[],4,recloc_hvede,srcnum_hvede);% 
+
+load s_hvede_ai.mat
+
+d{id} = dcfw2_5D(s_hvede_3,forward.Para);
