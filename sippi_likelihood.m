@@ -47,7 +47,8 @@
 function [logL,L,data]=sippi_likelihood(d,data,id_array)
 
 if  nargin<3
-    id_array=1:length(d);
+    id_array=1; % USE ONLY FIRST DATA
+    % id_array=1:length(d); %% USE ALL DATA
 end
 logL=zeros(1,length(d));
 L=zeros(1,length(d));
