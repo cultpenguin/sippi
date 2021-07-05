@@ -81,23 +81,42 @@ if ~isfield(prior{1},'n_layers');prior{1}.n_layers=length(prior{1}.p_rho);end
 
 
 
-
-
-[m_rho,prior{1}.p_rho] = sippi_prior(prior{1}.p_rho);
-[m_thick,prior{1}.p_thick] = sippi_prior(prior{1}.p_thick);
-for i = 1:length(m_thick)
-    m_t(i)=m_thick{i};
+if nargin>1
+    try
+    % update step lengths
+    for i=1:length(prior{1}.p_rho)
+        prior{1}.p_rho{i}.seq_gibbs.step = prior{1}.seq_gibbs.step;
+    end
+    for i=1:length(prior{1}.p_thick)
+        if length(prior)>1
+            prior{1}.p_thick{i}.seq_gibbs.step = prior{2}.seq_gibbs.step;
+        else
+            prior{1}.p_thick{i}.seq_gibbs.step = prior{1}.seq_gibbs.step;
+        end
+    end
+    catch
+        keyboard
+    end
+    
+    [prior{1}.m_rho,prior{1}.p_rho] = sippi_prior(prior{1}.p_rho,prior{1}.m_rho);
+    [prior{1}.m_thick,prior{1}.p_thick] = sippi_prior(prior{1}.p_thick,prior{1}.m_thick);
+else
+    [prior{1}.m_rho,prior{1}.p_rho] = sippi_prior(prior{1}.p_rho);
+    [prior{1}.m_thick,prior{1}.p_thick] = sippi_prior(prior{1}.p_thick);
+end
+for i = 1:length(prior{1}.m_thick)
+    m_t(i)=prior{1}.m_thick{i};
 end
 m_z = cumsum(m_t);
 
-rho = ones(prior{1}.dim(1),1).*m_rho{end};
-lith = ones(prior{1}.dim(1),1)*length(m_rho);
+rho = ones(prior{1}.dim(1),1).*prior{1}.m_rho{end};
+lith = ones(prior{1}.dim(1),1)*length(prior{1}.m_rho);
 
 
 for i=(prior{1}.n_layers-1):-1:1
     ix=find(prior{im}.x<m_z(i));
     lith(ix)=i;
-    rho(ix)=m_rho{i};
+    rho(ix)=prior{1}.m_rho{i};
 end
 
 prior{im}.lith=lith;
