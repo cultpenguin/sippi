@@ -117,7 +117,8 @@ for id=1:[min([show_max_data length(data)])];
     else
         h_true=normpdf(hx,0,sqrt(data{id}.d_var(1)));
     end
-    h_true=sum(h)*h_true./sum(h_true);
+    %h_true=sum(h)*h_true./sum(h_true);
+    h_true=sum(h).*h_true/sum(h_true);
     if (id==1);hold on;end
     plot(hx,[h],'Color',col(id+1,:),'LineWidth',2)
     plot(hx,[h_true],'color',col(id+1,:).*.8,'LineWidth',2)

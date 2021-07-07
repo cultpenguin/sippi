@@ -47,7 +47,6 @@
 %
 function [m,prior]=sippi_prior_layered(prior,m_current,im);
 
-
 if nargin<3, im=1; end
 if ~isfield(prior{1},'init')
     prior=sippi_prior_init(prior);

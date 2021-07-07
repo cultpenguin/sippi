@@ -176,6 +176,6 @@ for im=im_array;
             title(prior{im}.name,'interpreter','none')
         end
     else
-        try;sippi_verbose(sprintf('%25s : m_%d=%g',prior{im}.name,im,m{im}));end
+        try;sippi_verbose(sprintf('%25s : m_%d(1)=%g',prior{im}.name,im,m{im}(1)));end
     end
 end
