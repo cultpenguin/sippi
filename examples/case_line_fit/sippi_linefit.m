@@ -2,10 +2,15 @@
 clear all;close all
 rng('default')
 rng(1);
-%% LOAD DATA
-% nd=11; sippi_linefit_make_data;
-load('sippi_linefit_data_11');
-
+%% Load or generate data data
+nd=11;
+% 
+mat_datfile = sprintf('sippi_linefit_data_%d',nd);
+if exist([mat_datfile,'.mat'])
+    load(mat_datfile);
+else
+    sippi_linefit_make_data;
+end
 figure(1);clf;
 e=errorbar(x,d_obs,d_std,'k*');
 set(e,'LineStyle','none')
@@ -84,10 +89,10 @@ options.mcmc.i_plot=5000; % Plot the progress information for every 2500 iterati
 options.txt='case_line_fit_2nd_order'; % descriptive name for the output folder
 
 %% metropolis
-options.nruns = 4;
 [options_metropolis]=sippi_metropolis(data,prior,forward,options);
-sippi_plot_prior_sample(options_metropolis.txt);
-sippi_plot_posterior(options_metropolis.txt);
+out_folder = options_metropolis.txt;
+sippi_plot_prior_sample(out_folder);
+sippi_plot_posterior(out_folder);
 
 %% rejection
 options.mcmc.adaptive_rejection=1;
