@@ -1,4 +1,7 @@
 % prior_reals_fftma_1d_range
+clear all;
+
+% prior_reals_fftma_1d_range
 im=1; 
 prior{im}.type='FFTMA';
 prior{im}.x=[0:.1:20]; % X array 

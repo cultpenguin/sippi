@@ -60,16 +60,19 @@ prior{1}.fftma_options.constant_C=0;
 prior{2}.fftma_options.constant_C=0;
 
 save_movie=0;
-save_png=1;
+save_png=0;
 
 if (save_movie==1);
     vidObj = VideoWriter('unknown_pleasures','MPEG-4');
-    vidObj.FrameRate = 10;
+    vidObj.FrameRate = 30;
     vidObj.Quality = 95;
     open(vidObj)
 end
 
 nsim=800;
+figure(1);
+subfigure(2,2,1)
+
 for isim=1:nsim;
 
     % setting aniso
@@ -95,11 +98,10 @@ for isim=1:nsim;
         x_fill=[x,max(x),min(x),min(x)];
         d=i+mm(i,:);
         d_fill=[d,0,0,d(1)];
-        f=fill(x_fill,d_fill,'black');
-        set(f,'linewidth',.1)
+        f{i}=fill(x_fill,d_fill,'black');
+        set(f{i},'linewidth',.1)
         hold on
-        plot(x_fill,d_fill,'r-');
-        
+        p=plot(x_fill,d_fill,'r-');        
     end
     plot([0.1 0.1 0.9 0.9],[nl 0 0 nl],'k-')
     hold off
@@ -107,7 +109,7 @@ for isim=1:nsim;
     axis off
     drawnow;
     if (save_png==1)
-        print_mul(sprintf('unknown_pleasures_%d',isim),1)
+        print_mul(sprintf('unknown_pleasures_%3d',isim),1)
     end
     if (save_movie==1);
         currFrame = getframe(gcf);

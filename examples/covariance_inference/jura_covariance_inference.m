@@ -16,10 +16,10 @@ name=h_prediction{id};
 pos_known=[d_prediction(:,[ix iy])];  
 
 if use_nscore==0;
-    d=d_prediction(:,id);
+    d_obs=d_prediction(:,id);
 else
     % perform normal score transformation of tha original data
-    [d,o_nscore]=nscore(d_prediction(:,id));
+    [d_obs,o_nscore]=nscore(d_prediction(:,id));
     h_tit=h_prediction{id};
     name=[name,'_nscore'];
 end
@@ -52,8 +52,8 @@ prior{im}.max=1;
 
 
 %% DATA
-data{1}.d_obs=d; % observed data
-data{1}.d_std=0.1*std(d);.4; % uncertainty of observed data (in form of standard deviation of the noise)
+data{1}.d_obs=d_obs; % observed data
+data{1}.d_std=0.1*std(d_obs);.4; % uncertainty of observed data (in form of standard deviation of the noise)
 %data{1}.i_use=1:1:30;
 
 %% FORWARD
@@ -63,25 +63,24 @@ forward.pos_known=pos_known;
 forward.stabilize=0;
 % initial choice of N(m0,Cm), mean and sill are 0, and 1, due
 % due to normal score
-forward.m0=mean(d);
+forward.m0=mean(d_obs);
 forward.Cm=sprintf('%3.1f Sph(2)',var(d));
 
 %%
 [m,prior]=sippi_prior(prior);
 [d,forward,prior,data]=sippi_forward(m,forward,prior,data);
 [L,tmp,data]=sippi_likelihood(d,data);
-L
 
 %% METROPOLIS SAMPLING
 for ip=1:length(prior);
     prior{ip}.seq_gibbs.i_update_step_max=3000;
 end
 options.plot.hardcopy_types=0; % no hardcopy
-options.mcmc.nite=100000;
+options.mcmc.nite=10000;
 options.mcmc.i_plot=1000;
 options.mcmc.i_sample=25;
 options.txt=name;
-[options,data,prior,forward,m_current]=sippi_metropolis(data,prior,forward,options)
+[options,data,prior,forward,m_current]=sippi_metropolis(data,prior,forward,options);
 
 sippi_plot_prior(options.txt);
 sippi_plot_posterior(options.txt);
@@ -90,8 +89,8 @@ return
 
 %% CLASSICAL 'EXPERIMENTAL' COVARIANCE INFERENCE
 figure(1);clf;
-[gamma_exp1,h_exp1]=semivar_exp(pos_known,d,20);
-[gamma_exp_ang,h_exp,h_anh]=semivar_exp(pos_known,d,20,4);
+[gamma_exp1,h_exp1]=semivar_exp(pos_known,d_obs,20);
+[gamma_exp_ang,h_exp,h_anh]=semivar_exp(pos_known,d_obs,20,4);
 plot(h_exp1,gamma_exp1,'k-','LineWidth',5);
 hold on
 plot(h_exp,gamma_exp_ang,'-');
