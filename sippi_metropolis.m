@@ -141,8 +141,11 @@ end
 if start_from_mat_file==0;
     % ONLY DO THIS IF STARTING FROM SCRATCH
     if ~isfield(options,'txt');options.txt='';end
+    if ~isfield(options,'notxt');options.notxt=0;end
     if ~isempty(options.txt)
-        options.txt=sprintf('sm_%s_%s',datestr(now,'YYYYmmdd_HHMM'),options.txt);
+        if options.notxt==0
+            options.txt=sprintf('sm_%s_%s',datestr(now,'YYYYmmdd_HHMM'),options.txt);
+        end
     else
         options.txt=sprintf('sm_%s',datestr(now,'YYYYmmdd_HHMM'));
     end

@@ -2,6 +2,48 @@
 function [m_propose,prior]=sippi_prior_pdf2(prior,m_current,ip);
 
 
+if nargin == 0;
+    mu = [6 12;-3 5];
+    sigma = cat(3,[4 15],[5 1]); % 1-by-2-by-2 array
+    mu = [-5 5;5 16];
+    sigma = cat(3,[3 4],[3 14]); % 1-by-2-by-2 array
+    gm = gmdistribution(mu,sigma);
+    
+    nx=131;
+    ny=141;
+    x=linspace(-10,11,nx);
+    y=linspace(0,20,ny);
+    [xx,yy]=meshgrid(x,y);
+    P=reshape(pdf(gm,[xx(:),yy(:)]),ny,nx);
+    prior{1}.type='pdf2';
+    prior{1}.x=[1,2]; % set the correct 'dimension' / fix automatic
+    prior{1}.pdf=P;
+    prior{1}.pdf_x=x;
+    prior{1}.pdf_y=y;
+    
+    [m,prior]=sippi_prior(prior);
+
+    prior{1}.seq_gibbs.step=0.05;
+    N=10000;
+    disp(sprintf('%s: Generating %d realizations.',mfilename,N))
+    sim=ones(N,2).*NaN;
+    for i=1:N;
+        [m,prior]=sippi_prior(prior,m);
+        sim(i,:)=m{1};
+    end
+
+    for i=1:1:N;
+        imagesc(prior{1}.pdf_x,prior{1}.pdf_y,P);
+        hold on;
+        plot(sim(1:i,1),sim(1:i,2),'w.','MarkerSize',6);
+        hold off;
+        drawnow;
+    end
+    
+    m_propose = m;
+    return
+end
+
 if nargin<3;
     ip=1;
 end
