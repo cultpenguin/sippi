@@ -12,7 +12,7 @@
 %% Example 10D uniform
 %   ip=1;
 %   prior{ip}.type='uniform';
-%   prior{ip}.x=1:1:10; % As dimensions are uncorrelated, only the lehgth
+%   prior{ip}.x=1:1:10; % As dimensions are uncorrelated, only the length
 %                       % of prior{ip}.x matters, not its actual values.
 %   prior{ip}.min=10;
 %   prior{ip}.max=25;
@@ -43,12 +43,12 @@ if ~isfield(prior{ip},'init')
 end
 
 if nargin == 1
-    if prior{1}.ndim<=1
-        prior{ip}.randn=randn(prior{ip}.dim);
-    elseif (prior{1}.ndim)==2
-        prior{ip}.randn=randn([prior{ip}.dim(2) prior{ip}.dim(1)]);
-    elseif (prior{1}.ndim)==3
+    if prior{1}.dim(3)>1
         prior{ip}.randn=randn([prior{ip}.dim(2) prior{ip}.dim(1) prior{ip}.dim(3)]);
+    elseif prior{1}.dim(2)>1
+        prior{ip}.randn=randn([prior{ip}.dim(2) prior{ip}.dim(1)]);
+    else 
+        prior{ip}.randn=randn(prior{ip}.dim);
     end
 else
     % PERTURB
