@@ -74,14 +74,15 @@ else
     elseif prior{ip}.seq_gibbs.type==2
         %
         
-        if (prior{1}.ndim)<=1
-            new_randn=randn(prior{ip}.dim);
-        elseif (prior{1}.ndim)==2
-            new_randn=randn([prior{ip}.dim(2) prior{ip}.dim(1)]);
-        elseif (prior{1}.ndim)==3
-            new_randn=randn([prior{ip}.dim(2) prior{ip}.dim(1) prior{ip}.dim(3)]);
-        end
-        
+        % NEXT 7 LINES REPLACED BY 8TH LINE
+        %if (prior{1}.ndim)<=1
+        %    new_randn=randn(prior{ip}.dim);
+        %elseif (prior{1}.ndim)==2
+        %    new_randn=randn([prior{ip}.dim(2) prior{ip}.dim(1)]);
+        %elseif (prior{1}.ndim)==3
+        %    new_randn=randn([prior{ip}.dim(2) prior{ip}.dim(1) prior{ip}.dim(3)]);
+        %end
+        new_randn = randn(size(m_current{ip}));
         
         theta=90*(prior{ip}.seq_gibbs.step)*pi/180;
         prior{ip}.randn = prior{ip}.randn*cos(theta) + new_randn*sin(theta) ;
