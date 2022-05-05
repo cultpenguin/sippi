@@ -4,7 +4,6 @@
 %   prior=sippi_prior_set_steplength(prior,mcmc,im);
 %
 function  prior=sippi_prior_set_steplength(prior,mcmc,im);
-
 if nargin<3
     im=1;
 end

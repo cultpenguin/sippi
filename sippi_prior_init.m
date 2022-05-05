@@ -358,7 +358,7 @@ for im=im_array
         if ~iscell(prior{im}.d_target)
             if ~isfield(prior{im},'o_nscore')&&~iscell(prior{im}.d_target);
                 [d_nscore,prior{im}.o_nscore]=nscore(prior{im}.d_target,1,1);
-                sippi_verbose(sprintf('%s: performed normal score transformation of prior{%d}.d_target to prior{%d}.o_nscore',mfilename,im,im));
+                sippi_verbose(sprintf('%s: performed normal score transformation of prior{%d}.d_target to prior{%d}.o_nscore',mfilename,im,im),1);
             end
         end
         if isfield(prior{im},'m0')

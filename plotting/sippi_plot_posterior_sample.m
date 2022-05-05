@@ -208,21 +208,25 @@ end
             
             if ~exist('cax','var');
                 cax=[min(sample_prior) max(sample_prior)];
+                if isnan(cax(1));cax(1)=0;end
+                if isnan(cax(2));cax(2)=0;end
             end
-            hx=linspace(cax(1),cax(2),31);
-            h_post=hist(reals,hx);
-            h_post=h_post/sum(h_post);
-            
-            h_prior=hist(sample_prior,hx);
-            h_prior=h_prior/sum(h_prior);
-            
-            bar(hx,h_prior,.8,'k');
-            hold on
-            bar(hx,h_post,.6,'r');
-            hold off
-            ylim=get(gca,'ylim');
-            
-            
+            try
+                hx=linspace(cax(1),cax(2),31);
+                h_post=hist(reals,hx);
+                h_post=h_post/sum(h_post);
+                
+                h_prior=hist(sample_prior,hx);
+                h_prior=h_prior/sum(h_prior);
+                
+                bar(hx,h_prior,.8,'k');
+                hold on
+                bar(hx,h_post,.6,'r');
+                hold off
+                ylim=get(gca,'ylim');
+            catch
+                sippi_verbose(sprintf('Could not plot bar chart',mfilename),0);
+            end
             %% GET p10,050,090
             try
                 % ONLY DO IF QUNTILE EXISTS

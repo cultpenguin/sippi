@@ -344,7 +344,7 @@ while i<=mcmc.nite;
         for im=1:length(C{ic}.prior_current)
             if (( (mcmc.i./C{ic}.prior_current{im}.seq_gibbs.i_update_step)==round((mcmc.i./C{ic}.prior_current{im}.seq_gibbs.i_update_step)))&&(mcmc.i<C{ic}.prior_current{im}.seq_gibbs.i_update_step_max))
                 % UPDATE STEP LENGTH
-                C{ic}.prior_current=sippi_prior_set_steplength(C{ic}.prior_current,C{ic}.mcmc,im);
+                C{ic}.prior_current=sippi_prior_set_steplength(C{ic}.prior_current,C{ic}.mcmc,im);                
             end
             C{ic}.mcmc.step(im,i)=C{ic}.prior_current{im}.seq_gibbs.step(1);
         end
