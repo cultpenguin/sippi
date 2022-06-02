@@ -124,7 +124,6 @@ else
     sippi_verbose(sprintf('%s: Data covariance, Cd, set in options.lsq.Cd',mfilename),1)
 end
 
-
 %% CHECK FOR FORWARD OPERATOR
 if ~isfield(forward,'G');
     % assume the forward operator is output in forward.G if sippi_forward
