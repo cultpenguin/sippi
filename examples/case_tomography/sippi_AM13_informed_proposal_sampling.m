@@ -61,7 +61,7 @@ end
 %% THE DATA
 useSynth=1;
 if useSynth==1;
-    rng(2)
+    rng(3)
     [m_ref,prior]=sippi_prior(prior);
     forward_ref = forward;
     forward_ref.type='eikonal';
@@ -100,7 +100,7 @@ iCm=inv(Cm_est{1});
 %% McMC
 clear m_post logL
 
-usePert=4;
+usePert=2;
 usePrior=1;
 
 cax=[0.11, 0.17];
@@ -113,6 +113,7 @@ m_cur{1}=rand(size(m_ref{1}))*dm+m_min;
 d_cur = sippi_forward(m_cur,forward_ref,prior);
 L_cur = sippi_likelihood(d_cur,data);
 if usePrior==1
+    %% THIS IS ACTUALLY THE PROPOSAL DISTRIBUTION -- FIX
     dmm=m_cur{1}-m_est{1};
     rho_cur = -0.5*dmm(:)'*iCm*dmm(:);
 else
@@ -149,14 +150,9 @@ for i=1:50000
         m_std = std([m_app{1}(:),m_tilde{1}(:)]')';
 
         m_pro{1} = m_tilde{1} + reshape(randn(size(m_std)),prior{1}.dim(2),prior{1}.dim(1));
-
-
-        
-
     end
 
-    %d_pro = sippi_forward(m_pro,forward_ref,prior);
-    d_pro = sippi_forward(m_pro,forward,prior);
+    d_pro = sippi_forward(m_pro,forward_ref,prior);
     L_pro = sippi_likelihood(d_pro,data);
     if usePrior==1
         dmm=m_pro{1}-m_est{1};
@@ -177,7 +173,7 @@ for i=1:50000
     logL(i)=L_cur;
     logRho(i)=rho_cur;
 
-    if mod(i,1)==0
+    if mod(i,100)==0
         k=k+1;
         m_post(:,:,k)=m_cur{1};
 
