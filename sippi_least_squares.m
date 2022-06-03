@@ -1,7 +1,7 @@
 % sippi_least_squares Least squares type inversion for SIPPI
 %
 % Call :
-%    [options,data,prior,forward,m_reals,m_est,Cm_est]=sippi_least_squares(data,prior,forward,options);
+%   [m_est,Cm_est,m_reals,options,data,prior,forward]=sippi_least_squares(data,prior,forward,options);
 %
 %   options.lsq.type    : LSQ type to use ('lsq' (classical linear leqast squares) is the default)
 %   options.lsq.n_reals : Number of realizations to generate
@@ -98,31 +98,36 @@ else
     try
         options.lsq.Cd=data{id}.CD;
     end
+    try
+        % BIAS?
+        options.lsq.d0=data{id}.dt;
+    end
 end
 
-%if ~isfield(options.lsq,'Cd');
-% No correlated noise is set...
-if isfield(data{id},'d_std');
-    if length(data{id}.d_std)==1;
-        options.lsq.Cd=eye(length(data{id}.d_obs)).*data{id}.d_std.^2;
-    else
-        options.lsq.Cd=diag(data{1}.d_std.^2);
+if ~isfield(options.lsq,'Cd');
+
+    if isfield(data{id},'d_std');
+        if length(data{id}.d_std)==1;
+            options.lsq.Cd=eye(length(data{id}.d_obs)).*data{id}.d_std.^2;
+        else
+            options.lsq.Cd=diag(data{1}.d_std.^2);
+        end
+    end
+    if isfield(data{id},'d_var');
+        if length(data{id}.d_var)==1;
+            options.lsq.Cd=eye(length(data{id}.d_obs)).*data{id}.d_var;
+        else
+            options.lsq.Cd=diag(data{1}.d_var);
+        end
     end
 end
-if isfield(data{id},'d_var');
-    if length(data{id}.d_var)==1;
-        options.lsq.Cd=eye(length(data{id}.d_obs)).*data{id}.d_var;
-    else
-        options.lsq.Cd=diag(data{1}.d_var);
-    end
-end
-%end
 
 if ~isfield(options.lsq,'Cd');
     sippi_verbose(sprintf('%s: Could not data covariance Cd. Please use a Gaussian noise model in data{%d}',mfilename,id),0)
 else
     sippi_verbose(sprintf('%s: Data covariance, Cd, set in options.lsq.Cd',mfilename),1)
 end
+
 
 %% CHECK FOR FORWARD OPERATOR
 if ~isfield(forward,'G');
@@ -163,7 +168,7 @@ end
 sippi_verbose(sprintf('%s: setting options.lsq.m0=prior{%d}.m0',mfilename,im),1)
 
 %% D
-if ~isfield(data{id},'d0');
+if ~isfield(options.lsq,'d0');
     options.lsq.d0=data{id}.d_obs.*0;
     sippi_verbose(sprintf('%s: setting options.lsq.d0=0;',mfilename),1)
 end
@@ -172,7 +177,6 @@ sippi_verbose(sprintf('%s: setting options.lsq.d_obs=data{%d}.d_obs',mfilename,i
 
 
 %%
-
 i_use=data{1}.i_use;
 n_use=length(i_use);
 sippi_verbose(sprintf('%s : Linear least squares using ''%s'' type inversion',mfilename,options.lsq.type),1)
@@ -256,11 +260,11 @@ x=prior{im}.x;y=prior{im}.y;z=prior{im}.z;
 if prior{im}.dim(3)>1
     % 3D
     m_est{im}=reshape(m_est{im},length(y),length(x),length(z));
-    
+
 elseif prior{im}.dim(2)>1
     % 2D
     m_est{im}=reshape(m_est{im},length(y),length(x));
-    Cm_est_diag = reshape(diag(Cm_est{im}),length(y),length(x));    
+    Cm_est_diag = reshape(diag(Cm_est{im}),length(y),length(x));
 else
     % 1D
     Cm_est_diag = diag(Cm_est{im});
@@ -269,7 +273,7 @@ end
 
 %% EXPORT REALIZATIONS TO DISK
 if (options.lsq.save_data==1)
-    
+
     options.cwd=pwd;
     try;
         mkdir(options.txt);
@@ -282,16 +286,16 @@ if (options.lsq.save_data==1)
         fprintf(fid,'\n');
     end
     fclose(fid);
-    
-    
+
+
     filename_m_est{im}=sprintf('%s%s%s_m%d_mest%s',options.txt,filesep,options.txt,im,'.asc');
     sippi_verbose(sprintf('%s: Writing m_est to %s',mfilename,filename_m_est{im}),1);
     %fid=fopen(filename_m_est{im},'w');fprintf(fid,' %10.7g ',m_est(:));fclose(fid);
-    
+
     filename_Cm_est{im}=sprintf('%s%s%s_m%d_Cmest%s',options.txt,filesep,options.txt,im,'.asc');
     sippi_verbose(sprintf('%s: Writing Cm_est to %s',mfilename,filename_Cm_est{im}),1);
     %fid=fopen(filename_Cm_est{im},'w');fprintf(fid,' %10.7g ',Cm_est(:));fclose(fid);
-    
+
     filename_mat=sprintf('%s%s%s.mat',options.txt,filesep,options.txt);
     sippi_verbose(sprintf('%s: Writing %s',mfilename,filename_mat),1);
     save(filename_mat);

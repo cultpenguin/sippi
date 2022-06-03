@@ -115,7 +115,7 @@ if strcmp(forward.type,'eikonal')
         d{id}=eikonal_traveltime(x,y,z,m{im},forward.sources,forward.receivers,data{id}.i_use,forward.eikonal_type);
     end
 elseif (strcmp(forward.type,'ray')|strcmp(forward.type,'fat'));
-    % RAY APPROXIMATION
+    % RAY APPROXIMATION   
     if ~isfield(forward,'linear');forward.linear=0;end
     if (~isfield(forward,'G')|forward.linear==0);
         % ONLY COMPUTE KERNEL IF linear=1 OR IF G DOES NOT EXIST

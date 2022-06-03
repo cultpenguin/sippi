@@ -40,7 +40,7 @@ if nargin<5
     %end
 end
 if nargin<6
-    useNormalScore = 1;
+    useNormalScore = 0;
     o_nscore{1}=[];;
 end
 
