@@ -17,8 +17,8 @@
 clear all;
 close all
 useSynth=1;
-dx=0.2;
-d_std = 0.2;
+dx=0.1;
+d_std = 0.8;
 %id_use = 1:1:702; % Selevt number of data to use
 id_use = 1:1:702; % Use every 10th data
 
