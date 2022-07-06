@@ -5,6 +5,7 @@
 %
 % forward.ds=0; % DOWNSAMPLING [1]:yes, [0]:no
 % forward.S; % SYSTEM DESCRIPTION, see fdem1d
+% forward.htx; % Height of TX below surface (negative above surface)
 %
 % forward.force_one_thread [0], 0:force one thread only ( nor parallellization)
 % forward.nthreads : optionally maually choose the number of seperate
@@ -77,9 +78,17 @@ end
 %    forward.model.EL=repmat(prior{1}.y(:),[1 length(forward.x)]);
 %end
 
+imm=length(prior);
+for im=imm
+    if strcmp(lower(prior{im}.name),'htx')
+        forward.htx=-1*m{im};
+    end
+end
+
 if ~isfield(forward,'htx')
     forward.htx=-30;
 end
+%disp(sprintf('htx=%5.2f',forward.htx));
 
 %% PARALLEL
 isOpen=0; % BY DEF, NO PARFOR/PARRALLELISATION
