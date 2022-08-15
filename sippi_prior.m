@@ -11,6 +11,7 @@
 %   % two point statistics bases
 %   GAUSSIAN   [1D] : 1D generalized gaussian model
 %   UNIFORM [1D-3D] : 1D-3D uncorrelated uniform distribution
+%   GAMMA   [1D-3D] : 1D-3D gamma distribution
 %   CHOLESKY[1D-3D] : based on Cholesky decomposition
 %   FFTMA   [1D-3D] : based on the FFT-MA method (Multivariate Gaussian)
 %   VISIM   [1D-3D] : based on Sequential Gaussian and Direct Sequential simulation
@@ -277,19 +278,23 @@ for im=im_array;
         
         % check that a file exist that implements the prior type
         m_file=sprintf('sippi_prior_%s',lower(prior{im}.type));
-        if exist(m_file,'file')
-            p{1}=prior{im};
-            if nargin==1   
-                [m_p,p]=feval(m_file,p);
-            else
-                m_c{1}=m_current{im};
-                [m_p,p]=feval(m_file,p,m_c);
+        doCheckForFile=0; % DO not check that m-file exits 
+        %doCheckForFile=1; % Check that m-file exist - SLOW
+        if doCheckForFile==1
+            if ~exist(m_file,'file')
+                disp(sprintf('%s : ''%s'' type prior model not supported',mfilename,prior{im}.type));
             end
-            m_propose{im}=m_p{1};
-            prior{im}=p{1};
-        else
-            disp(sprintf('%s : ''%s'' type prior model not supported',mfilename,prior{im}.type));
         end
+        p{1}=prior{im};
+        if nargin==1
+            [m_p,p]=feval(m_file,p);
+        else
+            m_c{1}=m_current{im};
+            [m_p,p]=feval(m_file,p,m_c);
+        end
+        m_propose{im}=m_p{1};
+        prior{im}=p{1};
+        
     end
     
     prior{im}.time=toc;
