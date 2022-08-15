@@ -91,4 +91,3 @@ else
 end
 
 m_propose{ip}=normcdf(prior{ip}.randn,0,1)*(prior{ip}.max-prior{ip}.min)+prior{ip}.min;
-
