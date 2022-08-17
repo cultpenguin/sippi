@@ -32,7 +32,9 @@ end
 if ~isfield(forward,'ndata');
     forward.ndata=2*length(forward.S.freq);
 end
-
+if ~isfield(forward,'htx_as_data');
+    forward.htx_as_data=0;
+end
 if (prior{1}.dim(1)>1)&&(prior{2}.dim(1)==1)
     % condunctivites  profiles in x direction
     forward.onedim=1;
@@ -135,4 +137,9 @@ else
 end
 
 d{1}=d_est(:);
+if forward.htx_as_data==1
+    d{1}(end+1)=-1*forward.htx;
+end
+
+
 
