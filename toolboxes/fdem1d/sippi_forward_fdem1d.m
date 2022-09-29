@@ -77,8 +77,9 @@ end
 %    forward.model.EL=repmat(prior{1}.y(:),[1 length(forward.x)]);
 %end
 
-htx=-30;
-
+if ~isfield(forward,'htx')
+    forward.htx=-30;
+end
 %% PARALLEL
 isOpen=0; % BY DEF, NO PARFOR/PARRALLELISATION
 if forward.force_one_thread==0
@@ -112,14 +113,14 @@ end
 %isOpen=0;
 if (isOpen)
     parfor i=1:length(id_comp);%1:length(forward.x);
-        [d_est_par(:,i)] = calcFwd(forward.S,forward.model,htx,forward.ds,id_comp(i));
+        [d_est_par(:,i)] = calcFwd(forward.S,forward.model,forward.htx,forward.ds,id_comp(i));
     end
     if length(id_comp)>0
         d_est(:,id_comp)=d_est_par;
     end
 else
     for i=id_comp;%1:length(forward.x);
-        [d_est(:,i)] = calcFwd(forward.S,forward.model,htx,forward.ds,i);
+        [d_est(:,i)] = calcFwd(forward.S,forward.model,forward.htx,forward.ds,i);
     end
 end
 

@@ -74,7 +74,6 @@ if ~exist('dx','var')
     dx=0.2;
 end
 
-
 if exist('plot_posterior','var');    
     plot_posterior_sample=plot_posterior;
     plot_posterior_data=plot_posterior;
@@ -87,33 +86,20 @@ if ~exist('plot_posterior_data','var');    plot_posterior_data=1;end
 if ~exist('plot_posterior_loglikelihood','var');    plot_posterior_loglikelihood=1;end
 if ~exist('plot_posterior_2d_marg','var');    plot_posterior_2d_marg=1;end
 
-    
-
-
-
-
-
-
 %% SETUP DATA, PRIOR and FORWARD
 
 %%
 D=load('AM13_data.mat');
 options.txt='AM13_gaussian';
-%D2=D;
-%D.S(352:end,:)=D2.R(352:end,:);
-%D.R(352:end,:)=D2.S(352:end,:);
 
-
-%% SETUP DATA
+%% SETUP DATAwji
 D=load('AM13_data.mat');
 
 id=1;
 data{id}.d_obs=D.d_obs;
-data{id}.d_std=D.d_std.*0+0.4;;
-%data{id}.i_use=1:20;
-%data{id}.Ct=1; % Data covariance describing modelization error
+data{id}.d_std=D.d_std;
 data{id}.Ct=D.Ct; % Correlated noise model according to Cordua et al (2008; 2009)
-options.txt=[options.txt,'_noCt'];
+%options.txt=[options.txt,'_noCt'];
 
 figure(1);
 plot(data{1}.d_obs)
@@ -255,7 +241,7 @@ prior_all{im_all}{im}.prior_master=i_master;
 
 
 %% PLOT SAMPLE FROM PRIOR_MUL
-do_plot_prior_mul=0;
+do_plot_prior_mul=1;
 if do_plot_prior_mul==1;
     figure(2);clf;
     nsim=6;
