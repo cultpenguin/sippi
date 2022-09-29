@@ -15,7 +15,7 @@
 %  Accounting for imperfect forward modeling in geophysical inverse problems - exemplified for cross hole tomography.
 %  Geophsyics, 79(3) H1-H21, 2014. doi:10.1190/geo2013-0215.1
 %
-function [Ct,dt,dd,d_full,d_app,o_nscore]=sippi_compute_modelization_forward_error(forward_full,forward_app,prior,N,d,useNormalScore);
+function [Ct,dt,dd,d_full,d_app,o_nscore,dd_org]=sippi_compute_modelization_forward_error(forward_full,forward_app,prior,N,d,useNormalScore);
 
 
 N_app = length(forward_app);
@@ -38,6 +38,12 @@ if nargin<5
         [d{i},forward_app{i}]=sippi_forward(m,forward_app{i},prior);
     end
     %end
+else
+    if iscell(d);
+        d_temp=d;
+        clear d;
+        d{1}=d_temp;
+    end
 end
 if nargin<6
     useNormalScore = 0;
@@ -157,26 +163,29 @@ end
 
 for na=1:N_app
     
-    
     if useNormalScore
-        keyboard
-        [d_nscore{na},o_nscore{na}]=nscore(dd{na}(:));
+        nd=size(dd{na},1);
+        for id=1:nd
+            [d_nscore{na}(id,:),o_nscore{na}{id}]=nscore(dd{na}(id,:));
+        end
+        dd_org{na}=dd{na};
+        dd{na}=d_nscore{na};
+        %[d_nscore{na},o_nscore{na}]=nscore(dd{na}(:));
         % make sure data is in proper shape (and test the forward normal
         % score)!
-        [d_nscore{na},o_nscore{na}]=nscore(dd{na},o_nscore{na});
+        %[d_nscore{na},o_nscore{na}]=nscore(dd{na},o_nscore{na});
         
-        dt{na}=nanmean(d_nscore{na}')';
+        %dt{na}=nanmean(d_nscore{na}')'; % should be zero
         
-    else
-        dt{na}=nanmean(dd{na}')';
-    
-        % optionally force dt=0;
-        if nargout<2
-            dt{na}=dt{na}.*0;
-        end
-        dd_ct{na}=dd{na}-repmat(dt{na},1,N);
-        Ct{na}=(1/N).*(dd_ct{na}*dd_ct{na}');
     end
+    dt{na}=nanmean(dd{na}')';
+    % optionally force dt=0;
+    if nargout<2
+        dt{na}=dt{na}.*0;
+    end
+    dd_ct{na}=dd{na}-repmat(dt{na},1,N);
+    Ct{na}=(1/N).*(dd_ct{na}*dd_ct{na}');
+    
 end
 
 
