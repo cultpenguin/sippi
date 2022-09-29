@@ -24,7 +24,7 @@ if nargin == 0;
     [m,prior]=sippi_prior(prior);
 
     prior{1}.seq_gibbs.step=0.05;
-    N=10000;
+    N=1000;
     disp(sprintf('%s: Generating %d realizations.',mfilename,N))
     sim=ones(N,2).*NaN;
     for i=1:N;
@@ -53,7 +53,6 @@ if ~isfield(prior{ip},'init')
 end
 
 if length(prior{ip}.x)==1
-    disp('XXX')
     prior{ip}.x=[1,2];
 end
 

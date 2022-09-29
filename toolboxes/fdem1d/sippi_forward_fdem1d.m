@@ -5,10 +5,11 @@
 %
 % forward.ds=0; % DOWNSAMPLING [1]:yes, [0]:no
 % forward.S; % SYSTEM DESCRIPTION, see fdem1d
+% forward.htx; % Height of TX below surface (negative above surface)
 %
 % forward.force_one_thread [0], 0:force one thread only ( nor parallellization)
 % forward.nthreads : optionally maually choose the number of seperate
-%                    Matlab workers for parfor
+%                    Matlab workers   for parfor
 %
 %
 % From; 
@@ -31,7 +32,9 @@ end
 if ~isfield(forward,'ndata');
     forward.ndata=2*length(forward.S.freq);
 end
-
+if ~isfield(forward,'htx_as_data');
+    forward.htx_as_data=0;
+end
 if (prior{1}.dim(1)>1)&&(prior{2}.dim(1)==1)
     % condunctivites  profiles in x direction
     forward.onedim=1;
@@ -77,9 +80,18 @@ end
 %    forward.model.EL=repmat(prior{1}.y(:),[1 length(forward.x)]);
 %end
 
+imm=length(prior);
+for im=imm
+    if strcmp(lower(prior{im}.name),'htx')
+        forward.htx=-1*m{im};
+    end
+end
+
 if ~isfield(forward,'htx')
     forward.htx=-30;
 end
+%disp(sprintf('htx=%5.2f',forward.htx));
+
 %% PARALLEL
 isOpen=0; % BY DEF, NO PARFOR/PARRALLELISATION
 if forward.force_one_thread==0
@@ -125,4 +137,9 @@ else
 end
 
 d{1}=d_est(:);
+if forward.htx_as_data==1
+    d{1}(end+1)=-1*forward.htx;
+end
+
+
 

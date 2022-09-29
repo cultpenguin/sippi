@@ -46,14 +46,31 @@
 %
 function [logL,L,data]=sippi_likelihood(d,data,id_array)
 
+% Select which data for which likelihood should be computed!!
+% This is perhaps a bit slow!!
 if  nargin<3
-    id_array=1; % USE ONLY FIRST DATA
-    % id_array=1:length(d); %% USE ALL DATA
+    if ~isfield(data{1},'is_checked');
+        for id=1:length(data)
+            if ~isfield(data{id},'use');
+                data{id}.use=1;
+            end
+        end
+    end
+    id_array=[];
+    for id=1:length(data)
+        if data{id}.use==1;
+            id_array=[id_array id];
+        end
+    end
+    % OLD
+    % id_array=1; % USE ONLY FIRST DATA
+    %id_array=1:length(d); %% USE ALL DATA
+    data{1}.is_checked=1;    
 end
+
 logL=zeros(1,length(d));
 L=zeros(1,length(d));
-for id=id_array;
-    
+for id=id_array;  
     % Check whether 'full_likelihood' is set
     if ~isfield(data{id},'full_likelihood');
         data{id}.full_likelihood=0;
