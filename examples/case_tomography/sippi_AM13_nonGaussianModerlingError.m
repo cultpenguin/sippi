@@ -514,11 +514,11 @@ end
 
 
 
-O=sippi_metropolis(data,prior,forward,options);
-O_me=sippi_metropolis(data_me,prior,forward,options);
+%O=sippi_metropolis(data,prior,forward,options);
+%O_me=sippi_metropolis(data_me,prior,forward,options);
 O_ns=sippi_metropolis(data_ns,prior,forward,options);
 
-options.mcmc.time_elapsed_in_seconds
+%options.mcmc.time_elapsed_in_seconds
 
 
 
