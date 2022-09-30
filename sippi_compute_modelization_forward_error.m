@@ -170,12 +170,7 @@ for na=1:N_app
         end
         dd_org{na}=dd{na};
         dd{na}=d_nscore{na};
-        %[d_nscore{na},o_nscore{na}]=nscore(dd{na}(:));
-        % make sure data is in proper shape (and test the forward normal
-        % score)!
-        %[d_nscore{na},o_nscore{na}]=nscore(dd{na},o_nscore{na});
-        
-        %dt{na}=nanmean(d_nscore{na}')'; % should be zero
+       
         
     end
     dt{na}=nanmean(dd{na}')';

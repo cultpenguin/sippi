@@ -353,7 +353,7 @@ sippi_plot_data(d,data);
 % residual 
 %
 
-N=600;
+N=1200;
 [Ct1,dt1,dd1,d_full1,d_app1]=sippi_compute_modelization_forward_error(forward_ref,forward,prior,N,d,0);
 [Ct2,dt2,dd2,d_full2,d_app2,o_nscore2,dd_org2]=sippi_compute_modelization_forward_error(forward_ref,forward,prior,N,d,1);
 save -v7.3 MODELERRROR
@@ -403,9 +403,80 @@ sgtitle('Modeling error normal score')
 
 %% SIMULATE MODELING ERRORS
 nd=length(d{1});
-nr = 10;
+nr = N;
+irays=[1,50,100,250,500];
 d_real1 = gaussian_simulation_cholesky(dt1{1},Ct1{1}+0.001*eye(nd),nr);
-d_real2 = gaussian_simulation_cholesky(dt2{1},Ct2{1}+0.001*eye(nd),nr);
+d_real2_ns = gaussian_simulation_cholesky(dt2{1},Ct2{1}+0.001*eye(nd),nr);
+d_real2 = inscore_mul(d_real2_ns,o_nscore2{1});
+
+figure(21)
+subplot(1,1,1);
+hold on
+plot(d{1}+dd1{1}(:,1:nr),'b-')
+plot(d{1}+d_real1(:,1:nr),'r-')
+plot(d{1},'k-','LineWidth',3)
+hold off
+grid on
+sgtitle('Real and simulated Gaussian modeling error')
+
+
+figure(22);
+subplot(1,1,1);
+plot(d{1},'k-','LineWidth',3)
+hold on
+plot(d{1}+dd2{1}(:,1:nr),'b-','LineWidth',.1)
+plot(d{1}+d_real2(:,1:nr),'r-','LineWidth',.1)
+plot(d{1},'k-','LineWidth',1)
+hold off
+grid on
+legend({'d','dd real','dd sim'})
+sgtitle('Real and simulated non-Gaussian modeling error')
+
+figure(23);
+j=0;
+for id=ceil(linspace(1,length(d{1}),9));
+    j=j+1;
+    subplot(3,3,j);
+    [hn,hc]=hist([dd1{1}(id,:);d_real1(id,:),;d_real2(id,:)]',30);
+    p=plot(hc,hn,'-');
+    set(p(1),'LineWidth',3)
+    title(sprintf('id=%d',id))
+    legend('True','G','NS')
+end
+sgtitle('Modeling error - real and simulated')
+
+
+%% Test likelihood - should be really bad when using the Gaussian modeling error!!
+%make sure the following forward normal score works:
+% SHould we smooth the normal score a bit??
+nscore_mul(d_real,o_nscore2{1})
+
+m=sippi_prior(prior);
+d_ref=sippi_forward(m,forward_ref,prior);
+d=sippi_forward(m,forward,prior);
+
+
+clear data
+id=1;
+data{id}.d_obs=d_ref{1};
+data{id}.d_std=d_ref{1}.*0+0.0001;
+
+data_ns = data;
+data_ns{1}.n_score=o_nscore2{1};
+data_ns{1}.dt=dt2{1};
+data_ns{1}.Ct=Ct2{1};
+
+data_org = data;
+data_org{1}.dt=dt1{1};
+data_org{1}.Ct=Ct1{1};
+
+sippi_likelihood(d,data_org)
+sippi_likelihood(d,data_ns)
+
+%% TEST PROB INV (ON BOTH SYNTH AND REAL DATA) USING
+% Case 1: Ignoring modeling error
+% Case 2: Using Gaussian modeling error
+% Case 3: Using nonGaussian modeling error
 
 
 

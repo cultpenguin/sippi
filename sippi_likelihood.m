@@ -130,6 +130,10 @@ for id=id_array;
         else
             dd=data{id}.d_obs(data{id}.i_use)-d{id}(data{id}.i_use);            
         end
+        if isfield(data{id},'n_score');
+            keyboard
+            dd = nscore_mul(dd,prior{id}.n_score(data{id}.i_use)); 
+        end
         
         if length(data{id}.d_std)==1
             logL(id)=-.5*sum(sum(sum(dd.^2./(data{id}.d_std.^2))));
@@ -222,6 +226,13 @@ for id=id_array;
             end
         end
         
+        if isfield(data{id},'n_score');
+            % Perform forward normal score transformation of residuals to
+            % normal score space
+            keyboard
+            dd_ns = nscore_mul(dd,data{id}.n_score(data{id}.i_use));
+            dd = dd_ns;
+        end
         
         % Only compute iCD if it is computed only once (i.e.
         % data{id}.recomputeCD==0)
