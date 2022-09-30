@@ -13,8 +13,8 @@
 
 %% Make some choices
 if ~exist('use_prior','var')
-    % use_prior=1; % Gaussian
-    use_prior=2; % Gaussian with bimodal target distribution
+    use_prior=1; % Gaussian
+    % use_prior=2; % Gaussian with bimodal target distribution
     % use_prior=3; % Gaussian with uniform target distribution
     % use_prior=4; % Plurigaussian
     % use_prior=5; % Gaussian with variable covariance parameters
@@ -49,7 +49,7 @@ if ~exist('use_rejection','var')
 end
 
 if ~exist('use_reference','var')
-    use_reference=0;
+    use_reference=1;
 end
 
 if ~exist('use_correlated_noise','var')
@@ -94,21 +94,6 @@ if ~exist('plot_posterior_2d_marg','var');    plot_posterior_2d_marg=1;end
 
 D=load('AM13_data.mat');
 options.txt='AM13_gaussian';
-
-%% SETUP DATAwji
-D=load('AM13_data.mat');
-
-id=1;
-data{id}.d_obs=D.d_obs;
-data{id}.d_std=D.d_std.*0+0.1;
-if use_correlated_noise==1
-    data{id}.Ct=D.Ct; % Correlated noise model according to Cordua et al (2008; 2009)
-end
-
-figure(1);
-plot(data{1}.d_obs)
-xlabel('Data #')
-ylabel('Travel time (mus)')
 
 %% SETUP DIFFERENT PRIOR STRUCTURES
 % define some standard values
@@ -243,6 +228,8 @@ prior_all{im_all}{im}.min=.1;
 prior_all{im_all}{im}.max=2;
 prior_all{im_all}{im}.prior_master=i_master;
 
+% select the prior
+prior=prior_all{use_prior};
 
 %% PLOT SAMPLE FROM PRIOR_MUL
 do_plot_prior_mul=0;
@@ -320,8 +307,46 @@ if use_forward_ref==7;
     forward_ref.name=forward.type;
 end
 
+
+%% SETUP DATAwji
+D=load('AM13_data.mat');
+
+id=1;
+data{id}.d_obs=D.d_obs;
+data{id}.d_std=D.d_std.*0+0.1;
+if use_correlated_noise==1
+    data{id}.Ct=D.Ct; % Correlated noise model according to Cordua et al (2008; 2009)
+end
+
+if use_reference==1;
+    rng(1);
+    m_ref=sippi_prior(prior);
+    [d_ref,forward_ref]=sippi_forward(m_ref,forward_ref,prior,data);
+    [d,forward]=sippi_forward(m_ref,forward,prior,data);
+    [logL,L,data]=sippi_likelihood(d_ref,data);
+    
+    d_obs=d_ref{1};
+    d_noise = randn(size(data{1}.d_std)).*data{1}.d_std;
+    data{1}.d_noisefree=d_obs;
+    data{1}.d_obs=data{1}.d_noisefree+d_noise;
+    
+    options.mcmc.m_ref=m_ref;    
+    
+    options.txt=[options.txt,'_ref'];    
+end
+
+figure(1);
+plot(data{1}.d_obs,'k-')
+hold on
+plot(d_ref{1},'r-')
+plot(d{1},'b-')
+hold off
+xlabel('Data #')
+ylabel('Travel time (mus)')
+
+
 %% TEST THE SETUP
-prior=prior_all{use_prior};
+
 % generate a realization from the prior
 [m,prior]=sippi_prior(prior);
 sippi_plot_model(prior,m);
@@ -452,10 +477,9 @@ sgtitle('Modeling error - real and simulated')
 %make sure the following forward normal score works:
 % SHould we smooth the normal score a bit??
 
-
-m=sippi_prior(prior);
-d_ref=sippi_forward(m,forward_ref,prior);
-d=sippi_forward(m,forward,prior);
+%m=sippi_prior(prior);
+d_ref=sippi_forward(m_ref,forward_ref,prior);
+d=sippi_forward(m_ref,forward,prior);
 
 
 clear data
@@ -473,6 +497,7 @@ data_me = data;
 data_me{1}.dt=dt{1};
 data_me{1}.Ct=Ct{1};
 
+sippi_likelihood(d,data)
 sippi_likelihood(d,data_me)
 sippi_likelihood(d,data_ns)
 

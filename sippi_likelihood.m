@@ -230,7 +230,7 @@ for id=id_array;
             % Perform forward normal score transformation of residuals to
             % normal score space           
             dd_ns = nscore_mul(dd,data{id}.n_score(data{id}.i_use));
-            dd = dd_ns;
+            dd = dd_ns;            
         end
         
         % Only compute iCD if it is computed only once (i.e.
