@@ -100,7 +100,7 @@ D=load('AM13_data.mat');
 
 id=1;
 data{id}.d_obs=D.d_obs;
-data{id}.d_std=D.d_std;
+data{id}.d_std=D.d_std.*0+0.1;
 if use_correlated_noise==1
     data{id}.Ct=D.Ct; % Correlated noise model according to Cordua et al (2008; 2009)
 end
@@ -353,29 +353,32 @@ sippi_plot_data(d,data);
 % residual 
 %
 
-N=1200;
-[Ct1,dt1,dd1,d_full1,d_app1]=sippi_compute_modelization_forward_error(forward_ref,forward,prior,N,d,0);
-[Ct2,dt2,dd2,d_full2,d_app2,o_nscore2,dd_org2]=sippi_compute_modelization_forward_error(forward_ref,forward,prior,N,d,1);
+N=2000;
+N=200;
+[Ct,dt,dd,d_full,d_app]=sippi_compute_modelization_forward_error(forward_ref,forward,prior,N,d,0);
+[Ct_ns,dt_ns,dd_ns,d_full_ns,d_app_ns,o_nscore,dd_org_ns]=sippi_compute_modelization_forward_error(forward_ref,forward,prior,N,d,data,1);
+
+
 save -v7.3 MODELERRROR
 %% Plot the infered Gaussian model for modeling error
 close all
 figure(1);
 subplot(4,2,1);
-plot(dt1{1})
+plot(dt{1})
 ylim([-3 3])
 ylabel('mean (d_{ref}-d)')
 subplot(4,2,[3,5]);
-imagesc(Ct1{1});caxis([-1 1]);
+imagesc(Ct{1});caxis([-1 1]);
 colormap(cmap_linear)
 axis image;
 colorbar
 
 subplot(4,2,2);
-plot(dt2{1})
+plot(dt_ns{1})
 ylim([-3 3])
 ylabel('mean (d_{ref}-d) - normal score')
 subplot(4,2,[4,6]);
-imagesc(Ct2{1});caxis([-1 1]);
+imagesc(Ct_ns{1});caxis([-1 1]);
 colormap(cmap_linear)
 axis image;
 colorbar
@@ -385,7 +388,7 @@ j=0;
 for id=ceil(linspace(1,length(d{1}),9));
     j=j+1;
     subplot(3,3,j);
-    hist(dd1{1}(id,:),30);
+    hist(dd{1}(id,:),30);
     title(sprintf('id=%d',id))
 end
 sgtitle('Modeling error')
@@ -396,7 +399,7 @@ j=0;
 for id=ceil(linspace(1,length(d{1}),9));
     j=j+1;
     subplot(3,3,j);
-    hist(dd2{1}(id,:),30);
+    hist(dd_ns{1}(id,:),30);
     title(sprintf('id=%d',id))
 end
 sgtitle('Modeling error normal score')
@@ -405,15 +408,15 @@ sgtitle('Modeling error normal score')
 nd=length(d{1});
 nr = N;
 irays=[1,50,100,250,500];
-d_real1 = gaussian_simulation_cholesky(dt1{1},Ct1{1}+0.001*eye(nd),nr);
-d_real2_ns = gaussian_simulation_cholesky(dt2{1},Ct2{1}+0.001*eye(nd),nr);
-d_real2 = inscore_mul(d_real2_ns,o_nscore2{1});
+d_real = gaussian_simulation_cholesky(dt{1},Ct{1}+0.001*eye(nd),nr);
+d_real_ns_ns = gaussian_simulation_cholesky(dt_ns{1},Ct_ns{1}+0.001*eye(nd),nr);
+d_real_ns = inscore_mul(d_real_ns_ns,o_nscore{1});
 
 figure(21)
 subplot(1,1,1);
 hold on
-plot(d{1}+dd1{1}(:,1:nr),'b-')
-plot(d{1}+d_real1(:,1:nr),'r-')
+plot(d{1}+dd{1}(:,1:nr),'b-')
+plot(d{1}+d_real(:,1:nr),'r-')
 plot(d{1},'k-','LineWidth',3)
 hold off
 grid on
@@ -424,8 +427,8 @@ figure(22);
 subplot(1,1,1);
 plot(d{1},'k-','LineWidth',3)
 hold on
-plot(d{1}+dd2{1}(:,1:nr),'b-','LineWidth',.1)
-plot(d{1}+d_real2(:,1:nr),'r-','LineWidth',.1)
+plot(d{1}+dd{1}(:,1:nr),'b-','LineWidth',.1)
+plot(d{1}+d_real_ns(:,1:nr),'r-','LineWidth',.1)
 plot(d{1},'k-','LineWidth',1)
 hold off
 grid on
@@ -437,7 +440,7 @@ j=0;
 for id=ceil(linspace(1,length(d{1}),9));
     j=j+1;
     subplot(3,3,j);
-    [hn,hc]=hist([dd1{1}(id,:);d_real1(id,:),;d_real2(id,:)]',30);
+    [hn,hc]=hist([dd{1}(id,:);d_real(id,:),;d_real_ns(id,:)]',30);
     p=plot(hc,hn,'-');
     set(p(1),'LineWidth',3)
     title(sprintf('id=%d',id))
@@ -449,7 +452,7 @@ sgtitle('Modeling error - real and simulated')
 %% Test likelihood - should be really bad when using the Gaussian modeling error!!
 %make sure the following forward normal score works:
 % SHould we smooth the normal score a bit??
-nscore_mul(d_real,o_nscore2{1})
+
 
 m=sippi_prior(prior);
 d_ref=sippi_forward(m,forward_ref,prior);
@@ -462,21 +465,60 @@ data{id}.d_obs=d_ref{1};
 data{id}.d_std=d_ref{1}.*0+0.0001;
 
 data_ns = data;
-data_ns{1}.n_score=o_nscore2{1};
-data_ns{1}.dt=dt2{1};
-data_ns{1}.Ct=Ct2{1};
+data_ns{1}.d_std=0*data_ns{1}.d_std;
+data_ns{1}.n_score=o_nscore{1};
+data_ns{1}.dt=dt_ns{1};
+data_ns{1}.Ct=Ct_ns{1};
 
-data_org = data;
-data_org{1}.dt=dt1{1};
-data_org{1}.Ct=Ct1{1};
+data_me = data;
+data_me{1}.dt=dt{1};
+data_me{1}.Ct=Ct{1};
 
-sippi_likelihood(d,data_org)
+sippi_likelihood(d,data_me)
 sippi_likelihood(d,data_ns)
-
+return
 %% TEST PROB INV (ON BOTH SYNTH AND REAL DATA) USING
 % Case 1: Ignoring modeling error
 % Case 2: Using Gaussian modeling error
 % Case 3: Using nonGaussian modeling error
+
+
+    
+options.mcmc.nite=n_ite;
+options.mcmc.i_plot=max([500 ceil(n_ite/100)]);
+options.mcmc.i_sample=options.mcmc.nite/n_reals_out;
+
+% ANNEALING
+% example of starting with a high temperature, that allow higher
+% exploration. The temperature is lowered to T=1, after which the
+% algorithm proceeds as a usual Metropolis sampler
+if doAnneal==1;
+    options.txt=[options.txt,'_','anneal'];
+    i_stop_anneal=max([1000 ceil(n_ite/10)]);
+    for im=1:length(prior);
+        prior{im}.seq_gibbs.i_update_step_max=2*i_stop_anneal;
+    end
+    options.mcmc.anneal.T_begin=25; % Start temperature
+    options.mcmc.anneal.T_end=1; % End temperature, at ptions.mcmc.anneal.
+    options.mcmc.anneal.i_begin=1; % default, iteration number when annealing begins
+    options.mcmc.anneal.i_end=i_stop_anneal; %  iteration number when annealing stops
+end
+
+% TEMPERING
+% example of using parallel tempering (Sambridge, 2013)
+if doTempering==1;
+    options.txt=[options.txt,'_','temper'];
+    options.mcmc.n_chains=4; % set number of chains (def=1)
+    options.mcmc.T=[1 1.25 1.5 1.75]; % set number of chains (def=1)
+end
+
+
+
+O=sippi_metropolis(data,prior,forward,options);
+O_me=sippi_metropolis(data_me,prior,forward,options);
+O_ns=sippi_metropolis(data_ns,prior,forward,options);
+
+options.mcmc.time_elapsed_in_seconds
 
 
 

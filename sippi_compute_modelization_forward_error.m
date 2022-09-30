@@ -15,7 +15,7 @@
 %  Accounting for imperfect forward modeling in geophysical inverse problems - exemplified for cross hole tomography.
 %  Geophsyics, 79(3) H1-H21, 2014. doi:10.1190/geo2013-0215.1
 %
-function [Ct,dt,dd,d_full,d_app,o_nscore,dd_org]=sippi_compute_modelization_forward_error(forward_full,forward_app,prior,N,d,useNormalScore);
+function [Ct,dt,dd,d_full,d_app,o_nscore,dd_org]=sippi_compute_modelization_forward_error(forward_full,forward_app,prior,N,d,data,useNormalScore);
 
 
 N_app = length(forward_app);
@@ -46,6 +46,10 @@ else
     end
 end
 if nargin<6
+    data{1}.d_obs=[]
+    data{1}.d_std=zeros(1,length(d{1}));
+end
+if nargin<7
     useNormalScore = 0;
     o_nscore{1}=[];;
 end
@@ -163,16 +167,37 @@ end
 
 for na=1:N_app
     
-    if useNormalScore
+    if useNormalScore==1;
+        
+        % simulate measurement noise
+        dd_meas{na} = 0.*dd{na};
+        if isfield(data{1},'Cd')
+            dd_meas{na} = gaussian_simulation_cholesky(data{1}.d0, data{1}.Cd,N)
+        elseif isfield(data{1},'d_var')
+            for i=1:N
+                dd_meas{na}(:,i) = randn(size(data{1}.d_var)).*sqrt(data{1}.d_var);
+            end
+        elseif isfield(data{1},'d_std')
+            for i=1:N
+                dd_meas{na}(:,i) = randn(size(data{1}.d_std)).*data{1}.d_std;
+            end
+        end
+
+
         nd=size(dd{na},1);
+        % Convert sample of modeling PLUS measurement error into NS space
         for id=1:nd
-            [d_nscore{na}(id,:),o_nscore{na}{id}]=nscore(dd{na}(id,:));
+            %[d_nscore{na}(id,:),o_nscore{na}{id}]=nscore(dd{na}(id,:));
+            [d_nscore{na}(id,:),o_nscore{na}{id}]=nscore(dd{na}(id,:) + dd_meas{na}(id,:));
         end
         dd_org{na}=dd{na};
+        
+
         dd{na}=d_nscore{na};
        
         
     end
+
     dt{na}=nanmean(dd{na}')';
     % optionally force dt=0;
     if nargout<2

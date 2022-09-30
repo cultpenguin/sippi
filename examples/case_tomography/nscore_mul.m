@@ -7,7 +7,6 @@ if isstruct(o_nscore)
     end
 else
     for id=1:nd
-        id
         d_ireal(id,:)=nscore(d_real(id,:),o_nscore{id});
     end
 end

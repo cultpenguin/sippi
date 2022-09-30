@@ -132,7 +132,7 @@ for id=id_array;
         end
         if isfield(data{id},'n_score');
             keyboard
-            dd = nscore_mul(dd,prior{id}.n_score(data{id}.i_use)); 
+            dd = nscore_mul(dd,data{id}.n_score(data{id}.i_use)); 
         end
         
         if length(data{id}.d_std)==1
@@ -231,6 +231,8 @@ for id=id_array;
             % normal score space
             keyboard
             dd_ns = nscore_mul(dd,data{id}.n_score(data{id}.i_use));
+            find(d<o_nscore.sd(1))
+            
             dd = dd_ns;
         end
         
