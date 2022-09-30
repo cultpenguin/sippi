@@ -14,9 +14,9 @@
 %% Make some choices
 if ~exist('use_prior','var')
     % use_prior=1; % Gaussian
-    % use_prior=2; % Gaussian with bimodal target distribution
+    use_prior=2; % Gaussian with bimodal target distribution
     % use_prior=3; % Gaussian with uniform target distribution
-    use_prior=4; % Plurigaussian
+    % use_prior=4; % Plurigaussian
     % use_prior=5; % Gaussian with variable covariance parameters
     % use_prior=6; % Matern type covariance with varying nu parameter
 end
@@ -354,7 +354,6 @@ sippi_plot_data(d,data);
 %
 
 N=2000;
-N=200;
 [Ct,dt,dd,d_full,d_app]=sippi_compute_modelization_forward_error(forward_ref,forward,prior,N,d,0);
 [Ct_ns,dt_ns,dd_ns,d_full_ns,d_app_ns,o_nscore,dd_org_ns]=sippi_compute_modelization_forward_error(forward_ref,forward,prior,N,d,data,1);
 
@@ -476,7 +475,7 @@ data_me{1}.Ct=Ct{1};
 
 sippi_likelihood(d,data_me)
 sippi_likelihood(d,data_ns)
-return
+
 %% TEST PROB INV (ON BOTH SYNTH AND REAL DATA) USING
 % Case 1: Ignoring modeling error
 % Case 2: Using Gaussian modeling error
@@ -514,9 +513,9 @@ end
 
 
 
-%O=sippi_metropolis(data,prior,forward,options);
-%O_me=sippi_metropolis(data_me,prior,forward,options);
-O_ns=sippi_metropolis(data_ns,prior,forward,options);
+O=sippi_metropolis(data,prior,forward,options);
+O_me=sippi_metropolis(data_me,prior,forward,options);
+%O_ns=sippi_metropolis(data_ns,prior,forward,options);
 
 %options.mcmc.time_elapsed_in_seconds
 
