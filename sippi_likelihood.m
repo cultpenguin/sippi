@@ -1,7 +1,7 @@
 % sippi_likelihood Compute likelihood given an observed dataset
 %
 % Call
-%   [logL,L,data]=sippi_likelihood(d,data);
+%   [logL,LogL_all,data]=sippi_likelihood(d,data);
 %
 %
 %  data{1}.d_obs [N_data,1] N_data data observations
@@ -35,6 +35,19 @@
 %  then this can be used to evaluate the likelhood in sippi using
 %  data{1}.noise_model='sippi_likelihood_other',
 %
+%  %% Using multiple data
+%  for each data one can specify whether it is used. For example
+%  if using three data types (length(data)=3), one can ignore the second
+%  type of data (when computing the log-likelihood) using:
+%    data{1}.use=1;
+%    data{2}.use=0;
+%    data{3}.use=1;
+%
+% % OUTPUT 
+%     'logL': sum of all all log-likelihoods
+%     'logL_all': Iniduvual log-likelihood for each type of data
+%     'data': update data structre 
+%
 %
 
 
@@ -67,6 +80,7 @@ if  nargin<3
     %id_array=1:length(d); %% USE ALL DATA
     data{1}.is_checked=1;    
 end
+%id_array=1; % USE ONLY FIRST DATA
 
 logL=zeros(1,length(d));
 L=zeros(1,length(d));
