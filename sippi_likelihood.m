@@ -153,6 +153,7 @@ for id=id_array;
         if data{id}.full_likelihood==1;
             % compute full Gaussian  probability, necessary if the variance
             % is changing
+            % TMH:UPDATE
             k = length(dd).*log(((data{id}.d_std.*sqrt(2*pi)).^(-1)));
             logL(id)=k+logL(id);
         end

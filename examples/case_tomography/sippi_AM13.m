@@ -53,7 +53,9 @@ if ~exist('use_reference','var')
     use_reference=0;
 end
 
-
+if ~exist('use_correlated_noise','var')
+    use_correlated_noise=1;
+end
 if ~exist('n_ite','var')
     n_ite=200000;
 end
@@ -73,6 +75,9 @@ end
 if ~exist('dx','var')
     dx=0.2;
 end
+if ~exist('cov_range','var')
+    cov_range=6;
+end
 
 
 if exist('plot_posterior','var');    
@@ -87,33 +92,22 @@ if ~exist('plot_posterior_data','var');    plot_posterior_data=1;end
 if ~exist('plot_posterior_loglikelihood','var');    plot_posterior_loglikelihood=1;end
 if ~exist('plot_posterior_2d_marg','var');    plot_posterior_2d_marg=1;end
 
-    
-
-
-
-
-
-
 %% SETUP DATA, PRIOR and FORWARD
 
 %%
 D=load('AM13_data.mat');
 options.txt='AM13_gaussian';
-%D2=D;
-%D.S(352:end,:)=D2.R(352:end,:);
-%D.R(352:end,:)=D2.S(352:end,:);
 
-
-%% SETUP DATA
+%% SETUP DATAwji
 D=load('AM13_data.mat');
 
 id=1;
 data{id}.d_obs=D.d_obs;
-data{id}.d_std=D.d_std.*0+0.4;;
-%data{id}.i_use=1:20;
-%data{id}.Ct=1; % Data covariance describing modelization error
-data{id}.Ct=D.Ct; % Correlated noise model according to Cordua et al (2008; 2009)
-options.txt=[options.txt,'_noCt'];
+data{id}.d_std=D.d_std;
+if use_correlated_noise==1
+    data{id}.Ct=D.Ct; % Correlated noise model according to Cordua et al (2008; 2009)
+end
+%options.txt=[options.txt,'_noCt'];
 
 figure(1);
 plot(data{1}.d_obs)
@@ -123,7 +117,7 @@ ylabel('Travel time (mus)')
 %% SETUP DIFFERENT PRIOR STRUCTURES
 % define some standard values
 m0=0.145;
-Va='.0003 Sph(6,90,.3)';
+Va=sprintf('.0003 Sph(%g,90,.3)',cov_range);
 
 % some parameters needed by all a priori types
 np=2;
@@ -240,7 +234,7 @@ prior_all{im_all}{im}.title='Gaussian - Matern';
 
 prior_all{im_all}{im}.type='fftma';
 prior_all{im_all}{im}.m0=m0;
-prior_all{im_all}{im}.Cm='.0003 Mat(2,90,.3)';
+prior_all{im_all}{im}.Cm=sprintf('.0003 Mat(%g,90,.3)',cov_range);
 prior_all{im_all}{im}.fftma_options.pad_x=150; % avoid striping
 prior_all{im_all}{im}.fftma_options.pad_y=150; % avoid striping
 i_master=im;
@@ -255,7 +249,7 @@ prior_all{im_all}{im}.prior_master=i_master;
 
 
 %% PLOT SAMPLE FROM PRIOR_MUL
-do_plot_prior_mul=0;
+do_plot_prior_mul=1;
 if do_plot_prior_mul==1;
     figure(2);clf;
     nsim=6;
@@ -283,6 +277,7 @@ if do_plot_prior_mul==1;
     end
     print_mul(sprintf('%s_prior_reals',mfilename))
 end
+
 
 %% SETUP THE FORWARD MODEL(S)
 forward.forward_function='sippi_forward_traveltime';
@@ -320,7 +315,6 @@ elseif use_forward==6;
 end
 
 %% TEST THE SETUP
-use_prior=1;
 prior=prior_all{use_prior};
 % generate a realization from the prior
 [m,prior]=sippi_prior(prior);
@@ -332,9 +326,9 @@ try;
 end
 
 % plot the geomoetry
-% sippi_plot_traveltime_kernel(forward,prior,m);
-% figure(1);print_mul('AM13_SourceReceiverLoc');
-% figure(2);print_mul('AM13_Kernel');
+sippi_plot_traveltime_kernel(forward,prior,m);
+figure(100);print_mul('AM13_SourceReceiverLoc');
+figure(101);print_mul('AM13_Kernel');
 
 % Compute the likelihood
 [logL,L,data]=sippi_likelihood(d,data)
@@ -342,12 +336,23 @@ end
 % plot the forward response and compare it to the observed data
 sippi_plot_data(d,data);
 
-
-
 %% SET NAME OF SIMULATION
-options.txt=sprintf('AM13_I%d',use_prior);
+options.txt=sprintf('AM13_I%d_CO%d_r%g',use_prior,use_correlated_noise,cov_range);
 options.txt=sprintf('%s_DX%d',options.txt,1000*dx);
 options.txt=[options.txt,'_',forward.name];
+
+x=prior{1}.x;
+y=prior{1}.y;
+try
+    G=forward.G;
+try
+    Cd=data{1}.CD;
+    save(options.txt,'x','y','m','d','logL','G','Cd')
+catch
+    d_std=data{1}.d_std;
+    save(options.txt,'x','y','m','d','logL','G','d_std')
+end
+end
 
 %% MAKE REFERENCE MODEL
 if use_reference==1;
