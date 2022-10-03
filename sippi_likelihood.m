@@ -229,7 +229,7 @@ for id=id_array;
         if isfield(data{id},'n_score');
             % Perform forward normal score transformation of residuals to
             % normal score space           
-            dd_ns = nscore_mul(dd,data{id}.n_score(data{id}.i_use));
+            dd_ns = nscore_mul(dd,data{id}.n_score(data{id}.i_use));               
             dd = dd_ns;            
         end
         

@@ -183,18 +183,17 @@ for na=1:N_app
             end
         end
 
-
         nd=size(dd{na},1);
         % Convert sample of modeling PLUS measurement error into NS space
         for id=1:nd
             %[d_nscore{na}(id,:),o_nscore{na}{id}]=nscore(dd{na}(id,:));
-            [d_nscore{na}(id,:),o_nscore{na}{id}]=nscore(dd{na}(id,:) + dd_meas{na}(id,:));
+            dd_org{na}(id,:)=dd{na}(id,:) + dd_meas{na}(id,:);
+            [d_nscore{na}(id,:),o_nscore{na}{id}]=nscore(dd_org{na}(id,:));
         end
-        dd_org{na}=dd{na};
-        
-
+        % test forward
+        [d_nscore_forward{na}]=nscore_mul(dd_org{na},o_nscore{na});
+        % d_nscore_forward{na}  == d_nscore{na}
         dd{na}=d_nscore{na};
-       
         
     end
 

@@ -9,6 +9,8 @@
 %
 % clear all; use_prior=3; use_metropolis=1;use_rejection=0;n_ite=1000;sippi_AM13
 %
+% clear all;close all;rseed=1;n_ite=10000;use_prior=2;doAnneal=1;sippi_AM13_nonGaussianModerlingError
+
 
 
 %% Make some choices
@@ -77,6 +79,9 @@ end
 if ~exist('cov_range','var')
     cov_range=6;
 end
+if ~exist('Nme','var')
+    Nme=1000;
+end
 
 if exist('plot_posterior','var');    
     plot_posterior_sample=plot_posterior;
@@ -93,7 +98,7 @@ if ~exist('plot_posterior_2d_marg','var');    plot_posterior_2d_marg=1;end
 %% SETUP DATA, PRIOR and FORWARD
 
 D=load('AM13_data.mat');
-options.txt='AM13_gaussian';
+options.txt=sprintf('AM13_f%d_f%d_%d',use_forward,use_forward_ref,use_prior);
 
 %% SETUP DIFFERENT PRIOR STRUCTURES
 % define some standard values
@@ -308,7 +313,7 @@ if use_forward_ref==7;
 end
 
 
-%% SETUP DATAwji
+%% SETUP DATA
 D=load('AM13_data.mat');
 
 id=1;
@@ -319,7 +324,9 @@ if use_correlated_noise==1
 end
 
 if use_reference==1;
-    rng(1);
+    rng('default');
+    rng(rseed);
+    
     m_ref=sippi_prior(prior);
     [d_ref,forward_ref]=sippi_forward(m_ref,forward_ref,prior,data);
     [d,forward]=sippi_forward(m_ref,forward,prior,data);
@@ -332,7 +339,7 @@ if use_reference==1;
     
     options.mcmc.m_ref=m_ref;    
     
-    options.txt=[options.txt,'_ref'];    
+    options.txt=sprintf('%s_ref%d',options.txt,rseed);    
 end
 
 figure(1);
@@ -349,7 +356,7 @@ ylabel('Travel time (mus)')
 
 % generate a realization from the prior
 [m,prior]=sippi_prior(prior);
-sippi_plot_model(prior,m);
+sippi_plot_prior(prior,m);
 % Compute the forward response related to the realization of the prior model generated above
 [d,forward]=sippi_forward(m,forward,prior,data);
 try;
@@ -378,12 +385,12 @@ sippi_plot_data(d,data);
 % residual 
 %
 
-N=2000;
-[Ct,dt,dd,d_full,d_app]=sippi_compute_modelization_forward_error(forward_ref,forward,prior,N,d,0);
-[Ct_ns,dt_ns,dd_ns,d_full_ns,d_app_ns,o_nscore,dd_org_ns]=sippi_compute_modelization_forward_error(forward_ref,forward,prior,N,d,data,1);
+%Nme=2000;
+[Ct,dt,dd,d_full,d_app]=sippi_compute_modelization_forward_error(forward_ref,forward,prior,Nme,d,0);
+[Ct_ns,dt_ns,dd_ns,d_full_ns,d_app_ns,o_nscore,dd_org_ns]=sippi_compute_modelization_forward_error(forward_ref,forward,prior,Nme,d,data,1);
 
+save('-v7.3',sprintf('%s_MODELERRROR_N%d',options.txt,Nme))
 
-save -v7.3 MODELERRROR
 %% Plot the infered Gaussian model for modeling error
 close all
 figure(1);
@@ -430,7 +437,7 @@ sgtitle('Modeling error normal score')
 
 %% SIMULATE MODELING ERRORS
 nd=length(d{1});
-nr = N;
+nr = Nme;
 irays=[1,50,100,250,500];
 d_real = gaussian_simulation_cholesky(dt{1},Ct{1}+0.001*eye(nd),nr);
 d_real_ns_ns = gaussian_simulation_cholesky(dt_ns{1},Ct_ns{1}+0.001*eye(nd),nr);
@@ -473,6 +480,38 @@ end
 sgtitle('Modeling error - real and simulated')
 
 
+%% Compute average log-likelihood from all computes data residuals!
+iCt = inv(Ct{1}+diag(data{1}.d_std.^2));
+iCt_ns = inv(Ct_ns{1});
+for ir=1:Nme
+    delta_d = dd{1}(:,ir);
+    
+    % Only correlated noise
+    d_std = 8*data{1}.d_std;
+    logL_mul(ir,1)=sum(-.5*delta_d.^2./d_std.^2);
+
+    % Gaussian ME
+    dd0=delta_d-dt{1};
+    logL_mul(ir,2)=-.5*dd0'*iCt*dd0;
+    
+    % Gaussian ME
+    dd0_ns=nscore_mul(delta_d,o_nscore{1})-dt_ns{1};
+    logL_mul(ir,3)=-.5*dd0_ns'*iCt_ns*dd0_ns;
+
+    figure_focus(35);
+    subplot(1,2,1);
+    plot(1:ir,logL_mul(1:ir,2:3),'-');
+    legend({'ME','ME_{NS}'})
+    drawnow;
+    subplot(1,2,2);
+    plot(1:ir,logL_mul(1:ir,:),'-');
+    legend({'Normal','ME','ME_{NS}'})
+    drawnow;
+
+end
+
+return
+
 %% Test likelihood - should be really bad when using the Gaussian modeling error!!
 %make sure the following forward normal score works:
 % SHould we smooth the normal score a bit??
@@ -481,11 +520,15 @@ sgtitle('Modeling error - real and simulated')
 d_ref=sippi_forward(m_ref,forward_ref,prior);
 d=sippi_forward(m_ref,forward,prior);
 
-
+data_org = data;
 clear data
 id=1;
 data{id}.d_obs=d_ref{1};
-data{id}.d_std=d_ref{1}.*0+0.0001;
+data{id}.d_std=d_ref{1}.*0+data_org{1}.d_std;
+
+data_me = data;
+data_me{1}.dt=dt{1};
+data_me{1}.Ct=Ct{1};
 
 data_ns = data;
 data_ns{1}.d_std=0*data_ns{1}.d_std;
@@ -493,21 +536,24 @@ data_ns{1}.n_score=o_nscore{1};
 data_ns{1}.dt=dt_ns{1};
 data_ns{1}.Ct=Ct_ns{1};
 
-data_me = data;
-data_me{1}.dt=dt{1};
-data_me{1}.Ct=Ct{1};
 
-sippi_likelihood(d,data)
-sippi_likelihood(d,data_me)
-sippi_likelihood(d,data_ns)
+tic;logL(1)=sippi_likelihood(d,data);t(1)=toc;
+tic;logL(2)=sippi_likelihood(d,data_me);t(2)=toc;
+tic;logL(3)=sippi_likelihood(d,data_ns);t(3)=toc;
+disp(sprintf('logL=%g ',logL))
+
+figure(13);
+plot(d{1},'r-')
+hold on
+plot(d_ref{1},'k-')
+hold off
+grid on
 
 %% TEST PROB INV (ON BOTH SYNTH AND REAL DATA) USING
 % Case 1: Ignoring modeling error
 % Case 2: Using Gaussian modeling error
 % Case 3: Using nonGaussian modeling error
 
-
-    
 options.mcmc.nite=n_ite;
 options.mcmc.i_plot=max([500 ceil(n_ite/100)]);
 options.mcmc.i_sample=options.mcmc.nite/n_reals_out;
@@ -537,13 +583,23 @@ if doTempering==1;
 end
 
 
+O=options;
+Omul{1}=sippi_metropolis(data,prior,forward,O);
+O_me=options;O_me.txt=[O.txt,'_me'];
+Omul{2}=sippi_metropolis(data_me,prior,forward,O_me);
+O_ns=options;O_ns.txt=[O.txt,'_ns'];
+Omul{3}=sippi_metropolis(data_ns,prior,forward,O_ns);
 
-O=sippi_metropolis(data,prior,forward,options);
-O_me=sippi_metropolis(data_me,prior,forward,options);
-%O_ns=sippi_metropolis(data_ns,prior,forward,options);
+save(options.txt)
 
-%options.mcmc.time_elapsed_in_seconds
 
+%% 
+for i=1:length(Omul);
+    logL_out(i,:)=Omul{i}.C{1}.mcmc.logL;
+end
+figure(33);
+plot(logL_out');
+legend({'Standard','ME','ME_{NS}'})
 
 
 return
@@ -583,8 +639,8 @@ end
 
 %% SETUP METROPOLIS
 if use_metropolis==1
-    %rng('default');
-    %rng(rseed);
+    rng('default');
+    rng(rseed);
     
     options.mcmc.nite=n_ite;
     options.mcmc.i_plot=max([500 ceil(n_ite/100)]);
