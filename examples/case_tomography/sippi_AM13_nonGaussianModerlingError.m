@@ -510,8 +510,6 @@ for ir=1:Nme
 
 end
 
-return
-
 %% Test likelihood - should be really bad when using the Gaussian modeling error!!
 %make sure the following forward normal score works:
 % SHould we smooth the normal score a bit??
