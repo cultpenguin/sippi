@@ -9,7 +9,7 @@
 %
 % clear all; use_prior=3; use_metropolis=1;use_rejection=0;n_ite=1000;sippi_AM13
 %
-% clear all;close all;rseed=1;n_ite=10000;use_prior=2;doAnneal=1;sippi_AM13_nonGaussianModerlingError
+% clear all;close all;rseed=1;n_ite=50000;use_prior=2;doAnneal=1;Nme=2000;sippi_AM13_nonGaussianModerlingError
 
 
 
@@ -98,7 +98,7 @@ if ~exist('plot_posterior_2d_marg','var');    plot_posterior_2d_marg=1;end
 %% SETUP DATA, PRIOR and FORWARD
 
 D=load('AM13_data.mat');
-options.txt=sprintf('AM13_f%d_f%d_%d',use_forward,use_forward_ref,use_prior);
+options.txt=sprintf('AM13_f%d_f%d_P%d',use_forward,use_forward_ref,use_prior);
 
 %% SETUP DIFFERENT PRIOR STRUCTURES
 % define some standard values
@@ -318,10 +318,12 @@ D=load('AM13_data.mat');
 
 id=1;
 data{id}.d_obs=D.d_obs;
-data{id}.d_std=D.d_std.*0+0.1;
+data{id}.d_std=D.d_std;%.*0+0.1;
+data{id}.d_std=D.d_std*0+0.1;
 if use_correlated_noise==1
     data{id}.Ct=D.Ct; % Correlated noise model according to Cordua et al (2008; 2009)
 end
+options.txt=sprintf('%s_std%d',options.txt,ceil(10*data{1}.d_std(1)));
 
 if use_reference==1;
     rng('default');
@@ -483,11 +485,11 @@ sgtitle('Modeling error - real and simulated')
 %% Compute average log-likelihood from all computes data residuals!
 iCt = inv(Ct{1}+diag(data{1}.d_std.^2));
 iCt_ns = inv(Ct_ns{1});
-for ir=1:Nme
+for ir=1:min([100 Nme])
     delta_d = dd{1}(:,ir);
     
     % Only correlated noise
-    d_std = 8*data{1}.d_std;
+    d_std = data{1}.d_std;
     logL_mul(ir,1)=sum(-.5*delta_d.^2./d_std.^2);
 
     % Gaussian ME
@@ -502,13 +504,13 @@ for ir=1:Nme
     subplot(1,2,1);
     plot(1:ir,logL_mul(1:ir,2:3),'-');
     legend({'ME','ME_{NS}'})
-    drawnow;
     subplot(1,2,2);
     plot(1:ir,logL_mul(1:ir,:),'-');
     legend({'Normal','ME','ME_{NS}'})
     drawnow;
 
 end
+print_mul(sprintf('%s_logLtrain',options.txt))
 
 %% Test likelihood - should be really bad when using the Gaussian modeling error!!
 %make sure the following forward normal score works:
@@ -594,10 +596,28 @@ save(options.txt)
 %% 
 for i=1:length(Omul);
     logL_out(i,:)=Omul{i}.C{1}.mcmc.logL;
+    [reals{i},etype_mean{i},etype_var{i},reals_all{i},reals_ite{i}]=sippi_get_sample(Omul{i}.txt);
 end
+
+figure(1);set_paper;
+cax=[0.14]+[-1 1].*0.02
+for i=1:length(Omul);
+    subplot(2,4,i)
+    imagesc(prior{1}.x,prior{1}.y,etype_mean{i});axis image
+    caxis(cax)
+    subplot(2,4,i+4)
+    imagesc(prior{1}.x,prior{1}.y,sqrt(etype_var{i}));axis image
+    caxis([0 0.01])
+end
+subplot(2,4,4)
+imagesc(prior{1}.x,prior{1}.y,options.mcmc.m_ref{1});axis image
+caxis(cax)
+print_mul(sprintf('%s_compare_mean',options.txt))
+
 figure(33);
 plot(logL_out');
 legend({'Standard','ME','ME_{NS}'})
+print_mul(sprintf('%s_logL',options.txt))
 
 
 return
