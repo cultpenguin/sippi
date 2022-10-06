@@ -38,7 +38,6 @@ start_dir=pwd;
         [p,matfile]=fileparts(pwd);
         load(matfile,'options','prior');
         if nargin>1, im=old.im;; end
-        
         start_dir=old.start_dir;
         cd(start_dir);
     else
@@ -131,8 +130,7 @@ else
     n_reals=min([n_reals,size(reals,1)]);
     
     reals_all=reals;
-    n_reals_all=size(reals_all,1);
-    
+    n_reals_all=size(reals_all,1);    
     % GET ITERATION NUMBER AFTER SEQ GIBBS HAS FINISHED, i1
     try
         i1_post=ceil(prior{im}.seq_gibbs.i_update_step_max./options.mcmc.i_sample);
@@ -144,7 +142,6 @@ else
     if skip_seq_gibbs==0;
         i1_post=1;
     end
-        
     
     %% TAKE OUT ALL 'POSTERIOR' REALIZATION AND THE ITERATION NUMBER
     nr=size(reals,1);
