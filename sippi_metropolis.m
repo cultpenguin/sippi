@@ -388,11 +388,30 @@ while i<=mcmc.nite;
             
             else
                 i_pert=mcmc.pert_strategy.i_pert;
-                i_pert_freq=mcmc.pert_strategy.i_pert_freq
+                i_pert_freq=mcmc.pert_strategy.i_pert_freq;
             end
-            pert_freq=cumsum(i_pert_freq);
-            pert_freq=pert_freq./max(pert_freq);
-            im_perturb=i_pert(min(find(rand(1)<pert_freq)));
+
+            if (abs(sum(options.mcmc.pert_strategy.i_pert_freq{3})-1)<1e-9)
+                % when pert frequencies sum up to close to 1!!!
+                useMethod=1;
+            else
+                useMethod=2;
+            end            
+            if useMethod==1;
+                % method 1: Accept one prior with a certain probabiliy
+                pert_freq=cumsum(i_pert_freq);
+                pert_freq=pert_freq./max(pert_freq);
+                im_perturb=i_pert(min(find(rand(1)<pert_freq)));
+            else
+                % method 2: Accept all prior according to its pert
+                % freqyency!
+                i_perturb = find((i_pert_freq>rand(size(i_pert))));
+                if isempty(i_perturb)
+                    im_perturb  = i_pert(randi(length(i_pert)));
+                else
+                    im_perturb = i_pert(i_perturb);
+                end
+            end
         end
         for k=1:length(im_perturb);
             C{ic}.prior_current{im_perturb(k)}.perturb=1;
