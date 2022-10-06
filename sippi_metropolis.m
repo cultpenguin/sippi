@@ -391,7 +391,7 @@ while i<=mcmc.nite;
                 i_pert_freq=mcmc.pert_strategy.i_pert_freq;
             end
 
-            if (abs(sum(options.mcmc.pert_strategy.i_pert_freq{3})-1)<1e-9)
+            if (abs(sum(i_pert)-1)<1e-9)
                 % when pert frequencies sum up to close to 1!!!
                 useMethod=1;
             else
