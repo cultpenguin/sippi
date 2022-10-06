@@ -72,8 +72,8 @@ In order to disable automatic adjustment of the step length simply set
 
     prior{m}.seq_gibbs.i_update_step_max=0; % disable automatic step length
 
-Controlling how to perturb the prior (when multiple priors exist)
------------------------------------------------------------------
+Pertubation strategy: Controlling how to perturb the prior (when multiple priors exist)
+---------------------------------------------------------------------------------------
 
 When more than one prior structure is defined (e.g. ``prior{1}``,
 ``prior{2}``,...) the perturbation strategy can be controlled by the
@@ -110,6 +110,33 @@ case of 3 prior types this is set using:
 
     options.mcmc.pert_strategy.i_pert = [1,2,3]; % only perturb prior 1 and 3
     options.mcmc.pert_strategy.i_pert_freq = [1,1,1]; % same probability of perturbing all prior types
+
+
+Multiple pertubation strategies
+-------------------------------
+
+
+Several different pertubation strategies can be provided by specifying ``i_pert`` and ``i_pert_freq_freq`` as a cell array. For example to perturb either prior 1 or any of priors 2-9, use 
+
+::
+
+    options.mcmc.pert_strategy.i_pert{1} = [1];
+    options.mcmc.pert_strategy.i_pert_freq{1} = [1];
+    options.mcmc.pert_strategy.i_pert{2} = [2:9];
+    options.mcmc.pert_strategy.i_pert_freq{2} = ones(1,8)./8;
+    
+By default the probability of choosing a specific strategy is chosen from uniform distribution. A specific frequency of the chosen strategy can be given by.
+
+::
+
+    options.mcmc.pert_strategy.strategy_freq = [.5 .5]; % default is uniform
+
+To choose strategy 2 in 90% of iterations use
+
+::    
+
+    options.mcmc.pert_strategy.strategy_freq = [.1 .9]; % 
+
 
 The independent extended Metropolis sampler
 -------------------------------------------

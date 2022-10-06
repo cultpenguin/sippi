@@ -355,7 +355,6 @@ while i<=mcmc.nite;
         for im=1:length(C{ic}.prior_current);
             C{ic}.prior_current{im}.perturb=0;
         end
-        
         % PERTURBATION STRATEGY
         if mcmc.pert_strategy.perturb_all==1,
             % perturb all
@@ -369,8 +368,29 @@ while i<=mcmc.nite;
             end
         else
             % perturb one parameter according to frequency distribution
-            i_pert=mcmc.pert_strategy.i_pert;
-            pert_freq=cumsum(mcmc.pert_strategy.i_pert_freq);
+            
+            if iscell(mcmc.pert_strategy.i_pert)
+                n_strat = length(mcmc.pert_strategy.i_pert);
+                if n_strat>1
+                    if ~isfield(mcmc.pert_strategy,'strategy_freq')
+                        mcmc.pert_strategy.strategy_freq = ones(1,n_strat)/n_strat;
+                    end
+                    strat_freq=cumsum(mcmc.pert_strategy.strategy_freq);
+                    strat_freq=strat_freq./max(strat_freq);
+                    istrat_perturb=min(find(rand(1)<strat_freq));
+                else
+                    istrat_perturb=1;
+                end
+                sippi_verbose(sprintf('%s: using pertubations strategy %02d',mfilename,istrat_perturb),2);
+                
+                i_pert = mcmc.pert_strategy.i_pert{istrat_perturb};
+                i_pert_freq = mcmc.pert_strategy.i_pert_freq{istrat_perturb};
+            
+            else
+                i_pert=mcmc.pert_strategy.i_pert;
+                i_pert_freq=mcmc.pert_strategy.i_pert_freq
+            end
+            pert_freq=cumsum(i_pert_freq);
             pert_freq=pert_freq./max(pert_freq);
             im_perturb=i_pert(min(find(rand(1)<pert_freq)));
         end
@@ -378,6 +398,7 @@ while i<=mcmc.nite;
             C{ic}.prior_current{im_perturb(k)}.perturb=1;
             C{ic}.mcmc.perturb(im_perturb(k),i)=1;
         end
+        
         % SAMPLE PRIOR
         [C{ic}.m_propose,C{ic}.prior_propose] = sippi_prior(C{ic}.prior_current,C{ic}.m_current);
         
