@@ -3,8 +3,9 @@
 % Call :
 %    acc=sippi_plot_loglikelihood(logL,i_acc,N,itext)
 %
-function acc=sippi_plot_loglikelihood(logL,i_acc,N,itext);
+function [acc,p,p2]=sippi_plot_loglikelihood(logL,i_acc,N,itext);
 
+p2=[];
 acc=NaN;
 %cla;
 
@@ -39,9 +40,9 @@ grid on
 %% logL=-N/2 +- sqrt(N/2)
 if nargin>2   
     hold on
-    plot(xlim,[-1 -1].*N/2,'r-','linewidth',2)
-    plot(xlim,[-1 -1].*N/2+2*sqrt(N/2),'r--')
-    plot(xlim,[-1 -1].*N/2-2*sqrt(N/2),'r--')
+    p2=plot(xlim,[-1 -1].*N/2,'r-','linewidth',2)
+    plot(xlim,[-1 -1].*N/2+2*sqrt(N/2),'r--');
+    plot(xlim,[-1 -1].*N/2-2*sqrt(N/2),'r--');
     hold off
     % SCALE Y_AXIS
     n_int=ceil(0.01*length(logL));
