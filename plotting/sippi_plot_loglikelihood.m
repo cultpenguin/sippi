@@ -40,7 +40,7 @@ grid on
 %% logL=-N/2 +- sqrt(N/2)
 if nargin>2   
     hold on
-    p2=plot(xlim,[-1 -1].*N/2,'r-','linewidth',2)
+    p2=plot(xlim,[-1 -1].*N/2,'r-','linewidth',2);
     plot(xlim,[-1 -1].*N/2+2*sqrt(N/2),'r--');
     plot(xlim,[-1 -1].*N/2-2*sqrt(N/2),'r--');
     hold off
