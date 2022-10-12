@@ -11,6 +11,18 @@
 %
 % clear all;close all;rseed=1;n_ite=50000;use_prior=2;doAnneal=1;Nme=2000;sippi_AM13_nonGaussianModerlingError
 
+if exist('TEST','var')
+    if TEST
+        use_prior=2;
+        use_forward=1;
+        use_forward_ref=6;
+
+        rseed=1;
+        n_ite=500000;
+        doAnneal=1;
+        Nme=2000;
+    end
+end
 
 
 %% Make some choices
@@ -18,7 +30,7 @@ if ~exist('use_prior','var')
     use_prior=1; % Gaussian
     % use_prior=2; % Gaussian with bimodal target distribution
     % use_prior=3; % Gaussian with uniform target distribution
-    % use_prior=4; % Plurigaussian
+    % use_prior=4; % Pnlurigaussian
     % use_prior=5; % Gaussian with variable covariance parameters
     % use_prior=6; % Matern type covariance with varying nu parameter
 end
@@ -83,7 +95,7 @@ if ~exist('Nme','var')
     Nme=1000;
 end
 
-if exist('plot_posterior','var');    
+if exist('plot_posterior','var');
     plot_posterior_sample=plot_posterior;
     plot_posterior_data=plot_posterior;
     plot_posterior_loglikelihood=plot_posterior;
@@ -244,9 +256,9 @@ if do_plot_prior_mul==1;
     np=length(prior_all);
     for i=1:np
         prior=prior_all{i};
-        
+
         for isim=1:nsim
-            
+
             subplot(np,nsim,(i-1)*nsim+isim);
             [m,prior]=sippi_prior(prior);
             imagesc(prior{1}.x, prior{1}.y, m{1});
@@ -261,7 +273,7 @@ if do_plot_prior_mul==1;
             end
         end
         colorbar_shift;
-        
+
     end
     print_mul(sprintf('%s_prior_reals',mfilename))
 else
@@ -319,7 +331,7 @@ D=load('AM13_data.mat');
 id=1;
 data{id}.d_obs=D.d_obs;
 data{id}.d_std=D.d_std;%.*0+0.1;
-data{id}.d_std=D.d_std*0+0.1;
+data{id}.d_std=D.d_std*0+0.2;
 if use_correlated_noise==1
     data{id}.Ct=D.Ct; % Correlated noise model according to Cordua et al (2008; 2009)
 end
@@ -328,20 +340,20 @@ options.txt=sprintf('%s_std%d',options.txt,ceil(10*data{1}.d_std(1)));
 if use_reference==1;
     rng('default');
     rng(rseed);
-    
+
     m_ref=sippi_prior(prior);
     [d_ref,forward_ref]=sippi_forward(m_ref,forward_ref,prior,data);
     [d,forward]=sippi_forward(m_ref,forward,prior,data);
     [logL,L,data]=sippi_likelihood(d_ref,data);
-    
+
     d_obs=d_ref{1};
     d_noise = randn(size(data{1}.d_std)).*data{1}.d_std;
     data{1}.d_noisefree=d_obs;
     data{1}.d_obs=data{1}.d_noisefree+d_noise;
-    
-    options.mcmc.m_ref=m_ref;    
-    
-    options.txt=sprintf('%s_ref%d',options.txt,rseed);    
+
+    options.mcmc.m_ref=m_ref;
+
+    options.txt=sprintf('%s_ref%d',options.txt,rseed);
 end
 
 figure(1);
@@ -382,9 +394,9 @@ sippi_plot_data(d,data);
 % Such then when comjputeing the likelihood, is is dnoe conditoíonal to
 % both measurement and modeling errors!!!
 % This is importnat when setting up data{1}.dt and data{1}.Ct. such that
-% the only chage to sippi_likelihood is to optionally apply the normal score 
+% the only chage to sippi_likelihood is to optionally apply the normal score
 % residual data before likelihood computation!
-% residual 
+% residual
 %
 
 %Nme=2000;
@@ -395,26 +407,33 @@ save('-v7.3',sprintf('%s_MODELERRROR_N%d',options.txt,Nme))
 
 %% Plot the infered Gaussian model for modeling error
 close all
-figure(1);
+figure(1);set_paper;
 subplot(4,2,1);
 plot(dt{1})
 ylim([-3 3])
 ylabel('mean (d_{ref}-d)')
+title('d_T (Gaussian \Theta)')
 subplot(4,2,[3,5]);
 imagesc(Ct{1});caxis([-1 1]);
 colormap(cmap_linear)
 axis image;
 colorbar
+title('C_T (Gaussian \Theta)')
 
 subplot(4,2,2);
 plot(dt_ns{1})
 ylim([-3 3])
 ylabel('mean (d_{ref}-d) - normal score')
+title('d_T (Non-Gaussian \Theta)')
 subplot(4,2,[4,6]);
 imagesc(Ct_ns{1});caxis([-1 1]);
 colormap(cmap_linear)
 axis image;
 colorbar
+title('C_T (Non-Gaussian \Theta)')
+print_mul(sprintf('%s_dtCT',options.txt))
+
+
 
 figure(2);
 j=0;
@@ -424,7 +443,8 @@ for id=ceil(linspace(1,length(d{1}),9));
     hist(dd{1}(id,:),30);
     title(sprintf('id=%d',id))
 end
-sgtitle('Modeling error')
+sgtitle('Actual modeling error')
+print_mul(sprintf('%s_MEsample',options.txt))
 
 
 figure(3);
@@ -435,7 +455,8 @@ for id=ceil(linspace(1,length(d{1}),9));
     hist(dd_ns{1}(id,:),30);
     title(sprintf('id=%d',id))
 end
-sgtitle('Modeling error normal score')
+sgtitle('Actual modeling error in normal score space')
+print_mul(sprintf('%s_MEsampleNS',options.txt))
 
 %% SIMULATE MODELING ERRORS
 nd=length(d{1});
@@ -487,7 +508,7 @@ iCt = inv(Ct{1}+diag(data{1}.d_std.^2));
 iCt_ns = inv(Ct_ns{1});
 for ir=1:min([100 Nme])
     delta_d = dd{1}(:,ir);
-    
+
     % Only correlated noise
     d_std = data{1}.d_std;
     logL_mul(ir,1)=sum(-.5*delta_d.^2./d_std.^2);
@@ -495,7 +516,7 @@ for ir=1:min([100 Nme])
     % Gaussian ME
     dd0=delta_d-dt{1};
     logL_mul(ir,2)=-.5*dd0'*iCt*dd0;
-    
+
     % Gaussian ME
     dd0_ns=nscore_mul(delta_d,o_nscore{1})-dt_ns{1};
     logL_mul(ir,3)=-.5*dd0_ns'*iCt_ns*dd0_ns;
@@ -592,8 +613,15 @@ Omul{3}=sippi_metropolis(data_ns,prior,forward,O_ns);
 
 save(options.txt)
 
+% Test likelihood of reference model versus liellhood of samples of the
+% posterior.
+% Hopefully ME+NS does a better job than ME alone???
+% Should we use a single normal score for all travektime residualkt or (as
+% now) one normal socre per data?? What goves most robist results!!
+% Does the data residual using ME giev positive data residuals (it should
+% not)
 
-%% 
+%%
 for i=1:length(Omul);
     logL_out(i,:)=Omul{i}.C{1}.mcmc.logL;
     [reals{i},etype_mean{i},etype_var{i},reals_all{i},reals_ite{i}]=sippi_get_sample(Omul{i}.txt);
@@ -621,110 +649,105 @@ print_mul(sprintf('%s_logL',options.txt))
 
 
 return
-%% SET NAME OF SIMULATION
-options.txt=sprintf('AM13_I%d_CO%d_r%g',use_prior,use_correlated_noise,cov_range);
-options.txt=sprintf('%s_DX%d',options.txt,1000*dx);
-options.txt=[options.txt,'_',forward.name];
-
-x=prior{1}.x;
-y=prior{1}.y;
-try
-    G=forward.G;
-try
-    Cd=data{1}.CD;
-    save(options.txt,'x','y','m','d','logL','G','Cd')
-catch
-    d_std=data{1}.d_std;
-    save(options.txt,'x','y','m','d','logL','G','d_std')
-end
-end
-
-%% MAKE REFERENCE MODEL
-if use_reference==1;
-    rng(1);
-    m_ref=sippi_prior(prior);
-    [d,forward]=sippi_forward(m_ref,forward,prior,data);
-    [logL,L,data]=sippi_likelihood(d,data);
-    
-    d_obs=d{1};
-    d_noise=gaussian_simulation_cholesky(0,data{1}.CD,1);
-    data{1}.d_obs=d_obs+d_noise;
-    
-    options.mcmc.m_ref=m_ref;    
-    
-    options.txt=[options.txt,'_ref'];    
-end
-
-%% SETUP METROPOLIS
-if use_metropolis==1
-    rng('default');
-    rng(rseed);
-    
-    options.mcmc.nite=n_ite;
-    options.mcmc.i_plot=max([500 ceil(n_ite/100)]);
-    options.mcmc.i_sample=options.mcmc.nite/n_reals_out;
-    
-    % ANNEALING
-    % example of starting with a high temperature, that allow higher
-    % exploration. The temperature is lowered to T=1, after which the
-    % algorithm proceeds as a usual Metropolis sampler
-    if doAnneal==1;
-        options.txt=[options.txt,'_','anneal'];
-        i_stop_anneal=max([1000 ceil(n_ite/10)]);
-        for im=1:length(prior);
-            prior{im}.seq_gibbs.i_update_step_max=2*i_stop_anneal;
-        end
-        options.mcmc.anneal.T_begin=25; % Start temperature
-        options.mcmc.anneal.T_end=1; % End temperature, at ptions.mcmc.anneal.
-        options.mcmc.anneal.i_begin=1; % default, iteration number when annealing begins
-        options.mcmc.anneal.i_end=i_stop_anneal; %  iteration number when annealing stops
-    end
-    
-    % TEMPERING
-    % example of using parallel tempering (Sambridge, 2013)
-    if doTempering==1;
-        options.txt=[options.txt,'_','temper'];
-        options.mcmc.n_chains=4; % set number of chains (def=1)
-        options.mcmc.T=[1 1.25 1.5 1.75]; % set number of chains (def=1)
-    end
-    
-    options=sippi_metropolis(data,prior,forward,options);
-    options.mcmc.time_elapsed_in_seconds
-    
-    % PLOT SAMPLE FROM PRIOR
-    sippi_plot_prior_sample(options.txt);
-    % PLOT SAMPLE AND STATS FROM POSTERIOR
-    if plot_posterior_sample==1;  sippi_plot_posterior_sample(options.txt);end
-    if plot_posterior_data==1;    sippi_plot_posterior_data(options.txt);end
-    if plot_posterior_loglikelihood==1;    sippi_plot_posterior_loglikelihood(options.txt);end
-    if plot_posterior_2d_marg==1;    sippi_plot_posterior_2d_marg(options.txt);end
-
-    
-    %% PLOT PRIOR AND POSTERIO MOVIE
-    % sippi_plot_movie(options.txt)
-    
-    
-end
-return
 
 %% REJECTION
+use_rejection=1;
 if use_rejection==1;
-    rng('default');
-    rng(1);
-    options.mcmc.nite=n_ite;
-    options.mcmc.i_plot=max([500 ceil(n_ite/100)]);
-    
-    options=sippi_metropolis(data,prior,forward,options);
-    
-    
-    % PLOT SAMPLE FROM PRIOR
-    sippi_plot_prior_sample(options.txt);
-    % PLOT SAMPLE AND STATS FROM POSTERIOR
-    if ~exist('plot_posterior_sample','var');  sippi_plot_posterior_sample(options.txt);end
-    if ~exist('plot_posterior_data','var');    sippi_plot_posterior_data(options.txt);end
-    if ~exist('plot_posterior_loglikelihood','var');    sippi_plot_posterior_loglikelihood(options.txt);end
-    if ~exist('plot_posterior_2d_marg','var');    sippi_plot_posterior_2d_marg(options.txt);end
-    
-    
-    
+    Nl=200000;
+    Nl_me=0;
+    ABC=sippi_abc_setup(prior,forward,Nl,Nl_me);
+
+    %%
+    cax=[0.12 0.17];
+    cmap=jet;
+    cax_std=[0 0.01];
+    ns=100;
+    j=0;
+    for nd_use = [1:70]
+        j=j+1;
+        i_use = ceil(linspace(1,length(data{1}.d_obs),nd_use));
+        %i_use = 1:nd_use;
+        data_me{1}.i_use = i_use;
+        data_ns{1}.i_use = i_use;
+        data{1}.i_use = i_use;
+
+
+        ABC.use_sippi_likelihood=0;
+        data{1}.full_likelihood=0;
+        data_ns{1}.full_likelihood=ABC.use_sippi_likelihood;
+        data_me{1}.full_likelihood=ABC.use_sippi_likelihood;
+
+        [logL,evidence,T_est]=sippi_abc_logl(ABC,data);
+        T_est = 10;
+        [m_real]=sippi_abc_post_sample(ABC,ns,T_est,logL);
+        [m_mean,m_var]=sippi_abc_post_mean(ABC,T_est,logL);
+
+        [logL_me,evidence_me,T_est_me]=sippi_abc_logl(ABC,data_me);
+        T_est_me = 10;
+        [m_real_me]=sippi_abc_post_sample(ABC,ns,T_est_me,logL_me);
+        [m_mean_me,m_var_me]=sippi_abc_post_mean(ABC,T_est_me,logL_me);
+
+        [logL_ns,evidence_ns,T_est_ns]=sippi_abc_logl(ABC,data_ns);
+        T_est_ns = 10;
+        [m_real_ns]=sippi_abc_post_sample(ABC,ns,T_est_ns,logL_ns);
+        [m_mean_ns,m_var_ns]=sippi_abc_post_mean(ABC,T_est_ns,logL_ns);
+
+        for is=1:ns
+            cc=corrcoef(m_ref{1}(:),m_real{1}(:,is));cc=cc(2);
+            cc_me=corrcoef(m_ref{1}(:),m_real_me{1}(:,is));cc_me=cc_me(2);
+            cc_ns=corrcoef(m_ref{1}(:),m_real_ns{1}(:,is));cc_ns=cc_ns(2);
+
+            C(is,1,j)=cc;
+            C(is,2,j)=cc_me;
+            C(is,3,j)=cc_ns;
+        end
+        meanC(j,:)= mean(C(:,:,j));
+
+
+
+
+        figure(41);clf;
+        subplot(2,4,1);
+        imagesc(prior{1}.x,prior{1}.y,reshape(m_mean{1},prior{1}.dim(2),prior{1}.dim(1)))
+        axis image;caxis(cax);colormap(gca,cmap)
+        title(sprintf('No Me, T=%2.1f',T_est))
+        subplot(2,4,2);
+        imagesc(prior{1}.x,prior{1}.y,reshape(m_mean_me{1},prior{1}.dim(2),prior{1}.dim(1)))
+        axis image;caxis(cax);colormap(gca,cmap)
+        title(sprintf('Me, T=%2.1f',T_est_me))
+        subplot(2,4,3);
+        imagesc(prior{1}.x,prior{1}.y,reshape(m_mean_ns{1},prior{1}.dim(2),prior{1}.dim(1)))
+        axis image;caxis(cax);colormap(gca,cmap)
+        title(sprintf('Me-NS, T=%2.1f',T_est_ns))
+        subplot(2,4,4);
+        imagesc(prior{1}.x,prior{1}.y,m_ref{1})
+        axis image;caxis(cax);colormap(gca,cmap)
+
+        subplot(2,4,5);
+        imagesc(prior{1}.x,prior{1}.y,reshape(sqrt(m_var{1}),prior{1}.dim(2),prior{1}.dim(1)))
+        axis image;cax_std=caxis;colormap(gca,hot)
+        subplot(2,4,6);
+        imagesc(prior{1}.x,prior{1}.y,reshape(sqrt(m_var_me{1}),prior{1}.dim(2),prior{1}.dim(1)))
+        axis image;cax_std=caxis;colormap(gca,hot)
+        subplot(2,4,7);
+        imagesc(prior{1}.x,prior{1}.y,reshape(sqrt(m_var_ns{1}),prior{1}.dim(2),prior{1}.dim(1)))
+        axis image;caxis(cax_std);colormap(gca,hot)
+
+        subplot(2,4,8);
+        sippi_plot_traveltime_kernel(forward,prior,m_ref,0,data{1}.i_use);
+
+        sgtitle(sprintf('%s  --  nduse= %d',options.txt,nd_use),'interpreter','none')
+        drawnow;
+
+        figure(42);
+        plot(meanC(1:j,:))
+        legend({'NoME','ME','NS'})
+        drawnow
+
+    end
+
 end
+
+%%
+
+

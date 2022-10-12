@@ -74,17 +74,29 @@ try
             mcmc.i=max(find(mcmc.acc==1));
         end
     end
-    sippi_plot_loglikelihood(mcmc.logL(1:mcmc.i),mcmc.acc(1:mcmc.i),N);
+    [acc,p1,p2]=sippi_plot_loglikelihood(mcmc.logL(1:mcmc.i),mcmc.acc(1:mcmc.i),N);
+    
+    try    
+        legend([p1,p2],{'logL','logL_{Noise}'},'Location','SouthEast');
+    end
+    p3=[];
     if isfield(options.mcmc,'logL_ref');
         hold on
-        plot(xlim,[1 1].*options.mcmc.logL_ref,'b--','LineWidth',2)
+        p3=plot(xlim,[1 1].*options.mcmc.logL_ref,'b--','LineWidth',2);
         hold off
+        try
+            legend([p1,p2,p3],{'logL','logL_{Noise}','logL_{ref}'},'Location','SouthEast');
+        end
     end
+
+    ylabel('log(L)')
+    xlabel('Iteration number')
+
     
 catch
     sippi_verbose(sprintf('%s: failed to plot log likelihood curve',mfilename))
 end
-
+%%
 subplot(1,3,2);
 try
     % MAKE SURE THIS WORKS FOR MANY PRIOR MODELS

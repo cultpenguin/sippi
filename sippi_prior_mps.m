@@ -71,6 +71,14 @@ if ~isfield(prior{ip},'method')
     % prior{ip}.method='mps_genesim';
 end
 
+if ~exist('mps_cpp.m','file')
+    disp(sprintf('%s: =============================================================',mfilename))
+    disp(sprintf('%s: You need to install MPSlib to use %s',mfilename,prior{ip}.method))
+    disp(sprintf('%s: MPSlib --> https://github.com/ergosimulation/mpslib/releases',mfilename))    
+    disp(sprintf('%s: =============================================================',mfilename))
+end
+
+
 prior{ip}.MPS.method=prior{ip}.method;
 %prior{ip}.MPS.template_size=[9 9 1];
 prior{ip}.MPS.nreal=1;
