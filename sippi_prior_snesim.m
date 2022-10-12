@@ -2,6 +2,9 @@
 %
 %                      Using SNESIM form
 %                      https://github.com/SCRFpublic/snesim-standalone
+%                      Please remember to recompile SNESIM to uou needs, 
+%                      before using it with SIPPI
+%
 %
 %% Example:
 %    ip=1;
@@ -232,7 +235,7 @@ if nargin>1
     
     % SEQUENTIAL GIBBS    
     sippi_verbose(sprintf('%s : Sequential Gibbs',mfilename),2)
-    %prior{ip}.S=snesim_set_resim_data(prior{ip}.S,prior{ip}.S.D,[10 10]);
+    %prior{ip}.S=snesim_set_resim_data(prior{ip}.S,prior{ip}.S.D,[10 10]);    
     prior{ip}.S=snesim_set_resim_data(prior{ip}.S,m_current{ip},prior{ip}.seq_gibbs.step,prior{ip}.seq_gibbs.type);
     
 end
