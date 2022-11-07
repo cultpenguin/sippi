@@ -13,14 +13,23 @@
 
 if exist('TEST','var')
     if TEST
-        use_prior=2;
-        use_forward=1;
-        use_forward_ref=6;
-
+        close all,clear all;
+        use_forward=4;
+        use_forward_ref=5;
+        use_prior=1;
+        dx=0.2;
         rseed=1;
-        n_ite=500000;
-        doAnneal=1;
-        Nme=2000;
+        useZOP=0;
+        i_use=10:10:702;
+        n_ite=50000;
+        sippi_AM13_nonGaussianModerlingError
+        %use_prior=2;
+        %use_forward=1;
+        %use_forward_ref=6;
+        %rseed=1;
+        %n_ite=500000;
+        %doAnneal=1;
+        %Nme=2000;
     end
 end
 
