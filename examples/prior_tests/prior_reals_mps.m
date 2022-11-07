@@ -1,4 +1,6 @@
-% prior_reals_mps: Sampling MPS type prior models
+% prior_reals_mps: Sampling MPS type prior models (using MPSlib)
+%
+
 rng('default');rng(1);
 clear all,close all;
 ip=1; 
@@ -24,8 +26,7 @@ end
 colormap(sippi_colormap(1));
 colorbar_shift;
 print_mul(sprintf('prior_reals_%ss',prior{1}.type));
-s=suptitle(sprintf('Independent realizations from a %s (%s) type prior',upper(prior{1}.type),prior{1}.method))
-set(s,'interpreter','none')
+s=sgtitle(sprintf('Independent realizations from a %s (%s) type prior',upper(prior{1}.type),prior{1}.method),'interpreter','none');
 
 %% MULITPLE GRIDS
 prior{ip}.type='mps';
