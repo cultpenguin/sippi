@@ -90,9 +90,9 @@ if start_from_mat_file==0;
     options.null='';
     if ~isfield(options,'txt');options.txt='';end
     if length(options.txt)>0
-        options.txt=sprintf('%s_sippi_rejection_%s',datestr(now,'YYYYmmdd_HHMM'),options.txt);
+        options.txt=sprintf('%s_eREJ_%s',datestr(now,'YYYYmmdd_HHMMSS'),options.txt);
     else
-        options.txt=sprintf('%s_sippi_rejection',datestr(now,'YYYYmmdd_HHMM'));
+        options.txt=sprintf('%s_eREJ',datestr(now,'YYYYmmdd_HHMMSS'));
     end
     
     
@@ -167,10 +167,10 @@ if start_from_mat_file==0;
     
     sippi_verbose(sprintf('%s: STARTING rejection sampler in %s',mfilename,options.txt),-2)
     if mcmc.logLmax~=1;
-        sippi_verbose(sprintf('%s: logLmax=%g',mfilename,mcmc.logLmax),-2)
+        sippi_verbose(sprintf('%s: logLmax=%g',mfilename,mcmc.logLmax),-1)
     end
     if mcmc.adaptive_rejection==1;
-        sippi_verbose(sprintf('%s: Adaptive rejection sampling, using logLmax=%g',mfilename,mcmc.logLmax),-2)
+        sippi_verbose(sprintf('%s: Adaptive rejection sampling, using logLmax=%g',mfilename,mcmc.logLmax),-1)
     end
     
 end
