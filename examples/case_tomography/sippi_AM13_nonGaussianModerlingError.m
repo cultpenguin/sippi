@@ -13,17 +13,28 @@
 
 if exist('TEST','var')
     if TEST
-        use_prior=2;
-        use_forward=1;
-        use_forward_ref=6;
-
+        close all,clear all;
+        use_forward=4;
+        use_forward_ref=5;
+        use_prior=1;
+        dx=0.2;
         rseed=1;
-        n_ite=500000;
-        doAnneal=1;
-        Nme=2000;
+        useZOP=0;
+        i_use=10:10:702;
+        n_ite=50000;
+        sippi_AM13_nonGaussianModerlingError
+        %use_prior=2;
+        %use_forward=1;
+        %use_forward_ref=6;
+        %rseed=1;
+        %n_ite=500000;
+        %doAnneal=1;
+        %Nme=2000;
     end
 end
 
+% Load data from Arrenæs
+D=load('AM13_data.mat');
 
 %% Make some choices
 if ~exist('use_prior','var')
@@ -35,10 +46,10 @@ if ~exist('use_prior','var')
     % use_prior=6; % Matern type covariance with varying nu parameter
 end
 if ~exist('use_forward','var')
-    use_forward=1; % ray_2d - linear straight ray
+    %use_forward=1; % ray_2d - linear straight ray
     % use_forward=2; % linear ray (using eikonal)
     % use_forward=3; % bended ray
-    % use_forward=4; % linear fat
+    use_forward=4; % linear fat
     % use_forward=5; % bended fat
     % use_forward=6; % eikonal
     % use_forward=7; % waveform FD + first arriavle
@@ -49,8 +60,8 @@ if ~exist('use_forward_ref','var')
     % use_forward_ref=2; % linear ray (using eikonal)
     % use_forward_ref=3; % bended ray
     % use_forward_ref=4; % linear fat
-    % use_forward_ref=5; % bended fat
-    use_forward_ref=6; % eikonal
+    use_forward_ref=5; % bended fat
+    % use_forward_ref=6; % eikonal
     % use_forward_ref=7; % waveform FD + first arriavle
 end
 
@@ -95,6 +106,24 @@ if ~exist('Nme','var')
     Nme=1000;
 end
 
+if ~exist('i_use','var')
+    if ~exist('useZOP','var'), useZOP=1;end
+    if useZOP==1
+        z_pos=unique(D.S(:,2));
+        i_use=[];
+        for iz=1:length(z_pos);
+            for i=1:length(D.S(:,2));
+                if (D.S(i,2)==z_pos(iz))&(D.R(i,2)==z_pos(iz))
+                    i_use=[i_use,i];
+                end
+            end
+        end
+    else
+        i_use=1:1:702;
+        i_use=find(D.S(:,2)==6);
+    end
+end
+
 if exist('plot_posterior','var');
     plot_posterior_sample=plot_posterior;
     plot_posterior_data=plot_posterior;
@@ -109,13 +138,13 @@ if ~exist('plot_posterior_2d_marg','var');    plot_posterior_2d_marg=1;end
 
 %% SETUP DATA, PRIOR and FORWARD
 
-D=load('AM13_data.mat');
-options.txt=sprintf('AM13_f%d_f%d_P%d',use_forward,use_forward_ref,use_prior);
+options.txt=sprintf('AM13_f%d_f%d_P%d_nd%d_nit%d',use_forward,use_forward_ref,use_prior,length(i_use),n_ite);
 
 %% SETUP DIFFERENT PRIOR STRUCTURES
 % define some standard values
 m0=0.145;
 Va=sprintf('.0003 Sph(%g,90,.3)',cov_range);
+%Va=sprintf('.0003 Sph(%g,45,.3)',cov_range);
 
 % some parameters needed by all a priori types
 np=2;
@@ -283,8 +312,8 @@ end
 
 %% SETUP THE FORWARD MODEL(S)
 forward.forward_function='sippi_forward_traveltime';
-forward.sources=D.S;
-forward.receivers=D.R;
+forward.sources=D.S(i_use,:);
+forward.receivers=D.R(i_use,:);
 forward_ref=forward;
 
 if use_forward==1;
@@ -317,9 +346,34 @@ elseif use_forward==7;
     forward.name=forward.type;
 end
 
-forward_ref.type='eikonal';
-forward_ref.name=forward.type;
-if use_forward_ref==7;
+
+
+if use_forward_ref==1;
+    forward_ref.type='ray_2d';
+    forward_ref.r=1;
+    forward_ref.name=forward.type;
+elseif use_forward_ref==2;
+    forward_ref.type='ray';
+    forward_ref.linear=1;
+    forward_ref.name='SR';
+elseif use_forward_ref==3;
+    forward_ref.type='ray';
+    forward_ref.linear=0;
+    forward_ref.name='BR';
+elseif use_forward_ref==4;
+    forward_ref.type='fat';
+    forward_ref.linear=1;
+    forward_ref.freq=0.1;
+    forward_ref.name='SF';
+elseif use_forward_ref==5;
+    forward_ref.type='fat';
+    forward_ref.linear=0;
+    forward_ref.freq=0.1;
+    forward_ref.name='BF';
+elseif use_forward_ref==6;
+    forward_ref.type='eikonal';
+    forward_ref.name=forward_ref.type;
+elseif use_forward_ref==7;
     forward_ref.type='fd';
     forward_ref.name=forward.type;
 end
@@ -329,9 +383,10 @@ end
 D=load('AM13_data.mat');
 
 id=1;
-data{id}.d_obs=D.d_obs;
-data{id}.d_std=D.d_std;%.*0+0.1;
-data{id}.d_std=D.d_std*0+0.2;
+data{id}.d_obs=D.d_obs(i_use);
+%data{id}.d_std=D.d_std(i_use);
+data{id}.d_std=D.d_std(i_use)*0+0.1;
+%data{id}.d_std=D.d_std(i_use)*0+0.01;
 if use_correlated_noise==1
     data{id}.Ct=D.Ct; % Correlated noise model according to Cordua et al (2008; 2009)
 end
@@ -357,14 +412,14 @@ if use_reference==1;
 end
 
 figure(1);
-plot(data{1}.d_obs,'k-')
+plot(data{1}.d_obs,'k.')
 hold on
 plot(d_ref{1},'r-')
 plot(d{1},'b-')
 hold off
 xlabel('Data #')
 ylabel('Travel time (mus)')
-
+legend('d_{obs}','d_{ref}','d_{use}')
 
 %% TEST THE SETUP
 
@@ -407,7 +462,7 @@ save('-v7.3',sprintf('%s_MODELERRROR_N%d',options.txt,Nme))
 
 %% Plot the infered Gaussian model for modeling error
 close all
-figure(1);set_paper;
+figure(21);set_paper;
 subplot(4,2,1);
 plot(dt{1})
 ylim([-3 3])
@@ -422,7 +477,7 @@ title('C_T (Gaussian \Theta)')
 
 subplot(4,2,2);
 plot(dt_ns{1})
-ylim([-3 3])
+ylim([-5 5])
 ylabel('mean (d_{ref}-d) - normal score')
 title('d_T (Non-Gaussian \Theta)')
 subplot(4,2,[4,6]);
@@ -434,29 +489,59 @@ title('C_T (Non-Gaussian \Theta)')
 print_mul(sprintf('%s_dtCT',options.txt))
 
 
-
-figure(2);
+%% Actual Modeling Error
+figure(22);
 j=0;
 for id=ceil(linspace(1,length(d{1}),9));
     j=j+1;
     subplot(3,3,j);
-    hist(dd{1}(id,:),30);
+    h=histogram(dd{1}(id,:),30,'FaceColor',[0 0 0]);
+    BinCenter=(h.BinEdges(2:end)+h.BinEdges(1:end-1))/2;    
+    BinWidth=h.BinWidth;
+    BinPDF=(1/BinWidth).*h.BinCounts./sum(h.BinCounts);
+    bar(BinCenter,BinPDF,'FaceColor',[0 0 0]+.3)
+
+    m0=dt{1}(id);
+    s0=sqrt(Ct{1}(id,id));
+    BinCenter_G = linspace(m0-3*s0,m0+3*s0,51);
+    BinPDF_G=normpdf(BinCenter_G,m0,s0);
+    hold on
+    plot(BinCenter_G,BinPDF_G,'r-','LineWidth',2)
+    hold off
+
     title(sprintf('id=%d',id))
 end
 sgtitle('Actual modeling error')
 print_mul(sprintf('%s_MEsample',options.txt))
 
 
-figure(3);
+figure(23);
 j=0;
 for id=ceil(linspace(1,length(d{1}),9));
     j=j+1;
     subplot(3,3,j);
-    hist(dd_ns{1}(id,:),30);
+    h=histogram(dd_ns{1}(id,:),30,'FaceColor',[0 0 0]);
+    BinCenter=(h.BinEdges(2:end)+h.BinEdges(1:end-1))/2;    
+    BinWidth=h.BinWidth;
+    BinPDF=(1/BinWidth).*h.BinCounts./sum(h.BinCounts);
+    bar(BinCenter,BinPDF,'FaceColor',[0 0 0]+.3)
+
+
+    m0=dt_ns{1}(id);
+    s0=sqrt(Ct_ns{1}(id,id));
+    BinCenter_G = linspace(m0-3*s0,m0+3*s0,51);
+    BinPDF_G=normpdf(BinCenter_G,m0,s0);
+    hold on
+    plot(BinCenter_G,BinPDF_G,'r-','LineWidth',2)
+    hold off
+
+
+    %hist(dd_ns{1}(id,:),30);
     title(sprintf('id=%d',id))
 end
 sgtitle('Actual modeling error in normal score space')
 print_mul(sprintf('%s_MEsampleNS',options.txt))
+
 
 %% SIMULATE MODELING ERRORS
 nd=length(d{1});
@@ -506,7 +591,7 @@ sgtitle('Modeling error - real and simulated')
 %% Compute average log-likelihood from all computes data residuals!
 iCt = inv(Ct{1}+diag(data{1}.d_std.^2));
 iCt_ns = inv(Ct_ns{1});
-for ir=1:min([100 Nme])
+for ir=1:min([10 Nme])
     delta_d = dd{1}(:,ir);
 
     % Only correlated noise
@@ -528,6 +613,7 @@ for ir=1:min([100 Nme])
     subplot(1,2,2);
     plot(1:ir,logL_mul(1:ir,:),'-');
     legend({'Normal','ME','ME_{NS}'})
+    ylabel(log(L))
     drawnow;
 
 end
@@ -569,14 +655,13 @@ hold on
 plot(d_ref{1},'k-')
 hold off
 grid on
-
 %% TEST PROB INV (ON BOTH SYNTH AND REAL DATA) USING
 % Case 1: Ignoring modeling error
 % Case 2: Using Gaussian modeling error
 % Case 3: Using nonGaussian modeling error
 
 options.mcmc.nite=n_ite;
-options.mcmc.i_plot=max([500 ceil(n_ite/100)]);
+options.mcmc.i_plot=max([2500 ceil(n_ite/100)]);
 options.mcmc.i_sample=options.mcmc.nite/n_reals_out;
 
 % ANNEALING
@@ -627,18 +712,41 @@ for i=1:length(Omul);
     [reals{i},etype_mean{i},etype_var{i},reals_all{i},reals_ite{i}]=sippi_get_sample(Omul{i}.txt);
 end
 
+for i=1:length(Omul);
+    for ir=1:size(reals_all{1},1)
+        v = reshape(reals_all{i}(ir,:),prior{1}.dim(2),prior{1}.dim(1));
+        cc=corrcoef(v(:),m_ref{1}(:));cc=cc(2);
+        dv=v(:)-m_ref{1}(:);
+        mae_out(i,ir)=mean(abs(dv));
+        mse_out(i,ir)=sqrt(mean(dv.^2));
+        cc_out(i,ir)=cc;
+    end
+    i1=ceil(ir/2);
+    mean_cc(i)=mean(cc_out(i,i1:end))
+    mean_mse(i)=mean(mse_out(i,i1:end))
+    mean_mae(i)=mean(mae_out(i,i1:end))
+end
+
 figure(1);set_paper;
-cax=[0.14]+[-1 1].*0.02
+cax=[0.14]+[-1 1].*0.005;
 for i=1:length(Omul);
     subplot(2,4,i)
     imagesc(prior{1}.x,prior{1}.y,etype_mean{i});axis image
     caxis(cax)
+    if i==1;
+        title('No modeling error')
+    elseif i==2
+        title('Gaussian modeling error')
+    elseif i==3
+        title('Normal Score modeling error')
+    end
     subplot(2,4,i+4)
     imagesc(prior{1}.x,prior{1}.y,sqrt(etype_var{i}));axis image
     caxis([0 0.01])
-end
+    end
 subplot(2,4,4)
 imagesc(prior{1}.x,prior{1}.y,options.mcmc.m_ref{1});axis image
+title('Reference')
 caxis(cax)
 print_mul(sprintf('%s_compare_mean',options.txt))
 
@@ -647,6 +755,47 @@ plot(logL_out');
 legend({'Standard','ME','ME_{NS}'})
 print_mul(sprintf('%s_logL',options.txt))
 
+%%
+figure(34);
+ax1=subplot(3,1,1)
+p=plot(cc_out');
+hold on
+tmp=cc_out;for i=1:size(cc_out,1);tmp(i,:)=mean_cc(i);end
+p2=plot(tmp','-','LineWidth',2);
+hold off
+for i=1:length(p2);set(p2(i),'Color',p(i).Color);end
+legend(p,{'No C_T','Gauss','Ns'});grid on
+ylabel('Correlation Coefficient - to m-ref');
+
+ax2=subplot(3,1,2)
+p=plot(mae_out');
+hold on
+tmp=mae_out;for i=1:size(mae_out,1);tmp(i,:)=mean_mae(i);end
+p2=plot(tmp','-','LineWidth',2);
+for i=1:length(p2);set(p2(i),'Color',p(i).Color);end
+hold off
+legend(p,{'No C_T','Gauss','Ns'});grid on
+ylabel('Mean Absolute Error')
+
+ax3=subplot(3,1,3)
+p=plot(mse_out');
+hold on
+tmp=mse_out;for i=1:size(mse_out,1);tmp(i,:)=mean_mse(i);end
+p2=plot(tmp','-','LineWidth',2);
+for i=1:length(p2);set(p2(i),'Color',p(i).Color);end
+hold off
+ylabel('Mean Squared Error')
+xlabel('Realization number')
+legend(p,{'No C_T','Gauss','Ns'});grid on
+ylim(1)=ax2.YLim(1);
+ylim(2)=ax3.YLim(2);
+ax2.YLim=ylim;
+ax3.YLim=ylim;
+linkaxes([ax1, ax2, ax3],'x');
+sgtitle(options.txt,'Interpreter','None')
+print_mul(sprintf('%s_cc',options.txt))
+
+%%
 
 return
 
@@ -659,6 +808,7 @@ if use_rejection==1;
 
     %%
     cax=[0.12 0.17];
+    cax=[0.13 0.16];
     cmap=jet;
     cax_std=[0 0.01];
     ns=100;

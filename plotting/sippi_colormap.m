@@ -22,7 +22,11 @@ elseif ic==2
 elseif ic==3
     cmap=flipud(gray);
 elseif ic==4
-    cmap=parula;
+    if isoctave
+      cmap=viridis;
+    else 
+      cmap=parula;
+    end
 elseif ic==5
     cmap=cmap_geosoft;
 else

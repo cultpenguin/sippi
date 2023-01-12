@@ -152,6 +152,7 @@ else
    
     reals=reals(ii_post_reals,:);
     nr=size(reals,1);
+    reals_all=reals;
     
     %% GET ETYPES
     etype_mean=mean(reals);
@@ -193,6 +194,7 @@ if n_reals<1
     reals_mat=[];
     disp(sprintf('%s : Number of ''realizations'' is less than one!',mfilename));
 end
+
 
 for i=1:n_reals
     if prior{im}.dim(3)>1
