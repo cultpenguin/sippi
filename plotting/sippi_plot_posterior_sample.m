@@ -36,8 +36,11 @@ end
         end
     end
     if ~exist('mcmc','var')&isfield(options,'mcmc')
-        mcmc=options.mcmc;
-        mcmc=options.C{1}.mcmc;
+        try
+            mcmc=options.mcmc;
+        catch
+            mcmc=options.C{1}.mcmc;
+        end
     end
     
     % ALL DATA LOADED

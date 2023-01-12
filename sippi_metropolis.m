@@ -320,8 +320,7 @@ i=0;
 %for i=1:mcmc.nite;
 while i<=mcmc.nite;
     i=i+1;
-    
-    
+
     mcmc.i=i;
     mcmc.time(i)=now;
     
@@ -334,6 +333,7 @@ while i<=mcmc.nite;
         
         % Store index in forward
         C{ic}.forward.i=i;
+        C{ic}.mcmc.i=i;
         
         %% set seed / necessary?
         for im=1:length(C{ic}.prior_current)

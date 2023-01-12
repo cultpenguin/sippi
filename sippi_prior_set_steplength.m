@@ -8,7 +8,11 @@ if nargin<3
     im=1;
 end
 
-i_perturb=find(mcmc.perturb(im,:));
+if ~isfield(mcmc,'i')
+    mcmc.i=length(mcmc.acc(im,:));
+end
+
+i_perturb=find(mcmc.perturb(im,1:mcmc.i));
 if isempty(i_perturb);
     return
 end

@@ -83,8 +83,8 @@ print_mul(sprintf('sippi_linefit_data_%d_prior',length(d_obs)));
 %% Sample the posterior
 
 % Perform extended Metropolis sampling 
-options.mcmc.nite=40000;  % Run for 40000 iterations
-options.mcmc.i_sample=100; % Save every 100th visited model to disc
+options.mcmc.nite=100000;  % Run for 40000 iterations
+options.mcmc.n_sample=300; % Save every 100th visited model to disc
 options.mcmc.i_plot=5000; % Plot the progress information for every 2500 iterations
 options.txt='case_line_fit_2nd_order'; % descriptive name for the output folder
 
@@ -93,6 +93,7 @@ options.txt='case_line_fit_2nd_order'; % descriptive name for the output folder
 out_folder = options_metropolis.txt;
 sippi_plot_prior_sample(out_folder);
 sippi_plot_posterior(out_folder);
+
 
 %% rejection
 options.mcmc.adaptive_rejection=1;
