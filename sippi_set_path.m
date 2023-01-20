@@ -23,6 +23,10 @@ i=i+1;F{i}=[p,filesep,'toolboxes',filesep,'frequency_matching'];
 i=i+1;F{i}=[p,filesep,'toolboxes',filesep,'fdem1d'];
 i=i+1;F{i}=[p,filesep,'toolboxes',filesep,'fdem1d',filesep,'fdem1d'];
 
+% for sippi-all package
+i=i+1;F{i}=[p,filesep,'..',filesep,'mgstat'];
+i=i+1;F{i}=[p,filesep,'..',filesep,'mpslib',filesep,'matlab'];
+
 % ALSO ADD ALL DIRS IN 'toolboxes' folder not allready specified
 toolboxes_dir=[p,filesep,'toolboxes'];
 p_tb=dir(toolboxes_dir);
