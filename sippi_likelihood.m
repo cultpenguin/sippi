@@ -227,9 +227,11 @@ for id=id_array;
                 end
             else
                 if data{id}.use_log==1;
-                    dd=(log(data{id}.d_obs(data{id}.i_use))-data{id}.dt(data{id}.i_use))-log(d{id}(data{id}.i_use));
+                    %dd=(log(data{id}.d_obs(data{id}.i_use))-data{id}.dt(data{id}.i_use))-log(d{id}(data{id}.i_use));
+                    dd=(log(data{id}.d_obs(data{id}.i_use))-data{id}.dt(data{id}.i_use))-log(d{id});
                 else
-                    dd=(data{id}.d_obs(data{id}.i_use)-data{id}.dt(data{id}.i_use))-d{id}(data{id}.i_use);
+                    %dd=(data{id}.d_obs(data{id}.i_use)-data{id}.dt(data{id}.i_use))-d{id}(data{id}.i_use);
+                    dd=(data{id}.d_obs(data{id}.i_use)-data{id}.dt(data{id}.i_use))-d{id};                    
                 end
             end
         else
