@@ -20,7 +20,6 @@
 %              'visim', simulation through SGSIM of DSSIM
 %
 function [m_est,Cm_est,m_reals,options,data,prior,forward]=sippi_least_squares(data,prior,forward,options);
-
 id=1;
 im=1;
 
@@ -69,7 +68,6 @@ end
 
 options.txt=sprintf('%s_%s_%s',datestr(now,'YYYYmmdd_HHMM'),options.txt,options.lsq.type);
 sippi_verbose(sprintf('%s: output folder: %s ',mfilename,options.txt),1)
-
 
 %% MODEL COVARINCE
 if ~isfield(options.lsq,'Cm');
@@ -154,17 +152,28 @@ else
     sippi_verbose(sprintf('%s: linear forward operator G set in options.lsq.G',mfilename),1)
 end
 
-
 %% M
 if ~isfield(prior{im},'m0');
-    prior{im}.m0=0;
+    prior{im}.m0=0;    
 end
+
 if length(prior{im}.m0)==1;
     nm=size(options.lsq.Cm,1);
     options.lsq.m0=ones(nm,1).*prior{im}.m0;
 else
     options.lsq.m0=prior{im}.m0(:);
 end
+
+
+if isfield(forward,'linear_m');
+    if length(forward.linear_m)==1;
+        nm=size(options.lsq.Cm,1);
+        options.lsq.m0=ones(nm,1).*forward.linear_m;
+    else
+        options.lsq.m0=forward.linear_m;
+    end
+end
+
 sippi_verbose(sprintf('%s: setting options.lsq.m0=prior{%d}.m0',mfilename,im),1)
 
 %% D
@@ -174,7 +183,6 @@ if ~isfield(options.lsq,'d0');
 end
 options.lsq.d_obs=data{id}.d_obs;
 sippi_verbose(sprintf('%s: setting options.lsq.d_obs=data{%d}.d_obs',mfilename,id),1)
-
 
 %%
 i_use=data{1}.i_use;
