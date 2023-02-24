@@ -63,7 +63,7 @@ if pg_dim==1;
     for iz=1:nz
         for ix=1:nx
             for iy=1:ny
-                pg_d(iy,ix,iz)=pg_map(di_1(iy,ix));
+                pg_d(iy,ix,iz)=pg_map(di_1(iy,ix,iz));
             end
         end
     end
@@ -95,7 +95,7 @@ elseif pg_dim==3
     %% PLURIGAUSSIAN USING THREE GAUSSIANS
     n1=pg_size(2);
     n2=pg_size(1);
-    n3=pg_size(3);
+    n3=pg_size(3)
     
     
     w1=diff(pg_limits)/n1;
@@ -113,7 +113,7 @@ elseif pg_dim==3
     for iz=1:nz
         for ix=1:nx
             for iy=1:ny                
-                pg_d(iy,ix,iz)=pg_map(di_2(iy,ix,iz),di_1(iy,ix,iz),di_2(iy,ix,iz));
+                pg_d(iy,ix,iz)=pg_map(di_2(iy,ix,iz),di_1(iy,ix,iz),di_3(iy,ix,iz));
             end
         end
     end

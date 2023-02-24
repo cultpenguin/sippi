@@ -115,7 +115,6 @@ else
     end
     [pg_m_propose,prior{ip}.pg_prior]=sippi_prior(prior{ip}.pg_prior);
 end
-
 %% CONVERT N(0,1) using PG_MAP
 %m_propose{ip} = pg_m_propose{1}.*0;
 %m_propose{ip}(find(pg_m_propose{1}>-1))=1;
