@@ -241,7 +241,10 @@ for im=im_array;
             end
             
             % LOCATE VALUE IN GENERALIZED GAUSSIAN DIST.
-            jj=find( prior{im}.ggauss_cdf.cdf>0 & prior{im}.ggauss_cdf.cdf<1);
+            % next line lead to interpolation issues in Matlab R2023a
+            %jj=find( prior{im}.ggauss_cdf.cdf>0 & prior{im}.ggauss_cdf.cdf<1);
+            % next line leads to no interpolation issues in Matlab R2023a
+            jj=find(diff(prior{im}.ggauss_cdf.cdf)>0); % 
             ggauss_real=interp1(prior{im}.ggauss_cdf.cdf(jj),prior{im}.ggauss_cdf.x(jj),g_cdf);
             if isnan(ggauss_real)
                 ii=max(find(prior{im}.ggauss_cdf.cdf<g_cdf));
