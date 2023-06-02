@@ -1,5 +1,5 @@
 # GA-AEM forward
-This folder contains a SIPP forward wrapper that allow calling the GA-AEM EM forward modeling code using SIPPI.
+This folder contains a SIPPI forward wrapper that allow calling the GA-AEM EM forward modeling code (https://github.com/GeoscienceAustralia/ga-aem) using SIPPI.
 
 ## Install ga-aem
 
