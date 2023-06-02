@@ -22,6 +22,11 @@ i=i+1;F{i}=[p,filesep,'toolboxes',filesep,'mpslib',filesep,'matlab'];
 i=i+1;F{i}=[p,filesep,'toolboxes',filesep,'frequency_matching'];
 i=i+1;F{i}=[p,filesep,'toolboxes',filesep,'fdem1d'];
 i=i+1;F{i}=[p,filesep,'toolboxes',filesep,'fdem1d',filesep,'fdem1d'];
+i=i+1;F{i}=[p,filesep,'toolboxes',filesep,'ga-aem'];
+i=i+1;F{i}=[p,filesep,'toolboxes',filesep,'ga-aem',filesep,'ga-aem'];
+i=i+1;F{i}=[p,filesep,'toolboxes',filesep,'ga-aem',filesep,'ga-aem',filesep,'matlab',filesep,'gatdaem1d_functions'];
+i=i+1;F{i}=[p,filesep,'toolboxes',filesep,'ga-aem',filesep,'ga-aem',filesep,'matlab',filesep,'bin',filesep,'x86'];
+i=i+1;F{i}=[p,filesep,'toolboxes',filesep,'ga-aem',filesep,'ga-aem',filesep,'matlab',filesep,'bin',filesep,'linux'];
 
 % for sippi-all package
 i=i+1;F{i}=[p,filesep,'..',filesep,'mgstat'];
