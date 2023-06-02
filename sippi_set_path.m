@@ -25,7 +25,8 @@ i=i+1;F{i}=[p,filesep,'toolboxes',filesep,'fdem1d',filesep,'fdem1d'];
 i=i+1;F{i}=[p,filesep,'toolboxes',filesep,'ga-aem'];
 i=i+1;F{i}=[p,filesep,'toolboxes',filesep,'ga-aem',filesep,'ga-aem'];
 i=i+1;F{i}=[p,filesep,'toolboxes',filesep,'ga-aem',filesep,'ga-aem',filesep,'matlab',filesep,'gatdaem1d_functions'];
-i=i+1;F{i}=[p,filesep,'toolboxes',filesep,'ga-aem',filesep,'ga-aem',filesep,'matlab',filesep,'bin',filesep,'x86'];
+%i=i+1;F{i}=[p,filesep,'toolboxes',filesep,'ga-aem',filesep,'ga-aem',filesep,'matlab',filesep,'bin',filesep,'x86'];
+i=i+1;F{i}=[p,filesep,'toolboxes',filesep,'ga-aem',filesep,'ga-aem',filesep,'matlab',filesep,'bin',filesep,'x64'];
 i=i+1;F{i}=[p,filesep,'toolboxes',filesep,'ga-aem',filesep,'ga-aem',filesep,'matlab',filesep,'bin',filesep,'linux'];
 
 % for sippi-all package

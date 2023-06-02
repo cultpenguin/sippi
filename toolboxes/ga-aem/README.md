@@ -19,6 +19,9 @@ This folder contains a SIPPI forward wrapper that allow calling the GA-AEM EM fo
     export cxxflags='-std=c++11 -O3 -Wall'
     export exedir='../bin/'
 
+    # On windows please add libfftw3-3.dll to ga-aem/matlab/bin/x64
+    cp third_party/fftw3.2.2.dlls/64bit/libfftw3-3.dll matlab/bin/x64/.
+
 
 ### Compile issues 
 Please checkout https://github.com/GeoscienceAustralia/ga-aem for details on installation.
