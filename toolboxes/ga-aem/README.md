@@ -6,7 +6,7 @@ This folder contains a SIPP forward wrapper that allow calling the GA-AEM EM for
 
     git clone git@github.com:GeoscienceAustralia/ga-aem.git
     cd ga-aem
-    git co develop
+    git co develop # Optional
 
     # On linux you will need to compile GA-AEM before use
     sudo apt-get install build-essential
@@ -20,6 +20,7 @@ This folder contains a SIPP forward wrapper that allow calling the GA-AEM EM for
     export exedir='../bin/'
 
 
-## FFTW
+### Compile issues 
+Please checkout https://github.com/GeoscienceAustralia/ga-aem for details on installation.
 
 
