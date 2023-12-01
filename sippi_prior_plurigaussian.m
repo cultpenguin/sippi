@@ -66,6 +66,7 @@ if isfield(prior{ip},'Cm')
     % One Gaussian 
     if ~isfield(prior{ip},'pg_prior')
         prior{ip}.pg_prior{1}.type='fftma';
+        prior{ip}.pg_prior{1}.type='cholesky';
         prior{ip}.pg_prior{1}.x=prior{ip}.x;
         prior{ip}.pg_prior{1}.y=prior{ip}.y;
         prior{ip}.pg_prior{1}.z=prior{ip}.z;
