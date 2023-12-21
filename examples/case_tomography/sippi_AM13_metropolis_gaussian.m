@@ -50,8 +50,8 @@ forward.sources=D.S;
 forward.receivers=D.R;
 %forward.type='fat';forward.linear=1;forward.freq=0.1;
 %forward.type='ray';
-%forward.type='ray_2d';forward.r=2;
-forward.type='eikonal';
+forward.type='ray_2d';forward.r=2;
+%forward.type='eikonal';
 %forward.type='fd';
 
 
@@ -78,10 +78,9 @@ print_mul('AM13_data');
 
 
 %% SETUP METROPOLIS
-options.mcmc.nite=500000;
-options.mcmc.nite=5000;
+options.mcmc.nite=100000;
 options.mcmc.i_plot=25000;
-n_reals_out=50;
+n_reals_out=250;
 options.mcmc.i_sample=options.mcmc.nite/n_reals_out;
 rng(1);
 

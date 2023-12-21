@@ -14,6 +14,7 @@ i=i+1;F{i}=p;
 i=i+1;F{i}=[p,filesep,'data',filesep,'crosshole'];
 % i=i+1;F{i}=[p,filesep,'data',filesep,'ti'];
 i=i+1;F{i}=[p,filesep,'plotting'];
+i=i+1;F{i}=[p,filesep,'plotting/matplotlib'];
 i=i+1;F{i}=[p,filesep,'misc'];
 i=i+1;F{i}=[p,filesep,'toolboxes',filesep,'fast_marching_kroon'];
 i=i+1;F{i}=[p,filesep,'toolboxes',filesep,'fast_marching_kroon',filesep,'functions'];

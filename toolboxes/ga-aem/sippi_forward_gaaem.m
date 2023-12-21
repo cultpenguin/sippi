@@ -209,6 +209,10 @@ if (forward.log10_data==1)
     d{id}=log10(d{id});
 end
 
+if isfield(forward,'id_use')
+    d{id}=d{id}(forward.id_use);
+end
+
 %if forward.use_tx_height>0
 %    d{id+1}=m{2};
 %end
