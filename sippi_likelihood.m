@@ -133,19 +133,15 @@ for id=id_array;
     if ~isfield(data{id},'i_use'); data{id}.i_use=1:1:length(data{id}.d_obs);end
     
     
+    % UNCORRELATED GAUSSIAN NOISE
     if strcmp(data{id}.noise_model,'gaussian')&&(data{id}.noise_uncorr==1)
-        % UNCORRELATED GAUSSIAN NOISE
-        
-        % dd=data{id}.d_obs-d{id};
-        % d_std could be an array of lenth(data{id}.d_obs)...
         
         if data{id}.use_log==1;
             dd=log(data{id}.d_obs(data{id}.i_use))-log(d{id}(data{id}.i_use));
         else
             dd=data{id}.d_obs(data{id}.i_use)-d{id}(data{id}.i_use);            
         end
-        if isfield(data{id},'n_score');
-            keyboard
+        if isfield(data{id},'n_score');            
             dd = nscore_mul(dd,data{id}.n_score(data{id}.i_use)); 
         end
         
@@ -163,7 +159,7 @@ for id=id_array;
         end
         
         L(id)=exp(logL(id));
-    else
+    elseif  strcmp(data{id}.noise_model,'gaussian')&&(data{id}.noise_uncorr==0)
         % CORRELATED GAUSSIAN
         
         N=length(data{id}.d_obs);
@@ -268,12 +264,11 @@ for id=id_array;
                 data{id}.logdet = logdet(data{id}.CD(data{id}.i_use,data{id}.i_use));
             end
         end
-        
-    end %%%%%%%%%%%%%%%%%
-    
-    if strcmp(data{id}.noise_model,'gaussian')&&(data{id}.noise_uncorr==0)
+        disp(11)
+    %end %%%%%%%%%%%%%%%%%
+    %
+    %if strcmp(data{id}.noise_model,'gaussian')&&(data{id}.noise_uncorr==0)
         nknown=length(data{id}.i_use);
-        
         
         if data{id}.full_likelihood==1
             f1 = -(nknown/2)*log(2*pi);
@@ -334,8 +329,45 @@ for id=id_array;
         end
         logL(id) = sum((abs(dd(:)).^data{id}.norm)./(data{id}.sigma(:).^(data{id}.norm)));
         logL(id) = logL .* (-1./data{id}.norm );
-    elseif (strcmp(data{id}.noise_model,'gaussian'))
-        % ALLEADY DONE
+    elseif (strcmp(data{id}.noise_model,'gaussian_lu'))   
+
+        if ~isfield(data{id},'d_lu');
+            data{id}.d_lu = 0*data{1}.d_obs+1;
+        end
+
+        if data{id}.use_log==1;
+            dd=log(data{id}.d_obs(data{id}.i_use))-log(d{id}(data{id}.i_use));
+        else
+            dd=data{id}.d_obs(data{id}.i_use)-d{id}(data{id}.i_use);            
+        end
+        if isfield(data{id},'n_score');            
+            dd = nscore_mul(dd,data{id}.n_score(data{id}.i_use)); 
+        end
+        
+        % Truncate withe poisitive or negative dd's accorfing to
+        % data{id}.d_lu
+        ineg = find(data{id}.d_lu<0);
+        inull=find(dd(ineg)<0);
+        dd(ineg(inull))=0;
+
+        ipos = find(data{id}.d_lu>0);
+        inull=find(dd(ipos)>0);
+        dd(ipos(inull))=0;
+        
+
+        if length(data{id}.d_std)==1
+            logL(id)=-.5*sum(sum(sum(dd.^2./(data{id}.d_std.^2))));
+        else
+            logL(id)=-.5*sum(sum(sum(dd.^2./(data{id}.d_std(data{id}.i_use).^2))));
+        end
+        if data{id}.full_likelihood==1;
+            k = length(dd).*log(((data{id}.d_std.*sqrt(2*pi)).^(-1)));
+            logL(id)=k+logL(id);
+        end
+        
+        L(id)=exp(logL(id));
+
+
     else
         sippi_verbose(sprintf('%s : noise model ''%s'' is not supported',mfilename,data{id}.noise_model),-10);
         %keyboard

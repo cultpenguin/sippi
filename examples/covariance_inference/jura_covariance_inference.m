@@ -64,7 +64,7 @@ forward.stabilize=0;
 % initial choice of N(m0,Cm), mean and sill are 0, and 1, due
 % due to normal score
 forward.m0=mean(d_obs);
-forward.Cm=sprintf('%3.1f Sph(2)',var(d));
+forward.Cm=sprintf('%3.1f Sph(2)',var(d_obs));
 
 %%
 [m,prior]=sippi_prior(prior);
