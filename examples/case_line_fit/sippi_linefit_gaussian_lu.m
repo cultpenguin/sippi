@@ -81,6 +81,7 @@ data{1}.d_lu = data{1}.d_lu*0;
 data{1}.d_lu(1:5) = -1; % For these data any negative residuals are ignored
 data{1}.d_lu(6:end) = 1; % For these data any positive residuals are ignored
 data{1}.d_lu(5)=0; % for these data the noise is simple Gaussian uncorrelated
+
 %%
 figure(1);clf;
 e=errorbar(x,d_obs,d_std,'k*');
