@@ -9,6 +9,8 @@ if length(m)==1;
     d{1}=forward.x.*0 + m{1};
 elseif length(m)==2;
     d{1}=forward.x*m{2}+m{1};
-else
+elseif length(m)==3;
     d{1}=forward.x.^2*m{3}+forward.x*m{2}+m{1};
+else
+    d{1}=forward.x.^3*m{4}+forward.x.^2*m{3}+forward.x*m{2}+m{1};
 end
